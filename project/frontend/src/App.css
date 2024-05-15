@@ -1,0 +1,194 @@
+#root {
+  /* max-width: 1280px; */
+  margin: 0 auto;
+  margin-top: 80px;
+  margin-bottom: 10px;
+  /* padding: 1rem; */
+  text-align: center;
+  
+}
+@media screen and (max-width: 680px){
+  #root {
+    margin-top: 50px;
+  }
+}
+
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+
+/* css สำหรับตกแต่ง calendar picker */
+#dbPicker_modal button {
+  margin-top: 0;
+}
+
+#dbPicker_modal section {
+  border-radius: 14px !important;
+  padding: unset;
+  max-width: unset;
+  min-height: unset;
+}
+
+@media (max-width: 600px){
+  #dbPicker_modal section {
+    align-self: auto;
+    width: auto !important;
+  }
+}
+
+#dbPicker_modal button#modal-close-button:hover {
+  background-color: #5ed5d0;
+  color: #fff;
+}
+
+#dbPicker_modal h1, #dbPicker_modal h3 {
+  color: #128c83;
+}
+
+section#dbPicker_modal_calendar {
+  background-color: #fff;
+  border-radius: unset;
+  display: block;
+  padding: 0px 8px;
+}
+
+section#dbPicker_modal_calendar button[data-id="button-icon-element"] {
+  color: #128c83;
+}
+
+section#dbPicker_modal_calendar button[data-id="button-icon-element"][disabled] {
+  color: #d7d9e2;
+}
+
+section#dbPicker_modal_calendar ::after {
+  color: #128c83;
+}
+
+section#dbPicker_modal_calendar table th {
+  color: #178d84;
+  background-color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+}
+section#dbPicker_modal_calendar table tr:nth-of-type(odd) {background-color: #fff;}
+
+section#dbPicker_modal_calendar table button {
+  color: #2a3039;
+  font-weight: normal;
+  padding: 0;
+  padding-block: 1px;
+  padding-inline: 6px;
+}
+
+section#dbPicker_modal_calendar table button[data-selected="true"] {
+  background: #16afa9;
+  color: #fff;
+}
+
+section#dbPicker_modal_calendar table button[data-selected="true"]::after {
+  background: #fff;
+}
+
+section#dbPicker_modal_calendar table button:hover {
+  background: #5ed5d0;
+  color: #fff;
+  border: 0;
+}
+
+section#dbPicker_modal_calendar table button::after {
+  background: #16BCB6;
+}
+
+.MuiAlert-message {
+  /* font-family: 'DB-Helvethaica-X', 'Kanit', sans-serif; */
+  font-family: 'Prompt', sans-serif;
+}
+
+* div[role=tooltip] .MuiTooltip-tooltip {
+  background: #000;
+  /* font-family: 'DB-Helvethaica-X', 'Kanit', sans-serif; */
+  font-family: 'Prompt', sans-serif;
+  font-size: 0.875rem;
+}
+
+* div[role=tooltip] .MuiTooltip-arrow {
+  color: #000;
+}
+
+/* #edcb96
+#f7c4a5
+#9e7682
+#605770
+#4d4861 */
+
+#FormOptional{
+  /* border: 1px solid red; */
+  width: 95vw;
+  /* height: 20vh; */
+  --cal1:#edcb96;
+  --cal2:#f7c4a5;
+  --cal3:#9e7682;
+  --cal4:#605770;
+  --cal5:#4d4861;
+
+  #FormOptional_DNM{
+    /* border: 1px solid blue; */
+    width: 100%;
+  }
+  #FormOptional_Header{
+    width: 100%;
+    /* background:white; */
+    color:inherit;
+    display: flex;
+  }
+  #FormOptional_Header span{
+    padding: 0.25rem;
+  }
+  #RadioFormOptionalGroup,#CheckedboxFormOptionalGroup{
+    display: flex;
+    padding:0.5rem
+  }
+  #RadioFormOption,#CheckboxFormOption{
+    display: flex;
+    margin-left: unset;
+    padding:1rem
+    /* width: 20px; */
+  }
+  #TextRadioFormOption{
+    color:inherit;
+  }
+}
