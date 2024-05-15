@@ -52,7 +52,7 @@ const ReportStaff = ({data,setDataFunction,setData}) => {
               defaultValue="0"
               name="medicalrecorded"
               onChange={(e) => setDataFunction(e, "medicalrecorded")}
-              value={data?.urgenttype || "0"}
+              value={data?.medicalrecorded || "0"}
             >
               <FormControlLabel
                 sx={{ p: 1 }}
@@ -70,7 +70,7 @@ const ReportStaff = ({data,setDataFunction,setData}) => {
           </>
         }
         {/* <TextField id="isnew" label="หน่วยงานที่เกี่ยวข้อง" value={data?.dx || ""} onChange={(e) => setDataFunction(e, "isnew")} variant="filled" /> */}
-        <RadioGroup
+        {/* <RadioGroup
           sx={{ p: 1 }}
           row
           id="isnew"
@@ -92,7 +92,7 @@ const ReportStaff = ({data,setDataFunction,setData}) => {
             control={<Radio />}
             label="อุบัติการณ์ซ้ำ"
           />
-        </RadioGroup>
+        </RadioGroup> */}
       </ReportStaffStyle>
     </>
   );
