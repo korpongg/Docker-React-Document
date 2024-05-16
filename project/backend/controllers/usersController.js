@@ -1,5 +1,4 @@
-const sequelize = require('../config/dbConn').sequelize; // Import the sequelize instance
-const moment = require('moment-timezone');
+const sequelize = require('../config/dbConn').sequelize;
 const User = require("../models/User");
 
 const getAllUsers = async (req, res) => {

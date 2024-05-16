@@ -1,5 +1,6 @@
 const { DataTypes, Sequelize } = require("sequelize");
 const sequelize = require("../config/dbConn").sequelize;
+const User = require("./User");
 
 const Occurrences = sequelize.define('Occurrences', {
   id: {
@@ -155,7 +156,7 @@ const Occurrences = sequelize.define('Occurrences', {
     type: DataTypes.STRING(1),
     allowNull: true
   },
-  reportstaff: {
+  reportacknowledge: {
     type: DataTypes.STRING(1),
     allowNull: true
   },
@@ -214,6 +215,24 @@ const Occurrences = sequelize.define('Occurrences', {
 }, {
   tableName: 'occurrences',
   timestamps: false // Disable automatic timestamps
+});
+
+Occurrences.belongsTo(User, {
+  foreignKey: 'createby',
+  targetKey: 'userid',
+  as: 'CreateBy',
+});
+
+Occurrences.belongsTo(User, {
+  foreignKey: 'acceptby',
+  targetKey: 'userid',
+  as: 'AcceptBy',
+});
+
+Occurrences.belongsTo(User, {
+  foreignKey: 'updateby',
+  targetKey: 'userid',
+  as: 'UpdateBy',
 });
 
 module.exports = Occurrences;

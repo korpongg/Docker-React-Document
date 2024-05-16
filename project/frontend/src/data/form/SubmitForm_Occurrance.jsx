@@ -15,11 +15,11 @@ const SubmitForm_Occurrence = {
   reporttype: null,
   type: null,
 
-  reportid: "",
-  acceptdate: "",
-  responsedate: "",
-  urgenttype: null,
-  isnew:false,
+  // reportid: "",
+  // acceptdate: "",
+  // responsedate: "",
+  // urgenttype: null,
+  // isnew:false,
 
   patientcare: [],
   patientcareremark:"",
@@ -44,14 +44,16 @@ const SubmitForm_Occurrence = {
   docname:"",
   medicalrecorded:null,
   
-  reportstaff:false,
-  reportstaffremark:"",
+  reportacknowledge:false,
+
+  reportother:false,
+  reportotherremark:"",
 
   impromptusolution:"",
   activefailure:"",
   suggestion:"",
 
   userreport:"",
-  formstatus:""
+  formstatus:"1"
 };
 export default SubmitForm_Occurrence;

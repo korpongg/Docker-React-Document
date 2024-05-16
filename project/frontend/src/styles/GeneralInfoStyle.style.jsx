@@ -7,7 +7,15 @@ const GeneralInfoStyle = styled(Box)`
  
   display:flex;
   flex-direction:column;
-  
+  // padding-left:50px;
+  // padding-right:50px;
+  width:100%;
+  // overflow:scroll;
+  top:0;
+  // margin-bottom:45px;
+  // input {
+  //   margin:5px;
+  // }
 
 `
 export default GeneralInfoStyle;

@@ -12,27 +12,39 @@ import ReportStaffStyle from "../../styles/ReportStaffStyle.style";
 
 const ReportStaff = ({data,setDataFunction,setData}) => {
   const [isChecked, setIsChecked] = useState(data?.reportdoc || false);
-  const [isCheckedmedicalrecorded, setIsCheckedmedicalrecorded] = useState(data?.medicalrecorded || false);
+  const [isCheckedAcknowledge, setIsCheckedAcknowledge] = useState(data?.reportacknowledge || false);
+  const [isCheckedOther, setIsCheckedOther] = useState(data?.reportother || false);
+  // const [isCheckedmedicalrecorded, setIsCheckedmedicalrecorded] = useState(data?.medicalrecorded || false);
 
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
   };
-
-  const handleCheckboxChangemedicalrecorded = () => {
-    setIsCheckedmedicalrecorded(!isCheckedmedicalrecorded);
+  const handleCheckboxChangeAcknowledge = () => {
+    setIsCheckedAcknowledge(!isCheckedAcknowledge);
   };
+  const handleCheckboxChangeOther = () => {
+    setIsCheckedOther(!isCheckedOther);
+  };
+
+  // const handleCheckboxChangemedicalrecorded = () => {
+  //   setIsCheckedmedicalrecorded(!isCheckedmedicalrecorded);
+  // };
 
   useEffect(()=>{
     setData(isChecked,"reportdoc")
   },[isChecked])
-
   useEffect(()=>{
-    setData(isCheckedmedicalrecorded,"medicalrecorded")
-  },[isCheckedmedicalrecorded])
+    setData(isCheckedAcknowledge,"reportacknowledge")
+  },[isCheckedAcknowledge])
+  useEffect(()=>{
+    setData(isCheckedOther,"reportother")
+  },[isCheckedOther])
+  // useEffect(()=>{
+  //   setData(isCheckedmedicalrecorded,"medicalrecorded")
+  // },[isCheckedmedicalrecorded])
 
   return (
     <>
-    {/* {console.log(isChecked)} */}
       <ReportStaffStyle>
       ReportStaff
         <FormGroup>
@@ -41,9 +53,6 @@ const ReportStaff = ({data,setDataFunction,setData}) => {
         {isChecked && 
           <>
             <TextField id="docname" label="คำสั่งแพทย์" value={data?.docname || ""} onChange={(e) => setDataFunction(e, "docname")} variant="filled" />
-            {/* <FormGroup>
-              <FormControlLabel value={data?.medicalrecorded || false} control={<Checkbox checked={isCheckedmedicalrecorded} onChange={handleCheckboxChangemedicalrecorded} />} label="บันทึกในเวชระเบียน" />
-            </FormGroup> */}
             <RadioGroup
               sx={{ p: 1 }}
               row
@@ -69,30 +78,19 @@ const ReportStaff = ({data,setDataFunction,setData}) => {
             </RadioGroup>
           </>
         }
-        {/* <TextField id="isnew" label="หน่วยงานที่เกี่ยวข้อง" value={data?.dx || ""} onChange={(e) => setDataFunction(e, "isnew")} variant="filled" /> */}
-        {/* <RadioGroup
-          sx={{ p: 1 }}
-          row
-          id="isnew"
-          aria-labelledby="isnew"
-          defaultValue="1"
-          name="isnew"
-          onChange={(e) => setDataFunction(e, "isnew")}
-          value={data?.isnew || "1"}
-        >
-          <FormControlLabel
-            sx={{ p: 1 }}
-            value="1"
-            control={<Radio />}
-            label="อุบัติการณ์ใหม่"
-          />
-          <FormControlLabel
-            sx={{ p: 1 }}
-            value="0"
-            control={<Radio />}
-            label="อุบัติการณ์ซ้ำ"
-          />
-        </RadioGroup> */}
+
+        <FormGroup>
+          <FormControlLabel value={data?.reportacknowledge || false} control={<Checkbox checked={isCheckedAcknowledge} onChange={handleCheckboxChangeAcknowledge} />} label="รายงานหัวหน้าแผนก/ผู้จัดการฝ่าย/ผู้ตรวจการพยาบาล รับทราบ" />
+        </FormGroup>
+
+        <FormGroup>
+          <FormControlLabel value={data?.reportother || false} control={<Checkbox checked={isCheckedOther} onChange={handleCheckboxChangeOther} />} label="อื่นๆ..." />
+        </FormGroup>
+        {isCheckedOther && 
+          <>
+            <TextField id="reportotherremark" label="อื่นๆ" value={data?.reportotherremark || ""} onChange={(e) => setDataFunction(e, "reportotherremark")} variant="filled" />
+          </>
+        }
       </ReportStaffStyle>
     </>
   );

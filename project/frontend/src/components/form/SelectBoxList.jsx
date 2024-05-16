@@ -40,7 +40,8 @@ const SelectBoxList = ({data,optionsdata,datacolumn,handleDataChangeCheckbox,han
     };
 
     useEffect(() => {
-        handleDataChangeCheckbox(pickdata,datacolumn);
+        // handleDataChangeCheckbox(pickdata,datacolumn);
+        handleDataChangeCheckbox(JSON.stringify(pickdata),datacolumn); //array to string
     }, [pickdata]);
 
   return (

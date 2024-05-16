@@ -137,7 +137,7 @@ CREATE TABLE [occurrences](
 
 	[medicalrecorded] [nvarchar](1) NULL,
 
-	[reportstaff] [nvarchar](1) NULL,
+	[reportacknowledge] [nvarchar](1) NULL,
 
 	[reportother] [nvarchar](1) NULL,
     [otherremark] NVARCHAR(100) NULL,
@@ -155,4 +155,21 @@ CREATE TABLE [occurrences](
 	[acceptAt] [datetime] NULL,
 	[updateAt] [datetime] NULL,
 	[deleteAt] [datetime] NULL,
+);
+
+--DELETE event_logs
+--Drop table if exists [event_logs]
+CREATE TABLE [event_logs](
+	[id] INT IDENTITY(1,1),
+	[reportid] [varchar](20) NOT NULL,
+	[code] [varchar](20) NOT NULL,
+    [deptrelate] NVARCHAR(100) NOT NULL,
+	[acceptdate] [datetime] NULL,
+	[responsedate] [datetime] NULL,
+	[urgenttype] [nvarchar](1) NULL,
+	[isnew] [nvarchar](1) NULL,
+	[comment] NVARCHAR(MAX) NOT NULL,
+	[type] [nvarchar](1) NOT NULL,
+	[userid] [varchar](20) NOT NULL,
+	[createAt] [datetime] NOT NULL DEFAULT GETDATE(),
 );

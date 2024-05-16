@@ -29,6 +29,7 @@ app.use('/api/refresh', require('./routes/refresh'));
 app.use('/api/logout', require('./routes/logout'));
 app.use('/api/users', require('./routes/api/users'));
 app.use('/api/occurrences', require('./routes/api/occurrences'));
+app.use('/api/events', require('./routes/api/events'));
 
 app.all('*', (req, res) => {
     res.status(404);

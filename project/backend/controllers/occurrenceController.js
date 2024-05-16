@@ -1,6 +1,6 @@
-const sequelize = require("../config/dbConn").sequelize; // Import the sequelize instance
-const Occurrences = require("../models/Occurrences"); // Adjust the path as necessary
-const moment = require('moment-timezone');
+const sequelize = require("../config/dbConn").sequelize;
+const Occurrences = require("../models/Occurrences");
+const User = require("../models/User");
 
 // Create a new occurrence
 exports.createOccurrence = async (req, res) => {
@@ -51,8 +51,6 @@ exports.createOccurrence = async (req, res) => {
       createAt: sequelize.literal("CURRENT_TIMESTAMP"),
       reportid: reportId, // Assign the generated reportId
     });
-
-    // console.log(result)
     
     res.status(201).json(result);
   } catch (error) {
@@ -63,8 +61,57 @@ exports.createOccurrence = async (req, res) => {
 // Get all occurrences
 exports.getAllOccurrences = async (req, res) => {
   try {
-    const occurrences = await Occurrences.findAll();
-    res.status(200).json(occurrences);
+    const occurrences = await Occurrences.findAll({
+      include: [
+        {
+          model: User,
+          attributes: ['name', 'lastname'],
+          as: 'CreateBy'
+        },
+        {
+          model: User,
+          attributes: ['name', 'lastname'],
+          as: 'AcceptBy'
+        },
+        {
+          model: User,
+          attributes: ['name', 'lastname'],
+          as: 'UpdateBy'
+        }
+      ],
+    });
+    // res.status(200).json(occurrences);
+
+    if (occurrences.length > 0) {
+      // Use map to parse JSON fields before sending the response
+      const parsedResults = occurrences.map(occurrence => {
+        const occurrenceJSON = occurrence.toJSON();
+        const createdBy = occurrence.CreateBy;
+        const createname = createdBy ? `${createdBy.name} ${createdBy.lastname}` : null;
+        const acceptBy = occurrence.AcceptBy;
+        const acceptname = acceptBy ? `${acceptBy.name} ${acceptBy.lastname}` : null;
+        const updateBy = occurrence.UpdateBy;
+        const updatename = updateBy ? `${updateBy.name} ${updateBy.lastname}` : null;
+        return {
+          ...occurrenceJSON,
+          patientcare: JSON.parse(occurrenceJSON.patientcare || '[]'),
+          patientsupport: JSON.parse(occurrenceJSON.patientsupport || '[]'),
+          utility: JSON.parse(occurrenceJSON.utility || '[]'),
+          equipment: JSON.parse(occurrenceJSON.equipment || '[]'),
+          safety: JSON.parse(occurrenceJSON.safety || '[]'),
+          service: JSON.parse(occurrenceJSON.service || '[]'),
+          management: JSON.parse(occurrenceJSON.management || '[]'),
+          createname: createname,
+          acceptname: acceptname,
+          updatename: updatename
+        };
+      }).map(({ CreateBy, AcceptBy, UpdateBy, ...occurrence }) => occurrence);
+
+      res.status(200).json(parsedResults);
+    } else {
+      // No results found
+      return res.status(404).json({ error: "No data found" });
+    }
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -73,11 +120,57 @@ exports.getAllOccurrences = async (req, res) => {
 // Get a single occurrence by ID
 exports.getOccurrenceById = async (req, res) => {
   try {
-    const occurrence = await Occurrences.findByPk(req.params.id);
+    const occurrence = await Occurrences.findByPk(req.params.id, {
+      include: [
+        {
+          model: User,
+          attributes: ['name', 'lastname'],
+          as: 'CreateBy'
+        },
+        {
+          model: User,
+          attributes: ['name', 'lastname'],
+          as: 'AcceptBy'
+        },
+        {
+          model: User,
+          attributes: ['name', 'lastname'],
+          as: 'UpdateBy'
+        }
+      ],
+    });
     if (!occurrence) {
       return res.status(404).json({ error: "Occurrence not found" });
     }
-    res.status(200).json(occurrence);
+    // res.status(200).json(occurrence);
+
+    const occurrenceJSON = occurrence.toJSON();
+    const createdBy = occurrence.CreateBy;
+    const createname = createdBy ? `${createdBy.name} ${createdBy.lastname}` : null;
+    const acceptBy = occurrence.AcceptBy;
+    const acceptname = acceptBy ? `${acceptBy.name} ${acceptBy.lastname}` : null;
+    const updateBy = occurrence.UpdateBy;
+    const updatename = updateBy ? `${updateBy.name} ${updateBy.lastname}` : null;
+    const parsedOccurrence = {
+      ...occurrenceJSON,
+      patientcare: JSON.parse(occurrenceJSON.patientcare || '[]'),
+      patientsupport: JSON.parse(occurrenceJSON.patientsupport || '[]'),
+      utility: JSON.parse(occurrenceJSON.utility || '[]'),
+      equipment: JSON.parse(occurrenceJSON.equipment || '[]'),
+      safety: JSON.parse(occurrenceJSON.safety || '[]'),
+      service: JSON.parse(occurrenceJSON.service || '[]'),
+      management: JSON.parse(occurrenceJSON.management || '[]'),
+      createname: createname,
+      acceptname: acceptname,
+      updatename: updatename
+    };
+
+    // Exclude key from the result
+    delete parsedOccurrence.CreateBy;
+    delete parsedOccurrence.AcceptBy;
+    delete parsedOccurrence.UpdateBy;
+
+    res.status(200).json(parsedOccurrence);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -105,6 +198,16 @@ exports.updateOccurrence = async (req, res) => {
       const occurrencedate = new Date(req.body.occurrencedate);
       const formattedOccurrenceDate = occurrencedate.toISOString().replace('T', ' ').replace('Z', '');
       req.body.occurrencedate = sequelize.literal(`'${formattedOccurrenceDate}'`);
+    }
+    if (req.body.acceptdate) {
+      const acceptdate = new Date(req.body.acceptdate);
+      const formattedAcceptDate = acceptdate.toISOString().replace('T', ' ').replace('Z', '');
+      req.body.acceptdate = sequelize.literal(`'${formattedAcceptDate}'`);
+    }
+    if (req.body.responsedate) {
+      const responsedate = new Date(req.body.responsedate);
+      const formattedResponseDate = responsedate.toISOString().replace('T', ' ').replace('Z', '');
+      req.body.responsedate = sequelize.literal(`'${formattedResponseDate}'`);
     }
 
     const validColumns = req.body;
