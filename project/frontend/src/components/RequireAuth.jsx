@@ -6,9 +6,9 @@ const RequireAuth = ({ allowedRoles }) => {
   const location = useLocation();
   // console.log("Auth context in RequireAuth:", auth);
   // const rolesArray = [...allowedRoles];
-  // const result = auth?.roles?.some(role => rolesArray.includes(role));
+  // const result = auth?.role?.some(role => rolesArray.includes(role));
   // console.log("result", result);
-  return auth?.roles?.find((role) => allowedRoles?.includes(role)) ? (
+  return auth?.role?.find((role) => allowedRoles?.includes(role)) ? (
     <Outlet />
   ) : auth?.userid ? (
     <Navigate to="/unauthorized" state={{ from: location }} replace />

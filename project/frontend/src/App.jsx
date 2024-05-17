@@ -3,6 +3,7 @@ import { Routes, Route, useNavigate, useLocation, Navigate } from "react-router-
 import "./App.css";
 
 import Layout from "./components/Layout";
+import Header from "./layout/Header";
 import RequireAuth from "./components/RequireAuth";
 
 import Login from "./view/user/Login";
@@ -13,6 +14,8 @@ import Home from "./view/pages/Home";
 import IndexPage from "./components/Occurrence"
 import Occurrence from "./components/Occurrence/form";
 
+import Usermanager from "./view/admin/Usermanager";
+
 import Missing from "./components/Missing";
 
 const ROLES = {
@@ -22,20 +25,25 @@ const ROLES = {
 };
 
 function App() {
+  const location = useLocation();
 
   return (
     <>
-      {/* <Header /> */}
+      {!["", "/login", "/logout"].includes(location.pathname) && <Header />}
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/" element={<Layout />}>
           <Route path="login" element={<Login />} />
           <Route path="logout" element={<Logout />} />
-          
+
           <Route path="/home" element={<Home />} />
 
           <Route path="/occurrence" element={<IndexPage />} />
           <Route path="/occurrence/form" element={<Occurrence />} />
+
+          <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
+            <Route path="usermanager" element={<Usermanager />} />
+          </Route>
 
           {/* catch all */}
           <Route path="*" element={<Missing />} />

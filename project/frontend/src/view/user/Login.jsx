@@ -61,9 +61,9 @@ const Login = () => {
   };
 
   const handleAuthSuccess = (response) => {
-    const { accessToken, roles } = response?.data || {};
-    localStorage.setItem("auth", JSON.stringify({ userid, roles, accessToken }));
-    setAuth({ userid, roles, accessToken });
+    const { accessToken, role } = response?.data || {};
+    localStorage.setItem("auth", JSON.stringify({ userid, role, accessToken }));
+    setAuth({ userid, role, accessToken });
   };
 
   const handleUserData = async () => {

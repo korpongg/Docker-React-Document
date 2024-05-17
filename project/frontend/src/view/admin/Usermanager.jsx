@@ -137,7 +137,7 @@ export default function UserManager() {
     { field: "name", headerName: "Name", width: 200, editable: false },
     { field: "lastname", headerName: "LastName", width: 220, editable: false },
     {
-      field: "roles",
+      field: "role",
       headerName: "สิทธิ์",
       width: 90,
       editable: true,
