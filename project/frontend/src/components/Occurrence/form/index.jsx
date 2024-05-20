@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import IconButton from '@mui/material/IconButton';
 import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
 import Tooltip from '@mui/material/Tooltip'
+import dayjs from 'dayjs';
 
 import GeneralInfo from "../../form/GeneralInfo";
 import ReportLog from "../../form/ReportLog";
@@ -20,6 +21,7 @@ import DataDict_Risk from "../../../data/form/DataDict_Risk";
 
 import OccurrenceStyle from "../../../styles/OccurrenceStyle.style";
 
+
 const Occurrence = () => {
   const UserData = JSON.parse(localStorage.getItem("userData"));
   const TempFormData = JSON.parse(localStorage.getItem("FormData")) || {};
@@ -31,12 +33,28 @@ const Occurrence = () => {
     an:UserData.an,
     age:UserData.userid,
     gender:UserData.sex,
+    reportdate:new Date(),
+    type:"opd",
+    reporttype:"0",
   });
 
   const handleDataChange = (event, name) => {
     const Text = event.target.value;
+    if(name==="reporttype"){
+      delete FormData.ClinicalRisk;
+      delete FormData.GeneralRisk;
+    }
     setFormData({ ...FormData, [name]: Text });
   };
+
+  const handleDateChange = (event, name) => {
+    // console.log(event.toISOString())
+    setFormData({ ...FormData, [name]: event });
+  }; 
+    // const datetime = event.$d
+    // console.log(event,datetime);
+    // setFormData({ ...FormData, [name]: datetime });
+  // };
 
   const handleDataChangeCheckbox = (dataarray, columnname) => {
     setFormData({ ...FormData, [columnname]: dataarray });
@@ -74,6 +92,26 @@ const Occurrence = () => {
     });
   }
 
+  //submit
+  // const handleSubmit = async (event) => {
+  //   event.preventDefault();
+  //   try {
+  //     // Convert the date to a string format (e.g., ISO format) if necessary
+  //     const dataToSubmit = {
+  //       ...formData,
+  //       reportdate: formData.reportdate ? formData.reportdate.toISOString() : null,
+  //     };
+      
+  //     // Send a POST request to the API
+  //     const response = await axios.post('/your-api-endpoint', dataToSubmit);
+  //     console.log('Response:', response.data);
+  //     // Handle the response as needed
+  //   } catch (error) {
+  //     console.error('Error submitting form:', error);
+  //     // Handle the error as needed
+  //   }
+  // };
+
   return (
     <>
     <OccurrenceStyle>
@@ -97,32 +135,23 @@ const Occurrence = () => {
       <button onClick={NextStage}>Next</button> */}
 
       {Stage===1 && <>
-        <GeneralInfo data={FormData} setDataFunction={handleDataChange} />
-        <ReportLog data={FormData} setDataFunction={handleDataChange} />
+        <GeneralInfo data={FormData} setDataFunction={handleDataChange} userdata={UserData}/>
+        {/* <ReportLog data={FormData} setDataFunction={handleDataChange} /> */}
       </>}
-      {Stage===2 && ""}
-      {/* {Stage===3 && <ReportInfo data={FormData} setDataFunction={handleDataChange} />} */}
-      {Stage===3 && <ReportType data={FormData} setDataFunction={handleDataChange} />}
-      {Stage===4 && 
-        <RadioList
-        data={FormData}
-        optionsdata={DataDict_Risk}
-        datacolumn="ClinicalRisk"
-        remark={false}
-        handleDataChangeCheckbox={handleDataChangeCheckbox}
-        handleDataChange={handleDataChange}
+      {Stage===2 && 
+      <>
+        <ReportType 
+          data={FormData} 
+          setDataFunction={handleDataChange}
+          handleDateChange={handleDateChange}
+          optionsdata={DataDict_Risk}
+          datacolumn={["GeneralRisk","ClinicalRisk"]}
+          handleDataChangeCheckbox={handleDataChangeCheckbox}
+          handleDataChange={handleDataChange} 
         />
+      </>
       }
-      {Stage===5 && 
-      <RadioList
-      data={FormData}
-      optionsdata={DataDict_Risk}
-      datacolumn="GeneralRisk"
-      remark={false}
-      handleDataChangeCheckbox={handleDataChangeCheckbox}
-      handleDataChange={handleDataChange}
-      />
-    }
+
       {Stage===6 && 
       <SelectBoxList
       data={FormData}

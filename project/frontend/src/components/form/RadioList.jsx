@@ -14,7 +14,7 @@ const RadioList = ({
 
   return (
     <>
-      {optionsdata[datacolumn].topic && optionsdata[datacolumn].topic}
+    <div className="TopicHeader">{optionsdata[datacolumn].topic && optionsdata[datacolumn].topic}</div>
       {optionsdata && datacolumn && (
         <RadioListStyle>
           <RadioGroup
@@ -22,10 +22,11 @@ const RadioList = ({
             
             id={datacolumn}
             aria-labelledby={datacolumn}
-            defaultValue={optionsdata[datacolumn].options[0].code}
+            // defaultValue={optionsdata[datacolumn].options[0].code}
             name={datacolumn}
             onChange={(e) => handleDataChange(e, datacolumn)}
-            value={data[datacolumn] || optionsdata[datacolumn].options[0].code}
+            // value={data[datacolumn] || optionsdata[datacolumn].options[0].code}
+            value={data[datacolumn] || null}
           >
             {optionsdata[datacolumn].options.map((datarow, radiodatakey) => (
               <FormControlLabel

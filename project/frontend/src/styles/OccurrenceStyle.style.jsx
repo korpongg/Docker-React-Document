@@ -46,12 +46,12 @@ const OccurrenceStyle = styled(Box)`
   flex-direction:row;
   justify-content:space-between;
   align-items:center;
-  font-size:24px;
+  font-size:12px;
   // position: absolute;
   // bottom: 0;
   // width:100%;
-  height:50px;
-  padding:8px;
+  height:15px;
+  padding:12px;
   padding-left:15px;
   background: rgb(155,164,147);
   background: linear-gradient(90deg, rgba(155,164,147,1) 0%, rgba(193,194,178,1) 100%);
@@ -64,6 +64,36 @@ const OccurrenceStyle = styled(Box)`
     color:#000000;
     font-size:18px;
     padding:10px;
+  }
+  .DatetimeInput{
+    font: inherit;
+    letter-spacing: inherit;
+    color: rgba(51, 51, 51, 0.87);
+    padding: 4px 0 5px;
+    border: 0;
+    border-bottom: 1px solid rgb(118, 118, 118);
+    box-sizing: content-box;
+    background: #f1f1f1;
+    height: 1.4375em;
+    margin: 0;
+    -webkit-tap-highlight-color: transparent;
+    // display: block;
+    // min-width: 0;
+    // width: 100%;
+    -webkit-animation-name: mui-auto-fill-cancel;
+    animation-name: mui-auto-fill-cancel;
+    -webkit-animation-duration: 10ms;
+    animation-duration: 10ms;
+    padding-top: 25px;
+    padding-right: 12px;
+    padding-bottom: 8px;
+    padding-left: 12px;
+  }
+  .DatetimeInput::-webkit-calendar-picker-indicator {
+    color:red;
+}
+  .DatetimeInput:focus{
+
   }
 `
 export default OccurrenceStyle;

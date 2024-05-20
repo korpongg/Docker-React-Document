@@ -13,5 +13,5 @@ services:
       - ./nginx/http.d/:/etc/nginx/http.d/
       #- /mnt/tnh-fileserver:/app/tnh-fileserver
     ports:
-      - '8136:80'
+      - '8137:80'
     restart: always
