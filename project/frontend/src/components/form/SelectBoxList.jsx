@@ -41,7 +41,7 @@ const SelectBoxList = ({data,optionsdata,datacolumn,handleDataChangeCheckbox,han
 
     useEffect(() => {
         // handleDataChangeCheckbox(pickdata,datacolumn);
-        handleDataChangeCheckbox(JSON.stringify(pickdata),datacolumn); //array to string
+        handleDataChangeCheckbox(pickdata,datacolumn); //array to string
     }, [pickdata]);
 
   return (
@@ -52,22 +52,28 @@ const SelectBoxList = ({data,optionsdata,datacolumn,handleDataChangeCheckbox,han
 {console.log("DataDict_occurrenceForm",DataDict_occurrenceForm[datacolumn])} */}
 {/* {console.log("title",title)} */}
         {/* {datadict && //check array lenght to list */}
-        {optionsdata[datacolumn].topic &&
+        <Box className="TopicHeader">
+            {optionsdata[datacolumn].topic &&
+            optionsdata[datacolumn].topic}
+        </Box>
+        {/* {optionsdata[datacolumn].topic &&
             optionsdata[datacolumn].topic
-        }
+        } */}
         {optionsdata && datacolumn &&
-        <SelectBoxListStyle>
-            <FormGroup>
-                {optionsdata[datacolumn].options.map((datarow,datakey)=>(
-                    <FormControlLabel key={datakey} value={datarow.code} control={<Checkbox checked={pickdata.includes(datarow.code.toString())} onChange={handleCheckboxChange} />} label={datarow.code+" "+datarow.title} />
-                ))}
-                {remark &&<>
-                <FormControlLabel value={remarkno} control={<Checkbox checked={pickdata.includes(remarkno.toString())} onChange={handleCheckboxChange} />} label={remarkno+" อื่นๆ..."} />
-                    {pickdata.includes(remarkno.toString()) &&
-                        <TextField id={remarkcolumn} label="อื่นๆ ระบุ" value={data[remarkcolumn] || ""} onChange={(e) => handleDataChange(e, remarkcolumn)} variant="filled" />}
-                    </>}
-            </FormGroup>
-        </SelectBoxListStyle>
+            <Box className="CheckBoxMain">
+                <SelectBoxListStyle>
+                    <FormGroup sx={{width:"100%",alignItems:"left",textAlign:"left"}}>
+                        {optionsdata[datacolumn].options.map((datarow,datakey)=>(
+                            <FormControlLabel fullWidth key={datakey} value={datarow.code} control={<Checkbox checked={pickdata.includes(datarow.code.toString())} onChange={handleCheckboxChange} />} label={datarow.code+" "+datarow.title} />
+                        ))}
+                        {remark &&<>
+                        <FormControlLabel fullWidth value={remarkno} control={<Checkbox checked={pickdata.includes(remarkno.toString())} onChange={handleCheckboxChange} />} label={remarkno+" อื่นๆ..."} />
+                            {pickdata.includes(remarkno.toString()) &&
+                                <TextField fullWidth id={remarkcolumn} label="ระบุรายละเอียด" value={data[remarkcolumn] || ""} onChange={(e) => handleDataChange(e, remarkcolumn)} variant="filled" />}
+                            </>}
+                    </FormGroup>
+                </SelectBoxListStyle>
+            </Box>
         }
         {/* } */}
     </>

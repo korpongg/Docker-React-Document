@@ -5,21 +5,19 @@ const SubmitForm_Occurrence = {
   gender: "",
   dx: "",
   pct: "",
+  aff:"",
+  dep:"",
+
 
   reportlocation: "",
   reportdate: "",
   occurrencedate: "",
   occurrencetime: "",
+  affrelate: "",
   deptrelate: "",
 
   reporttype: null,
   type: null,
-
-  // reportid: "",
-  // acceptdate: "",
-  // responsedate: "",
-  // urgenttype: null,
-  // isnew:false,
 
   patientcare: [],
   patientcareremark:"",

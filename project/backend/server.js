@@ -28,6 +28,9 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/refresh', require('./routes/refresh'));
 app.use('/api/logout', require('./routes/logout'));
 app.use('/api/users', require('./routes/api/users'));
+app.use('/api/affiliations', require('./routes/api/affiliations'));
+app.use('/api/factions', require('./routes/api/factions'));
+app.use('/api/departments', require('./routes/api/departments'));
 app.use('/api/occurrences', require('./routes/api/occurrences'));
 app.use('/api/events', require('./routes/api/events'));
 

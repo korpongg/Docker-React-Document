@@ -9,6 +9,7 @@ const RadioList = ({
   data,
   optionsdata,
   datacolumn,
+  tocolumn,
   handleDataChange,
 }) => {
 
@@ -24,9 +25,9 @@ const RadioList = ({
             aria-labelledby={datacolumn}
             // defaultValue={optionsdata[datacolumn].options[0].code}
             name={datacolumn}
-            onChange={(e) => handleDataChange(e, datacolumn)}
+            onChange={(e) => handleDataChange(e, tocolumn)}
             // value={data[datacolumn] || optionsdata[datacolumn].options[0].code}
-            value={data[datacolumn] || null}
+            value={data[tocolumn] || null}
           >
             {optionsdata[datacolumn].options.map((datarow, radiodatakey) => (
               <FormControlLabel

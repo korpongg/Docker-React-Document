@@ -1,5 +1,29 @@
 import axios from "axios";
 
+function toInt(param) {
+  // Check if param is already a number
+  if (typeof param === "number") {
+    return param; // Return the number as is
+  } else if (typeof param === "string") {
+    // Attempt to convert the string to an integer
+    const parsed = parseInt(param, 10); // 10 is the radix (base) for decimal numbers
+    // Check if the parsing was successful
+    if (!isNaN(parsed)) {
+      return parsed; // Return the parsed integer
+    } else {
+      return NaN; // Return NaN if parsing fails
+    }
+  } else {
+    // Return NaN if param is neither a string nor a number
+    return NaN;
+  }
+}
+
+export function chkLV(param) {
+  const chkParam = toInt(param)
+  return chkParam > 2;
+}
+
 // เช็คสิทธิ์ Admin
 // export function chkAdmin(param) {
 //   if (new Set("3").has(param)) {
@@ -8,6 +32,7 @@ import axios from "axios";
 //     return false;
 //   }
 // }
+
 export function chkAdmin(param) {
   return new Set("3").has(param);
 }
@@ -140,6 +165,25 @@ export function ConvertDateFormat(date) {
   const formattedDate = `${year}-${month}-${day}`;
   return formattedDate;
 }
+export function ConvertDateTimeFormat(date) {
+  const currentDate = new Date(date);
+  const year = currentDate.getUTCFullYear();
+  const month = (currentDate.getUTCMonth() + 1).toString().padStart(2, '0');
+  const day = currentDate.getUTCDate().toString().padStart(2, '0');
+  // const date = new Date(dateString);
+  // const day = date.getDate();
+  // const month = date.getMonth() + 1;
+  // const year = date.getFullYear();
+  const hours = date.getUTCHours().toString().padStart(2, '0');
+  const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+  // const seconds = date.getSeconds();
+
+  // Pad single-digit day, month, hours, minutes, and seconds with leading zeros
+
+  const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}`;
+  return formattedDate;
+}
+
 export function GetDebitMonth(date) {
   const currentDate = new Date(date);
   const year = currentDate.getFullYear();
@@ -166,10 +210,8 @@ export function ConvertDatetoTH(datestring, fm) {
     '12': 'ธ.ค.',
   };
 
-  if(formatmonth)
-  {
-    if(formatmonth==="full"||formatmonth==="fullcutdate")
-    {
+  if (formatmonth) {
+    if (formatmonth === "full" || formatmonth === "fullcutdate") {
       MonthList = {
         '01': 'มกราคม',
         '02': 'กุมภาพันธ์',
@@ -208,21 +250,43 @@ export function GetDays(startdate) {
   const notsocurrentDate = new Date(startdate);
   const timeDiff = currentDate - notsocurrentDate;
   const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-  if(days<0){
+  if (days < 0) {
     const zero = 0;
-    const result = zero+" ปี "+zero+" เดือน "+zero+" วัน";
+    const result = zero + " ปี " + zero + " เดือน " + zero + " วัน";
     return result;
-  }else{
+  } else {
     const years = Math.floor(days / 365);
     const remainingDaysAfterYears = days % 365;
 
     const months = Math.floor(remainingDaysAfterYears / 30);
     const ldays = remainingDaysAfterYears % 30;
 
-    const result = years+" ปี "+months+" เดือน "+ldays+" วัน";
+    const result = years + " ปี " + months + " เดือน " + ldays + " วัน";
     return result;
   }
-  
+
+}
+//อายุ
+export function GetAges(startdate) {
+  const currentDate = new Date();
+  const notsocurrentDate = new Date(startdate);
+  const timeDiff = currentDate - notsocurrentDate;
+  const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+  if (days < 0) {
+    const zero = 0;
+    const result = zero + " ปี " + zero + " เดือน " + zero + " วัน";
+    return result;
+  } else {
+    const years = Math.floor(days / 365);
+    const remainingDaysAfterYears = days % 365;
+
+    // const months = Math.floor(remainingDaysAfterYears / 30);
+    // const ldays = remainingDaysAfterYears % 30;
+
+    const result = years + " ปี ";
+    return result;
+  }
+
 }
 
 //ผ่านวันไปรึยังนะ
@@ -232,9 +296,9 @@ export function isPassDate(thatdate) {
 
   if (currentDate > notsocurrentDate) {
     return "ชำระแล้ว";
-  }else{
+  } else {
     return "รอชำระ";
-  }  
+  }
 }
 
 export function getFullMonthTH(ThatMonthNumber) {
@@ -252,23 +316,39 @@ export function getFullMonthTH(ThatMonthNumber) {
     '11': 'พฤศจิกายน',
     '12': 'ธันวาคม',
   };
-return MonthList[ThatMonthNumber];
+  return MonthList[ThatMonthNumber];
 }
 
-export function filteredDataByMonth(data, targetMonth){
+export function filteredDataByMonth(data, targetMonth) {
   return data.filter(entry => {
     const visitDate = new Date(entry.visitdate);
     return visitDate.getMonth() + 1 === parseInt(targetMonth);
   });
 };
 
-export function formatDateTime(dateString, type) {
+export function formatDate(dateString) {
   if (dateString) {
     const date = new Date(dateString);
     const day = date.getDate();
     const month = date.getMonth() + 1;
     const year = date.getFullYear();
-    const hours = date.getHours();
+
+    // Pad single-digit day and month with leading zeros
+    const formattedDay = day < 10 ? `0${day}` : `${day}`;
+    const formattedMonth = month < 10 ? `0${month}` : `${month}`;
+
+    return `${formattedDay}/${formattedMonth}/${year}`;
+  }
+};
+
+export function formatDateTime(dateString, type) {
+  if (dateString) {
+    const date = new Date(dateString);
+
+    const day = date.getUTCDate();
+    const month = date.getUTCMonth() + 1;
+    const year = date.getUTCFullYear();
+    const hours = date.getUTCHours() ;
     const minutes = date.getMinutes();
     const seconds = date.getSeconds();
 
@@ -283,8 +363,110 @@ export function formatDateTime(dateString, type) {
       return `${formattedDay}/${formattedMonth}/${year} ${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
     } else if (type === "time") {
       return `${formattedHours}:${formattedMinutes}`;
-    } else {
+    } else if (type === "dash") {
+      return `${year}-${formattedMonth}-${formattedDay}`;
+    } else if (type === "slash") {
       return `${formattedDay}/${formattedMonth}/${year}`;
+    } else {
+      return `${formattedDay}/${formattedMonth}/${year} ${formattedHours}:${formattedMinutes}`;
     }
   }
+}
+
+export function formatDateTimeShow(dateString, type) {
+  if (dateString) {
+    const date = new Date(dateString);
+
+    const day = date.getUTCDate();
+    const month = date.getUTCMonth() + 1;
+    const year = date.getUTCFullYear();
+    const hours = date.getHours() ;
+    const minutes = date.getMinutes();
+    const seconds = date.getSeconds();
+
+    // Pad single-digit day, month, hours, minutes, and seconds with leading zeros
+    const formattedDay = day < 10 ? `0${day}` : `${day}`;
+    const formattedMonth = month < 10 ? `0${month}` : `${month}`;
+    const formattedHours = hours < 10 ? `0${hours}` : `${hours}`;
+    const formattedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
+    const formattedSeconds = seconds < 10 ? `0${seconds}` : `${seconds}`;
+
+    if (type === "full") {
+      return `${formattedDay}/${formattedMonth}/${year} ${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+    } else if (type === "time") {
+      return `${formattedHours}:${formattedMinutes}`;
+    } else if (type === "dash") {
+      return `${year}-${formattedMonth}-${formattedDay}`;
+    } else if (type === "slash") {
+      return `${formattedDay}/${formattedMonth}/${year}`;
+    } else {
+      return `${formattedDay}/${formattedMonth}/${year} ${formattedHours}:${formattedMinutes}`;
+    }
+  }
+}
+
+export function formatDateTimeN7(dateString, type) {
+  if (dateString) {
+    const date = new Date(dateString);
+
+    const day = date.getUTCDate();
+    const month = date.getUTCMonth() + 1;
+    const year = date.getUTCFullYear();
+    const hours = date.getUTCHours();
+    const minutes = date.getUTCMinutes();
+    const seconds = date.getUTCSeconds();
+
+    // Pad single-digit day, month, hours, minutes, and seconds with leading zeros
+    const formattedDay = day < 10 ? `0${day}` : `${day}`;
+    const formattedMonth = month < 10 ? `0${month}` : `${month}`;
+    const formattedHours = hours < 10 ? `0${hours}` : `${hours}`;
+    const formattedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
+    const formattedSeconds = seconds < 10 ? `0${seconds}` : `${seconds}`;
+
+    if (type === "full") {
+      return `${formattedDay}/${formattedMonth}/${year} ${formattedHours}:${formattedMinutes}`;
+    } else if (type === "fullNoYear") {
+      return `${formattedDay}/${formattedMonth} ${formattedHours}:${formattedMinutes}`;
+    } else if (type === "time") {
+      return `${formattedHours}:${formattedMinutes}`;
+    } else if (type === "labtodate"){
+      return `${formattedDay}/${formattedMonth}/${year} ${formattedHours}:${formattedMinutes}`;
+    } else if (type === "dmy"){
+      return `${formattedDay}/${formattedMonth}/${year}`;
+    } else {
+      return `${formattedDay}/${formattedMonth}/${year} ${formattedHours}:${formattedMinutes}`;
+    }
+  }
+  else {
+    return "";
+  }
+}
+
+export function formatDateTime_N7(dateString, type) {
+  if (dateString) {
+    const date = new Date(dateString);
+
+    switch (type) {
+      case 'date':
+        return date.toUTCString().slice(0, 16);
+      case 'time':
+        return date.toUTCString().slice(17, 22);
+      default:
+        return date.toUTCString().slice(0, 22);
+    }
+  }
+};
+
+export function getCurrentDate(date) {
+  if(!date)
+    {
+      date = new Date(); 
+    }
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
 }

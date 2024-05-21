@@ -11,7 +11,7 @@ import Logout from "./view/user/Logout";
 
 import Home from "./view/pages/Home";
 
-import IndexPage from "./components/Occurrence"
+import IndexPage from "./components/Occurrence/Dashboard"
 import Occurrence from "./components/Occurrence/form";
 
 import Usermanager from "./view/admin/Usermanager";

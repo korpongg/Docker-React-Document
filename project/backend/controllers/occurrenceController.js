@@ -48,6 +48,7 @@ exports.createOccurrence = async (req, res) => {
     const result = await Occurrences.create({
       ...req.body,
       occurrencedate: sequelize.literal(`'${formattedOccurrenceDate}'`),
+      formstatus: "1",
       createAt: sequelize.literal("CURRENT_TIMESTAMP"),
       reportid: reportId, // Assign the generated reportId
     });
@@ -63,29 +64,47 @@ exports.getAllOccurrences = async (req, res) => {
   try {
     const occurrences = await Occurrences.findAll({
       include: [
-        {
-          model: User,
-          attributes: ['name', 'lastname'],
-          as: 'CreateBy'
-        },
-        {
-          model: User,
-          attributes: ['name', 'lastname'],
-          as: 'AcceptBy'
-        },
-        {
-          model: User,
-          attributes: ['name', 'lastname'],
-          as: 'UpdateBy'
-        }
+        { model: User, attributes: ['name', 'lastname'], as: 'CreateBy' },
+        { model: User, attributes: ['name', 'lastname'], as: 'AcceptBy' },
+        { model: User, attributes: ['name', 'lastname'], as: 'UpdateBy' }
       ],
+      attributes: {
+        include: [
+          [sequelize.literal("CASE WHEN reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END"), "reporttypename"],
+        ]
+      },
     });
     // res.status(200).json(occurrences);
 
     if (occurrences.length > 0) {
+      // Fetch department and affiliation data using raw query
+      const deptAffData = await sequelize.query(
+        `SELECT d.id, d.name AS DepName, a.id AS AffID, a.name AS AffName
+         FROM [occurrence].[dbo].[department] d
+         LEFT JOIN [occurrence].[dbo].[affiliation] a ON a.id = d.relateid`,
+        { type: sequelize.QueryTypes.SELECT }
+      );
+
       // Use map to parse JSON fields before sending the response
       const parsedResults = occurrences.map(occurrence => {
         const occurrenceJSON = occurrence.toJSON();
+        // const deptRelateIds = JSON.parse(occurrenceJSON.deptrelate || '[]');
+
+        let deptRelateIds = [];
+
+        try {
+          // Parse deptrelate field assuming it's a JSON array of strings
+          deptRelateIds = JSON.parse(occurrenceJSON.deptrelate || '[]').map(id => parseInt(id, 10));
+        } catch (e) {
+          // Handle parsing error if any
+          console.error("Error parsing deptrelate:", e);
+        }
+
+        // Map deptRelateIds to department and affiliation data
+        const deptAffInfo = deptRelateIds.map(id => {
+          return deptAffData.find(dept => dept.id === id) || {};
+        });
+
         const createdBy = occurrence.CreateBy;
         const createname = createdBy ? `${createdBy.name} ${createdBy.lastname}` : null;
         const acceptBy = occurrence.AcceptBy;
@@ -103,7 +122,8 @@ exports.getAllOccurrences = async (req, res) => {
           management: JSON.parse(occurrenceJSON.management || '[]'),
           createname: createname,
           acceptname: acceptname,
-          updatename: updatename
+          updatename: updatename,
+          deptAffInfo
         };
       }).map(({ CreateBy, AcceptBy, UpdateBy, ...occurrence }) => occurrence);
 
@@ -122,29 +142,46 @@ exports.getOccurrenceById = async (req, res) => {
   try {
     const occurrence = await Occurrences.findByPk(req.params.id, {
       include: [
-        {
-          model: User,
-          attributes: ['name', 'lastname'],
-          as: 'CreateBy'
-        },
-        {
-          model: User,
-          attributes: ['name', 'lastname'],
-          as: 'AcceptBy'
-        },
-        {
-          model: User,
-          attributes: ['name', 'lastname'],
-          as: 'UpdateBy'
-        }
+        { model: User, attributes: ['name', 'lastname'], as: 'CreateBy' },
+        { model: User, attributes: ['name', 'lastname'], as: 'AcceptBy' },
+        { model: User, attributes: ['name', 'lastname'], as: 'UpdateBy' }
       ],
+      attributes: {
+        include: [
+          [sequelize.literal("CASE WHEN reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END"), "reporttypename"],
+        ]
+      },
     });
     if (!occurrence) {
       return res.status(404).json({ error: "Occurrence not found" });
     }
     // res.status(200).json(occurrence);
+    // Fetch department and affiliation data using raw query
+    const deptAffData = await sequelize.query(
+      `SELECT d.id, d.name AS DepName, a.id AS AffID, a.name AS AffName
+      FROM [occurrence].[dbo].[department] d
+      LEFT JOIN [occurrence].[dbo].[affiliation] a ON a.id = d.relateid`,
+      { type: sequelize.QueryTypes.SELECT }
+    );
 
     const occurrenceJSON = occurrence.toJSON();
+    // const deptRelateIds = JSON.parse(occurrenceJSON.deptrelate || '[]');
+
+    let deptRelateIds = [];
+
+    try {
+      // Parse deptrelate field assuming it's a JSON array of strings
+      deptRelateIds = JSON.parse(occurrenceJSON.deptrelate || '[]').map(id => parseInt(id, 10));
+    } catch (e) {
+      // Handle parsing error if any
+      console.error("Error parsing deptrelate:", e);
+    }
+
+    // Map deptRelateIds to department and affiliation data
+    const deptAffInfo = deptRelateIds.map(id => {
+      return deptAffData.find(dept => dept.id === id) || {};
+    });
+
     const createdBy = occurrence.CreateBy;
     const createname = createdBy ? `${createdBy.name} ${createdBy.lastname}` : null;
     const acceptBy = occurrence.AcceptBy;
@@ -162,7 +199,8 @@ exports.getOccurrenceById = async (req, res) => {
       management: JSON.parse(occurrenceJSON.management || '[]'),
       createname: createname,
       acceptname: acceptname,
-      updatename: updatename
+      updatename: updatename,
+      deptAffInfo
     };
 
     // Exclude key from the result

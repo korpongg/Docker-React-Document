@@ -40,14 +40,18 @@ const Occurrences = sequelize.define('Occurrences', {
     type: DataTypes.TEXT,
     allowNull: false
   },
-  reportdate: {
-    type: DataTypes.DATEONLY,
-    allowNull: false
-  },
+  // reportdate: {
+  //   type: DataTypes.DATEONLY,
+  //   allowNull: false
+  // },
   occurrencedate: {
     type: DataTypes.DATE,
     allowNull: false
   },
+  // affrelate: {
+  //   type: DataTypes.STRING(100),
+  //   allowNull: false
+  // },
   deptrelate: {
     type: DataTypes.STRING(100),
     allowNull: false
@@ -57,7 +61,7 @@ const Occurrences = sequelize.define('Occurrences', {
     allowNull: false
   },
   type: {
-    type: DataTypes.STRING(1),
+    type: DataTypes.STRING(3),
     allowNull: false
   },
   acceptdate: {
@@ -182,7 +186,7 @@ const Occurrences = sequelize.define('Occurrences', {
   },
   formstatus: {
     type: DataTypes.STRING(1),
-    allowNull: true
+    allowNull: false
   },
   createby: {
     type: DataTypes.STRING(20),

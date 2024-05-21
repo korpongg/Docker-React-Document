@@ -215,6 +215,7 @@ export default function UserManager() {
             }}
           >
             <DataGrid
+              autoHeight
               className="UserDataTable"
               rows={rows}
               columns={columns}
@@ -235,14 +236,14 @@ export default function UserManager() {
 
         {showRoleInfo && (
           <div className="RoleLimit">
-            การจำกัดสิทธิ์(Role)<br />
+            การจำกัดสิทธิ์ (Role)<br />
             1 คือ User <br />
             2 คือ Editer<br />
             3 คือ Admin<br />
-            Level(level)<br />
-            1 คือ User เห็นเฉพาะงาน<br />
+            Level (level)<br />
+            1, 2 เห็นเฉพาะงาน<br />
             ในแผนกตัวเอง<br />
-            2-4 คือ เห็นทั้งหมด<br />
+            3, 4 เห็นทั้งหมด<br />
           </div>
         )}
         <InfoIcon className="BtnInfo" onClick={toggleRoleInfo} />

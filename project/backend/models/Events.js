@@ -16,9 +16,42 @@ const Events = sequelize.define('Events', {
     type: DataTypes.STRING(20),
     allowNull: false
   },
+  // affrelate: {
+  //   type: DataTypes.INTEGER,
+  //   allowNull: true
+  // },
   deptrelate: {
-    type: DataTypes.STRING(100),
+    type: DataTypes.INTEGER,
     allowNull: false
+  },
+  urgenttype: {
+    type: DataTypes.STRING(1),
+    allowNull: false
+  },
+  comment: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  description: {
+    type: DataTypes.TEXT,
+    allowNull: false
+  },
+  status: {
+    type: DataTypes.STRING(1),
+    allowNull: false
+  },
+  createby: {
+    type: DataTypes.STRING(20),
+    allowNull: false
+  },
+  createAt: {
+    type: DataTypes.DATE,
+    defaultValue: Sequelize.literal('GETDATE()'),
+    allowNull: false
+  },
+  acceptby: {
+    type: DataTypes.STRING(20),
+    allowNull: true
   },
   acceptdate: {
     type: DataTypes.DATE,
@@ -28,40 +61,37 @@ const Events = sequelize.define('Events', {
     type: DataTypes.DATE,
     allowNull: true
   },
-  urgenttype: {
-    type: DataTypes.STRING(1),
-    allowNull: true
-  },
-  isnew: {
-    type: DataTypes.STRING(1),
-    allowNull: true
-  },
-  comment: {
-    type: DataTypes.TEXT,
-    allowNull: false
-  },
-  type: {
-    type: DataTypes.STRING(1),
-    allowNull: false
-  },
-  userid: {
-    type: DataTypes.STRING(20),
-    allowNull: false
-  },
-  createAt: {
-    type: DataTypes.DATE,
-    defaultValue: Sequelize.literal('GETDATE()'),
-    allowNull: false
-  }
 }, {
   tableName: 'event_logs',
-  timestamps: false // Disable automatic timestamps
+  timestamps: false, // Disable automatic timestamps
+  hooks: {
+    afterDestroy: async (event, options) => {
+      try {
+        const resetIdentityQuery = `
+          DECLARE @max INT;
+          SELECT @max = MAX([id]) FROM [event_logs];
+          IF @max IS NULL SET @max = 0;
+          DBCC CHECKIDENT ('[event_logs]', RESEED, @max);
+        `;
+
+        await sequelize.query(resetIdentityQuery);
+      } catch (error) {
+        console.error('Error executing afterDestroy hook:', error);
+      }
+    }
+  }
 });
 
 Events.belongsTo(User, {
-  foreignKey: 'userid',
+  foreignKey: 'createby',
   targetKey: 'userid',
   as: 'CreateBy',
+});
+
+Events.belongsTo(User, {
+  foreignKey: 'acceptby',
+  targetKey: 'userid',
+  as: 'AcceptBy',
 });
 
 module.exports = Events;

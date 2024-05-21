@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Paper, Box, FormControl, TableContainer, Dialog } from "@mui/material";
 import styled from "styled-components";
 
 export const DashboardBox = styled(Box)`
@@ -61,12 +61,28 @@ export const DashboardBox = styled(Box)`
   }
 
   .post-status.new {
-    background: #1976d2;
+    background: cadetblue;
     text-align: center;
-    box-shadow: 1px 1px 2px 0px #1976d28c;
+    box-shadow: 1px 1px 2px 0px #5f9ea0c4;
     // -webkit-animation: glow 1s ease-in-out infinite alternate;
     // -moz-animation: glow 1s ease-in-out infinite alternate;
     // animation: glow 1s ease-in-out infinite alternate;
+  }
+  .post-status.repeat {
+    background: black;
+    box-shadow: 1px 1px 2px 0px #0000008c;
+  }
+  .post-status.in-progress {
+    background: orange;
+    box-shadow: 1px 1px 2px 0px #ffa5008c;
+  }
+  .post-status.success {
+    background: green;
+    box-shadow: 1px 1px 2px 0px #0080008c;
+  }
+  .post-status.cancel {
+    background: red;
+    box-shadow: 1px 1px 2px 0px #ff0000c4;
   }
 
   @-webkit-keyframes glow {
@@ -79,18 +95,6 @@ export const DashboardBox = styled(Box)`
         0 0 14px #ffd700, 0 0 20px #ffd700;
     }
   }
-  .post-status.in-progress {
-    background: orange;
-    box-shadow: 1px 1px 2px 0px #ffa5008c;
-  }
-  .post-status.success {
-    background: green;
-    box-shadow: 1px 1px 2px 0px #0080008c;
-  }
-  .post-status.cancel-request {
-    background: red;
-    box-shadow: 1px 1px 2px 0px #ff00008c;
-  }
 
   .rotate-icon {
     transform: scaleX(-1);
@@ -102,45 +106,52 @@ export const DashboardBox = styled(Box)`
   }
 `;
 
-export const VNBox = styled(Box)`
-  // min-height: 30vh;
-  max-height: 90vh;
-  width: 100%;
-  overflow: hidden;
-  overflow-y: auto;
-  margin: 20px 0;
-
-  div.item {
-    cursor: help;
-    // background: black;
-    background: darkslategray;
-    color: white;
-    border: 1px solid #fff;
-    border-radius: 20px;
-    // font-size: 21px;
-    padding: 6px 10px;
-    display: block;
-    text-align: center;
-    cursor: pointer;
-  }
-  div.item.df {
-    display: flex;
-    justify-content: space-evenly;
+export const TranferDialogBox = styled(Dialog)`
+  .ItemBox {
+    display:flex;
+    justify-content: center;
     align-items: center;
+    width:100%;
+    flex-wrap: wrap;
   }
-  div.item.use {
-    background: #a91b0d;
+  .LinkTo {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    color: #525252;
+    background:#f4ffff;
+    padding: 10px;
+    width:80%;
+    height:60px;
+    font-size: 1.2rem;
+    letter-spacing: 0.1rem;
+    cursor:pointer;
+    border:2px solid rgba(0, 0, 0, 0.2);
+    border-radius:15px;
+    margin:5px;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
   }
-  div.item.available {
-    background: green;
+  .LinkTo span {
+    width: 100%;
+    max-height:100%;
+    display: block;
+    white-space: wrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
   }
-  div.item.allow {
-    background: #FF8000;
+  .LinkTo:hover {
+    background:#dafffd;
   }
-  div.item.cleaning {
-    background: #00A2E8;
+
+  input[type="radio"], label {
+    cursor: pointer;
+    margin-right: 6px;
   }
-  div.item.ma {
-    background: #000;
+
+  @media screen and (max-width: 901px) {
+    #tranfer-dialog-title {
+      font-size: 1.125rem;
+    }
   }
 `;

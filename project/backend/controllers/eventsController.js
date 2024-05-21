@@ -23,6 +23,7 @@ exports.createReportLog = async (req, res) => {
       ...otherData,
       reportid,
       code: newCode,
+      status: '1',
       acceptdate: formattedAcceptDate ? sequelize.literal(`'${formattedAcceptDate}'`) : null,
       responsedate: formattedResponseDate ? sequelize.literal(`'${formattedResponseDate}'`) : null,
     });
@@ -37,11 +38,10 @@ exports.createReportLog = async (req, res) => {
 exports.getAllReportLogs = async (req, res) => {
   try {
     const events = await Events.findAll({
-      include: [{
-        model: User,
-        attributes: ['name', 'lastname'],
-        as: 'CreateBy'
-      }],
+      include: [
+        { model: User, attributes: ['name', 'lastname'], as: 'CreateBy' },
+        { model: User, attributes: ['name', 'lastname'], as: 'AcceptBy' }
+      ],
     });
 
     if (!events || events.length === 0) {
@@ -52,11 +52,14 @@ exports.getAllReportLogs = async (req, res) => {
     const mappedEvents = events.map(event => {
       const createdBy = event.CreateBy;
       const createname = createdBy ? `${createdBy.name} ${createdBy.lastname}` : null;
+      const acceptBy = event.AcceptBy;
+      const acceptname = acceptBy ? `${acceptBy.name} ${acceptBy.lastname}` : null;
       return {
         ...event.toJSON(),
-        createname: createname
+        createname: createname,
+        acceptname: acceptname
       };
-    }).map(({ CreateBy, ...event }) => event); // Exclude CreateBy key from the result
+    }).map(({ CreateBy, AcceptBy, ...event }) => event); // Exclude CreateBy key from the result
 
     res.status(200).json(mappedEvents);
   } catch (error) {
@@ -69,11 +72,10 @@ exports.getReportLogById = async (req, res) => {
   try {
     const events = await Events.findAll({
       where: { reportid: req.params.id },
-      include: [{
-        model: User,
-        attributes: ['name', 'lastname'],
-        as: 'CreateBy'
-      }],
+      include: [
+        { model: User, attributes: ['name', 'lastname'], as: 'CreateBy' },
+        { model: User, attributes: ['name', 'lastname'], as: 'AcceptBy' }
+      ],
       order: [["createAt", "DESC"]],
     });
 
@@ -86,11 +88,14 @@ exports.getReportLogById = async (req, res) => {
     const mappedEvents = events.map(event => {
       const createdBy = event.CreateBy;
       const createname = createdBy ? `${createdBy.name} ${createdBy.lastname}` : null;
+      const acceptBy = event.AcceptBy;
+      const acceptname = acceptBy ? `${acceptBy.name} ${acceptBy.lastname}` : null;
       return {
         ...event.toJSON(),
-        createname: createname
+        createname: createname,
+        acceptname: acceptname
       };
-    }).map(({ CreateBy, ...event }) => event); // Exclude CreateBy key from the result
+    }).map(({ CreateBy, AcceptBy, ...event }) => event); // Exclude CreateBy key from the result
 
     res.status(200).json(mappedEvents);
   } catch (error) {
@@ -105,6 +110,13 @@ exports.updateReportLog = async (req, res) => {
     if (!events) {
       return res.status(404).json({ message: "Report log not found" });
     }
+    
+    // Check if req.body.comment is not an empty string
+    if (req.body.comment && req.body.comment.trim() !== "") {
+      req.body.status = '2';
+      req.body.acceptdate = sequelize.literal("CURRENT_TIMESTAMP");
+    }
+
     await events.update(req.body);
     res.status(200).json(events);
   } catch (error) {

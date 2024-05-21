@@ -14,7 +14,10 @@ import RadioList from "./RadioList";
 
 import ReportTypeStyle from "../../styles/ReportTypeStyle.style";
 
-const ReportType = ({data,setDataFunction,handleDateChange,optionsdata,datacolumn,handleDataChangeCheckbox,handleDataChange}) => {
+const ReportType = ({
+  data,
+  setDataFunction,
+}) => {
 
   return (
     <>
@@ -44,57 +47,6 @@ const ReportType = ({data,setDataFunction,handleDateChange,optionsdata,datacolum
             label="ipd"
           />
         </RadioGroup>
-        <ReportLog data={data} setDataFunction={handleDataChange} handleDateChange={handleDateChange}/>
-        
-        <Box className="TopicHeader">ประเภทอุบัติการณ์</Box>
-        <RadioGroup
-          sx={{ p: 1 }}
-          row
-          id="reporttype"
-          aria-labelledby="reporttype"
-          defaultValue="0"
-          name="reporttype"
-          onChange={(e) => setDataFunction(e, "reporttype")}
-          value={data?.reporttype || "0"}
-        >
-          <FormControlLabel
-            sx={{ p: 1 }}
-            value="0"
-            control={<Radio />}
-            label="General Risk"
-          />
-          <FormControlLabel
-            sx={{ p: 1 }}
-            value="1"
-            control={<Radio />}
-            label="Clinical Risk"
-          />
-        </RadioGroup>
-
-        {data?.reporttype==="0" && 
-          <>
-            <RadioList
-              data={data}
-              optionsdata={optionsdata}
-              datacolumn={datacolumn[0]}
-              remark={false}
-              handleDataChangeCheckbox={handleDataChangeCheckbox}
-              handleDataChange={handleDataChange}
-            />
-          </>
-        }
-        {data?.reporttype==="1" && 
-          <>
-            <RadioList
-              data={data}
-              optionsdata={optionsdata}
-              datacolumn={datacolumn[1]}
-              remark={false}
-              handleDataChangeCheckbox={handleDataChangeCheckbox}
-              handleDataChange={handleDataChange}
-            />
-          </>
-        }
         
       </ReportTypeStyle>
     </>

@@ -46,51 +46,53 @@ const ReportStaff = ({data,setDataFunction,setData}) => {
   return (
     <>
       <ReportStaffStyle>
-      ReportStaff
-        <FormGroup>
-          <FormControlLabel value={data?.reportdoc || false} control={<Checkbox checked={isChecked} onChange={handleCheckboxChange} />} label="รายงานแพทย์" />
-        </FormGroup>
-        {isChecked && 
-          <>
-            <TextField id="docname" label="คำสั่งแพทย์" value={data?.docname || ""} onChange={(e) => setDataFunction(e, "docname")} variant="filled" />
-            <RadioGroup
-              sx={{ p: 1 }}
-              row
-              id="medicalrecorded"
-              aria-labelledby="medicalrecorded"
-              defaultValue="0"
-              name="medicalrecorded"
-              onChange={(e) => setDataFunction(e, "medicalrecorded")}
-              value={data?.medicalrecorded || "0"}
-            >
-              <FormControlLabel
+        <Box className="TopicHeader">รายงานบุคลากร</Box>
+        <Box className="CheckBoxMain">
+          <FormGroup>
+            <FormControlLabel value={data?.reportdoc || false} control={<Checkbox checked={isChecked} onChange={handleCheckboxChange} />} label="รายงานแพทย์" />
+          </FormGroup>
+          {isChecked && 
+            <>
+              <TextField id="docname" label="คำสั่งแพทย์" value={data?.docname || ""} onChange={(e) => setDataFunction(e, "docname")} variant="filled" />
+              <RadioGroup
                 sx={{ p: 1 }}
-                value="0"
-                control={<Radio />}
-                label="ไม่ได้บันทึกในเวชระเบียน"
-              />
-              <FormControlLabel
-                sx={{ p: 1 }}
-                value="1"
-                control={<Radio />}
-                label="บันทึกในเวชระเบียน"
-              />
-            </RadioGroup>
-          </>
-        }
+                row
+                id="medicalrecorded"
+                aria-labelledby="medicalrecorded"
+                defaultValue="0"
+                name="medicalrecorded"
+                onChange={(e) => setDataFunction(e, "medicalrecorded")}
+                value={data?.medicalrecorded || "0"}
+              >
+                <FormControlLabel
+                  sx={{ p: 1 }}
+                  value="0"
+                  control={<Radio />}
+                  label="ไม่ได้บันทึกในเวชระเบียน"
+                />
+                <FormControlLabel
+                  sx={{ p: 1 }}
+                  value="1"
+                  control={<Radio />}
+                  label="บันทึกในเวชระเบียน"
+                />
+              </RadioGroup>
+            </>
+          }
 
-        <FormGroup>
-          <FormControlLabel value={data?.reportacknowledge || false} control={<Checkbox checked={isCheckedAcknowledge} onChange={handleCheckboxChangeAcknowledge} />} label="รายงานหัวหน้าแผนก/ผู้จัดการฝ่าย/ผู้ตรวจการพยาบาล รับทราบ" />
-        </FormGroup>
+          <FormGroup>
+            <FormControlLabel value={data?.reportacknowledge || false} control={<Checkbox checked={isCheckedAcknowledge} onChange={handleCheckboxChangeAcknowledge} />} label="รายงานหัวหน้าแผนก/ผู้จัดการฝ่าย/ผู้ตรวจการพยาบาล รับทราบ" />
+          </FormGroup>
 
-        <FormGroup>
-          <FormControlLabel value={data?.reportother || false} control={<Checkbox checked={isCheckedOther} onChange={handleCheckboxChangeOther} />} label="อื่นๆ..." />
-        </FormGroup>
-        {isCheckedOther && 
-          <>
-            <TextField id="reportotherremark" label="อื่นๆ" value={data?.reportotherremark || ""} onChange={(e) => setDataFunction(e, "reportotherremark")} variant="filled" />
-          </>
-        }
+          <FormGroup>
+            <FormControlLabel value={data?.reportother || false} control={<Checkbox checked={isCheckedOther} onChange={handleCheckboxChangeOther} />} label="อื่นๆ..." />
+          </FormGroup>
+          {isCheckedOther && 
+            <>
+              <TextField id="reportotherremark" label="อื่นๆ" value={data?.reportotherremark || ""} onChange={(e) => setDataFunction(e, "reportotherremark")} variant="filled" />
+            </>
+          }
+        </Box>
       </ReportStaffStyle>
     </>
   );

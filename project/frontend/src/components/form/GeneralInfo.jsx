@@ -8,17 +8,22 @@ const GeneralInfo = ({data,setDataFunction,userdata}) => {
   
   return (
     <>
-        {console.log(userdata)}
+        {/* {console.log(userdata)} */}
       <GeneralInfoStyle>
         <Box className="TopicHeader">ข้อมูลผู้ยื่น</Box>
-        <TextField disabled id="userreport" label="ID" value={data?.userreport || ""} onChange={(e) => setDataFunction(e, "userreport")} variant="filled" />
+        <TextField disabled id="userreport" label="ID" value={data?.userreport || ""} variant="filled" />
         <TextField disabled id="FullName" label="FullName" value={userdata?.title+" "+userdata?.name+" "+userdata?.lastname} variant="filled" />
         <TextField id="hn" label="HN" value={data?.hn || ""} onChange={(e) => setDataFunction(e, "hn")} variant="filled" />
         <TextField id="an" label="AN" value={data?.an || ""} onChange={(e) => setDataFunction(e, "an")} variant="filled" />
-        <TextField disabled id="age" label="อายุ" value={data?.age || ""} onChange={(e) => setDataFunction(e, "age")} variant="filled" />
-        <TextField disabled id="gender" label="เพศ" value={data?.gender || ""} onChange={(e) => setDataFunction(e, "gender")} variant="filled" />
-        <TextField id="dx" label="Dx." value={data?.dx || ""} onChange={(e) => setDataFunction(e, "dx")} variant="filled" />
-        <TextField id="pct" label="PCT ที่เกี่ยวข้อง" value={data?.pct || ""} onChange={(e) => setDataFunction(e, "pct")} variant="filled" />
+        <TextField id="age" label="อายุ" value={data?.age || ""} onChange={(e) => setDataFunction(e, "age")} variant="filled" />
+        <TextField disabled id="gender" label="เพศ" value={data?.gender && data?.gender==="M" ? "ชาย" : "หญิง" || ""} variant="filled" />
+
+        <TextField disabled id="aff" label="สังกัด" value={data?.aff || ""} variant="filled" />
+        <TextField disabled id="faction" label="ฝ่าย" value={data?.faction || ""} variant="filled" />
+        <TextField disabled id="dep" label="แผนก" value={data?.dep || ""} variant="filled" />
+
+        <TextField multiline rows={3} id="dx" label="Dx." value={data?.dx || ""} onChange={(e) => setDataFunction(e, "dx")} variant="filled" />
+        <TextField multiline rows={3} id="pct" label="PCT ที่เกี่ยวข้อง" value={data?.pct || ""} onChange={(e) => setDataFunction(e, "pct")} variant="filled" />
       </GeneralInfoStyle>
     </>
   );

@@ -4,12 +4,15 @@ import IconButton from '@mui/material/IconButton';
 import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
 import Tooltip from '@mui/material/Tooltip'
 import dayjs from 'dayjs';
+import axios from "axios";
 
 import GeneralInfo from "../../form/GeneralInfo";
 import ReportLog from "../../form/ReportLog";
 // import ReportInfo from "../../form/ReportInfo";
 import ReportType from "../../form/ReportType";
+import ReportRiskType from "../../form/ReportRiskType";
 import SelectBoxList from "../../form/SelectBoxList";
+import AutoCompleteText from "../../form/AutoCompleteText";
 import RadioList from "../../form/RadioList";
 import ReportDescription from "../../form/ReportDescription";
 import ReportStaff from "../../form/ReportStaff";
@@ -19,10 +22,16 @@ import NavForm from "../../form/NavForm";
 import DataDict_OccurrenceForm from "../../../data/form/DataDict_OccurrenceForm";
 import DataDict_Risk from "../../../data/form/DataDict_Risk";
 
-import OccurrenceStyle from "../../../styles/OccurrenceStyle.style";
+import { OccurrenceStyle } from "../../../styles/OccurrenceStyle.style";
 
+import departmentRaw from "../../../data/rawData.json";
+
+import { getCurrentDate } from "../../Function";
 
 const Occurrence = () => {
+  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
+  const storedAuth = JSON.parse(localStorage.getItem("auth"));
+  const config = { headers: { Authorization: `Bearer ${storedAuth.accessToken}` } };
   const UserData = JSON.parse(localStorage.getItem("userData"));
   const TempFormData = JSON.parse(localStorage.getItem("FormData")) || {};
   const [Stage,setStage] = useState(1);
@@ -31,25 +40,35 @@ const Occurrence = () => {
     userreport:UserData.userid,
     hn:UserData.hn,
     an:UserData.an,
-    age:UserData.userid,
+    age:"",
     gender:UserData.sex,
     reportdate:new Date(),
+    occurrencedate:new Date(),
     type:"opd",
     reporttype:"0",
+    aff:UserData.affiliation,
+    faction:UserData.faction,
+    dep:UserData.dep,
+    deptrelate:"",
+    // formstatus:1,
+    createby:UserData.userid,
+    // affrelate:"",
+    // factionrelate:"",
+    // patientcare:["103","104","105"],
   });
 
   const handleDataChange = (event, name) => {
     const Text = event.target.value;
-    if(name==="reporttype"){
-      delete FormData.ClinicalRisk;
-      delete FormData.GeneralRisk;
-    }
+    // if(name==="reporttype"){
+    //   delete FormData.ClinicalRisk;
+    //   delete FormData.GeneralRisk;
+    // }
     setFormData({ ...FormData, [name]: Text });
   };
 
   const handleDateChange = (event, name) => {
-    // console.log(event.toISOString())
-    setFormData({ ...FormData, [name]: event });
+    const AddDate = new Date(event.target.value);
+    setFormData({ ...FormData, [name]: AddDate });
   }; 
     // const datetime = event.$d
     // console.log(event,datetime);
@@ -57,6 +76,7 @@ const Occurrence = () => {
   // };
 
   const handleDataChangeCheckbox = (dataarray, columnname) => {
+    console.log(dataarray);
     setFormData({ ...FormData, [columnname]: dataarray });
   };
 
@@ -87,10 +107,55 @@ const Occurrence = () => {
       userreport:UserData.userid,
       hn:UserData.hn,
       an:UserData.an,
-      age:UserData.userid,
+      age:"",
       gender:UserData.sex,
+      reportdate:new Date(),
+      occurrencedate:new Date(),
+      type:"opd",
+      reporttype:"0",
+      aff:UserData.affiliation,
+      faction:UserData.faction,
+      dep:UserData.dep,
+      deptrelate:"",
+      // formstatus:1,
+      createby:UserData.userid,
     });
   }
+
+  const handleSubmit = async() => {
+    const submitFormData = {
+      ...FormData,
+      deptrelate: JSON.stringify(FormData.deptrelate),
+      equipment: JSON.stringify(FormData.equipment),
+      management: JSON.stringify(FormData.management),
+      patientcare: JSON.stringify(FormData.patientcare),
+      patientsupport: JSON.stringify(FormData.patientsupport),
+      safety: JSON.stringify(FormData.safety),
+      service: JSON.stringify(FormData.service),
+      utility: JSON.stringify(FormData.utility)
+    };
+    console.log("submitFormData:", submitFormData);
+
+    try {
+      // const response = 
+      await axios.post( `${apiUrl}/occurrences`, { submitFormData }, { ...config });
+      // const responseStatus = response.status;
+
+      // if (responseStatus === 200 || responseStatus === 201) {
+      //   setPass("");
+      //   setPassRe("");
+      //   setSuccess(true);
+      // }
+    } catch (err) {
+      // handleApiError(err);
+      console.error(err)
+    } 
+    // finally {
+    //   setLoading(false);
+    // }
+
+  };
+  
 
   //submit
   // const handleSubmit = async (event) => {
@@ -114,6 +179,7 @@ const Occurrence = () => {
 
   return (
     <>
+    {console.log("FormData", FormData)}
     <OccurrenceStyle>
       <Box className="FormHeader">
         <span>บันทึกใบรายงานเหตุการณ์ (Occurrence Report)</span>
@@ -127,7 +193,6 @@ const Occurrence = () => {
       </Box>
 
       <Box className="MainContainer">
-      {console.log("FormData", FormData)}
       
       {/* <button onClick={PrevStage}>Prev</button>
       occurrence index Location : {Stage}
@@ -143,16 +208,46 @@ const Occurrence = () => {
         <ReportType 
           data={FormData} 
           setDataFunction={handleDataChange}
-          handleDateChange={handleDateChange}
-          optionsdata={DataDict_Risk}
-          datacolumn={["GeneralRisk","ClinicalRisk"]}
-          handleDataChangeCheckbox={handleDataChangeCheckbox}
-          handleDataChange={handleDataChange} 
         />
+        <ReportLog 
+          data={FormData} 
+          setDataFunction={handleDataChange} 
+          handleDateChange={handleDateChange}
+          handleDataChangeCheckbox={handleDataChangeCheckbox}
+          depoptiondata={departmentRaw}
+          />
+        
       </>
       }
+{Stage===3 && 
+<>
+  <ReportRiskType 
+    data={FormData} 
+    setDataFunction={handleDataChange}
+    optionsdata={DataDict_Risk}
+    datacolumn={["GeneralRisk","ClinicalRisk"]}
+    tocolumn="level"
+    handleDataChangeCheckbox={handleDataChangeCheckbox}
+    handleDataChange={handleDataChange} 
+  />
 
-      {Stage===6 && 
+  {/* {Object.values(DataDict_OccurrenceForm).map(category => (
+    <div key={category.topic}>
+      <h2>{category.topic}</h2>
+    </div>
+  ))} */}
+
+  {/* <AutoCompleteText 
+    data={FormData} 
+    datacolumn="affrelate" 
+    optionsdata={departmentRaw} 
+    optioncolumn="affiliation"
+    handleDataChangeCheckbox={handleDataChangeCheckbox}
+    handleDataChange={handleDataChange}
+    /> */}
+</>
+}
+      {Stage===4 && 
       <SelectBoxList
       data={FormData}
       optionsdata={DataDict_OccurrenceForm}
@@ -164,7 +259,7 @@ const Occurrence = () => {
       handleDataChange={handleDataChange}
       />
     }
-      {Stage===7 && 
+      {Stage===5 && 
       <SelectBoxList
       data={FormData}
       optionsdata={DataDict_OccurrenceForm}
@@ -176,7 +271,7 @@ const Occurrence = () => {
       handleDataChange={handleDataChange}
       />
     }
-      {Stage===8 && 
+      {Stage===6 && 
       <SelectBoxList
       data={FormData}
       optionsdata={DataDict_OccurrenceForm}
@@ -188,7 +283,7 @@ const Occurrence = () => {
       handleDataChange={handleDataChange}
       />
     }
-      {Stage===9 && 
+      {Stage===7 && 
       <SelectBoxList
       data={FormData}
       optionsdata={DataDict_OccurrenceForm}
@@ -200,7 +295,7 @@ const Occurrence = () => {
       handleDataChange={handleDataChange}
       />
     }
-      {Stage===10 && 
+      {Stage===8 && 
       <SelectBoxList
       data={FormData}
       optionsdata={DataDict_OccurrenceForm}
@@ -212,7 +307,7 @@ const Occurrence = () => {
       handleDataChange={handleDataChange}
       />
     }
-      {Stage===11 && 
+      {Stage===9 && 
       <SelectBoxList
       data={FormData}
       optionsdata={DataDict_OccurrenceForm}
@@ -224,7 +319,7 @@ const Occurrence = () => {
       handleDataChange={handleDataChange}
       />
     }
-      {Stage===12 && 
+      {Stage===10 && 
       <SelectBoxList
       data={FormData}
       optionsdata={DataDict_OccurrenceForm}
@@ -238,13 +333,20 @@ const Occurrence = () => {
     }
       
 
-      {Stage===13 && <ReportDescription data={FormData} setDataFunction={handleDataChange} />}
-      {Stage===14 && <ReportStaff data={FormData} setDataFunction={handleDataChange} setData={handleDataSingleChange} />}
-      {Stage===15 && <ReportSugestions data={FormData} setDataFunction={handleDataChange}/>}
+      {Stage===11 && <ReportStaff data={FormData} setDataFunction={handleDataChange} setData={handleDataSingleChange} />}
+      {Stage===12 && 
+        <>
+          <ReportDescription data={FormData} setDataFunction={handleDataChange} />
+          <ReportSugestions data={FormData} setDataFunction={handleDataChange}/>
+        </>
+      }
+      {/* {Stage===13 && 
+      "Submit Here"
+      } */}
 
       </Box>
 
-      <NavForm Stage={Stage} MaxStage={15} PrevStage={PrevStage} NextStage={NextStage} ToStage={ToStage} ClearData={ClearData} />
+      <NavForm submitfunction={handleSubmit} Stage={Stage} MaxStage={12} PrevStage={PrevStage} NextStage={NextStage} ToStage={ToStage} ClearData={ClearData} />
       </OccurrenceStyle>
     </>
 

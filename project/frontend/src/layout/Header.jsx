@@ -233,8 +233,8 @@ const Header = () => {
 };
 
 const AppBarStyled = styled(AppBar)`
-  background-color: rgb(3 94 185) !important
-  padding: 2px 0;
+  background-color: #17a2b8 !important;
+  box-shadow: 0px 2px 10px 0px #a3a3a3ad !important;
 
   .Button-Text {
     font-size: 1.188rem;

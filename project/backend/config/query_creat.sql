@@ -81,10 +81,42 @@ CREATE TABLE [user] (
 	  ,[updateAt] [datetime] NOT NULL DEFAULT GETDATE()
 	  ,[deleteAt] [date] NULL 
 );
-   
-        INSERT INTO [dbo].[user] (userid, hn,password,title,name , lastname,affiliation, jobtitle,faction,dep,role,level)
-        SELECT userid, hn,password,title,name , lastname,affiliation, jobtitle,faction,dep, '1' AS role,'1' AS level
-        FROM [dbo].[users];
+
+INSERT INTO [dbo].[user] (userid, hn,password,title,name , lastname,affiliation, jobtitle,faction,dep,role,level)
+SELECT userid, hn,password,title,name , lastname,affiliation, jobtitle,faction,dep, '1' AS role,'1' AS level
+FROM [dbo].[users];
+
+
+
+--DELETE affiliation
+--Drop table if exists [affiliation]
+CREATE TABLE [affiliation](
+	[id] INT IDENTITY(1,1),
+    [name] NVARCHAR(MAX) NOT NULL,
+);
+
+--DELETE faction
+--Drop table if exists [faction]
+CREATE TABLE [faction](
+	[id] INT IDENTITY(1,1),
+	[relateid] INT NOT NULL,
+    [name] NVARCHAR(MAX) NOT NULL,
+);
+
+--DELETE department
+--Drop table if exists [department]
+CREATE TABLE [department](
+	[id] INT IDENTITY(1,1),
+	[relateid] INT NOT NULL,
+    [name] NVARCHAR(MAX) NOT NULL,
+);
+
+SELECT d.id,
+	d.name AS DepName,
+	a.id AS AffID,
+	a.name AS AffName
+	FROM [occurrence].[dbo].[department] d
+	LEFT JOIN [occurrence].[dbo].[affiliation] a ON a.id = d.[relateid]
 
 
 --DELETE occurrences
@@ -101,17 +133,18 @@ CREATE TABLE [occurrences](
     [pct] NVARCHAR(MAX) NULL,
 
     [reportlocation] NVARCHAR(MAX) NOT NULL,
-	[reportdate] [date] NOT NULL,
+	-- [reportdate] [date] NOT NULL,
 	[occurrencedate] [datetime] NOT NULL,
+    -- [affrelate] NVARCHAR(100) NOT NULL,
     [deptrelate] NVARCHAR(100) NOT NULL,
 
 	[reporttype] [nvarchar](1) NOT NULL,
-	[type] [nvarchar](1) NOT NULL,
+	[type] NVARCHAR(3) NOT NULL,
 
 	[acceptdate] [datetime] NULL,
 	[responsedate] [datetime] NULL,
 	[urgenttype] [nvarchar](1) NULL,
-	[isnew] [nvarchar](1) NULL,
+	[isnew] [nvarchar](1) NULL,					-- อุบัติการณ์ใหม่, อุบัติการณ์ซ้ำ
 
 	[patientcare] NVARCHAR(MAX) NULL,
 	[patientcareremark] NVARCHAR(MAX) NULL,
@@ -146,7 +179,7 @@ CREATE TABLE [occurrences](
 	[activefailure] NVARCHAR(MAX) NULL,
 	[suggestion] NVARCHAR(MAX) NULL,
 
-	[formstatus] [nvarchar](1) NULL,
+	[formstatus] [nvarchar](1) NOT NULL,
 
 	[createby] [varchar](20) NOT NULL,
 	[acceptby] [varchar](20) NULL,
@@ -161,15 +194,133 @@ CREATE TABLE [occurrences](
 --Drop table if exists [event_logs]
 CREATE TABLE [event_logs](
 	[id] INT IDENTITY(1,1),
-	[reportid] [varchar](20) NOT NULL,
-	[code] [varchar](20) NOT NULL,
-    [deptrelate] NVARCHAR(100) NOT NULL,
-	[acceptdate] [datetime] NULL,
-	[responsedate] [datetime] NULL,
-	[urgenttype] [nvarchar](1) NULL,
-	[isnew] [nvarchar](1) NULL,
-	[comment] NVARCHAR(MAX) NOT NULL,
-	[type] [nvarchar](1) NOT NULL,
-	[userid] [varchar](20) NOT NULL,
-	[createAt] [datetime] NOT NULL DEFAULT GETDATE(),
+	[reportid] [varchar](20) NOT NULL,					-- Parent Report ID : 0010524
+	[code] [varchar](20) NOT NULL,						-- Running No with reportid-running no : 0010524-01, -02
+    -- [affrelate] INT NULL,							-- สังกัดที่เกี่ยวข้อง by HA
+    [deptrelate] INT NOT NULL,							-- แผนกที่เกี่ยวข้อง by HA
+	[urgenttype] [nvarchar](1) NOT NULL,				-- ความเร่งด่วน by HA
+	[comment] NVARCHAR(MAX) NULL,						-- สรุปเหตุการณ์ไม่พึงประสงค์ by deptrelate
+	[description] NVARCHAR(MAX) NOT NULL,				-- สรุปรายละเอียดเหตุการณ์ by HA
+	[status] [nvarchar](1) NOT NULL,					-- ส่งทบทวน หลังจากสร้าง 1, ทบทวนแล้ว	มีการอัพเดท comment 2, ทบทวนซ้ำ	กดจากปุ่ม จะโชว์เฉพาะ 2
+	[createby] [varchar](20) NOT NULL,					-- create by HA
+	[createAt] [datetime] NOT NULL DEFAULT GETDATE(),	-- วันที่สร้าง
+	[acceptby] [varchar](20) NULL,						-- คนรับเรื่อง อัพเดท comment
+	[acceptdate] [datetime] NULL,						-- วันที่รับเรื่อง อัพเดท comment
+	[responsedate] [datetime] NULL,						-- วันที่รับคืน
 );
+
+
+
+
+
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('คลังยา', 1);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('คอลเซ็นเตอร์', 1);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('เคหกรรม', 1);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('งานอาคารและรักษาความปลอดภัย', 1);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ซักรีด', 1);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ดูแลรักษาความสะอาด', 1);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('บริการทั่วไป และประสานงานกลาง', 1);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('บริหารงานเวชสารและธุรการ', 1);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('บริหารจัดการแฟ้ม', 1);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('บริหารจัดการระบบเบิกจ่ายภาครัฐ', 1);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ประเมินราคา และ Finance', 1);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ประสานสิทธิ์', 1);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('เภสัชกรรมคลินิก', 1);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ยานพาหนะ', 1);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ลงทะเบียนผู้ป่วยและเดินแฟ้ม', 1);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ลูกค้าสัมพันธ์', 1);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('วิเคราะห์โรค', 1);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('เวชระเบียนอิเล็กทรอนิกส์', 1);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('เวชสถิติ', 1);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('เวรเปล', 1);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ศูนย์สารสนเทศทางยา', 1);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('โอเปอเรเตอร์', 1);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('Digital Marketing & Creative', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('Events', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('การเงินกลาง', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('การเงินนอก', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('การเงินผู้ป่วยนอก', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('การเงินผู้ป่วยใน', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('การตลาดองค์กร', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('การพัฒนาองค์กร', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ค่าตอบแทนและผลประโยชน์', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('จัดซื้อเครื่องมือแพทย์ ยา และเวชภัณฑ์', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('จัดซื้อทั่วไป', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ซ่อมบำรุง', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ตรวจสอบคุณภาพการบันทึกเวชระเบียน', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('บริการ', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('บริหารโครงการเทคโนโลยีสารสนเทศ', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('บริหารจัดการฐานข้อมูล และสารสนเทศขององค์กร', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('บริหารจัดการหนี้', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('บัญชีจ่าย', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('บัญชีทั่วไป', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('บัญชีบริหาร', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('บันทึกเวลา', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ปฏิบัติการควบคุมอุปกรณ์คอมพิวเตอร์ และระบบเครือข่าย', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('พัฒนาซอฟต์แวร์', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('พัฒนาทรัพยากรมนุษย์', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('พัฒนาผลิตภัณฑ์', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('โภชนบำบัด', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('โภชนาการ', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ระบบคอมพิวเตอร์ทางธุรกิจองค์กร', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('รับและทะเบียนคุม', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('สนับสนุนงานระบบ', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('สรรหาและว่าจ้าง', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('สวัสดิการและสร้างเสริมสุขภาพ', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('สารสนเทศทรัพยากรมนุษย์', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('โสตทัศนูปกรณ์', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ออกแบบและควบคุมโครงการ', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ไอที', 2);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('กองตรวจการพยาบาล', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('คลินิกแพทย์แผนจีน', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ฉุกเฉิน', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ซีซียู', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ไตเทียม', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ทันตกรรม', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ทารกแรกเกิด', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ผิวหนัง', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('พยาบาล', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('พัฒนาบุคลากรทางการพยาบาล', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('รับผู้ป่วยใน', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('วิสัญญี', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ศัลยกรรม', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ศูนย์กระดูกและข้อ', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ศูนย์ตรวจสุขภาพ', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ศูนย์ตา', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ศูนย์ทางเดินอาหาร', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ศูนย์ปลูกถ่ายไต', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ศูนย์มะเร็งและรังสีรักษา', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ศูนย์เวชศาสตร์ชะลอวัย', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ศูนย์สมองและระบบประสาท', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ศูนย์สูติ-นรีเวช', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ศูนย์หัวใจคนไข้นอก', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('สราญรมย์', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('สวนหัวใจ', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('สำนักงานพยาบาล', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('หน่วยจ่ายกลาง', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ห้องคลอด', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ห้องผ่าตัด', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ห้องพยาบาลประจำบริษัทคู่สัญญา', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ห้องยาผู้ป่วยนอก', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ห้องยาผู้ป่วยใน', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('หอผู้ป่วยในชั้น 10', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('หอผู้ป่วยในชั้น 5', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('หอผู้ป่วยในชั้น 6', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('หอผู้ป่วยในชั้น 7', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('หอผู้ป่วยในชั้น 8', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('หอผู้ป่วยในชั้น 9', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('หู คอ จมูก', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('อายุรกรรม', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ไอซียู', 3);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ควบคุมเอกสารคุณภาพ', 4);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('บริหารข้อร้องเรียน', 4);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('บริหารอุบัติการณ์', 4);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('กายภาพบำบัด', 5);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('กิจกรรมบำบัด', 5);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('กุมารเวช', 5);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('คลังพัสดุ', 6);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ธุรการ', 6);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ธุรการ นิติการ', 6);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('นิติการ', 6);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('สำนักอำนวยการบริหาร', 6);
+INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('สำนักอำนวยการแพทย์', 6);
