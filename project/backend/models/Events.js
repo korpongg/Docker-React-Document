@@ -53,7 +53,7 @@ const Events = sequelize.define('Events', {
     type: DataTypes.STRING(20),
     allowNull: true
   },
-  acceptdate: {
+  acceptAt: {
     type: DataTypes.DATE,
     allowNull: true
   },

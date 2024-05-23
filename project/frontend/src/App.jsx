@@ -39,7 +39,10 @@ function App() {
           <Route path="/home" element={<Home />} />
 
           <Route path="/occurrence" element={<IndexPage />} />
-          <Route path="/occurrence/form" element={<Occurrence />} />
+          <Route path="/occurrence/:id" element={<Occurrence Mode="Edit"/>} />
+          <Route path="/occurrence/form" element={<Occurrence Mode="Add"/>} />
+          <Route path="/occurrence/form/:id" element={<Occurrence Mode="Edit"/>} />
+
 
           <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
             <Route path="usermanager" element={<Usermanager />} />

@@ -9,7 +9,7 @@ function EditToolbar({ handleAddItem, loading }) {
   return (
     <GridToolbarContainer style={{ justifyContent: "space-between", padding: "10px 10px 0" }}>
       <div>
-        <Button variant="contained" onClick={handleAddItem} startIcon={<AddIcon />} disabled={loading} style={{ marginRight: 10 }}>บันทึกอุบัติการณ์</Button>
+        <Button variant="contained" onClick={handleAddItem} startIcon={<AddIcon />} style={{ marginRight: 10 }}>บันทึกอุบัติการณ์</Button>
       </div>
       {/* <GridToolbar /> */}
       <GridToolbarQuickFilter />
@@ -17,7 +17,7 @@ function EditToolbar({ handleAddItem, loading }) {
   );
 }
 
-const DataTable = ({ data, isAdmin, handleAddItem, handleViewClick, handleTranfClick, handleEditClick, loading }) => {
+const DataTable = ({ data, isAdmin, userData, handleAddItem, handleViewClick, handleTranfClick, handleEditClick, loading }) => {
   // console.log(data);
   const statusMap = {};
   requestStatusData.requestStatus.forEach(status => {
@@ -33,7 +33,8 @@ const DataTable = ({ data, isAdmin, handleAddItem, handleViewClick, handleTranfC
     {
       field: "formstatus",
       headerName: "สถานะ",
-      width: 155,
+      minWidth: 155,
+      flex: 1,
       align: "center",
       headerAlign: "center",
       // sortable: false,
@@ -44,12 +45,13 @@ const DataTable = ({ data, isAdmin, handleAddItem, handleViewClick, handleTranfC
         return <div className={`post-status ${statusInfo.color}`}>{statusInfo.text}</div>;
       },
     },
-    { field: "reportid", headerName: "ReportId", width: 120, align: "center", headerAlign: "center", },
-    { field: "hn", headerName: "HN", width: 180, align: "center", headerAlign: "center" },
+    { field: "reportid", headerName: "ReportId", minWidth: 120, flex: 1, align: "center", headerAlign: "center", },
+    { field: "hn", headerName: "HN", minWidth: 180, flex: 1, align: "center", headerAlign: "center" },
     {
       field: "occurrencedate",
       headerName: "วันที่เกิดเหตุ",
-      width: 140,
+      minWidth: 140,
+      flex: 1,
       align: "center",
       headerAlign: "center",
       valueGetter: (params) => params ? formatDateTimeN7(params.value, "dmy") : '',
@@ -57,19 +59,21 @@ const DataTable = ({ data, isAdmin, handleAddItem, handleViewClick, handleTranfC
     {
       field: "deptAffInfo",
       headerName: "แผนก",
-      width: 160,
+      minWidth: 170,
+      flex: 1,
       align: "center",
       headerAlign: "center",
       sortable: false,
       filterable: false,
       renderCell: renderDeptrelateCell,
     },
-    { field: "reporttypename", headerName: "ประเภท", width: 140, align: "center", headerAlign: "center" },
-    { field: "level", headerName: "ความรุนแรง", width: 115, align: "center", headerAlign: "center" },
+    { field: "reporttypename", headerName: "ประเภท", minWidth: 140, flex: 1, align: "center", headerAlign: "center" },
+    { field: "level", headerName: "ความรุนแรง", minWidth: 100, flex: 1, align: "center", headerAlign: "center" },
     {
       field: "description",
       headerName: "รายละเอียดเหตุการณ์",
-      width: 300,
+      minWidth: 340,
+      flex: 1,
       align: "center",
       headerAlign: "center",
       sortable: false,
@@ -79,7 +83,8 @@ const DataTable = ({ data, isAdmin, handleAddItem, handleViewClick, handleTranfC
       field: "actions",
       type: "actions",
       headerName: "จัดการ",
-      width: 140,
+      minWidth: 140,
+      flex: 1,
       cellClassName: "actions",
       align: "center",
       headerAlign: "center",
@@ -105,14 +110,16 @@ const DataTable = ({ data, isAdmin, handleAddItem, handleViewClick, handleTranfC
             </Tooltip>
           )}
 
-          <Tooltip title="แก้ไขข้อมูลอุบัติการณ์">
-            <GridActionsCellItem
-              icon={<EditIcon />}
-              label="แก้ไขข้อมูลอุบัติการณ์"
-              onClick={() => handleEditClick(id, row)}
-              color="warning"
-            />
-          </Tooltip>
+          {userData.userid === row.createby && (
+            <Tooltip title="แก้ไขข้อมูลอุบัติการณ์">
+              <GridActionsCellItem
+                icon={<EditIcon />}
+                label="แก้ไขข้อมูลอุบัติการณ์"
+                onClick={() => handleEditClick(id, row)}
+                color="warning"
+              />
+            </Tooltip>
+          )}
         </>
       ),
     },

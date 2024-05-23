@@ -8,9 +8,7 @@ exports.createOccurrence = async (req, res) => {
 
     // Get the current year and month
     const currentYear = new Date().getFullYear().toString().slice(-2); // Extract last two digits of the year
-    const currentMonth = (new Date().getMonth() + 1)
-      .toString()
-      .padStart(2, "0"); // Get current month and ensure it's zero-padded
+    const currentMonth = (new Date().getMonth() + 1).toString().padStart(2, "0"); // Get current month and ensure it's zero-padded
     const fullYear = new Date().getFullYear().toString();
 
     // Find the last job detail entry for the current month

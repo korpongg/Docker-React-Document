@@ -25,7 +25,7 @@ export const DashboardBox = styled(Box)`
 
   .MuiDataGrid-toolbarContainer .MuiButton-root {
     font-family: inherit;
-    font-size: 17px;
+    font-size: 16px;
   }
 
   .add-button {
@@ -41,6 +41,7 @@ export const DashboardBox = styled(Box)`
 
   .MuiDataGrid-root {
     font-size: 19px;
+    font-size: 16px;
   }
 
   .MuiDataGrid-root,
@@ -57,6 +58,7 @@ export const DashboardBox = styled(Box)`
     border-radius: 10px;
     color: #fff;
     font-size: 21px;
+    font-size: 18px;
     padding: 6px 10px;
   }
 

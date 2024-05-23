@@ -8,8 +8,8 @@ const formatDate = (date) => date ? date.toISOString().replace("T", " ").replace
 // Create a new report log
 exports.createReportLog = async (req, res) => {
   try {
-    const { reportid, acceptdate, responsedate, ...otherData } = req.body;
-    const formattedAcceptDate = formatDate(acceptdate ? new Date(acceptdate) : null);
+    const { reportid, acceptAt, responsedate, ...otherData } = req.body;
+    const formattedAcceptDate = formatDate(acceptAt ? new Date(acceptAt) : null);
     const formattedResponseDate = formatDate(responsedate ? new Date(responsedate) : null);
 
     // Find all events with the same reportid
@@ -24,7 +24,7 @@ exports.createReportLog = async (req, res) => {
       reportid,
       code: newCode,
       status: '1',
-      acceptdate: formattedAcceptDate ? sequelize.literal(`'${formattedAcceptDate}'`) : null,
+      acceptAt: formattedAcceptDate ? sequelize.literal(`'${formattedAcceptDate}'`) : null,
       responsedate: formattedResponseDate ? sequelize.literal(`'${formattedResponseDate}'`) : null,
     });
 
@@ -114,7 +114,7 @@ exports.updateReportLog = async (req, res) => {
     // Check if req.body.comment is not an empty string
     if (req.body.comment && req.body.comment.trim() !== "") {
       req.body.status = '2';
-      req.body.acceptdate = sequelize.literal("CURRENT_TIMESTAMP");
+      req.body.acceptAt = sequelize.literal("CURRENT_TIMESTAMP");
     }
 
     await events.update(req.body);
