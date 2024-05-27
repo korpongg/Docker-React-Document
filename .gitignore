@@ -3,3 +3,4 @@ project/frontend/.env
 project/frontend/node_modules/*
 project/backend/package-lock.json
 project/yarn.lock
+project/frontend/package-lock.json
