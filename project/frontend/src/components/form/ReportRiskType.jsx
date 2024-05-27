@@ -22,6 +22,7 @@ const ReportRiskType = ({
   datacolumn,
   handleDataChangeCheckbox,
   handleDataChange,
+  missingKeys,
 }) => {
 
   return (
@@ -51,7 +52,8 @@ const ReportRiskType = ({
             label="Clinical Risk"
           />
         </RadioGroup>
-
+        {/* <Box className={missingKeys.some(item => item.key === 'deptrelate') ? "SETERROR":"FormInputBorder" }> */}
+{/* test */}
         {data?.reporttype==="0" && 
           <>
             <RadioList
@@ -62,7 +64,8 @@ const ReportRiskType = ({
               remark={false}
               handleDataChangeCheckbox={handleDataChangeCheckbox}
               handleDataChange={handleDataChange}
-            />
+              missingKeys={missingKeys}
+              />
           </>
         }
         {data?.reporttype==="1" && 
@@ -75,9 +78,11 @@ const ReportRiskType = ({
               remark={false}
               handleDataChangeCheckbox={handleDataChangeCheckbox}
               handleDataChange={handleDataChange}
-            />
+              missingKeys={missingKeys}
+              />
           </>
         }
+        {/* </Box> */}
         
       </ReportTypeStyle>
     </>

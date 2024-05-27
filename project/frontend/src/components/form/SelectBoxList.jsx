@@ -64,10 +64,10 @@ const SelectBoxList = ({data,optionsdata,datacolumn,handleDataChangeCheckbox,han
                 <SelectBoxListStyle>
                     <FormGroup sx={{width:"100%",alignItems:"left",textAlign:"left"}}>
                         {optionsdata[datacolumn].options.map((datarow,datakey)=>(
-                            <FormControlLabel fullWidth key={datakey} value={datarow.code} control={<Checkbox checked={pickdata.includes(datarow.code.toString())} onChange={handleCheckboxChange} />} label={datarow.code+" "+datarow.title} />
+                            <FormControlLabel key={datakey} value={datarow.code} control={<Checkbox checked={pickdata.includes(datarow.code.toString())} onChange={handleCheckboxChange} />} label={datarow.code+" "+datarow.title} />
                         ))}
                         {remark &&<>
-                        <FormControlLabel fullWidth value={remarkno} control={<Checkbox checked={pickdata.includes(remarkno.toString())} onChange={handleCheckboxChange} />} label={remarkno+" อื่นๆ..."} />
+                        <FormControlLabel value={remarkno} control={<Checkbox checked={pickdata.includes(remarkno.toString())} onChange={handleCheckboxChange} />} label={remarkno+" อื่นๆ..."} />
                             {pickdata.includes(remarkno.toString()) &&
                                 <TextField fullWidth id={remarkcolumn} label="ระบุรายละเอียด" value={data[remarkcolumn] || ""} onChange={(e) => handleDataChange(e, remarkcolumn)} variant="filled" />}
                             </>}

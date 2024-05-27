@@ -200,13 +200,13 @@ CREATE TABLE [event_logs](
     [deptrelate] INT NOT NULL,							-- แผนกที่เกี่ยวข้อง by HA
 	[urgenttype] [nvarchar](1) NOT NULL,				-- ความเร่งด่วน by HA
 	[comment] NVARCHAR(MAX) NULL,						-- สรุปเหตุการณ์ไม่พึงประสงค์ by deptrelate
-	[description] NVARCHAR(MAX) NOT NULL,				-- สรุปรายละเอียดเหตุการณ์ by HA
+	[summarydetail] NVARCHAR(MAX) NOT NULL,				-- สรุปรายละเอียดเหตุการณ์ by HA
 	[status] [nvarchar](1) NOT NULL,					-- ส่งทบทวน หลังจากสร้าง 1, ทบทวนแล้ว	มีการอัพเดท comment 2, ทบทวนซ้ำ	กดจากปุ่ม จะโชว์เฉพาะ 2
 	[createby] [varchar](20) NOT NULL,					-- create by HA
 	[createAt] [datetime] NOT NULL DEFAULT GETDATE(),	-- วันที่สร้าง
 	[acceptby] [varchar](20) NULL,						-- คนรับเรื่อง อัพเดท comment
 	[acceptAt] [datetime] NULL,							-- วันที่รับเรื่อง อัพเดท comment
-	[responsedate] [datetime] NULL,						-- วันที่รับคืน
+	[responsedate] [datetime] NULL,						-- วันที่รับคืน (ยังไม่มีการอัพเดทข้อมูลในส่วนนี้)
 );
 
 

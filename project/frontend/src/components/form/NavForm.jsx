@@ -11,7 +11,12 @@ import Tooltip from '@mui/material/Tooltip'
 import ConfirmDialog from "./ConfirmDialog";
 import NavFormStyle from "../../styles/NavFormStyle.style";
 
-const NavForm = ({submitfunction,Stage,MaxStage,PrevStage,NextStage,ToStage}) => {
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import FirstPageIcon from '@mui/icons-material/FirstPage';
+import LastPageIcon from '@mui/icons-material/LastPage';
+
+const NavForm = ({submitfunction,Stage,MaxStage,FirstStage,LastStage,PrevStage,NextStage,ToStage}) => {
   const NavPage = [];
   for (let i = 0; i < MaxStage; i++) {
     NavPage.push(
@@ -21,14 +26,25 @@ const NavForm = ({submitfunction,Stage,MaxStage,PrevStage,NextStage,ToStage}) =>
     );
   }
   return (
+  <>
     <Box className="FormFooter" >
+      {/* <Box sx={{width:"10px"}}>
+        Test
+      </Box> */}
     <span>
       {Stage>1 ?
-        <Tooltip title="ย้อนกลับ">
-          <IconButton aria-label="prev" onClick={PrevStage}>
-            <ArrowBackIosNewIcon />
+      <>
+        <Tooltip title="หน้าแรก">
+          <IconButton aria-label="prev" onClick={FirstStage}>
+            <FirstPageIcon />
           </IconButton>
         </Tooltip>
+        <Tooltip title="ย้อนกลับ">
+          <IconButton aria-label="prev" onClick={PrevStage}>
+            <ChevronLeftIcon />
+          </IconButton>
+        </Tooltip>
+      </>
         :
         <Tooltip title="ไม่สามารถย้อนไปได้อีก">
           <IconButton aria-label="stop" >
@@ -37,25 +53,33 @@ const NavForm = ({submitfunction,Stage,MaxStage,PrevStage,NextStage,ToStage}) =>
         </Tooltip>
       }
     </span>
-    {Stage+" of "+MaxStage}
+    {"Page "+Stage+" of "+MaxStage}
+    <ConfirmDialog submitfunction={submitfunction}/>
     <span>
       {Stage===MaxStage ? 
-        // <Tooltip title="ต่อไป">
-        //   <IconButton aria-label="next" onClick={NextStage}>
-        //     <ArrowForwardIosIcon />
-        //   </IconButton>
-        // </Tooltip>
-        <ConfirmDialog submitfunction={submitfunction}/>
-      :
-        <Tooltip title="ต่อไป">
-          <IconButton aria-label="next" onClick={NextStage}>
-            <ArrowForwardIosIcon />
+        <Tooltip title="ไม่สามารถย้อนไปได้อีก">
+          <IconButton aria-label="stop" >
+            <DoDisturbOnIcon sx={{opacity:0.25}}/>
           </IconButton>
         </Tooltip>
+        // <ConfirmDialog submitfunction={submitfunction}/>
+      :
+      <>
+        <Tooltip title="ต่อไป">
+          <IconButton aria-label="next" onClick={NextStage}>
+            <ChevronRightIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="หน้าสุดท้าย">
+          <IconButton aria-label="next" onClick={()=>LastStage(MaxStage)}>
+            <LastPageIcon />
+          </IconButton>
+        </Tooltip>
+      </>
       }
     </span>
   </Box>
-      
+  </>
   );
 };
 

@@ -32,7 +32,7 @@ const Events = sequelize.define('Events', {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  description: {
+  summarydetail: {
     type: DataTypes.TEXT,
     allowNull: false
   },

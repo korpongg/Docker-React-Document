@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Box, Tooltip } from "@mui/material";
 import { DataGrid, GridToolbarContainer, GridToolbar, GridToolbarQuickFilter, GridActionsCellItem } from "@mui/x-data-grid";
-import { Add as AddIcon, DescriptionRounded as FileIcon, SwapHorizRounded as RotateIcon, Edit as EditIcon } from "@mui/icons-material";
+import { Add as AddIcon, DescriptionRounded as FileIcon, SwapHorizRounded as RotateIcon, FindInPageRounded as ViewIcon, Edit as EditIcon } from "@mui/icons-material";
 import { formatDateTimeN7 } from "../../Function";
 import requestStatusData from "../../label.json";
 
@@ -17,23 +17,26 @@ function EditToolbar({ handleAddItem, loading }) {
   );
 }
 
-const DataTable = ({ data, isAdmin, userData, handleAddItem, handleViewClick, handleTranfClick, handleEditClick, loading }) => {
+const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewClick, handleTranfClick, handleEditClick, loading }) => {
   // console.log(data);
   const statusMap = {};
-  requestStatusData.requestStatus.forEach(status => {
+  requestStatusData.reportStatus.forEach(status => {
     statusMap[status.id] = { text: status.statusText, color: status.statusColor };
   });
 
   const renderDeptrelateCell = (params) => {
     const deptAffInfo = Array.isArray(params.row.deptAffInfo) ? params.row.deptAffInfo : [];
-    return <div className="MuiDataGrid-cellContent" title={deptAffInfo.map(dept => dept.DepName).join(", ")} role="presentation">{deptAffInfo.map(dept => dept.DepName).join(", ")}</div>;
+    const deptNames = deptAffInfo.map(dept => dept.DepName).join(", ");
+    return (
+      <Tooltip title={deptNames}><div className="MuiDataGrid-cellContent" role="presentation">{deptNames}</div></Tooltip>
+    );
   };
 
   const columns = [
     {
       field: "formstatus",
       headerName: "สถานะ",
-      minWidth: 155,
+      minWidth: 140,
       flex: 1,
       align: "center",
       headerAlign: "center",
@@ -69,7 +72,7 @@ const DataTable = ({ data, isAdmin, userData, handleAddItem, handleViewClick, ha
     },
     { field: "reporttypename", headerName: "ประเภท", minWidth: 140, flex: 1, align: "center", headerAlign: "center" },
     { field: "level", headerName: "ความรุนแรง", minWidth: 100, flex: 1, align: "center", headerAlign: "center" },
-    {
+    (isAdmin || (isEXEC && userData.affiliation === "งานคุณภาพ")) ? {
       field: "description",
       headerName: "รายละเอียดเหตุการณ์",
       minWidth: 340,
@@ -78,7 +81,7 @@ const DataTable = ({ data, isAdmin, userData, handleAddItem, handleViewClick, ha
       headerAlign: "center",
       sortable: false,
       filterable: false,
-    },
+    } : null,
     {
       field: "actions",
       type: "actions",
@@ -99,16 +102,14 @@ const DataTable = ({ data, isAdmin, userData, handleAddItem, handleViewClick, ha
             />
           </Tooltip>
 
-          {isAdmin && (
-            <Tooltip title="Tranfer">
-              <GridActionsCellItem
-                icon={<RotateIcon className="rotate-icon" />}
-                label="Tranfer"
-                onClick={() => handleTranfClick(id, row)}
-                color="success"
-              />
-            </Tooltip>
-          )}
+          <Tooltip title={isAdmin ? 'ส่งต่อรายงาน' : 'ดูรายงานส่งต่อ'}>
+            <GridActionsCellItem
+              icon={isAdmin ? <RotateIcon /> : <ViewIcon />}
+              label={isAdmin ? 'ส่งต่อรายงาน' : 'ดูรายงานส่งต่อ'}
+              onClick={() => handleTranfClick(id, row)}
+              color="success"
+            />
+          </Tooltip>
 
           {userData.userid === row.createby && (
             <Tooltip title="แก้ไขข้อมูลอุบัติการณ์">
@@ -125,11 +126,13 @@ const DataTable = ({ data, isAdmin, userData, handleAddItem, handleViewClick, ha
     },
   ];
 
+  const filteredColumns = columns.filter(column => column !== null);
+
   return (
     <DataGrid
       autoHeight
       rows={data}
-      columns={columns}
+      columns={filteredColumns}
       disableRowSelectionOnClick
       hideFooterSelectedRowCount={true}
       initialState={{

@@ -6,7 +6,7 @@ import { Dialog } from "@mui/material";
 export const OccurrenceStyle = styled(Box)`
   background:#ffffff;
   color:#000000;
-  height:80vh;
+  height:88vh;
   width:1000px;
   // padding:5px;
   display:flex;
@@ -86,7 +86,10 @@ export const OccurrenceStyle = styled(Box)`
     align-items:left;
     // padding:10px;
     font-size:18px;
-    background: #f1f1f1;
+    // background: #f1f1f1;
+    background:unset;
+    padding-left:12px;
+    padding-right:50px;
     span{
       padding-left:12px;
       padding-top:10px;
@@ -94,6 +97,30 @@ export const OccurrenceStyle = styled(Box)`
       text-align:left;
       color: rgba(51, 51, 51, 0.87);
     }
+    input{
+      background:unset;
+    }
+  }
+  input,textarea{
+    background:unset;
+  }
+  input:disabled{
+    background:#f1f1f1;
+  }
+  textarea:disabled{
+    background:#f1f1f1;
+  }
+  .MuiInputBase-root{
+    background:unset;
+  }
+  .MuiInputBase-root:hover{
+    background:unset;
+  }
+  .MuiInputBase-root:focused{
+    background:unset;
+  }
+  .MuiFilledInput-root{
+    background:unset;
   }
   .AutoBox{
     width:100%;
@@ -106,7 +133,8 @@ export const OccurrenceStyle = styled(Box)`
     align-items:left;
     // padding:10px;
     font-size:18px;
-    background: #f1f1f1;
+    // background: #f1f1f1;
+    background:unset;
     // span{
     //   padding-left:12px;
     //   padding-top:10px;
@@ -138,13 +166,22 @@ export const OccurrenceStyle = styled(Box)`
     padding-right: 12px;
     padding-bottom: 8px;
     padding-left: 12px;
+    cursor:text;
   }
   input[type="datetime-local"]::-webkit-calendar-picker-indicator {
     filter: invert(0.5);
+    cursor:pointer;
 }
-  .DatetimeInput:hover{
-    background rgb(133, 133, 133))
+  .DatetimeInput:disabled{
+    background: unset;
+    cursor:unset;
   }
+  .DatetimeInput:hover{
+    background :#f5f5f5;
+  }
+  .DatetimeInput:disabled:hover {
+    background: unset;
+}
   .SubmitBTN{
     display:flex;
     justify-content:center;
@@ -178,5 +215,20 @@ export const OccurrenceStyle = styled(Box)`
     font-size:30px;
     padding:unset;
     transition:0.35s;
+  }
+
+  .FormInputBorder{
+    // width:95%;
+    background: unset;
+    border: unset;
+  }
+  .SETERROR{
+    background: #ffe5e580;
+    border: 1px solid #ff000080;
+    border-radius:8px;
+  }
+  .RadioBoxED{
+    width:100%;
+    height:100%;
   }
 `;

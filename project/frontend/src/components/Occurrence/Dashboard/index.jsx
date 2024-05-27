@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useWebSocket } from '../../../context/WebSocketContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Box from "@mui/material/Box";
@@ -13,6 +14,7 @@ import { DashboardBox } from "../../../styles/Dashboard.style";
 const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
 const IndexPage = () => {
+  const { connectWebSocket, disconnectWebSocket, dataCenter, load } = useWebSocket();
   const navigate = useNavigate();
   const storedAuth = JSON.parse(localStorage.getItem("auth"));
   const userData = storedAuth ? JSON.parse(localStorage.getItem("userData")) : null;
@@ -20,46 +22,42 @@ const IndexPage = () => {
   const isEXEC = chkAdmin(userData?.level);
   const config = { headers: { Authorization: `Bearer ${storedAuth.accessToken}` } };
   const [dashboard, setDashboard] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(load);
   const [rowData, setRowData] = useState(null);
   const [eventData, setEventData] = useState([]);
   const [isDialogOpen, setDialogOpen] = useState(false);
 
-  const filterData = (data) => {
-    if (isAdmin) return data;
+  useEffect(() => {
+    connectWebSocket();
 
-    if (isEXEC) {
-      if (userData.affiliation === "งานคุณภาพ") {
-        return data;
-      }
-      return data.filter(item =>
-        item.deptAffInfo.some(dept => dept.AffName === userData.affiliation)
-      );
-    }
-
-    return data.filter(item =>
-      item.deptAffInfo.some(dept => dept.AffName === userData.affiliation && dept.DepName === userData.dep)
-    );
-  };
-
-  // Fetch data based on start and end dates
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const url = `${apiUrl}/occurrences`;
-      const response = await axios.get(url, { ...config });
-      const filteredData = filterData(response.data);
-      setDashboard(filteredData);
-    } catch (error) {
-      console.error("Failed to fetch data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    return () => {
+      disconnectWebSocket();
+    };
+  }, []);
 
   useEffect(() => {
-    fetchData(); // Fetch data on component mount
-  }, []);
+    if (isAdmin) {
+      setDashboard(dataCenter);
+      setLoading(false);
+    } else if (isEXEC) {
+      if (userData.affiliation === "งานคุณภาพ") {
+        setDashboard(dataCenter);
+        setLoading(false);
+      } else {
+        const filteredData = dataCenter.filter(item =>
+          item.deptAffInfo.some(dept => dept.AffName === userData.affiliation)
+        );
+        setDashboard(filteredData);
+        setLoading(false);
+      }
+    } else {
+      const filteredData = dataCenter.filter(item =>
+        item.deptAffInfo.some(dept => dept.AffName === userData.affiliation && dept.DepName === userData.dep)
+      );
+      setDashboard(filteredData);
+      setLoading(false);
+    }
+  }, [dataCenter]);
 
   const handleAddItem = () => {
     navigate(`/occurrence/form`);
@@ -91,6 +89,7 @@ const IndexPage = () => {
         <DataTable
           data={dashboard}
           isAdmin={isAdmin}
+          isEXEC={isEXEC}
           userData={userData}
           handleAddItem={handleAddItem}
           handleViewClick={handleViewClick}

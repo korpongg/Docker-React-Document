@@ -109,6 +109,10 @@ export const DashboardBox = styled(Box)`
 `;
 
 export const TranferDialogBox = styled(Dialog)`
+  #tranfer-dialog-title {
+    font-family: inherit;
+  }
+  
   .ItemBox {
     display:flex;
     justify-content: center;

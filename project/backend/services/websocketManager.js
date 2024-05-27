@@ -4,7 +4,7 @@ const clients = {}; // This holds the connected WebSocket clients
 
 // Function to broadcast a message to all connected WebSocket clients
 function broadcastMessage(message) {
-    console.log(`Broadcasting Xray-cd-Request message to ${Object.keys(clients).length} clients.`);
+    console.log(`Broadcasting Occurrence Report message to ${Object.keys(clients).length} clients.`);
     Object.values(clients).forEach(client => {
         if (client.readyState === WebSocket.OPEN) {
             try {

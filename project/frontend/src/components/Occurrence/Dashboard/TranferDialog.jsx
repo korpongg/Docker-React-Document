@@ -34,7 +34,7 @@ const TranferDialog = ({ config, rowData, eventData, setEventData, isDialogOpen,
             maxWidth="md"
             fullWidth
         >
-            <DialogTitle id="tranfer-dialog-title">Tranfer หน่วยงานที่เกี่ยวข้อง</DialogTitle>
+            <DialogTitle id="tranfer-dialog-title">ส่งต่อรายงาน หน่วยงานที่เกี่ยวข้อง</DialogTitle>
             <DialogContent>
 
             </DialogContent>

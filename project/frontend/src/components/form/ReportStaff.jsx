@@ -53,7 +53,7 @@ const ReportStaff = ({data,setDataFunction,setData}) => {
           </FormGroup>
           {isChecked && 
             <>
-              <TextField id="docname" label="คำสั่งแพทย์" value={data?.docname || ""} onChange={(e) => setDataFunction(e, "docname")} variant="filled" />
+              <TextField fullWidth id="docname" label="คำสั่งแพทย์" value={data?.docname || ""} onChange={(e) => setDataFunction(e, "docname")} variant="filled" />
               <RadioGroup
                 sx={{ p: 1 }}
                 row
@@ -89,7 +89,7 @@ const ReportStaff = ({data,setDataFunction,setData}) => {
           </FormGroup>
           {isCheckedOther && 
             <>
-              <TextField id="reportotherremark" label="อื่นๆ" value={data?.reportotherremark || ""} onChange={(e) => setDataFunction(e, "reportotherremark")} variant="filled" />
+              <TextField fullWidth id="reportotherremark" label="อื่นๆ" value={data?.reportotherremark || ""} onChange={(e) => setDataFunction(e, "reportotherremark")} variant="filled" />
             </>
           }
         </Box>

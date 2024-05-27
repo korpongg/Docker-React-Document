@@ -20,7 +20,7 @@ function EditToolbar({ handleAddItem, loading }) {
 const TranferTable = ({ data, isAdmin, handleAddItem, handleViewClick, handleTranfClick, handleEditClick, loading }) => {
   // console.log(data);
   const statusMap = {};
-  requestStatusData.requestStatus.forEach(status => {
+  requestStatusData.subStatus.forEach(status => {
     statusMap[status.id] = { text: status.statusText, color: status.statusColor };
   });
 

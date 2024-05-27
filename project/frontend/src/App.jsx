@@ -36,13 +36,19 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="logout" element={<Logout />} />
 
-          <Route path="/home" element={<Home />} />
-
-          <Route path="/occurrence" element={<IndexPage />} />
-          <Route path="/occurrence/:id" element={<Occurrence Mode="Edit"/>} />
-          <Route path="/occurrence/form" element={<Occurrence Mode="Add"/>} />
-          <Route path="/occurrence/form/:id" element={<Occurrence Mode="Edit"/>} />
-
+          <Route
+            element={
+              <RequireAuth
+                allowedRoles={[ROLES.User, ROLES.Editor, ROLES.Admin]}
+              />
+            }
+          >
+            <Route path="/home" element={<Home />} />
+            <Route path="/occurrence" element={<IndexPage />} />
+            <Route path="/occurrence/:id" element={<Occurrence Mode="Edit" />} />
+            <Route path="/occurrence/form" element={<Occurrence Mode="Add" />} />
+            <Route path="/occurrence/form/:id" element={<Occurrence Mode="Edit" />} />
+          </Route>
 
           <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
             <Route path="usermanager" element={<Usermanager />} />

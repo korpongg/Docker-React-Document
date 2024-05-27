@@ -27,6 +27,7 @@ import { OccurrenceStyle } from "../../../styles/OccurrenceStyle.style";
 
 import departmentRaw from "../../../data/rawData.json";
 
+import AlertBar from "../../form/AlertBar";
 import { getCurrentDate } from "../../Function";
 
 const Occurrence = ({ Mode }) => {
@@ -56,6 +57,10 @@ const Occurrence = ({ Mode }) => {
     // deptrelate: "",
     // createby: UserData.userid,
   });
+  const [Alert, setAlert] = useState(false);
+  const [AlertType, setAlertType] = useState("error");
+  const [AlertText, setAlertText] = useState("");
+  const [AlertBorder,setAlertBorder] =useState([]);
 
   const handleDataChange = (event, name) => {
     const Text = event.target.value;
@@ -68,7 +73,7 @@ const Occurrence = ({ Mode }) => {
   };
 
   const handleDataChangeCheckbox = (dataarray, columnname) => {
-    console.log(dataarray);
+    // console.log(dataarray);
     setFormData({ ...FormData, [columnname]: dataarray });
   };
 
@@ -85,6 +90,14 @@ const Occurrence = ({ Mode }) => {
       localStorage.setItem("FormData", JSON.stringify(FormData));
       setStage(Stage - 1);
     }
+  };
+  const FirstStage = () => {
+    localStorage.setItem("FormData", JSON.stringify(FormData));
+    setStage(1);
+  };
+  const LastStage = (MaxStage) => {
+      localStorage.setItem("FormData", JSON.stringify(FormData));
+      setStage(MaxStage);
   };
   const ToStage = (toval, MaxStage) => {
     if (toval <= MaxStage && toval > 0) {
@@ -110,7 +123,7 @@ const Occurrence = ({ Mode }) => {
         aff: UserData.affiliation,
         faction: UserData.faction,
         dep: UserData.dep,
-        deptrelate: "",
+        // deptrelate: "",
         createby: UserData.userid,
       })
   }
@@ -136,12 +149,58 @@ const Occurrence = ({ Mode }) => {
       aff: UserData.affiliation,
       faction: UserData.faction,
       dep: UserData.dep,
-      deptrelate: "",
+      // deptrelate: "",
       createby: UserData.userid,
     });
   };
 
+  const keydata = [
+     {key:'reportlocation',name:"สถานที่เกิดเหตุ",location:2},
+     {key:'occurrencedate',name:"วัน-เวลาที่เกิดเหตุการณ์",location:2},
+     {key:'deptrelate',name:"หน่วยงานที่เกี่ยวข้อง",location:2},
+     {key:'reporttype',name:"ประเภทอุบัติการณ์",location:3},
+     {key:'type',name:"ประเภท",location:2},
+     {key:'level',name:"ระดับความเสี่ยง",location:3},
+     {key:'description',name:"บรรยายสรุปเหตุการณ์ที่เกิดขึ้น",location:12},
+     {key:'effectremark',name:"ระบุความเสียหายที่เกิดขึ้น",location:12},
+    //  {key:'formstatus',name:"formstatus",location:12},
+    //  {key:'createby',name:"createby",location:12},
+  ];
+
+  // const checkSubmit = async (dataObject, keyData) => {
+  //   const missingKeys = keyData.filter(({ key }) => !(key in dataObject));
+  //   if (missingKeys.length === 0) {
+  //     return true;
+  //   } else {
+  //     setAlert(true);
+  //     console.log("Missing keys:", missingKeys.map(obj => obj.key));
+  //     return false;
+  //   }
+  // };
+  
+  // const allKeysExist = checkSubmit(dataobject2, keydata);
+
   const handleSubmit = async () => {
+    console.log("handleSubmit");
+    
+    
+    // Assuming keydata is defined elsewhere
+    const missingKeys = keydata.filter(({ key }) => {
+      if (key === "deptrelate") {
+        return !(FormData[key] && FormData[key].length);
+      } else {
+        return !(key in FormData);
+      }
+    });
+    setAlertBorder(missingKeys);
+    console.log("missingKeys", missingKeys);
+  
+    if (missingKeys.length === 0) {
+      // All keys exist, proceed with form submission
+      console.log("All keys exist. Submitting form data...");
+      // Your form submission logic here
+
+      // Assuming FormData is your form state
     const submitFormData = {
       ...FormData,
       deptrelate: JSON.stringify(FormData.deptrelate),
@@ -153,25 +212,64 @@ const Occurrence = ({ Mode }) => {
       service: JSON.stringify(FormData.service),
       utility: JSON.stringify(FormData.utility),
     };
-    try {
-      const response = await axios.post(
-        `${apiUrl}/occurrences`,
-        submitFormData,
-        { ...config }
-      );
-      const responseStatus = response.status;
+    console.log("submitFormData",submitFormData)
 
-      if (responseStatus === 200 || responseStatus === 201) {
-        navigate("/occurrence");
-      }
-    } catch (err) {
-      console.error(err);
+    } else {
+      // Some keys are missing, handle accordingly
+      setStage(missingKeys[0].location)
+      setAlertText("ไม่สามารถบันทึกข้อมูลได้ โปรดระบุ '"+missingKeys[0].name+"'");
+      console.log("Some keys are missing.Cannot submit form data.", missingKeys[0].key);
+      setAlert(true); // Trigger Snackbar alert
     }
   };
+  
+
+  
+  // const handleSubmit = async () => {
+  //   console.log("handleSubmit");
+  //   const submitFormData = {
+  //     ...FormData,
+  //     deptrelate: JSON.stringify(FormData.deptrelate),
+  //     equipment: JSON.stringify(FormData.equipment),
+  //     management: JSON.stringify(FormData.management),
+  //     patientcare: JSON.stringify(FormData.patientcare),
+  //     patientsupport: JSON.stringify(FormData.patientsupport),
+  //     safety: JSON.stringify(FormData.safety),
+  //     service: JSON.stringify(FormData.service),
+  //     utility: JSON.stringify(FormData.utility),
+  //   };
+
+  //   const missingKeys = keydata.filter(({ key }) => !(key in submitFormData));
+  //   console.log("missingKeys",missingKeys);
+
+  // };
+    // if(allKeysExist){
+    //   console.log("submit");
+    // } else {
+      // setAlertText("โปรดตรวจสอบ")
+      // setAlert(true);
+    // }
+    // try {
+    //   const response = await axios.post(
+    //     `${apiUrl}/occurrences`,
+    //     submitFormData,
+    //     { ...config }
+    //   );
+    //   const responseStatus = response.status;
+
+    //   if (responseStatus === 200 || responseStatus === 201) {
+    //     navigate("/occurrence");
+    //   }
+    // } catch (err) {
+    //   console.error(err);
+    // }
+  // };
 
   return (
     <>
       {console.log("FormData", FormData)}
+      {/* {console.log("allKeysExist", allKeysExist)} */}
+      <AlertBar open={Alert} setOpen={setAlert} AlertType={AlertType} AlertText={AlertText}/>
       <OccurrenceStyle>
         <Box className="FormHeader">
           <span>บันทึกใบรายงานเหตุการณ์ (Occurrence Report)</span>
@@ -203,6 +301,7 @@ const Occurrence = ({ Mode }) => {
                 handleDateChange={handleDateChange}
                 handleDataChangeCheckbox={handleDataChangeCheckbox}
                 depoptiondata={departmentRaw}
+                missingKeys={AlertBorder}
               />
             </>
           )}
@@ -216,6 +315,7 @@ const Occurrence = ({ Mode }) => {
                 tocolumn="level"
                 handleDataChangeCheckbox={handleDataChangeCheckbox}
                 handleDataChange={handleDataChange}
+                missingKeys={AlertBorder}
               />
             </>
           )}
@@ -331,6 +431,8 @@ const Occurrence = ({ Mode }) => {
           MaxStage={12}
           PrevStage={PrevStage}
           NextStage={NextStage}
+          FirstStage={FirstStage}
+          LastStage={LastStage}
           ToStage={ToStage}
           ClearData={ClearData}
         />

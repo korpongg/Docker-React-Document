@@ -6,7 +6,7 @@ const User = require("../models/User");
 const formatDate = (date) => date ? date.toISOString().replace("T", " ").replace("Z", "") : null;
 
 // Create a new report log
-exports.createReportLog = async (req, res) => {
+exports.createEventtLog = async (req, res) => {
   try {
     const { reportid, acceptAt, responsedate, ...otherData } = req.body;
     const formattedAcceptDate = formatDate(acceptAt ? new Date(acceptAt) : null);
@@ -35,7 +35,7 @@ exports.createReportLog = async (req, res) => {
 };
 
 // Get all report logs
-exports.getAllReportLogs = async (req, res) => {
+exports.getAllEventLogs = async (req, res) => {
   try {
     const events = await Events.findAll({
       include: [
@@ -68,43 +68,111 @@ exports.getAllReportLogs = async (req, res) => {
 };
 
 // Get a single report log by ID
-exports.getReportLogById = async (req, res) => {
+exports.getEventLogById = async (req, res) => {
   try {
-    const events = await Events.findAll({
-      where: { reportid: req.params.id },
-      include: [
-        { model: User, attributes: ['name', 'lastname'], as: 'CreateBy' },
-        { model: User, attributes: ['name', 'lastname'], as: 'AcceptBy' }
-      ],
-      order: [["createAt", "DESC"]],
+    const reportId = req.params.id;
+
+    const query = `
+      SELECT e.id,
+      e.reportid,
+      e.code,
+      o.hn,
+      o.occurrencedate,
+      e.deptrelate,
+      d.name as depname,
+      CASE WHEN o.reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END AS reporttypename,
+      o.level,
+      o.description,
+      e.comment,
+      e.summarydetail,
+      o.activefailure,
+      e.urgenttype,
+      e.status,
+      e.createby,
+      e.createAt,
+      e.acceptby,
+      e.acceptAt,
+      e.responsedate
+      FROM [occurrence].[dbo].[event_logs] e
+      LEFT JOIN [occurrence].[dbo].[occurrences] o ON o.reportid = e.reportid
+      LEFT JOIN [occurrence].[dbo].[department] d ON d.id = e.deptrelate
+      WHERE e.reportid = :reportId
+      ORDER BY e.createAt DESC
+    `;
+
+    const events = await sequelize.query(query, {
+      replacements: { reportId: reportId },
+      type: sequelize.QueryTypes.SELECT,
     });
 
     if (!events || events.length === 0) {
-      res.status(404).json({ message: "Event log not found" });
-      return;
+      return res.status(404).json({ message: "Event log not found" });
     }
-    
-    // Map the events to include "createname" field
-    const mappedEvents = events.map(event => {
-      const createdBy = event.CreateBy;
-      const createname = createdBy ? `${createdBy.name} ${createdBy.lastname}` : null;
-      const acceptBy = event.AcceptBy;
-      const acceptname = acceptBy ? `${acceptBy.name} ${acceptBy.lastname}` : null;
+
+    // Debugging: Log the events fetched from the query
+    // console.log("Fetched events:", events);
+
+    // Optionally, map events to include createname and acceptname
+    const mappedEvents = await Promise.all(events.map(async event => {
+      // Debugging: Log the createby and acceptby IDs
+      // console.log("Processing event:", event.id, "createby:", event.createby, "acceptby:", event.acceptby);
+
+      const createdByUser = event.createby ? await User.findOne({ where: { userid: event.createby }, attributes: ['name', 'lastname'] }) : null;
+      const acceptedByUser = event.acceptby ? await User.findOne({ where: { userid: event.acceptby }, attributes: ['name', 'lastname'] }) : null;
+
+      // Debugging: Log the fetched user details
+      // console.log("Created by user:", createdByUser);
+      // console.log("Accepted by user:", acceptedByUser);
+
       return {
-        ...event.toJSON(),
-        createname: createname,
-        acceptname: acceptname
+        ...event,
+        createname: createdByUser ? `${createdByUser.name} ${createdByUser.lastname}` : null,
+        acceptname: acceptedByUser ? `${acceptedByUser.name} ${acceptedByUser.lastname}` : null,
       };
-    }).map(({ CreateBy, AcceptBy, ...event }) => event); // Exclude CreateBy key from the result
+    }));
 
     res.status(200).json(mappedEvents);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+// exports.getEventLogById = async (req, res) => {
+//   try {
+//     const events = await Events.findAll({
+//       where: { reportid: req.params.id },
+//       include: [
+//         { model: User, attributes: ['name', 'lastname'], as: 'CreateBy' },
+//         { model: User, attributes: ['name', 'lastname'], as: 'AcceptBy' }
+//       ],
+//       order: [["createAt", "DESC"]],
+//     });
+
+//     if (!events || events.length === 0) {
+//       res.status(404).json({ message: "Event log not found" });
+//       return;
+//     }
+    
+//     // Map the events to include "createname" field
+//     const mappedEvents = events.map(event => {
+//       const createdBy = event.CreateBy;
+//       const createname = createdBy ? `${createdBy.name} ${createdBy.lastname}` : null;
+//       const acceptBy = event.AcceptBy;
+//       const acceptname = acceptBy ? `${acceptBy.name} ${acceptBy.lastname}` : null;
+//       return {
+//         ...event.toJSON(),
+//         createname: createname,
+//         acceptname: acceptname
+//       };
+//     }).map(({ CreateBy, AcceptBy, ...event }) => event); // Exclude CreateBy key from the result
+
+//     res.status(200).json(mappedEvents);
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
 
 // Update a report log by ID
-exports.updateReportLog = async (req, res) => {
+exports.updateEventLog = async (req, res) => {
   try {
     const events = await Events.findByPk(req.params.id);
     if (!events) {
@@ -125,7 +193,7 @@ exports.updateReportLog = async (req, res) => {
 };
 
 // Delete a report log by ID
-exports.deleteReportLog = async (req, res) => {
+exports.deleteEventLog = async (req, res) => {
   try {
     const events = await Events.findByPk(req.params.id);
     if (!events) {
