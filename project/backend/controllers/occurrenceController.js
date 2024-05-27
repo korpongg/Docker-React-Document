@@ -60,21 +60,33 @@ exports.createOccurrence = async (req, res) => {
 // Get all occurrences
 exports.getAllOccurrences = async (req, res) => {
   try {
-    const occurrences = await Occurrences.findAll({
-      include: [
-        { model: User, attributes: ['name', 'lastname'], as: 'CreateBy' },
-        { model: User, attributes: ['name', 'lastname'], as: 'AcceptBy' },
-        { model: User, attributes: ['name', 'lastname'], as: 'UpdateBy' }
-      ],
-      attributes: {
-        include: [
-          [sequelize.literal("CASE WHEN reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END"), "reporttypename"],
-        ]
-      },
-    });
-    // res.status(200).json(occurrences);
+    // First query to get occurrences and user details
+    const occQuery = `
+    SELECT occ.*,
+      CONCAT(u_request.title, ' ', u_request.name, ' ', u_request.lastname) AS requestby,
+      u_request.dep AS requestdep,
+      u_request.faction AS requestfac,
+      u_request.affiliation AS requestaff,
+      CONCAT(u_update.title, ' ', u_update.name, ' ', u_update.lastname) AS updateby,
+      u_update.dep AS updatedep,
+      u_update.faction AS updatefac,
+      u_update.affiliation AS updateaff,
+      CONCAT(u_accept.title, ' ', u_accept.name, ' ', u_accept.lastname) AS acceptby,
+      u_accept.dep AS acceptdep,
+      u_accept.faction AS acceptfac,
+      u_accept.affiliation AS acceptaff,
+      CASE WHEN occ.reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END AS reporttypename
+    FROM [occurrence].[dbo].[occurrences] occ
+    LEFT JOIN [occurrence].[dbo].[user] AS u_request ON u_request.userid = occ.createby
+    LEFT JOIN [occurrence].[dbo].[user] AS u_update ON u_update.userid = occ.updateby
+    LEFT JOIN [occurrence].[dbo].[user] AS u_accept ON u_accept.userid = occ.acceptby;
+    `;
 
-    if (occurrences.length > 0) {
+    const results = await sequelize.query(occQuery, {
+      type: sequelize.QueryTypes.SELECT
+    });
+
+    if (results.length > 0) {
       // Fetch department and affiliation data using raw query
       const deptAffData = await sequelize.query(
         `SELECT d.id, d.name AS DepName, a.id AS AffID, a.name AS AffName
@@ -84,15 +96,12 @@ exports.getAllOccurrences = async (req, res) => {
       );
 
       // Use map to parse JSON fields before sending the response
-      const parsedResults = occurrences.map(occurrence => {
-        const occurrenceJSON = occurrence.toJSON();
-        // const deptRelateIds = JSON.parse(occurrenceJSON.deptrelate || '[]');
-
+      const parsedResults = results.map(occurrence => {
         let deptRelateIds = [];
 
         try {
           // Parse deptrelate field assuming it's a JSON array of strings
-          deptRelateIds = JSON.parse(occurrenceJSON.deptrelate || '[]').map(id => parseInt(id, 10));
+          deptRelateIds = JSON.parse(occurrence.deptrelate || '[]').map(id => parseInt(id, 10));
         } catch (e) {
           // Handle parsing error if any
           console.error("Error parsing deptrelate:", e);
@@ -103,32 +112,23 @@ exports.getAllOccurrences = async (req, res) => {
           return deptAffData.find(dept => dept.id === id) || {};
         });
 
-        const createdBy = occurrence.CreateBy;
-        const createname = createdBy ? `${createdBy.name} ${createdBy.lastname}` : null;
-        const acceptBy = occurrence.AcceptBy;
-        const acceptname = acceptBy ? `${acceptBy.name} ${acceptBy.lastname}` : null;
-        const updateBy = occurrence.UpdateBy;
-        const updatename = updateBy ? `${updateBy.name} ${updateBy.lastname}` : null;
         return {
-          ...occurrenceJSON,
-          patientcare: JSON.parse(occurrenceJSON.patientcare || '[]'),
-          patientsupport: JSON.parse(occurrenceJSON.patientsupport || '[]'),
-          utility: JSON.parse(occurrenceJSON.utility || '[]'),
-          equipment: JSON.parse(occurrenceJSON.equipment || '[]'),
-          safety: JSON.parse(occurrenceJSON.safety || '[]'),
-          service: JSON.parse(occurrenceJSON.service || '[]'),
-          management: JSON.parse(occurrenceJSON.management || '[]'),
-          createname: createname,
-          acceptname: acceptname,
-          updatename: updatename,
+          ...occurrence,
+          deptrelate: JSON.parse(occurrence.deptrelate || '[]'),
+          patientcare: JSON.parse(occurrence.patientcare || '[]'),
+          patientsupport: JSON.parse(occurrence.patientsupport || '[]'),
+          utility: JSON.parse(occurrence.utility || '[]'),
+          equipment: JSON.parse(occurrence.equipment || '[]'),
+          safety: JSON.parse(occurrence.safety || '[]'),
+          service: JSON.parse(occurrence.service || '[]'),
+          management: JSON.parse(occurrence.management || '[]'),
           deptAffInfo
         };
-      }).map(({ CreateBy, AcceptBy, UpdateBy, ...occurrence }) => occurrence);
+      });
 
-      res.status(200).json(parsedResults);
+      return res.status(200).json(parsedResults[0]);
     } else {
-      // No results found
-      return res.status(404).json({ error: "No data found" });
+      return res.status(404).json({ error: "Occurrence not found" });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -137,76 +137,85 @@ exports.getAllOccurrences = async (req, res) => {
 
 // Get a single occurrence by ID
 exports.getOccurrenceById = async (req, res) => {
+  if (!req?.params?.id) {
+    return res.status(400).json({ message: "id is required." });
+  }
+
+  const reportid = req?.params?.id;
+
   try {
-    const occurrence = await Occurrences.findByPk(req.params.id, {
-      include: [
-        { model: User, attributes: ['name', 'lastname'], as: 'CreateBy' },
-        { model: User, attributes: ['name', 'lastname'], as: 'AcceptBy' },
-        { model: User, attributes: ['name', 'lastname'], as: 'UpdateBy' }
-      ],
-      attributes: {
-        include: [
-          [sequelize.literal("CASE WHEN reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END"), "reporttypename"],
-        ]
-      },
+    // First query to get occurrences and user details
+    const occQuery = `
+    SELECT occ.*,
+      CONCAT(u_request.title, ' ', u_request.name, ' ', u_request.lastname) AS requestby,
+      u_request.dep AS requestdep,
+      u_request.faction AS requestfac,
+      u_request.affiliation AS requestaff,
+      CONCAT(u_update.title, ' ', u_update.name, ' ', u_update.lastname) AS updateby,
+      u_update.dep AS updatedep,
+      u_update.faction AS updatefac,
+      u_update.affiliation AS updateaff,
+      CONCAT(u_accept.title, ' ', u_accept.name, ' ', u_accept.lastname) AS acceptby,
+      u_accept.dep AS acceptdep,
+      u_accept.faction AS acceptfac,
+      u_accept.affiliation AS acceptaff,
+      CASE WHEN occ.reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END AS reporttypename
+    FROM [occurrence].[dbo].[occurrences] occ
+    LEFT JOIN [occurrence].[dbo].[user] AS u_request ON u_request.userid = occ.createby
+    LEFT JOIN [occurrence].[dbo].[user] AS u_update ON u_update.userid = occ.updateby
+    LEFT JOIN [occurrence].[dbo].[user] AS u_accept ON u_accept.userid = occ.acceptby
+    WHERE occ.id = :reportid;
+    `;
+
+    const results = await sequelize.query(occQuery, {
+      type: sequelize.QueryTypes.SELECT,
+      replacements: { reportid }
     });
-    if (!occurrence) {
+
+    if (results.length > 0) {
+      // Fetch department and affiliation data using raw query
+      const deptAffData = await sequelize.query(
+        `SELECT d.id, d.name AS DepName, a.id AS AffID, a.name AS AffName
+         FROM [occurrence].[dbo].[department] d
+         LEFT JOIN [occurrence].[dbo].[affiliation] a ON a.id = d.relateid`,
+        { type: sequelize.QueryTypes.SELECT }
+      );
+
+      // Use map to parse JSON fields before sending the response
+      const parsedResults = results.map(occurrence => {
+        let deptRelateIds = [];
+
+        try {
+          // Parse deptrelate field assuming it's a JSON array of strings
+          deptRelateIds = JSON.parse(occurrence.deptrelate || '[]').map(id => parseInt(id, 10));
+        } catch (e) {
+          // Handle parsing error if any
+          console.error("Error parsing deptrelate:", e);
+        }
+
+        // Map deptRelateIds to department and affiliation data
+        const deptAffInfo = deptRelateIds.map(id => {
+          return deptAffData.find(dept => dept.id === id) || {};
+        });
+
+        return {
+          ...occurrence,
+          deptrelate: JSON.parse(occurrence.deptrelate || '[]'),
+          patientcare: JSON.parse(occurrence.patientcare || '[]'),
+          patientsupport: JSON.parse(occurrence.patientsupport || '[]'),
+          utility: JSON.parse(occurrence.utility || '[]'),
+          equipment: JSON.parse(occurrence.equipment || '[]'),
+          safety: JSON.parse(occurrence.safety || '[]'),
+          service: JSON.parse(occurrence.service || '[]'),
+          management: JSON.parse(occurrence.management || '[]'),
+          deptAffInfo
+        };
+      });
+
+      return res.status(200).json(parsedResults[0]);
+    } else {
       return res.status(404).json({ error: "Occurrence not found" });
     }
-    // res.status(200).json(occurrence);
-    // Fetch department and affiliation data using raw query
-    const deptAffData = await sequelize.query(
-      `SELECT d.id, d.name AS DepName, a.id AS AffID, a.name AS AffName
-      FROM [occurrence].[dbo].[department] d
-      LEFT JOIN [occurrence].[dbo].[affiliation] a ON a.id = d.relateid`,
-      { type: sequelize.QueryTypes.SELECT }
-    );
-
-    const occurrenceJSON = occurrence.toJSON();
-    // const deptRelateIds = JSON.parse(occurrenceJSON.deptrelate || '[]');
-
-    let deptRelateIds = [];
-
-    try {
-      // Parse deptrelate field assuming it's a JSON array of strings
-      deptRelateIds = JSON.parse(occurrenceJSON.deptrelate || '[]').map(id => parseInt(id, 10));
-    } catch (e) {
-      // Handle parsing error if any
-      console.error("Error parsing deptrelate:", e);
-    }
-
-    // Map deptRelateIds to department and affiliation data
-    const deptAffInfo = deptRelateIds.map(id => {
-      return deptAffData.find(dept => dept.id === id) || {};
-    });
-
-    const createdBy = occurrence.CreateBy;
-    const createname = createdBy ? `${createdBy.name} ${createdBy.lastname}` : null;
-    const acceptBy = occurrence.AcceptBy;
-    const acceptname = acceptBy ? `${acceptBy.name} ${acceptBy.lastname}` : null;
-    const updateBy = occurrence.UpdateBy;
-    const updatename = updateBy ? `${updateBy.name} ${updateBy.lastname}` : null;
-    const parsedOccurrence = {
-      ...occurrenceJSON,
-      patientcare: JSON.parse(occurrenceJSON.patientcare || '[]'),
-      patientsupport: JSON.parse(occurrenceJSON.patientsupport || '[]'),
-      utility: JSON.parse(occurrenceJSON.utility || '[]'),
-      equipment: JSON.parse(occurrenceJSON.equipment || '[]'),
-      safety: JSON.parse(occurrenceJSON.safety || '[]'),
-      service: JSON.parse(occurrenceJSON.service || '[]'),
-      management: JSON.parse(occurrenceJSON.management || '[]'),
-      createname: createname,
-      acceptname: acceptname,
-      updatename: updatename,
-      deptAffInfo
-    };
-
-    // Exclude key from the result
-    delete parsedOccurrence.CreateBy;
-    delete parsedOccurrence.AcceptBy;
-    delete parsedOccurrence.UpdateBy;
-
-    res.status(200).json(parsedOccurrence);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -214,19 +223,19 @@ exports.getOccurrenceById = async (req, res) => {
 
 // Update an occurrence by ID
 exports.updateOccurrence = async (req, res) => {
-  if (!req?.body?.reportid) {
-    return res.status(400).json({ message: "reportid is required." });
+  if (!req?.body?.id) {
+    return res.status(400).json({ message: "id is required." });
   }
 
-  const reportid = req?.body?.reportid;
+  const id = req?.body?.id;
 
   try {
-    const occurrence = await Occurrences.findOne({ where: { reportid: reportid } });
+    const occurrence = await Occurrences.findOne({ where: { id: id } });
     // const [updated] = await Occurrences.update(req.body, {
     //   where: { id: req.params.id },
     // });
     if (!occurrence) {
-      return res.status(204).json({ message: `No Occurrences matches ID ${req.body.reportid}.` });
+      return res.status(204).json({ message: `No Occurrences matches ID ${req.body.id}.` });
     }
 
     // Check if req.body.occurrencedate is provided and parse it
@@ -280,8 +289,6 @@ exports.updateOccurrence = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
-
-// Update an occurrence by ID
 // exports.updateOccurrences = async (req, res) => {
 //   try {
 //     const [updated] = await Occurrences.update(req.body, {

@@ -44,22 +44,19 @@ const IndexPage = () => {
         setDashboard(dataCenter);
         setLoading(false);
       } else {
-        const filteredData = dataCenter.filter(item =>
-          item.deptAffInfo.some(dept => dept.AffName === userData.affiliation)
-        );
+        const filteredData = dataCenter.filter(item => item.requestaff === userData.affiliation);
         setDashboard(filteredData);
         setLoading(false);
       }
     } else {
-      const filteredData = dataCenter.filter(item =>
-        item.deptAffInfo.some(dept => dept.AffName === userData.affiliation && dept.DepName === userData.dep)
-      );
+      const filteredData = dataCenter.filter(item => item.requestaff === userData.affiliation && item.requestdep === userData.dep);
       setDashboard(filteredData);
       setLoading(false);
     }
   }, [dataCenter]);
 
   const handleAddItem = () => {
+    localStorage.removeItem("FormData");
     navigate(`/occurrence/form`);
   };
 
@@ -73,7 +70,7 @@ const IndexPage = () => {
   };
 
   const handleEditClick = (id, row) => {
-    console.log(row)
+    // console.log(row)
     navigate(`/occurrence/form/${id}`);
   };
 
@@ -82,6 +79,8 @@ const IndexPage = () => {
     setEventData([]);
     setDialogOpen(false);
   };
+
+  console.log(dashboard);
 
   return (
     <>

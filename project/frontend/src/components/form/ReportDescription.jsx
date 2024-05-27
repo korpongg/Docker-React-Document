@@ -11,7 +11,7 @@ const ReportDescription = ({data,setDataFunction}) => {
     <>
       <Box className="TopicHeader">บันทึกรายละเอียด</Box>
       <Box className="ContentBoxMain">
-        <TextField id="description" label="บรรยายสรุปเหตุการณ์ที่เกิดขึ้น" value={data?.description || ""} onChange={(e) => setDataFunction(e, "description")} variant="filled" multiline rows={6} sx={{marginBottom:1}}/>
+        <TextField id="description" label="บรรยายสรุปเหตุการณ์ (เกิดเหตุการณ์อะไร เกิดที่ไหน เกิดเมื่อไหร่ ใครคือผู้เกี่ยวข้อง เกี่ยวข้องอย่างไร)" value={data?.description || ""} onChange={(e) => setDataFunction(e, "description")} variant="filled" multiline rows={6} sx={{marginBottom:1}}/>
         <TextField id="effectremark" label="ระบุความเสียหายที่เกิดขึ้น" value={data?.effectremark || ""} onChange={(e) => setDataFunction(e, "effectremark")} variant="filled" multiline rows={3} sx={{marginBottom:1}}/>
       </Box>
     </>

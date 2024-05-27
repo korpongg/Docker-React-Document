@@ -458,6 +458,8 @@ export function formatDateTime_N7(dateString, type) {
 };
 
 export function getCurrentDate(date) {
+  // console.log(date);
+  // console.log(new Date(date));
   if(!date)
     {
       date = new Date(); 

@@ -8,13 +8,17 @@ const executeSQLQuery = async () => {
     SELECT occ.*,
       CONCAT(u_request.title, ' ', u_request.name, ' ', u_request.lastname) AS requestby,
       u_request.dep AS requestdep,
+      u_request.faction AS requestfac,
       u_request.affiliation AS requestaff,
       CONCAT(u_update.title, ' ', u_update.name, ' ', u_update.lastname) AS updateby,
       u_update.dep AS updatedep,
+      u_update.faction AS updatefac,
       u_update.affiliation AS updateaff,
       CONCAT(u_accept.title, ' ', u_accept.name, ' ', u_accept.lastname) AS acceptby,
       u_accept.dep AS acceptdep,
-      u_accept.affiliation AS acceptaff
+      u_accept.faction AS acceptfac,
+      u_accept.affiliation AS acceptaff,
+      CASE WHEN occ.reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END AS reporttypename
     FROM [occurrence].[dbo].[occurrences] occ
     LEFT JOIN [occurrence].[dbo].[user] AS u_request ON u_request.userid = occ.createby
     LEFT JOIN [occurrence].[dbo].[user] AS u_update ON u_update.userid = occ.updateby
@@ -52,6 +56,7 @@ const executeSQLQuery = async () => {
 
         return {
           ...occurrence,
+          deptrelate: JSON.parse(occurrence.deptrelate || '[]'),
           patientcare: JSON.parse(occurrence.patientcare || '[]'),
           patientsupport: JSON.parse(occurrence.patientsupport || '[]'),
           utility: JSON.parse(occurrence.utility || '[]'),

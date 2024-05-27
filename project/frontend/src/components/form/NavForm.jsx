@@ -16,7 +16,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import LastPageIcon from '@mui/icons-material/LastPage';
 
-const NavForm = ({submitfunction,Stage,MaxStage,FirstStage,LastStage,PrevStage,NextStage,ToStage}) => {
+const NavForm = ({Mode,submitfunction,handleSubmitEdit,Stage,MaxStage,FirstStage,LastStage,PrevStage,NextStage,ToStage}) => {
   const NavPage = [];
   for (let i = 0; i < MaxStage; i++) {
     NavPage.push(
@@ -53,8 +53,13 @@ const NavForm = ({submitfunction,Stage,MaxStage,FirstStage,LastStage,PrevStage,N
         </Tooltip>
       }
     </span>
-    {"Page "+Stage+" of "+MaxStage}
-    <ConfirmDialog submitfunction={submitfunction}/>
+    {Stage===MaxStage ? 
+    Mode!=="Show" &&(
+      (Mode==="Add" ?
+        <ConfirmDialog submitfunction={submitfunction} Mode={Mode}/> 
+        :
+        <ConfirmDialog submitfunction={handleSubmitEdit} Mode={Mode}/> ))
+    : "Page "+Stage+" of "+MaxStage}
     <span>
       {Stage===MaxStage ? 
         <Tooltip title="ไม่สามารถย้อนไปได้อีก">

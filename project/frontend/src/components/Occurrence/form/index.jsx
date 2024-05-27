@@ -5,7 +5,7 @@ import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
 import Tooltip from "@mui/material/Tooltip";
 import dayjs from "dayjs";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import GeneralInfo from "../../form/GeneralInfo";
 import ReportLog from "../../form/ReportLog";
@@ -31,6 +31,7 @@ import AlertBar from "../../form/AlertBar";
 import { getCurrentDate } from "../../Function";
 
 const Occurrence = ({ Mode }) => {
+  let { id } = useParams();
   const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
   const storedAuth = JSON.parse(localStorage.getItem("auth"));
   const config = {
@@ -40,23 +41,8 @@ const Occurrence = ({ Mode }) => {
   const UserData = JSON.parse(localStorage.getItem("userData"));
   const TempFormData = JSON.parse(localStorage.getItem("FormData")) || {};
   const [Stage, setStage] = useState(1);
-  const [FormData, setFormData] = useState({
-    // ...TempFormData,
-    // userreport: UserData.userid,
-    // hn: UserData.hn,
-    // an: UserData.an,
-    // age: "",
-    // gender: UserData.sex,
-    // reportdate: new Date(),
-    // occurrencedate: new Date(),
-    // type: "opd",
-    // reporttype: "0",
-    // aff: UserData.affiliation,
-    // faction: UserData.faction,
-    // dep: UserData.dep,
-    // deptrelate: "",
-    // createby: UserData.userid,
-  });
+  const [FormData, setFormData] = useState({});
+  const [EditFormData, setEditFormData] = useState({});
   const [Alert, setAlert] = useState(false);
   const [AlertType, setAlertType] = useState("error");
   const [AlertText, setAlertText] = useState("");
@@ -65,20 +51,69 @@ const Occurrence = ({ Mode }) => {
   const handleDataChange = (event, name) => {
     const Text = event.target.value;
     setFormData({ ...FormData, [name]: Text });
+    if(Mode==="Edit"){
+      setEditFormData({ ...EditFormData, [name]: Text });
+    }
   };
 
   const handleDateChange = (event, name) => {
     const AddDate = new Date(event.target.value);
     setFormData({ ...FormData, [name]: AddDate });
+    if(Mode==="Edit"){
+      setEditFormData({ ...EditFormData, [name]: AddDate });
+    }
   };
+
+  // Get Data For Mode Edit&Show 
+  const FetchOccurranceById = async () => {
+    console.log("FetchOccurranceById : "+id);
+    try {
+        const response = await axios.get(`${apiUrl}/occurrences/${id}`,config);
+        console.log("Fetched Data : ",response.data);
+
+        if (response.status === 200 || response.status === 201) 
+        {
+          // setFormData(response.data)   
+          setFormData({
+            ...response.data,
+            userreport: response.data.createby,
+            // hn: UserData.hn,
+            // an: UserData.an,
+            // age: "",
+            // gender: UserData.sex,
+            reportdate: new Date(response.data.createAt),
+            occurrencedate: new Date(response.data.occurrencedate),
+            aff: response.data.requestaff,
+            faction: response.data.requestfac,
+            dep: response.data.requestdep,
+            // type: "opd",
+            // reporttype: "0",
+            // aff: UserData.affiliation,
+            // faction: UserData.faction,
+            // dep: UserData.dep,
+            // // deptrelate: "",
+            // createby: UserData.userid,
+          })
+        }
+    } catch (error) {
+        console.error(`Error fetching user data: ${error.message}`);
+    }
+};
+
 
   const handleDataChangeCheckbox = (dataarray, columnname) => {
     // console.log(dataarray);
     setFormData({ ...FormData, [columnname]: dataarray });
+    if(Mode==="Edit"){
+      setEditFormData({ ...EditFormData, [columnname]: dataarray });
+    }
   };
 
   const handleDataSingleChange = (data, name) => {
     setFormData({ ...FormData, [name]: data });
+    if(Mode==="Edit"){
+      setEditFormData({ ...EditFormData, [name]: data });
+    }
   };
 
   const NextStage = () => {
@@ -113,8 +148,8 @@ const Occurrence = ({ Mode }) => {
         ...TempFormData,
         userreport: UserData.userid,
         hn: UserData.hn,
-        an: UserData.an,
-        age: "",
+        // an: UserData.an,
+        // age: "",
         gender: UserData.sex,
         reportdate: new Date(),
         occurrencedate: new Date(),
@@ -127,11 +162,15 @@ const Occurrence = ({ Mode }) => {
         createby: UserData.userid,
       })
   }
-  else if(Mode==="Edit"){
-    console.log("Edit Mode");
-  } else if(Mode==="Show"){
-    console.log("Show Mode");
-  }
+  else {
+    console.log("Edit/Show Mode : "+id);
+    FetchOccurranceById();
+    setEditFormData({id:parseInt(id,10)});
+    // console.log("EditFormData",EditFormData);
+  } 
+  // else if(Mode==="Show"){
+  //   console.log("Show Mode");
+  // }
   }, []);
 
   const ClearData = () => {
@@ -139,8 +178,8 @@ const Occurrence = ({ Mode }) => {
     setFormData({
       userreport: UserData.userid,
       hn: UserData.hn,
-      an: UserData.an,
-      age: "",
+      // an: UserData.an,
+      // age: "",
       gender: UserData.sex,
       reportdate: new Date(),
       occurrencedate: new Date(),
@@ -214,6 +253,27 @@ const Occurrence = ({ Mode }) => {
     };
     console.log("submitFormData",submitFormData)
 
+    try {
+        const response = await axios.post(
+          `${apiUrl}/occurrences`,
+          submitFormData,
+          { ...config }
+        );
+        const responseStatus = response.status;
+  
+        if (responseStatus === 200 || responseStatus === 201) {
+          navigate("/occurrence");
+        }
+      } catch (err) {
+        console.error(err);
+      }
+
+
+
+
+
+
+
     } else {
       // Some keys are missing, handle accordingly
       setStage(missingKeys[0].location)
@@ -223,6 +283,39 @@ const Occurrence = ({ Mode }) => {
     }
   };
   
+
+  const handleSubmitEdit = async () => {
+    console.log("handleSubmitEdit");
+    
+    const submitEditFormData = {
+      ...EditFormData,
+      deptrelate: JSON.stringify(FormData.deptrelate),
+      equipment: JSON.stringify(FormData.equipment),
+      management: JSON.stringify(FormData.management),
+      patientcare: JSON.stringify(FormData.patientcare),
+      patientsupport: JSON.stringify(FormData.patientsupport),
+      safety: JSON.stringify(FormData.safety),
+      service: JSON.stringify(FormData.service),
+      utility: JSON.stringify(FormData.utility),
+    };
+    console.log("submitEditFormData",submitEditFormData)
+
+    try {
+        const response = await axios.put(
+          `${apiUrl}/occurrences`,
+          submitEditFormData,
+          { ...config }
+        );
+        const responseStatus = response.status;
+  
+        if (responseStatus === 200 || responseStatus === 201) {
+          navigate("/occurrence");
+        }
+      } catch (err) {
+        console.error(err);
+      }
+
+  };
 
   
   // const handleSubmit = async () => {
@@ -268,11 +361,15 @@ const Occurrence = ({ Mode }) => {
   return (
     <>
       {console.log("FormData", FormData)}
+      {console.log("EditFormData", EditFormData)}
       {/* {console.log("allKeysExist", allKeysExist)} */}
       <AlertBar open={Alert} setOpen={setAlert} AlertType={AlertType} AlertText={AlertText}/>
       <OccurrenceStyle>
         <Box className="FormHeader">
-          <span>บันทึกใบรายงานเหตุการณ์ (Occurrence Report)</span>
+        {Mode==="Add" && <span>บันทึกใบรายงานเหตุการณ์ (Occurrence Report)</span>}
+        {Mode==="Edit" && <span>แก้ไขใบรายงานเหตุการณ์ (Occurrence Report)</span>}
+        {Mode==="Show" && <span>ใบรายงานเหตุการณ์ (Occurrence Report)</span>}
+          
           <span>
             <Tooltip title="ล้างข้อมูลทั้งหมด">
               <IconButton aria-label="clear" onClick={ClearData}>
@@ -426,7 +523,9 @@ const Occurrence = ({ Mode }) => {
         </Box>
 
         <NavForm
+          Mode={Mode}
           submitfunction={handleSubmit}
+          handleSubmitEdit={handleSubmitEdit}
           Stage={Stage}
           MaxStage={12}
           PrevStage={PrevStage}

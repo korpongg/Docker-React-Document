@@ -7,7 +7,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
-export default function ConfirmDialog({submitfunction}) {
+export default function ConfirmDialog({Mode,submitfunction}) {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -21,7 +21,7 @@ export default function ConfirmDialog({submitfunction}) {
   return (
     <React.Fragment>
       <Button sx={{fontSize:22,width:180,p:0.25}} variant="contained" color="success" onClick={handleClickOpen}>
-        บันทึก
+        {Mode==="Add"?"บันทึก":"บันทึกการแก้ไข้"}
       </Button>
       <Dialog
         open={open}

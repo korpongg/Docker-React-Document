@@ -30,8 +30,6 @@ const ReportLog = ({data,setDataFunction,handleDateChange,handleDataChangeCheckb
               required
               data={data} 
               datacolumn="deptrelate"
-              // optionsdata={depoptiondata} //
-              // optioncolumn="faction"
               handleDataChangeCheckbox={handleDataChangeCheckbox}
               label="หน่วยงานที่เกี่ยวข้อง"
               />
