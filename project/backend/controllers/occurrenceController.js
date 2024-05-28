@@ -1,6 +1,7 @@
 const sequelize = require("../config/dbConn").sequelize;
 const Occurrences = require("../models/Occurrences");
 const User = require("../models/User");
+const { executeAndStoreQueryResult } = require('../services/broadcastService');
 
 // Create a new occurrence
 exports.createOccurrence = async (req, res) => {
@@ -50,6 +51,8 @@ exports.createOccurrence = async (req, res) => {
       createAt: sequelize.literal("CURRENT_TIMESTAMP"),
       reportid: reportId, // Assign the generated reportId
     });
+
+    executeAndStoreQueryResult();
     
     res.status(201).json(result);
   } catch (error) {
@@ -79,7 +82,8 @@ exports.getAllOccurrences = async (req, res) => {
     FROM [occurrence].[dbo].[occurrences] occ
     LEFT JOIN [occurrence].[dbo].[user] AS u_request ON u_request.userid = occ.createby
     LEFT JOIN [occurrence].[dbo].[user] AS u_update ON u_update.userid = occ.updateby
-    LEFT JOIN [occurrence].[dbo].[user] AS u_accept ON u_accept.userid = occ.acceptby;
+    LEFT JOIN [occurrence].[dbo].[user] AS u_accept ON u_accept.userid = occ.acceptby
+    ORDER BY CASE WHEN occ.formstatus = '1' THEN 0 ELSE 1 END;
     `;
 
     const results = await sequelize.query(occQuery, {
@@ -126,7 +130,7 @@ exports.getAllOccurrences = async (req, res) => {
         };
       });
 
-      return res.status(200).json(parsedResults[0]);
+      return res.status(200).json(parsedResults);
     } else {
       return res.status(404).json({ error: "Occurrence not found" });
     }
@@ -279,6 +283,9 @@ exports.updateOccurrence = async (req, res) => {
     console.log(occurrence.toJSON());
 
     const result = await occurrence.save();
+
+    executeAndStoreQueryResult();
+
     // Additional logging after saving
     console.log("After saving Occurrences:");
     console.log(result.toJSON());
@@ -306,15 +313,33 @@ exports.updateOccurrence = async (req, res) => {
 
 // Delete an occurrence by ID
 exports.deleteOccurrence = async (req, res) => {
+  const Id = req?.params?.id;
+  if (!Id) return res.status(400).json({ message: "Occurence ID required" });
+
   try {
-    const deleted = await Occurrences.destroy({
-      where: { id: req.params.id },
-    });
-    if (!deleted) {
-      return res.status(404).json({ error: "Occurrence not found" });
+    const occ = await Occurrences.findOne({ where: { id: Id, deleteAt: null } });
+    if (!occ) {
+      return res.status(204).json({ message: `Occurence ID ${Id} not found` });
     }
-    res.status(204).send();
+    occ.deleteAt = sequelize.fn('GETDATE');
+    occ.formstatus = "3";
+    await occ.save();
+    executeAndStoreQueryResult();
+    res.status(201).json({ message: `Occurence ID ${Id} deleted successfully` });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+// exports.deleteOccurrence = async (req, res) => {
+//   try {
+//     const deleted = await Occurrences.destroy({
+//       where: { id: req.params.id },
+//     });
+//     if (!deleted) {
+//       return res.status(404).json({ error: "Occurrence not found" });
+//     }
+//     res.status(204).send();
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// };

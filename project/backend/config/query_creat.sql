@@ -206,6 +206,7 @@ CREATE TABLE [event_logs](
 	[createAt] [datetime] NOT NULL DEFAULT GETDATE(),	-- วันที่สร้าง
 	[acceptby] [varchar](20) NULL,						-- คนรับเรื่อง อัพเดท comment
 	[acceptAt] [datetime] NULL,							-- วันที่รับเรื่อง อัพเดท comment
+	[repeatAt] [datetime] NULL,							-- วันที่ทบทวนซ้ำ
 	[responsedate] [datetime] NULL,						-- วันที่รับคืน (ยังไม่มีการอัพเดทข้อมูลในส่วนนี้)
 );
 

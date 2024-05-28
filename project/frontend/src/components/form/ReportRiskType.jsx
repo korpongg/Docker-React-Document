@@ -29,6 +29,33 @@ const ReportRiskType = ({
     <>
       <ReportTypeStyle>        
         <Box className="TopicHeader">ประเภทอุบัติการณ์</Box>
+        <div className="ContentRow">
+
+              <RadioGroup
+                sx={{ p: 1 }}
+                row
+                id="type"
+                aria-labelledby="type"
+                defaultValue="opd"
+                name="type"
+                onChange={(e) => setDataFunction(e, "type")}
+                value={data?.type || "opd"}
+              >
+                <FormControlLabel
+                  sx={{ p: 1 }}
+                  value="opd"
+                  control={<Radio />}
+                  label="opd"
+                />
+                <FormControlLabel
+                  sx={{ p: 1 }}
+                  value="ipd"
+                  control={<Radio />}
+                  label="ipd"
+                />
+              </RadioGroup>
+
+            </div>
         <RadioGroup
           sx={{ p: 1 }}
           row
@@ -52,6 +79,7 @@ const ReportRiskType = ({
             label="Clinical Risk"
           />
         </RadioGroup>
+        
         {/* <Box className={missingKeys.some(item => item.key === 'deptrelate') ? "SETERROR":"FormInputBorder" }> */}
 {/* test */}
         {data?.reporttype==="0" && 

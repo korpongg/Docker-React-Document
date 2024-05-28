@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useWebSocket } from '../../../context/WebSocketContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 import Box from "@mui/material/Box";
 import Link from "@mui/material/Link";
 
@@ -69,9 +70,41 @@ const IndexPage = () => {
     setDialogOpen(true);
   };
 
-  const handleEditClick = (id, row) => {
-    // console.log(row)
+  const handleEditClick = (id, data) => {
+    // console.log(data)
     navigate(`/occurrence/form/${id}`);
+  };
+
+  const handleDeleteClick = async (id) => {
+    const result = await Swal.fire({
+      title: 'ยืนยันยกเลิกรายการ?',
+      text: "คุณจะไม่สามารถย้อนกลับสิ่งนี้ได้!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'ยืนยัน',
+      cancelButtonText: 'ปิด'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const response = await axios.delete(`${apiUrl}/occurrences/${id}`, config);
+        if (response.status === 200 || response.status === 201)
+          Swal.fire(
+            'สำเร็จ!',
+            'ยกเลิกรายการเรียบร้อย.',
+            'success'
+          );
+      } catch (error) {
+        console.error("ไม่สามารถทำการยกเลิกรายการได้:", error);
+        Swal.fire(
+          'พบข้อผิดพลาด!',
+          'ไม่สามารถทำการยกเลิกรายการได้, กรุณาลองอีกครั้ง.',
+          'error'
+        );
+      }
+    }
   };
 
   const handleCloseDialog = () => {
@@ -79,8 +112,6 @@ const IndexPage = () => {
     setEventData([]);
     setDialogOpen(false);
   };
-
-  console.log(dashboard);
 
   return (
     <>
@@ -94,12 +125,14 @@ const IndexPage = () => {
           handleViewClick={handleViewClick}
           handleTranfClick={handleTranfClick}
           handleEditClick={handleEditClick}
+          handleDeleteClick={handleDeleteClick}
           loading={loading}
         />
 
         <TranferDialog
           config={config}
           rowData={rowData}
+          isAdmin={isAdmin}
           eventData={eventData}
           setEventData={setEventData}
           isDialogOpen={isDialogOpen}

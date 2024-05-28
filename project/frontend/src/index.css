@@ -122,3 +122,87 @@ div:where(.swal2-icon) {
 .swal2-icon-content {
   font-size: 2.75em;
 }
+
+
+.ReportViewStyle {
+  color: red;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+  margin: 0;
+  font-size: 20px;
+}
+
+.ReportViewHeader {
+  font-size: 20px;
+}
+
+.ReportViewContainer {
+  display: flex;
+  width: 900px;
+  /* width: 100%; */
+}
+.ReportViewTable_Row{
+ display: flex;
+ flex-direction: row;
+ width: 100%;
+}
+.ReportViewTable {
+  border: 1px solid red;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+}
+
+.ReportViewTable span {
+  border: 1px solid red;
+  padding: 5px;
+  text-align: left;
+  display: flex;
+  /* white-space:unset;  */
+  /* height: fit-content; */
+  /* overflow: hidden;  */
+  text-overflow: ellipsis;
+  /* border: 1px solid red; */
+  /* width: 100px; Added missing semicolon */
+  /* display: flex; */
+  flex-wrap: wrap;
+  word-break: break-word; /* Ensures long words break to fit within the container */
+  overflow: hidden; /* Hides any overflowing content */
+
+}
+
+.ReportViewTable_Full {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid blue;
+  width: 100%;
+}
+
+.ReportViewTable_Topic {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid blue;
+  width: 40%;
+}
+
+.ReportViewTable_Content {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid blue;
+  width: 60%;
+}
+
+
+
+.ReviewTable {
+  border: 1px solid red;
+  width: 100px; /* Added missing semicolon */
+  display: flex;
+  flex-wrap: wrap;
+  word-break: break-word; /* Ensures long words break to fit within the container */
+  overflow: hidden; /* Hides any overflowing content */
+}

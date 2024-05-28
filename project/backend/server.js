@@ -1,10 +1,10 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
-const http = require("http"); // Import the 'http' module
-const path = require("path");
+const path = require('path');
+const cors = require('cors');
+const http = require('http');
 const errorHandler = require("./middleware/errorHandler");
-const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const credentials = require("./middleware/credentials");
 const { sequelize, connectDB } = require("./config/dbConn");
@@ -14,21 +14,28 @@ const { v4: uuidv4 } = require("uuid");
 
 connectDB();
 
+// custom middleware logger
+//app.use(logger);
+
 // Handle options credentials check - before CORS!
 // and fetch cookies credentials requirement
 app.use(credentials);
 
-// Enable CORS for all routes
+// Cross Origin Resource Sharing
+//app.use(cors(corsOptions));
 app.use(cors());
 
-// Middleware to parse JSON request bodies
+// built-in middleware to handle urlencoded form data
+app.use(express.urlencoded({ extended: false }));
+
+// built-in middleware for json 
 app.use(express.json());
 
 //middleware for cookies
 app.use(cookieParser());
 
-// Define other routes and middleware as needed
-app.use("/api/", express.static(path.join(__dirname, "/public")));
+//serve static files
+app.use('/api/', express.static(path.join(__dirname, '/public')));
 
 // Main routes
 app.use("/api/", require("./routes/root"));
@@ -43,19 +50,6 @@ app.use("/api/factions", require("./routes/api/factions"));
 app.use("/api/departments", require("./routes/api/departments"));
 app.use("/api/occurrences", require("./routes/api/occurrences"));
 app.use("/api/events", require("./routes/api/events"));
-
-app.all("*", (req, res) => {
-  res.status(404);
-  if (req.accepts("html")) {
-    res.sendFile(path.join(__dirname, "views", "404.html"));
-  } else if (req.accepts("json")) {
-    res.json({ error: "404 Not Found" });
-  } else {
-    res.type("txt").send("404 Not Found");
-  }
-});
-
-app.use(errorHandler);
 
 const { WebSocketServer } = require("ws");
 const WebSocket = require("ws");
@@ -74,17 +68,33 @@ server.listen(PORT, () => {
 //BoardCast Initialize the count of connected clients
 let connectedClientsCount = 0;
 
+let globalDep = null; // Global variable
+
 // Function to handle new client connections
 wsServer.on("connection", function (connection, request) {
   const userId = uuidv4();
-  const userIP =
-    request.headers["x-forwarded-for"] || request.connection.remoteAddress;
-  console.log(
-    `Received a new connection from user:${userId} With IP:${userIP}.`
-  );
+  const userIP = request.headers["x-forwarded-for"] || request.connection.remoteAddress;
+  console.log(`Received a new connection from user:${userId} With IP:${userIP}.`);
   addClient(userId, connection);
-  executeAndStoreQueryResult();
   connectedClientsCount++; // Increment the count
+
+  connection.on("message", async (message) => {
+    // Log the received message
+    try {
+      const data = JSON.parse(message);
+      console.log("Received message:", data);
+      // Handle the cid parameter sent from the client
+
+      if (data.dep) {
+        globalDep = data.dep; // Store global variable
+        await executeAndStoreQueryResult(globalDep);
+      } else {
+        await executeAndStoreQueryResult();
+      }
+    } catch (error) {
+      console.error("Error processing message:", error);
+    }
+  });
 
   connection.on("close", () => {
     console.log(`user:${userId} With IP:${userIP} disconnected.`);
@@ -102,16 +112,12 @@ global.resetInterval = () => {
   clearInterval(global.intervalId);
 
   global.intervalId = setInterval(async () => {
-    if (connectedClientsCount > 0) {
+    if (connectedClientsCount > 0 && globalDep) {
       try {
         // Get the current date and time
         const currentTime = new Date();
-        //executeSQLQueryUpdateStaff();
-        console.log(
-          `..........Start Do interval......... At`,
-          currentTime.toLocaleString("en-GB", { hour12: false })
-        );
-        await executeAndStoreQueryResult();
+        console.log(`..........Start Do interval......... At`, currentTime.toLocaleString("en-GB", { hour12: false }));
+        await executeAndStoreQueryResult(globalDep);
       } catch (error) {
         console.error("Error during periodic execution:", error);
       }

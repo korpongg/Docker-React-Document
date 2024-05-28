@@ -1,18 +1,43 @@
 const { broadcastMessage } = require("./websocketManager");
-const { executeSQLQuery } = require("../controllers/broadcastController"); // Import executeSQLQuery
+const { executeSQLQuery, executeSQLQueryEvent } = require("../controllers/broadcastController"); // Import executeSQLQuery
 
-async function executeAndStoreQueryResult() {
+// Variable to indicate whether broadcasting is in progress
+global.isExecuting = false;
+
+async function executeAndStoreQueryResult(dep) {
   try {
     global.resetInterval();
 
-    const [queryResult] = await Promise.all([executeSQLQuery()]);
+    // Check if another execution is in progress
+    if (global.isExecuting) {
+      console.log("Another Broadcast is in progress. Skipping this execution.");
+      return;
+    }
+
+    // Set isExecuting to true to indicate that execution is in progress
+    global.isExecuting = true;
+
+    const [queryReport, queryEvent] = await Promise.all([
+      executeSQLQuery(),
+      executeSQLQueryEvent(dep)
+    ]);
+
+    const dataWithHeader = {
+      report_data: queryReport,
+      event_data: queryEvent,
+    };
 
     // Store the query result data
-    queryResultData = JSON.stringify(queryResult);
+    queryResultData = JSON.stringify(dataWithHeader);
 
     broadcastMessage(queryResultData);
+    
   } catch (error) {
     console.error("Error executing SQL query:", error);
+  } finally {
+    // Reset isExecuting to false to allow the next execution
+    global.isExecuting = false;
+    global.resetInterval();
   }
 }
 

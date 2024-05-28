@@ -22,39 +22,21 @@
   "subStatus": [
     {
       "id": 1,
-      "statusText": "อุบัติการณ์ใหม่",
+      "statusText": "ส่งทบทวน",
       "statusColor": "new",
       "color": "cadetblue"
     },
     {
       "id": 2,
-      "statusText": "ส่งทบทวน",
-      "statusColor": "repeat",
-      "color": "black"
-    },
-    {
-      "id": 3,
       "statusText": "ทบทวนแล้ว",
       "statusColor": "in-progress",
       "color": "orange"
     },
     {
-      "id": 4,
+      "id": 3,
       "statusText": "ทบทวนซ้ำ",
       "statusColor": "repeat",
       "color": "black"
-    },
-    {
-      "id": 5,
-      "statusText": "ปิดอุบัติการณ์",
-      "statusColor": "success",
-      "color": "green"
-    },
-    {
-      "id": 6,
-      "statusText": "ยกเลิก",
-      "statusColor": "cancel",
-      "color": "red"
     }
   ]
 }

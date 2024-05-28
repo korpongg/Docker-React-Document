@@ -58,6 +58,7 @@ function AutoCompleteText({ data, datacolumn, handleDataChangeCheckbox, label })
     <>
       <Autocomplete
         multiple
+        sx={{width:"860px",padding:"unset"}}
         options={departmentData}
         getOptionLabel={(option) => option.DepName}
         value={selectedDepartments}

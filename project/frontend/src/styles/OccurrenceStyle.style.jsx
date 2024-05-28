@@ -6,8 +6,8 @@ import { Dialog } from "@mui/material";
 export const OccurrenceStyle = styled(Box)`
   background:#ffffff;
   color:#000000;
-  height:88vh;
-  width:1000px;
+  // height:88vh;
+  width:960px;
   // padding:5px;
   display:flex;
   flex-direction:column;
@@ -20,7 +20,7 @@ export const OccurrenceStyle = styled(Box)`
     position: relative;
     width: 100%; 
     height: 100%; 
-    overflow:scroll;
+    // overflow:scroll;
     // border: 1px solid #000;
   }
   .FormHeader{
@@ -146,18 +146,21 @@ export const OccurrenceStyle = styled(Box)`
   .DatetimeInput{
     font: inherit;
     letter-spacing: inherit;
+    // width:50px;
     color: rgba(51, 51, 51, 0.87);
     padding: 4px 0 5px;
     border: 0;
-    // border-bottom: 1px solid rgb(118, 118, 118);
+    border:1px solid #a6a6a6;
+    // border: 1px solid rgb(118, 118, 118);
+    border-radius:3px;
     box-sizing: content-box;
-    background: #f1f1f1;
+    // background: #f1f1f1;
     height: 1.4375em;
     margin: 0;
     -webkit-tap-highlight-color: transparent;
     // display: block;
     // min-width: 0;
-    width: 250px;
+    width: 290px;
     -webkit-animation-name: mui-auto-fill-cancel;
     animation-name: mui-auto-fill-cancel;
     -webkit-animation-duration: 10ms;
@@ -173,14 +176,16 @@ export const OccurrenceStyle = styled(Box)`
     cursor:pointer;
 }
   .DatetimeInput:disabled{
-    background: unset;
-    cursor:unset;
+    // background: unset;
+    background: #f1f1f1
+    // cursor:pointer;
   }
   .DatetimeInput:hover{
     background :#f5f5f5;
   }
   .DatetimeInput:disabled:hover {
-    background: unset;
+    background: #f1f1f1;
+    cursor:unset;
 }
   .SubmitBTN{
     display:flex;
@@ -230,5 +235,133 @@ export const OccurrenceStyle = styled(Box)`
   .RadioBoxED{
     width:100%;
     height:100%;
+  }
+
+  .ReportViewStyle{
+    color:red;
+  }
+
+
+  .GeneralBox{
+    // border:1px solid green;
+    width:940px;
+    display:flex;
+    // margin-bottom:10px;
+  }
+  .ContentBox{
+    // border:1px solid red;
+    width:100%;
+    // display:flex;
+    // justify-content: flex-start;
+    // text-align: left;
+    // align-items: center;
+    // span{
+    //   border:1px solid blue;
+    // }
+  }
+  .ContentRow{
+    // border:1px solid red;
+    width:100%;
+    display:flex;
+    justify-content: flex-start;
+    text-align: left;
+    height:50px;
+    align-items: center;
+    // span{
+    //   border:1px solid blue;
+    // }
+  }
+  
+  .w30P{
+    // border:1px solid blue;
+    // padding-left:35px;
+    font-size:18px;
+    width:30%;
+    height:50px;
+    display:flex;
+    // justify-content: flex-start;
+    justify-content: center;
+    align-items: center;
+    // text-align: left;
+  }
+  .w70P{
+    display:flex;
+    justify-content:space-between;
+    align-items: center;
+    // border:1px solid blue;
+    width:70%;
+    // padding:5px;
+    height:50px;
+  }
+  .TextInputContent{
+    font-family:inherit;
+    padding:5px;
+    font-size:16px;
+    width:100%;
+    color:#000;
+    // color: rgba(51, 51, 51, 0.87);
+    margin-right:6px;
+    border:1px solid #a6a6a6;
+    border-radius:3px;
+    // height:30px;
+  }
+  .TextInputContent:disable{
+    color: rgba(51, 51, 51, 0.87);
+  }
+  .SyncBTN{
+    margin:15px;
+    color:#fff;
+    width:35px;
+    height:35px;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .AreaContentBox{
+    // width:945px;
+    // border:1px solid blue;
+    display:flex;
+    flex-direction:column;
+    justify-content: center;
+    padding-left:40px;
+  }
+  .TextAreaTopic{
+    display:flex;
+    justify-content: flex-start;
+    // justify-content: center;
+    align-items: center;
+    text-align: left;
+    padding-left:15px;
+    width:280px;
+  }
+
+  .TextAreaInputContent{
+    font-family:inherit;
+    padding:5px;
+    font-size:16px;
+    width:860px;
+    color:#000;
+    margin:6px;
+    border:1px solid #a6a6a6;
+    border-radius:3px;
+    // height:30px;
+    display:flex;
+    // justify-content: flex-start;
+    justify-content: center;
+    align-items: center;
+    // text-align: left;
+  }
+
+  .SelectInput{
+    padding:5px;
+    font-size:16px;
+    background:unset;
+    color:inherit;
+    font-family:inherit;
+    border:1px solid #a6a6a6;
+    border-radius:3px;
+    width:100%;
+    margin-right:6px;
+    cursor:pointer;
   }
 `;

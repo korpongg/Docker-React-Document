@@ -1,73 +1,156 @@
 import React, { useState, useEffect } from "react";
 import { Button, Box, Tooltip } from "@mui/material";
 import { DataGrid, GridToolbarContainer, GridToolbar, GridToolbarQuickFilter, GridActionsCellItem } from "@mui/x-data-grid";
-import { Add as AddIcon, DescriptionRounded as FileIcon, SwapHorizRounded as RotateIcon, Edit as EditIcon } from "@mui/icons-material";
+import { Add as AddIcon, FindInPageRounded as FileIcon, RestartAltRounded as RepeatIcon, Edit as EditIcon } from "@mui/icons-material";
 import { formatDateTimeN7 } from "../../Function";
 import requestStatusData from "../../label.json";
 
-function EditToolbar({ handleAddItem, loading }) {
+function EditToolbar({ reportData, handleAddItem }) {
   return (
     <GridToolbarContainer style={{ justifyContent: "space-between", padding: "10px 10px 0" }}>
-      <div>
-        <Button variant="contained" onClick={handleAddItem} startIcon={<AddIcon />} disabled={loading} style={{ marginRight: 10 }}>บันทึกอุบัติการณ์</Button>
-      </div>
+      {reportData && (
+        <div>
+          <Button variant="contained" onClick={handleAddItem} startIcon={<AddIcon />} style={{ marginRight: 10 }} disabled={reportData?.formstatus !== '1'}>ส่งทบทวน</Button>
+        </div>
+      )}
       {/* <GridToolbar /> */}
-      <GridToolbarQuickFilter />
+      {/* <GridToolbarQuickFilter /> */}
     </GridToolbarContainer>
   );
 }
 
-const TranferTable = ({ data, isAdmin, handleAddItem, handleViewClick, handleTranfClick, handleEditClick, loading }) => {
-  // console.log(data);
+const isWithinLast3Days = (dateString) => {
+  const date = new Date(dateString);
+  const today = new Date();
+  const diffTime = Math.abs(today - date);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays <= 3;
+};
+
+// const isOlderThan3Days = (dateString) => {
+//   const date = new Date(dateString);
+//   const today = new Date();
+//   const diffTime = today - date;
+//   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+//   console.log(diffDays)
+//   return diffDays > 3;
+// };
+
+const isWithinLast7Days = (dateString) => {
+  const date = new Date(dateString);
+  const today = new Date();
+  const diffTime = Math.abs(today - date);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays <= 7;
+};
+
+// const isOlderThan7Days = (dateString) => {
+//   const date = new Date(dateString);
+//   const today = new Date();
+//   const diffTime = today - date;
+//   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+//   return diffDays > 7;
+// };
+
+const ActionButtons = ({ id, row, isAdmin, handleViewEvent, handleRepeatEvent, handleEditEvent }) => {
+  return (
+    <>
+      <Tooltip title="ดูรายงาน">
+        <GridActionsCellItem
+          icon={<FileIcon />}
+          label="ดูรายงาน"
+          onClick={() => handleViewEvent(id, row)}
+          color="primary"
+        />
+      </Tooltip>
+
+      {row.status === '1' && isWithinLast7Days(row.createAt) && (
+        <Tooltip title="แก้ไขรายงาน">
+          <GridActionsCellItem
+            icon={<EditIcon />}
+            label="แก้ไขรายงาน"
+            onClick={() => handleEditEvent(id, row, isAdmin)}
+            color="warning"
+          />
+        </Tooltip>
+      )}
+
+      {row.status === '3' && isWithinLast3Days(row.repeatAt) && (
+        <Tooltip title="แก้ไขรายงาน">
+          <GridActionsCellItem
+            icon={<EditIcon />}
+            label="แก้ไขรายงาน"
+            onClick={() => handleEditEvent(id, row, isAdmin)}
+            color="warning"
+          />
+        </Tooltip>
+      )}
+
+      {isAdmin && row.status === '2' && (
+        <Tooltip title="ส่งทบทวนซ้ำ">
+          <GridActionsCellItem
+            icon={<RepeatIcon />}
+            label="ส่งทบทวนซ้ำ"
+            onClick={() => handleRepeatEvent(id, row)}
+            color="error"
+          />
+        </Tooltip>
+      )}
+    </>
+  );
+};
+
+const TranferTable = ({ reportData, eventData, isAdmin, handleAddItem, handleViewEvent, handleRepeatEvent, handleEditEvent, loading }) => {
+  // console.log(reportData);
   const statusMap = {};
   requestStatusData.subStatus.forEach(status => {
     statusMap[status.id] = { text: status.statusText, color: status.statusColor };
   });
 
-  const renderDeptrelateCell = (params) => {
-    const deptAffInfo = Array.isArray(params.row.deptAffInfo) ? params.row.deptAffInfo : [];
-    return <div className="MuiDataGrid-cellContent" title={deptAffInfo.map(dept => dept.DepName).join(", ")} role="presentation">{deptAffInfo.map(dept => dept.DepName).join(", ")}</div>;
-  };
-
   const columns = [
+    { field: "code", headerName: "ใบที่", minWidth: 115, flex: 1, align: "center", headerAlign: "center", },
     {
-      field: "formstatus",
+      field: "status",
       headerName: "สถานะ",
-      width: 155,
+      minWidth: 95,
+      flex: 1,
       align: "center",
       headerAlign: "center",
       // sortable: false,
       filterable: false,
       renderCell: (params) => {
-        const statusId = params.row.formstatus;
+        const statusId = params.row.status;
         const statusInfo = statusMap[statusId];
         return <div className={`post-status ${statusInfo.color}`}>{statusInfo.text}</div>;
       },
     },
-    { field: "reportid", headerName: "ReportId", width: 120, align: "center", headerAlign: "center", },
-    { field: "hn", headerName: "HN", width: 180, align: "center", headerAlign: "center" },
+    { field: "hn", headerName: "HN", minWidth: 135, flex: 1, align: "center", headerAlign: "center" },
     {
       field: "occurrencedate",
       headerName: "วันที่เกิดเหตุ",
-      width: 140,
+      minWidth: 115,
+      flex: 1,
       align: "center",
       headerAlign: "center",
+      valueGetter: (params) => params ? formatDateTimeN7(params.value, "dmy") : '',
     },
     {
-      field: "deptAffInfo",
+      field: "depname",
       headerName: "แผนก",
-      width: 160,
+      minWidth: 160,
+      flex: 1,
       align: "center",
       headerAlign: "center",
       sortable: false,
       filterable: false,
     },
-    { field: "reporttypename", headerName: "ประเภท", width: 140, align: "center", headerAlign: "center" },
-    { field: "level", headerName: "ความรุนแรง", width: 115, align: "center", headerAlign: "center" },
+    { field: "reporttypename", headerName: "ประเภท", minWidth: 110, flex: 1, align: "center", headerAlign: "center" },
+    { field: "level", headerName: "ความรุนแรง", minWidth: 90, flex: 1, align: "center", headerAlign: "center" },
     {
-      field: "description",
+      field: "summarydetail",
       headerName: "รายละเอียดเหตุการณ์",
-      width: 300,
+      minWidth: 300,
+      flex: 1,
       align: "center",
       headerAlign: "center",
       sortable: false,
@@ -77,49 +160,35 @@ const TranferTable = ({ data, isAdmin, handleAddItem, handleViewClick, handleTra
       field: "actions",
       type: "actions",
       headerName: "จัดการ",
-      width: 140,
+      minWidth: 140,
       cellClassName: "actions",
       align: "center",
       headerAlign: "center",
-      // renderCell: ({ id, row }) => (
-      //   <>
-      //     <Tooltip title="ดูบันทึกอุบัติการณ์">
-      //       <GridActionsCellItem
-      //         icon={<FileIcon />}
-      //         label="ดูบันทึกอุบัติการณ์"
-      //         onClick={() => handleViewClick(id, row)}
-      //         color="primary"
-      //       />
-      //     </Tooltip>
-
-      //     {isAdmin && (
-      //       <Tooltip title="Tranfer">
-      //         <GridActionsCellItem
-      //           icon={<RotateIcon className="rotate-icon" />}
-      //           label="Tranfer"
-      //           onClick={() => handleTranfClick(id, row)}
-      //           color="success"
-      //         />
-      //       </Tooltip>
-      //     )}
-
-      //     <Tooltip title="แก้ไขข้อมูลอุบัติการณ์">
-      //       <GridActionsCellItem
-      //         icon={<EditIcon />}
-      //         label="แก้ไขข้อมูลอุบัติการณ์"
-      //         onClick={() => handleEditClick(id, row)}
-      //         color="warning"
-      //       />
-      //     </Tooltip>
-      //   </>
-      // ),
+      renderCell: (params) => (
+        <ActionButtons
+          id={params.id}
+          row={params.row}
+          isAdmin={isAdmin}
+          handleViewEvent={handleViewEvent}
+          handleRepeatEvent={handleRepeatEvent}
+          handleEditEvent={handleEditEvent}
+        />
+      ),
     },
   ];
+
+  const getRowClassName = (params) => {
+    const { status, createAt, repeatAt } = params.row;
+    if (status === '1' && !isWithinLast7Days(createAt) || status === '3' && !isWithinLast3Days(repeatAt)) {
+      return 'alert-row';
+    }
+    return params.indexRelativeToCurrentPage % 2 === 0 ? 'even-row' : 'odd-row';
+  };
 
   return (
     <DataGrid
       autoHeight
-      rows={data}
+      rows={eventData}
       columns={columns}
       disableRowSelectionOnClick
       hideFooterSelectedRowCount={true}
@@ -127,10 +196,10 @@ const TranferTable = ({ data, isAdmin, handleAddItem, handleViewClick, handleTra
         pagination: { paginationModel: { page: 0, pageSize: 10 } },
       }}
       pageSizeOptions={[10, 25, 50, 100]}
-      getRowClassName={(params) => params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"}
+      getRowClassName={getRowClassName}
       slots={{
         toolbar: () => (
-          <EditToolbar handleAddItem={handleAddItem} loading={loading} />
+          <EditToolbar reportData={reportData} handleAddItem={handleAddItem} />
         ),
       }}
       localeText={{

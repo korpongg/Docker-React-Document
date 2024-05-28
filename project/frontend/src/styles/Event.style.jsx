@@ -1,7 +1,7 @@
 import { Paper, Box, FormControl, TableContainer, Dialog } from "@mui/material";
 import styled from "styled-components";
 
-export const DashboardBox = styled(Box)`
+export const EventBox = styled(Box)`
   display: block;
   justify-content: center;
   background-color: #fff;

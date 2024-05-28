@@ -46,14 +46,9 @@ const ReportStaff = ({data,setDataFunction,setData}) => {
   return (
     <>
       <ReportStaffStyle>
-        <Box className="TopicHeader">รายงานบุคลากร</Box>
-        <Box className="CheckBoxMain">
-          <FormGroup>
-            <FormControlLabel value={data?.reportdoc || false} control={<Checkbox checked={isChecked} onChange={handleCheckboxChange} />} label="รายงานแพทย์" />
-          </FormGroup>
-          {isChecked && 
-            <>
-              <TextField fullWidth id="docname" label="คำสั่งแพทย์" value={data?.docname || ""} onChange={(e) => setDataFunction(e, "docname")} variant="filled" />
+        <Box className="TopicHeader">การดำเนินการหลังเกิดเหตุการณ์</Box>
+        <Box className="CheckBoxMain" sx={{marginBottom:"25px",width:"900px"}}>
+        
               <RadioGroup
                 sx={{ p: 1 }}
                 row
@@ -77,6 +72,13 @@ const ReportStaff = ({data,setDataFunction,setData}) => {
                   label="บันทึกในเวชระเบียน"
                 />
               </RadioGroup>
+
+          <FormGroup>
+            <FormControlLabel value={data?.reportdoc || false} control={<Checkbox checked={isChecked} onChange={handleCheckboxChange} />} label="รายงานแพทย์" />
+          </FormGroup>
+          {isChecked && 
+            <>
+            <TextField fullWidth id="docname" label="คำสั่งแพทย์" value={data?.docname || ""} onChange={(e) => setDataFunction(e, "docname")} variant="filled" />
             </>
           }
 

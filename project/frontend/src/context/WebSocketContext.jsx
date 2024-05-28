@@ -11,27 +11,30 @@ export const useWebSocket = () => useContext(WebSocketContext);
 export const WebSocketProvider = ({ children }) => {
     const [socket, setSocket] = useState(null);
     const [dataCenter, setDataCenter] = useState([]);
+    const [dataEvent, setDataEvent] = useState([]);
     const [load, setLoad] = useState(true);
 
     // Function to initiate the WebSocket connection
-    const connectWebSocket = useCallback(() => {
-        setReloadTimeout(); // Call this function to set the initial timeout
+    const connectWebSocket = useCallback((dep) => {
+        // setReloadTimeout(); // Call this function to set the initial timeout
         // Establish the WebSocket connection
         const ws = new WebSocket(`${import.meta.env.VITE_REACT_APP_API_BC_PREFIX}${window.location.hostname}${import.meta.env.VITE_REACT_APP_API_BC}`);
 
         ws.onopen = () => {
             console.log('WebSocket connection opened.');
             // You can add more logic here for when the connection opens
+            ws.send(JSON.stringify({ dep }));
         };
 
         ws.onmessage = (event) => {
             // Handle incoming WebSocket messages
             // console.log('Received data:', event.data);
             const data = JSON.parse(event.data);
-            setReloadTimeout(); // Call this function when a message is received.
+            // setReloadTimeout(); // Call this function when a message is received.
 
 
-            setDataCenter(data || []);
+            setDataCenter(data.report_data || []);
+            setDataEvent(data.report_data || []);
             setLoad(false);
         };
 
@@ -76,6 +79,7 @@ export const WebSocketProvider = ({ children }) => {
         disconnectWebSocket,
         socket,
         dataCenter,
+        dataEvent,
         load
     };
 

@@ -6,7 +6,9 @@ import Tooltip from "@mui/material/Tooltip";
 import dayjs from "dayjs";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import Divider from '@mui/material/Divider';
 
+// import MainForm from "../../form/MainForm";
 import GeneralInfo from "../../form/GeneralInfo";
 import ReportLog from "../../form/ReportLog";
 // import ReportInfo from "../../form/ReportInfo";
@@ -26,6 +28,7 @@ import DataDict_Risk from "../../../data/form/DataDict_Risk";
 import { OccurrenceStyle } from "../../../styles/OccurrenceStyle.style";
 
 import departmentRaw from "../../../data/rawData.json";
+import ReportView from "../../../styles/ReportView";
 
 import AlertBar from "../../form/AlertBar";
 import { getCurrentDate } from "../../Function";
@@ -147,10 +150,11 @@ const Occurrence = ({ Mode }) => {
       setFormData({
         ...TempFormData,
         userreport: UserData.userid,
-        hn: UserData.hn,
+        requestby: UserData?.title+" "+UserData?.name+" "+UserData?.lastname,
+        // hn: UserData.hn,
         // an: UserData.an,
         // age: "",
-        gender: UserData.sex,
+        // gender: UserData.sex,
         reportdate: new Date(),
         occurrencedate: new Date(),
         type: "opd",
@@ -177,10 +181,11 @@ const Occurrence = ({ Mode }) => {
     localStorage.removeItem("FormData");
     setFormData({
       userreport: UserData.userid,
-      hn: UserData.hn,
+      // hn: UserData.hn,
+      requestby: UserData?.title+" "+UserData?.name+" "+UserData?.lastname,
       // an: UserData.an,
       // age: "",
-      gender: UserData.sex,
+      // gender: UserData.sex,
       reportdate: new Date(),
       occurrencedate: new Date(),
       type: "opd",
@@ -361,8 +366,9 @@ const Occurrence = ({ Mode }) => {
   return (
     <>
       {console.log("FormData", FormData)}
-      {console.log("EditFormData", EditFormData)}
+      {/* {console.log("EditFormData", EditFormData)} */}
       {/* {console.log("allKeysExist", allKeysExist)} */}
+      {/* <ReportView Mode={Mode} data={FormData}/> */}
       <AlertBar open={Alert} setOpen={setAlert} AlertType={AlertType} AlertText={AlertText}/>
       <OccurrenceStyle>
         <Box className="FormHeader">
@@ -380,6 +386,14 @@ const Occurrence = ({ Mode }) => {
         </Box>
 
         <Box className="MainContainer">
+
+        
+        {/* <MainForm
+                data={FormData}
+                setDataFunction={handleDataChange}
+                userdata={UserData}
+              /> */}
+
           {Stage === 1 && (
             <>
               <GeneralInfo
@@ -387,11 +401,12 @@ const Occurrence = ({ Mode }) => {
                 setDataFunction={handleDataChange}
                 userdata={UserData}
               />
-            </>
+            {/* </>
           )}
           {Stage === 2 && (
-            <>
-              <ReportType data={FormData} setDataFunction={handleDataChange} />
+            <> */}
+            <Divider variant="middle" flexItem sx={{m:1}} />
+              {/* <ReportType data={FormData} setDataFunction={handleDataChange} /> */}
               <ReportLog
                 data={FormData}
                 setDataFunction={handleDataChange}
@@ -400,10 +415,10 @@ const Occurrence = ({ Mode }) => {
                 depoptiondata={departmentRaw}
                 missingKeys={AlertBorder}
               />
-            </>
+            {/* </>
           )}
           {Stage === 3 && (
-            <>
+            <> */}
               <ReportRiskType
                 data={FormData}
                 setDataFunction={handleDataChange}
@@ -502,18 +517,22 @@ const Occurrence = ({ Mode }) => {
           )}
 
           {Stage === 11 && (
-            <ReportStaff
+            <>
+            <ReportDescription
+                data={FormData}
+                setDataFunction={handleDataChange}
+              />
+            
+              </>
+          )}
+          {Stage === 12 && (
+            <>
+              <ReportStaff
               data={FormData}
               setDataFunction={handleDataChange}
               setData={handleDataSingleChange}
             />
-          )}
-          {Stage === 12 && (
-            <>
-              <ReportDescription
-                data={FormData}
-                setDataFunction={handleDataChange}
-              />
+            
               <ReportSugestions
                 data={FormData}
                 setDataFunction={handleDataChange}

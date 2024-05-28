@@ -57,6 +57,10 @@ const Events = sequelize.define('Events', {
     type: DataTypes.DATE,
     allowNull: true
   },
+  repeatAt: {
+    type: DataTypes.DATE,
+    allowNull: true
+  },
   responsedate: {
     type: DataTypes.DATE,
     allowNull: true
@@ -64,22 +68,22 @@ const Events = sequelize.define('Events', {
 }, {
   tableName: 'event_logs',
   timestamps: false, // Disable automatic timestamps
-  hooks: {
-    afterDestroy: async (event, options) => {
-      try {
-        const resetIdentityQuery = `
-          DECLARE @max INT;
-          SELECT @max = MAX([id]) FROM [event_logs];
-          IF @max IS NULL SET @max = 0;
-          DBCC CHECKIDENT ('[event_logs]', RESEED, @max);
-        `;
+  // hooks: {
+  //   afterDestroy: async (event, options) => {
+  //     try {
+  //       const resetIdentityQuery = `
+  //         DECLARE @max INT;
+  //         SELECT @max = MAX([id]) FROM [event_logs];
+  //         IF @max IS NULL SET @max = 0;
+  //         DBCC CHECKIDENT ('[event_logs]', RESEED, @max);
+  //       `;
 
-        await sequelize.query(resetIdentityQuery);
-      } catch (error) {
-        console.error('Error executing afterDestroy hook:', error);
-      }
-    }
-  }
+  //       await sequelize.query(resetIdentityQuery);
+  //     } catch (error) {
+  //       console.error('Error executing afterDestroy hook:', error);
+  //     }
+  //   }
+  // }
 });
 
 Events.belongsTo(User, {

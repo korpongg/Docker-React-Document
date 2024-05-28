@@ -22,7 +22,8 @@ const executeSQLQuery = async () => {
     FROM [occurrence].[dbo].[occurrences] occ
     LEFT JOIN [occurrence].[dbo].[user] AS u_request ON u_request.userid = occ.createby
     LEFT JOIN [occurrence].[dbo].[user] AS u_update ON u_update.userid = occ.updateby
-    LEFT JOIN [occurrence].[dbo].[user] AS u_accept ON u_accept.userid = occ.acceptby;
+    LEFT JOIN [occurrence].[dbo].[user] AS u_accept ON u_accept.userid = occ.acceptby
+    ORDER BY CASE WHEN occ.formstatus = '1' THEN 0 ELSE 1 END;
     `;
     const results = await sequelize.query(occQuery, {
       type: sequelize.Sequelize.QueryTypes.SELECT,
@@ -70,11 +71,70 @@ const executeSQLQuery = async () => {
 
       return parsedResults;
     }
+    return [];
   } catch (error) {
     console.error("An error occurred while executing:", error);
+    return [];
+  }
+};
+
+const executeSQLQueryEvent = async (dep) => {
+  try {
+    // First query to get occurrences and user details
+    const eventQuery = `
+      SELECT e.id,
+        e.reportid,
+        e.code,
+        o.hn,
+        o.occurrencedate,
+        e.deptrelate,
+        d.name AS depname,
+        CASE WHEN o.reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END AS reporttypename,
+        o.level,
+        -- o.description,
+        e.comment,
+        e.summarydetail,
+        o.activefailure,
+        e.urgenttype,
+        e.status,
+        e.createby,
+        CONCAT(u_request.title, ' ', u_request.name, ' ', u_request.lastname) AS createname,
+        u_request.dep AS createdep,
+        u_request.faction AS createfac,
+        u_request.affiliation AS createaff,
+        e.createAt,
+        e.acceptby,
+        CONCAT(u_accept.title, ' ', u_accept.name, ' ', u_accept.lastname) AS acceptname,
+        u_accept.dep AS acceptdep,
+        u_accept.faction AS acceptfac,
+        u_accept.affiliation AS acceptaff,
+        e.acceptAt,
+        e.repeatAt,
+        e.responsedate
+      FROM [occurrence].[dbo].[event_logs] e
+      LEFT JOIN [occurrence].[dbo].[occurrences] o ON o.reportid = e.reportid
+      LEFT JOIN [occurrence].[dbo].[department] d ON d.id = e.deptrelate
+      LEFT JOIN [occurrence].[dbo].[user] AS u_request ON u_request.userid = e.createby
+      LEFT JOIN [occurrence].[dbo].[user] AS u_accept ON u_accept.userid = e.acceptby
+      ${dep ? `WHERE d.name = :dep` : ''}
+      ORDER BY e.createAt DESC;
+    `;
+    const results = await sequelize.query(eventQuery, {
+      type: sequelize.Sequelize.QueryTypes.SELECT,
+      replacements: { dep }
+    });
+
+    if (results.length > 0) {
+      return results;
+    }
+    return [];
+  } catch (error) {
+    console.error("An error occurred while executing:", error);
+    return [];
   }
 };
 
 module.exports = {
   executeSQLQuery,
+  executeSQLQueryEvent
 };
