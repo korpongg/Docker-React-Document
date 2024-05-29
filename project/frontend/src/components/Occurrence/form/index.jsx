@@ -21,6 +21,7 @@ import ReportDescription from "../../form/ReportDescription";
 import ReportStaff from "../../form/ReportStaff";
 import ReportSugestions from "../../form/ReportSugestions";
 import NavForm from "../../form/NavForm";
+import ListSelectData from "../../form/ListSelectData";
 
 import DataDict_OccurrenceForm from "../../../data/form/DataDict_OccurrenceForm";
 import DataDict_Risk from "../../../data/form/DataDict_Risk";
@@ -44,6 +45,7 @@ const Occurrence = ({ Mode }) => {
   const UserData = JSON.parse(localStorage.getItem("userData"));
   const TempFormData = JSON.parse(localStorage.getItem("FormData")) || {};
   const [Stage, setStage] = useState(1);
+  const [OccStage, setOccStage] = useState(0);
   const [FormData, setFormData] = useState({});
   const [EditFormData, setEditFormData] = useState({});
   const [Alert, setAlert] = useState(false);
@@ -57,6 +59,11 @@ const Occurrence = ({ Mode }) => {
     if(Mode==="Edit"){
       setEditFormData({ ...EditFormData, [name]: Text });
     }
+  };
+  const handleDataOccStageChange = (event) => {
+    const Text = event.target.value;
+    setOccStage(parseInt(Text,10));
+    // console.log(Text);
   };
 
   const handleDateChange = (event, name) => {
@@ -112,6 +119,29 @@ const Occurrence = ({ Mode }) => {
     }
   };
 
+  const removeDataFromCheckboxList = (key, value) => {
+    const tempOccStage = OccStage;
+    setFormData(prevData => {
+        if (!prevData[key]) {
+            console.log(`Key ${key} not found`);
+            return prevData;
+        }
+
+        const index = prevData[key].indexOf(value);
+        if (index === -1) {
+            console.log(`${value} not found in ${key}`);
+            return prevData;
+        }
+
+        return {
+            ...prevData,
+            [key]: prevData[key].filter(item => item !== value)
+        };
+    });
+    // setOccStage(0);
+    // setOccStage(tempOccStage);
+};
+
   const handleDataSingleChange = (data, name) => {
     setFormData({ ...FormData, [name]: data });
     if(Mode==="Edit"){
@@ -122,25 +152,30 @@ const Occurrence = ({ Mode }) => {
   const NextStage = () => {
     localStorage.setItem("FormData", JSON.stringify(FormData));
     setStage(Stage + 1);
+    handleScrollToTop();
   };
   const PrevStage = () => {
     if (Stage > 1) {
       localStorage.setItem("FormData", JSON.stringify(FormData));
       setStage(Stage - 1);
+      handleScrollToTop();
     }
   };
   const FirstStage = () => {
     localStorage.setItem("FormData", JSON.stringify(FormData));
     setStage(1);
+    handleScrollToTop();
   };
   const LastStage = (MaxStage) => {
       localStorage.setItem("FormData", JSON.stringify(FormData));
       setStage(MaxStage);
+      handleScrollToTop();
   };
   const ToStage = (toval, MaxStage) => {
     if (toval <= MaxStage && toval > 0) {
       localStorage.setItem("FormData", JSON.stringify(FormData));
       setStage(toval);
+      handleScrollToTop();
     }
   };
 
@@ -322,7 +357,9 @@ const Occurrence = ({ Mode }) => {
 
   };
 
-  
+  const handleScrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
   // const handleSubmit = async () => {
   //   console.log("handleSubmit");
   //   const submitFormData = {
@@ -362,6 +399,20 @@ const Occurrence = ({ Mode }) => {
     //   console.error(err);
     // }
   // };
+
+  function getHTMLByCodeAndKey(key, codes) {
+    const section = DataDict_OccurrenceForm[key];
+    if (!section) {
+      return `Section with key ${key} not found.`;
+    }
+  
+    const titles = section.options
+      .filter(option => codes.includes(option.code.toString()))
+      .map(option => `<div><span>${option.code}</span><span>${option.title}</span></div>`)
+      .join("");
+  
+    return `<div>${section.topic}</div>${titles}`;
+  }
 
   return (
     <>
@@ -431,92 +482,126 @@ const Occurrence = ({ Mode }) => {
               />
             </>
           )}
-          {Stage === 4 && (
-            <SelectBoxList
-              data={FormData}
-              optionsdata={DataDict_OccurrenceForm}
-              datacolumn="patientcare"
-              remark={true}
-              remarkno="199"
-              remarkcolumn="patientcareremark"
-              handleDataChangeCheckbox={handleDataChangeCheckbox}
-              handleDataChange={handleDataChange}
-            />
-          )}
-          {Stage === 5 && (
-            <SelectBoxList
-              data={FormData}
-              optionsdata={DataDict_OccurrenceForm}
-              datacolumn="patientsupport"
-              remark={true}
-              remarkno="299"
-              remarkcolumn="patientsupportremark"
-              handleDataChangeCheckbox={handleDataChangeCheckbox}
-              handleDataChange={handleDataChange}
-            />
-          )}
-          {Stage === 6 && (
-            <SelectBoxList
-              data={FormData}
-              optionsdata={DataDict_OccurrenceForm}
-              datacolumn="utility"
-              remark={true}
-              remarkno="399"
-              remarkcolumn="utilityremark"
-              handleDataChangeCheckbox={handleDataChangeCheckbox}
-              handleDataChange={handleDataChange}
-            />
-          )}
-          {Stage === 7 && (
-            <SelectBoxList
-              data={FormData}
-              optionsdata={DataDict_OccurrenceForm}
-              datacolumn="equipment"
-              remark={true}
-              remarkno="499"
-              remarkcolumn="equipmentremark"
-              handleDataChangeCheckbox={handleDataChangeCheckbox}
-              handleDataChange={handleDataChange}
-            />
-          )}
-          {Stage === 8 && (
-            <SelectBoxList
-              data={FormData}
-              optionsdata={DataDict_OccurrenceForm}
-              datacolumn="safety"
-              remark={true}
-              remarkno="599"
-              remarkcolumn="safetyremark"
-              handleDataChangeCheckbox={handleDataChangeCheckbox}
-              handleDataChange={handleDataChange}
-            />
-          )}
-          {Stage === 9 && (
-            <SelectBoxList
-              data={FormData}
-              optionsdata={DataDict_OccurrenceForm}
-              datacolumn="service"
-              remark={true}
-              remarkno="699"
-              remarkcolumn="serviceremark"
-              handleDataChangeCheckbox={handleDataChangeCheckbox}
-              handleDataChange={handleDataChange}
-            />
-          )}
-          {Stage === 10 && (
-            <SelectBoxList
-              data={FormData}
-              optionsdata={DataDict_OccurrenceForm}
-              datacolumn="management"
-              remark={true}
-              remarkno="799"
-              remarkcolumn="managementremark"
-              handleDataChangeCheckbox={handleDataChangeCheckbox}
-              handleDataChange={handleDataChange}
-            />
+              {/* {console.log(typeof(OccStage),OccStage)} */}
+          {Stage === 1 && (
+<>
+<Box className="TopicHeader">
+            {/* {optionsdata[datacolumn].topic &&
+            optionsdata[datacolumn].topic} */}
+            หัวข้อระบบงานที่เกี่ยวข้องกับเหตุการณ์ที่เกิดขึ้น
+        </Box>
+        <ListSelectData data={FormData} Mode={Mode} DeleteFunction={removeDataFromCheckboxList}/>
+<div>
+{/* {getHTMLByCodeAndKey('service', ['606', '603'])} */}
+</div>
+
+              <select className="SelectInputDominant" id="OccStage" name="OccStage" form="OccStage" value={OccStage} onChange={handleDataOccStageChange}>
+                <option value={1}>กระบวนการดูแลผู้ป่วย</option>
+                <option value={2}>ระบบงานสนับสนุนการดูแลผู้ป่วย</option>
+                <option value={3}>ระบบสาธารณูปโภค / ระบบสำรอง</option>
+                <option value={4}>ระบบเครื่องมือ / อุปกรณ์</option>
+                <option value={5}>ความปลอดภัย และสิ่งแวดล้อม</option>
+                <option value={6}>ระบบงานบริการ</option>
+                <option value={7}>ระบบบริหารงาน</option>
+                <option value={0}>-กรุณาเลือกหัวข้อ-</option>
+              </select>
+
+              {OccStage === 0 && (
+                <>
+                  <div style={{color:"#b00e0e",margin:"50px"}}> โปรดเลือกหัวข้อเพื่อแสดงรายการตามหมวดหมู่ และทำเครื่องอย่างน้อย 1 รายการ</div>
+                </>
+              )}
+
+            {OccStage === 1 && (
+              <SelectBoxList
+                data={FormData}
+                optionsdata={DataDict_OccurrenceForm}
+                datacolumn="patientcare"
+                remark={true}
+                remarkno="199"
+                remarkcolumn="patientcareremark"
+                handleDataChangeCheckbox={handleDataChangeCheckbox}
+                handleDataChange={handleDataChange}
+                OccStage={OccStage}
+                setOccStage={setOccStage}
+              />
+            )}
+            {OccStage === 2 && (
+              <SelectBoxList
+                data={FormData}
+                optionsdata={DataDict_OccurrenceForm}
+                datacolumn="patientsupport"
+                remark={true}
+                remarkno="299"
+                remarkcolumn="patientsupportremark"
+                handleDataChangeCheckbox={handleDataChangeCheckbox}
+                handleDataChange={handleDataChange}
+              />
+            )}
+            {OccStage === 3 && (
+              <SelectBoxList
+                data={FormData}
+                optionsdata={DataDict_OccurrenceForm}
+                datacolumn="utility"
+                remark={true}
+                remarkno="399"
+                remarkcolumn="utilityremark"
+                handleDataChangeCheckbox={handleDataChangeCheckbox}
+                handleDataChange={handleDataChange}
+              />
+            )}
+            {OccStage === 4 && (
+              <SelectBoxList
+                data={FormData}
+                optionsdata={DataDict_OccurrenceForm}
+                datacolumn="equipment"
+                remark={true}
+                remarkno="499"
+                remarkcolumn="equipmentremark"
+                handleDataChangeCheckbox={handleDataChangeCheckbox}
+                handleDataChange={handleDataChange}
+              />
+            )}
+            {OccStage === 5 && (
+              <SelectBoxList
+                data={FormData}
+                optionsdata={DataDict_OccurrenceForm}
+                datacolumn="safety"
+                remark={true}
+                remarkno="599"
+                remarkcolumn="safetyremark"
+                handleDataChangeCheckbox={handleDataChangeCheckbox}
+                handleDataChange={handleDataChange}
+              />
+            )}
+            {OccStage === 6 && (
+              <SelectBoxList
+                data={FormData}
+                optionsdata={DataDict_OccurrenceForm}
+                datacolumn="service"
+                remark={true}
+                remarkno="699"
+                remarkcolumn="serviceremark"
+                handleDataChangeCheckbox={handleDataChangeCheckbox}
+                handleDataChange={handleDataChange}
+              />
+            )}
+            {OccStage === 7 && (
+              <SelectBoxList
+                data={FormData}
+                optionsdata={DataDict_OccurrenceForm}
+                datacolumn="management"
+                remark={true}
+                remarkno="799"
+                remarkcolumn="managementremark"
+                handleDataChangeCheckbox={handleDataChangeCheckbox}
+                handleDataChange={handleDataChange}
+              />
+            )}
+            </>
           )}
 
-          {Stage === 11 && (
+          {Stage === 1 && (
             <>
             <ReportDescription
                 data={FormData}
@@ -525,7 +610,7 @@ const Occurrence = ({ Mode }) => {
             
               </>
           )}
-          {Stage === 12 && (
+          {Stage === 1 && (
             <>
               <ReportStaff
               data={FormData}
@@ -546,7 +631,7 @@ const Occurrence = ({ Mode }) => {
           submitfunction={handleSubmit}
           handleSubmitEdit={handleSubmitEdit}
           Stage={Stage}
-          MaxStage={12}
+          MaxStage={1}
           PrevStage={PrevStage}
           NextStage={NextStage}
           FirstStage={FirstStage}

@@ -9,7 +9,7 @@ const ReportLog = ({data,setDataFunction,handleDateChange,handleDataChangeCheckb
 
   return (
     <>
-    {/* <Box className="TopicHeader">ข้อมูลสถานการณ์</Box> */}
+    <Box className="TopicHeader">ข้อมูลสถานการณ์</Box>
     <div className="GeneralBox">
       <div className="ContentBox">
           <div className="ContentRow">

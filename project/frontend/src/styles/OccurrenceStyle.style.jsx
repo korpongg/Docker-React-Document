@@ -6,7 +6,7 @@ import { Dialog } from "@mui/material";
 export const OccurrenceStyle = styled(Box)`
   background:#ffffff;
   color:#000000;
-  // height:88vh;
+  // min-height:88vh;
   width:960px;
   // padding:5px;
   display:flex;
@@ -19,7 +19,7 @@ export const OccurrenceStyle = styled(Box)`
     // justify-content:center;
     position: relative;
     width: 100%; 
-    height: 100%; 
+    min-height:400px;
     // overflow:scroll;
     // border: 1px solid #000;
   }
@@ -53,6 +53,7 @@ export const OccurrenceStyle = styled(Box)`
     padding-bottom:10px;
   }
   .FormFooter{
+    position:;
     display:flex;
   flex-direction:row;
   justify-content:space-between;
@@ -363,5 +364,51 @@ export const OccurrenceStyle = styled(Box)`
     width:100%;
     margin-right:6px;
     cursor:pointer;
+  }
+
+  .SelectInputDominant{
+    padding:5px;
+    font-size:18px;
+    background:#f1f1f1;
+    color:inherit;
+    font-family:inherit;
+    border:1px solid #a6a6a6;
+    border-radius:3px;
+    width:100%;
+    margin-right:6px;
+    cursor:pointer;
+  }
+  
+  .ListSelectTable{
+    margin:5px;
+    border:1px solid #a6a6a6;
+    height:220px;
+    overflow:scroll;
+  }
+
+  .ListSelectTable_Row{
+    display:flex;
+    width:100%;
+    // border-bottom:1px solid #a6a6a6;
+  }
+
+  .ListSelectTable_Row:hover{
+    background:rgb(243 243 243);
+  }
+
+  .ListSelectTable_Row:first-child{
+    background:rgb(243 243 243);
+    // width:100%;
+    border-bottom:1px solid #a6a6a6;
+    // border-bottom:unset ;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+  }
+
+  .ListSelectTable_Cell{
+    width:100%;
+    // border:1px solid #fe0;
+    padding:4px;
   }
 `;

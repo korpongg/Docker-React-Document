@@ -136,6 +136,26 @@ export const TranferDialogBox = styled(Dialog)`
     outline: unset !important;
   }
 
+  .post-status {
+    border: 1px solid #fff;
+    border-radius: 10px;
+    color: #fff;
+    padding: 6px 10px;
+  }
+  .post-status.new {
+    background: cadetblue;
+    text-align: center;
+    box-shadow: 1px 1px 2px 0px #5f9ea0c4;
+  }
+  .post-status.in-progress {
+    background: orange;
+    box-shadow: 1px 1px 2px 0px #ffa5008c;
+  }
+  .post-status.repeat {
+    background: black;
+    box-shadow: 1px 1px 2px 0px #0000008c;
+  }
+
   @media screen and (max-width: 901px) {
     #tranfer-dialog-title {
       font-size: 1.125rem;

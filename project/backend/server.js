@@ -68,14 +68,13 @@ server.listen(PORT, () => {
 //BoardCast Initialize the count of connected clients
 let connectedClientsCount = 0;
 
-let globalDep = null; // Global variable
-
 // Function to handle new client connections
 wsServer.on("connection", function (connection, request) {
   const userId = uuidv4();
   const userIP = request.headers["x-forwarded-for"] || request.connection.remoteAddress;
   console.log(`Received a new connection from user:${userId} With IP:${userIP}.`);
   addClient(userId, connection);
+  executeAndStoreQueryResult();
   connectedClientsCount++; // Increment the count
 
   connection.on("message", async (message) => {
@@ -84,13 +83,8 @@ wsServer.on("connection", function (connection, request) {
       const data = JSON.parse(message);
       console.log("Received message:", data);
       // Handle the cid parameter sent from the client
-
-      if (data.dep) {
-        globalDep = data.dep; // Store global variable
-        await executeAndStoreQueryResult(globalDep);
-      } else {
-        await executeAndStoreQueryResult();
-      }
+      
+      await executeAndStoreQueryResult();
     } catch (error) {
       console.error("Error processing message:", error);
     }
@@ -112,12 +106,12 @@ global.resetInterval = () => {
   clearInterval(global.intervalId);
 
   global.intervalId = setInterval(async () => {
-    if (connectedClientsCount > 0 && globalDep) {
+    if (connectedClientsCount > 0) {
       try {
         // Get the current date and time
         const currentTime = new Date();
         console.log(`..........Start Do interval......... At`, currentTime.toLocaleString("en-GB", { hour12: false }));
-        await executeAndStoreQueryResult(globalDep);
+        await executeAndStoreQueryResult();
       } catch (error) {
         console.error("Error during periodic execution:", error);
       }
@@ -132,13 +126,13 @@ global.resetInterval();
 // Serve static files from the React app
 const FRONTEND_PORT = process.env.BACKEND_PORT2 || 3500;
 const app2 = express();
-app2.use(express.static(path.join(__dirname, "/frontend/dist")));
-app2.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname + "/frontend/dist/index.html"));
+app2.use(express.static(path.join(__dirname, '/frontend/dist')));
+app2.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname + '/frontend/dist/index.html'));
 });
 
-app2.use(errorHandler);
+app2.use(errorHandler); 
 
 app2.listen(FRONTEND_PORT, () => {
-  console.log(`Server running on port ${FRONTEND_PORT}`);
+    console.log(`Server running on port ${FRONTEND_PORT}`);
 });

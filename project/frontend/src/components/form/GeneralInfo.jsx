@@ -79,7 +79,7 @@ const GeneralInfo = ({data,setDataFunction,userdata}) => {
             <div className="ContentRow">
               <div className="w30P">Dx.</div>
               <div className="w70P">
-                <input className="TextInputContent" type="text" id="hn" label="HN" value={data?.hn || ""} onChange={(e) => setDataFunction(e, "hn")} />
+                <input className="TextInputContent" type="text" id="dx" label="Dx." value={data?.dx || ""} onChange={(e) => setDataFunction(e, "dx")} />
               </div>
             </div>
 

@@ -4,166 +4,116 @@ import { DataGrid, GridToolbarContainer, GridToolbar, GridToolbarQuickFilter, Gr
 import { Add as AddIcon, FindInPageRounded as FileIcon, RestartAltRounded as RepeatIcon, Edit as EditIcon } from "@mui/icons-material";
 import { formatDateTimeN7 } from "../../Function";
 import requestStatusData from "../../label.json";
+import EventDialog from "../Event/EventDialog";
 
-function EditToolbar({ reportData, handleAddItem }) {
-  return (
-    <GridToolbarContainer style={{ justifyContent: "space-between", padding: "10px 10px 0" }}>
-      {reportData && (
-        <div>
-          <Button variant="contained" onClick={handleAddItem} startIcon={<AddIcon />} style={{ marginRight: 10 }} disabled={reportData?.formstatus !== '1'}>ส่งทบทวน</Button>
-        </div>
-      )}
-      {/* <GridToolbar /> */}
-      {/* <GridToolbarQuickFilter /> */}
-    </GridToolbarContainer>
-  );
-}
+const EditToolbar = ({ reportData, handleAddEvent }) => (
+  <GridToolbarContainer style={{ justifyContent: "space-between", padding: "10px 10px 0" }}>
+    {reportData && (
+      <Button
+        variant="contained"
+        onClick={handleAddEvent}
+        startIcon={<AddIcon />}
+        style={{ marginRight: 10 }}
+        disabled={reportData?.formstatus !== '1'}
+      >
+        ส่งทบทวน
+      </Button>
+    )}
+    {/* <GridToolbar /> */}
+    {/* <GridToolbarQuickFilter /> */}
+  </GridToolbarContainer>
+);
 
-const isWithinLast3Days = (dateString) => {
+const isWithinDays = (dateString, days) => {
   const date = new Date(dateString);
   const today = new Date();
   const diffTime = Math.abs(today - date);
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  return diffDays <= 3;
+  return diffDays <= days;
 };
 
-// const isOlderThan3Days = (dateString) => {
-//   const date = new Date(dateString);
-//   const today = new Date();
-//   const diffTime = today - date;
-//   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-//   console.log(diffDays)
-//   return diffDays > 3;
-// };
-
-const isWithinLast7Days = (dateString) => {
-  const date = new Date(dateString);
-  const today = new Date();
-  const diffTime = Math.abs(today - date);
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  return diffDays <= 7;
-};
-
-// const isOlderThan7Days = (dateString) => {
-//   const date = new Date(dateString);
-//   const today = new Date();
-//   const diffTime = today - date;
-//   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-//   return diffDays > 7;
-// };
-
-const ActionButtons = ({ id, row, isAdmin, handleViewEvent, handleRepeatEvent, handleEditEvent }) => {
-  return (
-    <>
-      <Tooltip title="ดูรายงาน">
+const ActionButtons = ({ id, row, isAdmin, handleViewEvent, handleRepeatEvent, handleEditEvent }) => (
+  <>
+    <Tooltip title="ดูรายงาน">
+      <GridActionsCellItem
+        icon={<FileIcon />}
+        label="ดูรายงาน"
+        onClick={() => handleViewEvent(id, row)}
+        color="primary"
+      />
+    </Tooltip>
+    {row.status === '1' && isWithinDays(row.createAt, 7) && (
+      <Tooltip title="แก้ไขรายงาน">
         <GridActionsCellItem
-          icon={<FileIcon />}
-          label="ดูรายงาน"
-          onClick={() => handleViewEvent(id, row)}
-          color="primary"
+          icon={<EditIcon />}
+          label="แก้ไขรายงาน"
+          onClick={() => handleEditEvent(id, row, isAdmin)}
+          color="warning"
         />
       </Tooltip>
+    )}
+    {row.status === '3' && isWithinDays(row.repeatAt, 3) && (
+      <Tooltip title="แก้ไขรายงาน">
+        <GridActionsCellItem
+          icon={<EditIcon />}
+          label="แก้ไขรายงาน"
+          onClick={() => handleEditEvent(id, row, isAdmin)}
+          color="warning"
+        />
+      </Tooltip>
+    )}
+    {isAdmin && row.status === '2' && (
+      <Tooltip title="ส่งทบทวนซ้ำ">
+        <GridActionsCellItem
+          icon={<RepeatIcon />}
+          label="ส่งทบทวนซ้ำ"
+          onClick={() => handleRepeatEvent(id, row)}
+          color="error"
+        />
+      </Tooltip>
+    )}
+  </>
+);
 
-      {row.status === '1' && isWithinLast7Days(row.createAt) && (
-        <Tooltip title="แก้ไขรายงาน">
-          <GridActionsCellItem
-            icon={<EditIcon />}
-            label="แก้ไขรายงาน"
-            onClick={() => handleEditEvent(id, row, isAdmin)}
-            color="warning"
-          />
-        </Tooltip>
-      )}
+const TranferTable = ({ reportData, dataEvent, isAdmin, userData, config, handleViewEvent, handleRepeatEvent, loading, setLoading }) => {
+  const [mode, setMode] = useState(null);
+  const [isHA, setIsHA] = useState(false);
+  const [eventData, setEventData] = useState([]);
+  const [isDialogOpen, setDialogOpen] = useState(false);
 
-      {row.status === '3' && isWithinLast3Days(row.repeatAt) && (
-        <Tooltip title="แก้ไขรายงาน">
-          <GridActionsCellItem
-            icon={<EditIcon />}
-            label="แก้ไขรายงาน"
-            onClick={() => handleEditEvent(id, row, isAdmin)}
-            color="warning"
-          />
-        </Tooltip>
-      )}
+  useEffect(() => {
+    const filteredData = isAdmin ? dataEvent : dataEvent.filter(item => item.depname === userData.dep);
+    setEventData(filteredData);
+    setLoading(false);
+  }, [dataEvent]);
 
-      {isAdmin && row.status === '2' && (
-        <Tooltip title="ส่งทบทวนซ้ำ">
-          <GridActionsCellItem
-            icon={<RepeatIcon />}
-            label="ส่งทบทวนซ้ำ"
-            onClick={() => handleRepeatEvent(id, row)}
-            color="error"
-          />
-        </Tooltip>
-      )}
-    </>
-  );
-};
-
-const TranferTable = ({ reportData, eventData, isAdmin, handleAddItem, handleViewEvent, handleRepeatEvent, handleEditEvent, loading }) => {
-  // console.log(reportData);
-  const statusMap = {};
-  requestStatusData.subStatus.forEach(status => {
-    statusMap[status.id] = { text: status.statusText, color: status.statusColor };
-  });
+  const statusMap = requestStatusData.subStatus.reduce((map, status) => {
+    map[status.id] = { text: status.statusText, color: status.statusColor };
+    return map;
+  }, {});
 
   const columns = [
-    { field: "code", headerName: "ใบที่", minWidth: 115, flex: 1, align: "center", headerAlign: "center", },
+    { field: "code", headerName: "ใบที่", minWidth: 115, flex: 1, align: "center", headerAlign: "center" },
     {
       field: "status",
       headerName: "สถานะ",
-      minWidth: 95,
-      flex: 1,
-      align: "center",
-      headerAlign: "center",
-      // sortable: false,
-      filterable: false,
+      minWidth: 95, flex: 1, align: "center", headerAlign: "center",
       renderCell: (params) => {
-        const statusId = params.row.status;
-        const statusInfo = statusMap[statusId];
+        const statusInfo = statusMap[params.row.status];
         return <div className={`post-status ${statusInfo.color}`}>{statusInfo.text}</div>;
       },
     },
-    { field: "hn", headerName: "HN", minWidth: 135, flex: 1, align: "center", headerAlign: "center" },
+    // { field: "hn", headerName: "HN", minWidth: 135, flex: 1, align: "center", headerAlign: "center" },
     {
-      field: "occurrencedate",
-      headerName: "วันที่เกิดเหตุ",
-      minWidth: 115,
-      flex: 1,
-      align: "center",
-      headerAlign: "center",
-      valueGetter: (params) => params ? formatDateTimeN7(params.value, "dmy") : '',
+      field: "occurrencedate", headerName: "วันที่เกิดเหตุ", minWidth: 115, flex: 1, align: "center", headerAlign: "center",
+      valueGetter: (params) => params.value ? formatDateTimeN7(params.value, "dmy") : ''
     },
-    {
-      field: "depname",
-      headerName: "แผนก",
-      minWidth: 160,
-      flex: 1,
-      align: "center",
-      headerAlign: "center",
-      sortable: false,
-      filterable: false,
-    },
+    { field: "depname", headerName: "แผนก", minWidth: 160, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false },
     { field: "reporttypename", headerName: "ประเภท", minWidth: 110, flex: 1, align: "center", headerAlign: "center" },
     { field: "level", headerName: "ความรุนแรง", minWidth: 90, flex: 1, align: "center", headerAlign: "center" },
+    { field: "summarydetail", headerName: "รายละเอียดเหตุการณ์", minWidth: 300, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false },
     {
-      field: "summarydetail",
-      headerName: "รายละเอียดเหตุการณ์",
-      minWidth: 300,
-      flex: 1,
-      align: "center",
-      headerAlign: "center",
-      sortable: false,
-      filterable: false,
-    },
-    {
-      field: "actions",
-      type: "actions",
-      headerName: "จัดการ",
-      minWidth: 140,
-      cellClassName: "actions",
-      align: "center",
-      headerAlign: "center",
+      field: "actions", type: "actions", headerName: "จัดการ", minWidth: 140, cellClassName: "actions", align: "center", headerAlign: "center",
       renderCell: (params) => (
         <ActionButtons
           id={params.id}
@@ -179,37 +129,56 @@ const TranferTable = ({ reportData, eventData, isAdmin, handleAddItem, handleVie
 
   const getRowClassName = (params) => {
     const { status, createAt, repeatAt } = params.row;
-    if (status === '1' && !isWithinLast7Days(createAt) || status === '3' && !isWithinLast3Days(repeatAt)) {
+    if ((status === '1' && !isWithinDays(createAt, 7)) || (status === '3' && !isWithinDays(repeatAt, 3))) {
       return 'alert-row';
     }
     return params.indexRelativeToCurrentPage % 2 === 0 ? 'even-row' : 'odd-row';
   };
 
+  const handleAddEvent = () => {
+    setMode('Add');
+    setIsHA(isAdmin);
+    setDialogOpen(true);
+  };
+
+  const handleEditEvent = (id, data, role) => {
+    setMode('Edit');
+    setIsHA(role);
+    setDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setMode(null);
+    setIsHA(false);
+    setDialogOpen(false);
+  };
+
   return (
-    <DataGrid
-      autoHeight
-      rows={eventData}
-      columns={columns}
-      disableRowSelectionOnClick
-      hideFooterSelectedRowCount={true}
-      initialState={{
-        pagination: { paginationModel: { page: 0, pageSize: 10 } },
-      }}
-      pageSizeOptions={[10, 25, 50, 100]}
-      getRowClassName={getRowClassName}
-      slots={{
-        toolbar: () => (
-          <EditToolbar reportData={reportData} handleAddItem={handleAddItem} />
-        ),
-      }}
-      localeText={{
-        toolbarColumns: "คอลัมน์",
-        toolbarFilters: "ตัวกรอง",
-        toolbarDensity: "ระยะห่าง",
-        toolbarExport: "ส่งออก",
-      }}
-      loading={loading}
-    />
+    <>
+      <DataGrid
+        autoHeight
+        rows={eventData}
+        columns={columns}
+        disableRowSelectionOnClick
+        hideFooterSelectedRowCount
+        initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
+        pageSizeOptions={[10, 25, 50, 100]}
+        getRowClassName={getRowClassName}
+        slots={{ toolbar: () => <EditToolbar reportData={reportData} handleAddEvent={handleAddEvent} /> }}
+        localeText={{ toolbarColumns: "คอลัมน์", toolbarFilters: "ตัวกรอง", toolbarDensity: "ระยะห่าง", toolbarExport: "ส่งออก" }}
+        loading={loading}
+      />
+
+      <EventDialog
+        mode={mode}
+        isHA={isHA}
+        userData={userData}
+        config={config}
+        isDialogOpen={isDialogOpen}
+        handleCloseDialog={handleCloseDialog}
+        reportData={reportData}
+      />
+    </>
   );
 };
 

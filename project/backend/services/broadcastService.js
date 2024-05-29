@@ -4,7 +4,7 @@ const { executeSQLQuery, executeSQLQueryEvent } = require("../controllers/broadc
 // Variable to indicate whether broadcasting is in progress
 global.isExecuting = false;
 
-async function executeAndStoreQueryResult(dep) {
+async function executeAndStoreQueryResult() {
   try {
     global.resetInterval();
 
@@ -19,7 +19,7 @@ async function executeAndStoreQueryResult(dep) {
 
     const [queryReport, queryEvent] = await Promise.all([
       executeSQLQuery(),
-      executeSQLQueryEvent(dep)
+      executeSQLQueryEvent(),
     ]);
 
     const dataWithHeader = {
@@ -31,9 +31,9 @@ async function executeAndStoreQueryResult(dep) {
     queryResultData = JSON.stringify(dataWithHeader);
 
     broadcastMessage(queryResultData);
-    
   } catch (error) {
     console.error("Error executing SQL query:", error);
+    // Handle the error gracefully, e.g., log it or send an error message to clients.
   } finally {
     // Reset isExecuting to false to allow the next execution
     global.isExecuting = false;

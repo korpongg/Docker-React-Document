@@ -38,11 +38,15 @@ const SelectBoxList = ({data,optionsdata,datacolumn,handleDataChangeCheckbox,han
             setPickdata(prevData => prevData.filter(item => item !== value));
         }
     };
+    // useEffect(() => {
+    //     useState(data[datacolumn] || [])
+    // }, [data]);
 
     useEffect(() => {
         // handleDataChangeCheckbox(pickdata,datacolumn);
         handleDataChangeCheckbox(pickdata,datacolumn); //array to string
     }, [pickdata]);
+
 
   return (
     <>
@@ -52,10 +56,11 @@ const SelectBoxList = ({data,optionsdata,datacolumn,handleDataChangeCheckbox,han
 {console.log("DataDict_occurrenceForm",DataDict_occurrenceForm[datacolumn])} */}
 {/* {console.log("title",title)} */}
         {/* {datadict && //check array lenght to list */}
-        <Box className="TopicHeader">
-            {optionsdata[datacolumn].topic &&
-            optionsdata[datacolumn].topic}
-        </Box>
+        {/* <Box className="TopicHeader"> */}
+            {/* {optionsdata[datacolumn].topic &&
+            optionsdata[datacolumn].topic} */}
+            {/* หัวข้อระบบงานที่เกี่ยวข้องกับเหตุการณ์ที่เกิดขึ้น */}
+        {/* </Box> */}
         {/* {optionsdata[datacolumn].topic &&
             optionsdata[datacolumn].topic
         } */}

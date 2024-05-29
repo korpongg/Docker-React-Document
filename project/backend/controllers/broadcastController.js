@@ -1,32 +1,32 @@
-const { sequelize } = require("../config/dbConn"); // Import the sequelize instance
+const sequelize = require('../config/dbConn').sequelize; // Import the sequelize instance
 
 // Main function to construct the JSON structure
 const executeSQLQuery = async () => {
   try {
     // First query to get occurrences and user details
     const occQuery = `
-    SELECT occ.*,
-      CONCAT(u_request.title, ' ', u_request.name, ' ', u_request.lastname) AS requestby,
-      u_request.dep AS requestdep,
-      u_request.faction AS requestfac,
-      u_request.affiliation AS requestaff,
-      CONCAT(u_update.title, ' ', u_update.name, ' ', u_update.lastname) AS updateby,
-      u_update.dep AS updatedep,
-      u_update.faction AS updatefac,
-      u_update.affiliation AS updateaff,
-      CONCAT(u_accept.title, ' ', u_accept.name, ' ', u_accept.lastname) AS acceptby,
-      u_accept.dep AS acceptdep,
-      u_accept.faction AS acceptfac,
-      u_accept.affiliation AS acceptaff,
-      CASE WHEN occ.reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END AS reporttypename
-    FROM [occurrence].[dbo].[occurrences] occ
-    LEFT JOIN [occurrence].[dbo].[user] AS u_request ON u_request.userid = occ.createby
-    LEFT JOIN [occurrence].[dbo].[user] AS u_update ON u_update.userid = occ.updateby
-    LEFT JOIN [occurrence].[dbo].[user] AS u_accept ON u_accept.userid = occ.acceptby
-    ORDER BY CASE WHEN occ.formstatus = '1' THEN 0 ELSE 1 END;
+      SELECT occ.*,
+        CONCAT(u_request.title, ' ', u_request.name, ' ', u_request.lastname) AS requestby,
+        u_request.dep AS requestdep,
+        u_request.faction AS requestfac,
+        u_request.affiliation AS requestaff,
+        CONCAT(u_update.title, ' ', u_update.name, ' ', u_update.lastname) AS updateby,
+        u_update.dep AS updatedep,
+        u_update.faction AS updatefac,
+        u_update.affiliation AS updateaff,
+        CONCAT(u_accept.title, ' ', u_accept.name, ' ', u_accept.lastname) AS acceptby,
+        u_accept.dep AS acceptdep,
+        u_accept.faction AS acceptfac,
+        u_accept.affiliation AS acceptaff,
+        CASE WHEN occ.reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END AS reporttypename
+      FROM [occurrence].[dbo].[occurrences] occ
+      LEFT JOIN [occurrence].[dbo].[user] AS u_request ON u_request.userid = occ.createby
+      LEFT JOIN [occurrence].[dbo].[user] AS u_update ON u_update.userid = occ.updateby
+      LEFT JOIN [occurrence].[dbo].[user] AS u_accept ON u_accept.userid = occ.acceptby
+      ORDER BY CASE WHEN occ.formstatus = '1' THEN 0 ELSE 1 END;
     `;
     const results = await sequelize.query(occQuery, {
-      type: sequelize.Sequelize.QueryTypes.SELECT,
+      type: sequelize.QueryTypes.SELECT,
     });
 
     if (results.length > 0) {
@@ -35,7 +35,7 @@ const executeSQLQuery = async () => {
         `SELECT d.id, d.name AS DepName, a.id AS AffID, a.name AS AffName
          FROM [occurrence].[dbo].[department] d
          LEFT JOIN [occurrence].[dbo].[affiliation] a ON a.id = d.relateid`,
-        { type: sequelize.Sequelize.QueryTypes.SELECT }
+        { type: sequelize.QueryTypes.SELECT }
       );
 
       // Use map to parse JSON fields before sending the response
@@ -91,7 +91,7 @@ const executeSQLQueryEvent = async (dep) => {
         d.name AS depname,
         CASE WHEN o.reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END AS reporttypename,
         o.level,
-        -- o.description,
+        o.description,
         e.comment,
         e.summarydetail,
         o.activefailure,
@@ -120,7 +120,7 @@ const executeSQLQueryEvent = async (dep) => {
       ORDER BY e.createAt DESC;
     `;
     const results = await sequelize.query(eventQuery, {
-      type: sequelize.Sequelize.QueryTypes.SELECT,
+      type: sequelize.QueryTypes.SELECT,
       replacements: { dep }
     });
 

@@ -47,7 +47,7 @@ function App() {
             <Route path="/home" element={<Home />} />
             <Route path="/occurrence" element={<IndexPage />} />
             <Route path="/occurrence/event" element={<EventOcc />} />
-            <Route path="/occurrence/:id" element={<Occurrence Mode="Edit" />} />
+            <Route path="/occurrence/:id" element={<Occurrence Mode="Show" />} />
             <Route path="/occurrence/form" element={<Occurrence Mode="Add" />} />
             <Route path="/occurrence/form/:id" element={<Occurrence Mode="Edit" />} />
           </Route>

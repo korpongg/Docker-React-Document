@@ -8,6 +8,7 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import Divider from '@mui/material/Divider';
 // import StatusLable from "../label.json";
 import ReportLog from "./ReportLog";
 import RadioList from "./RadioList";
@@ -29,7 +30,7 @@ const ReportRiskType = ({
     <>
       <ReportTypeStyle>        
         <Box className="TopicHeader">ประเภทอุบัติการณ์</Box>
-        <div className="ContentRow">
+        <div className="ContentRow" style={{paddingLeft:"50px"}}>
 
               <RadioGroup
                 sx={{ p: 1 }}
@@ -54,9 +55,8 @@ const ReportRiskType = ({
                   label="ipd"
                 />
               </RadioGroup>
-
-            </div>
-        <RadioGroup
+              <Divider orientation="vertical" variant="middle" flexItem sx={{m:1,marginLeft:"50px",marginRight:"50px"}} />
+              <RadioGroup
           sx={{ p: 1 }}
           row
           id="reporttype"
@@ -79,6 +79,9 @@ const ReportRiskType = ({
             label="Clinical Risk"
           />
         </RadioGroup>
+        
+            </div>
+        
         
         {/* <Box className={missingKeys.some(item => item.key === 'deptrelate') ? "SETERROR":"FormInputBorder" }> */}
 {/* test */}

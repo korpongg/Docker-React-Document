@@ -1,36 +1,28 @@
-import React, { useEffect, useState, useRef, useMemo } from "react";
-import axios from "axios";
-import { DialogTitle, DialogContent, DialogActions, Box, Button, TextField } from '@mui/material';
-import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
+import React, { useEffect, useState, useCallback } from "react";
+import { DialogTitle, DialogContent } from '@mui/material';
 import { TranferDialogBox } from "../../../styles/Dashboard.style";
 import TranferTable from "./TranferTable";
 
-const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
-
-const TranferDialog = ({ config, isAdmin, rowData, eventData, setEventData, isDialogOpen, setDialogOpen, handleCloseDialog }) => {
-    const userId = rowData?.reportid || 0;
+const TranferDialog = ({ userData, config, isAdmin, rowData, eventData, isDialogOpen, handleCloseDialog }) => {
+    const reportID = rowData?.reportid || 0;
+    const [filterData, setFilterData] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const fetchVitalSignData = async () => {
-        try {
-            const response = await axios.get(`${apiUrl}/events/${userId}`, { ...config });
-            if (response.status === 200) {
-                setEventData(response.data);
-                setLoading(false);
-            }
-        } catch (error) {
-            console.error('Error fetching events data:', error);
-        } finally {
+    const fetchData = useCallback(async () => {
+        if (isDialogOpen && reportID) {
+            setLoading(true);
+            const filteredData = eventData.filter(item => item.reportid === reportID);
+            setFilterData(filteredData);
+            setLoading(false);
+        } else {
+            setFilterData([]);
             setLoading(false);
         }
-    };
+    }, [isDialogOpen, reportID, eventData]);
 
     useEffect(() => {
-        setLoading(true);
-        if (isDialogOpen && userId) {
-            fetchVitalSignData();
-        }
-    }, [isDialogOpen, userId]);
+        fetchData();
+    }, [fetchData]);
 
     return (
         <TranferDialogBox
@@ -41,20 +33,24 @@ const TranferDialog = ({ config, isAdmin, rowData, eventData, setEventData, isDi
             maxWidth="lg"
             fullWidth
         >
-            {/* <DialogTitle id="tranfer-dialog-title">ส่งต่อรายงาน หน่วยงานที่เกี่ยวข้อง</DialogTitle> */}
             <DialogTitle id="tranfer-dialog-title">รายงานหน่วยงานที่เกี่ยวข้อง</DialogTitle>
             <DialogContent>
-
-                <TranferTable
-                    reportData={rowData}
-                    eventData={eventData}
-                    isAdmin={isAdmin}
-                    loading={loading}
-                />
-
+                {loading ? (
+                    <div>Loading...</div>
+                ) : (
+                    <TranferTable
+                        reportData={rowData}
+                        dataEvent={filterData}
+                        isAdmin={isAdmin}
+                        userData={userData}
+                        config={config}
+                        loading={loading}
+                        setLoading={setLoading}
+                    />
+                )}
             </DialogContent>
-        </TranferDialogBox >
-    )
-}
+        </TranferDialogBox>
+    );
+};
 
 export default TranferDialog;

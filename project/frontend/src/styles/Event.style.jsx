@@ -38,6 +38,9 @@ export const EventBox = styled(Box)`
   .even-row {
     background: #f3f2fa;
   }
+  .alert-row {
+    background: #ff0000 !important;
+  }
 
   .MuiDataGrid-root {
     font-size: 19px;
