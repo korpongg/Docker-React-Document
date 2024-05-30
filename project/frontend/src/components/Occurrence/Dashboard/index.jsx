@@ -59,7 +59,6 @@ const IndexPage = () => {
 
   const handleAddItem = () => {
     disconnectWebSocket();
-    localStorage.removeItem("FormData");
     navigate(`/occurrence/form`);
   };
 

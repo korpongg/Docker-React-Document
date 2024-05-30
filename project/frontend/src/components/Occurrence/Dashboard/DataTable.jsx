@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Box, Tooltip } from "@mui/material";
+import { Button, Box, Tooltip, Link } from "@mui/material";
 import { DataGrid, GridToolbarContainer, GridToolbar, GridToolbarQuickFilter, GridActionsCellItem } from "@mui/x-data-grid";
 import { Add as AddIcon, DescriptionRounded as FileIcon, SwapHorizRounded as RotateIcon, FindInPageRounded as ViewIcon, Edit as EditIcon, DeleteForeverRounded as DeleteIcon } from "@mui/icons-material";
 import { formatDateTimeN7 } from "../../Function";
@@ -14,6 +14,26 @@ function EditToolbar({ handleAddItem, loading }) {
       {/* <GridToolbar /> */}
       <GridToolbarQuickFilter />
     </GridToolbarContainer>
+  );
+}
+
+function ExpandableCell({ value }) {
+  const [expanded, setExpanded] = React.useState(false);
+
+  return (
+    <div>
+      {expanded ? value : value.slice(0, 200)}&nbsp;
+      {value.length > 200 && (
+        <Link
+          type="button"
+          component="button"
+          sx={{ fontSize: 'inherit' }}
+          onClick={() => setExpanded(!expanded)}
+        >
+          {expanded ? 'ดูน้อยลง' : 'ดูเพิ่มเติม'}
+        </Link>
+      )}
+    </div>
   );
 }
 
@@ -36,7 +56,7 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
     {
       field: "formstatus",
       headerName: "สถานะ",
-      minWidth: 140,
+      minWidth: 155,
       flex: 1,
       align: "center",
       headerAlign: "center",
@@ -91,6 +111,7 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
       headerAlign: "center",
       sortable: false,
       filterable: false,
+      renderCell: (params) => <ExpandableCell {...params} />,
     },
     {
       field: "actions",
@@ -112,7 +133,7 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
             />
           </Tooltip>
 
-          {isAdmin && (
+          {isAdmin && row.formstatus === '1' && (
             <Tooltip title={row.formstatus === '1' ? 'ส่งต่อรายงาน' : 'ดูรายงานส่งต่อ'}>
               <GridActionsCellItem
                 icon={row.formstatus === '1' ? <RotateIcon /> : <ViewIcon />}
@@ -155,6 +176,8 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
     <DataGrid
       autoHeight
       rows={data}
+      getRowHeight={() => 'auto'}
+      getEstimatedRowHeight={() => 200}
       columns={filteredColumns}
       disableRowSelectionOnClick
       hideFooterSelectedRowCount={true}
@@ -175,6 +198,20 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
         toolbarExport: "ส่งออก",
       }}
       loading={loading}
+      sx={{
+        '&.MuiDataGrid-root--densityCompact .MuiDataGrid-cell': {
+          py: 1,
+        },
+        '&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell': {
+          py: '15px',
+        },
+        '&.MuiDataGrid-root--densityComfortable .MuiDataGrid-cell': {
+          py: '22px',
+        },
+        '& .MuiDataGrid-cell': {
+          alignItems: 'flex-start',
+        },
+      }}
     />
   );
 };

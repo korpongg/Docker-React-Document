@@ -1,20 +1,105 @@
 import React from "react";
-import { DialogTitle, DialogContent } from '@mui/material';
+import { DialogTitle, DialogContent, Divider } from '@mui/material';
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
+Divider
 
 const EventView = ({ isHA, eventData }) => {
-    console.log(eventData);
 
     return (
         <>
             {eventData ? (
                 <>
                     <DialogTitle id="tranfer-dialog-title">
-                        <u>Report ID {eventData.reportid}</u>
+                        <div>Report ID : {eventData.reportid}</div>
                     </DialogTitle>
                     <DialogContent>
+                        <div className="EventBox">
+                            <div className="EventRow">
+                                <div className="EventCol">
+                                    <div className="EventCell Topic">ใบที่</div>
+                                    <div className="EventCell Content">{eventData.code}</div>
+                                </div>
+                                <div className="EventCol">
+                                    <div className="EventCell Topic">HN</div>
+                                    <div className="EventCell Content">{eventData.hn}</div>
+                                </div>
+                            </div>
+                            <div className="EventRow">
+                                <div className="EventCol">
+                                    <div className="EventCell Topic">วันที่เกิดเหตุ</div>
+                                    <div className="EventCell Content">{new Date(eventData.occurrencedate).toLocaleString()}</div>
+                                </div>
+                                <div className="EventCol">
+                                    <div className="EventCell Topic">แผนกที่เกี่ยวข้อง</div>
+                                    <div className="EventCell Content">{eventData.depname}</div>
+                                </div>
+                            </div>
+                            <div className="EventRow">
+                                <div className="EventCol">
+                                    <div className="EventCell Topic">ประเภท</div>
+                                    <div className="EventCell Content">{eventData.reporttypename}</div>
+                                </div>
+                                <div className="EventCol">
+                                    <div className="EventCell Topic">ความรุนแรง</div>
+                                    <div className="EventCell Content">{eventData.level}</div>
+                                </div>
+                            </div>
+                            <div className="EventRow">
+                                <div className="EventCol">
+                                    <div className="EventCell Topic">ความเร่งด่วน</div>
+                                    <div className="EventCell Content">{eventData.urgenttype === "0" ? "เร่งด่วน" : "ไม่เร่งด่วน"}</div>
+                                </div>
+                                <div className="EventCol">
+                                    <div className="EventCell Topic">ประเภทอุบัติการณ์</div>
+                                    <div className="EventCell Content">{eventData.isnew === "0" ? "อุบัติการณ์ใหม่" : "อุบัติการณ์ซ้ำ"}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {isHA && 
+                        <div className="EventBox">
+                            <div className="EventRow">
+                                <div className="EventCell AreaTopic">บันทึกรายละเอียด</div>
+                            </div>
+                            <div className="EventRow">
+                                    <pre className="EventCell AreaContent">{eventData.description}</pre>
+                                    
+                            </div>
+                        </div>
+                        }
+
+                        <div className="EventBox">
+                            <div className="EventRow">
+                                <div className="EventCell AreaTopic">สรุปรายละเอียดเหตุการณ์</div>
+                            </div>
+                            <div className="EventRow">
+                                <pre className="EventCell AreaContent">{eventData.summarydetail}</pre>
+                            </div>
+                        </div>
+
+                        <div className="EventBox">
+                            <div className="EventRow">
+                                <div className="EventCell AreaTopic">ความคลาดเคลื่อน / การละเมิดที่เกิดขึ้น</div>
+                            </div>
+                            <div className="EventRow">
+                                <pre className="EventCell AreaContent">{eventData.activefailure ? eventData.activefailure : '-'}</pre>
+                            </div>
+                        </div>
+
+                        {eventData.comment && 
+                            <div className="EventBox">
+                                <div className="EventRow">
+                                    <div className="EventCell AreaTopic">สรุปเหตุการณ์ไม่พึงประสงค์</div>
+                                </div>
+                                <div className="EventRow">
+                                    <pre className="EventCell AreaContent">{eventData.comment}</pre>
+                                </div>
+                            </div>
+                        }
+
+
                         <Grid2 container spacing={1}>
-                            <Grid2 xs={12} sm={6}>
+                            {/* <Grid2 xs={12} sm={6}>
                                 <strong>ใบที่:</strong> {eventData.code}
                             </Grid2>
                             <Grid2 xs={12} sm={6}>
@@ -32,30 +117,36 @@ const EventView = ({ isHA, eventData }) => {
                             <Grid2 xs={12} sm={6}>
                                 <strong>ความรุนแรง:</strong> {eventData.level}
                             </Grid2>
+                            <Grid2 xs={12} sm={6}>
+                                <strong>ความเร่งด่วน:</strong> {eventData.urgenttype === "0" ? "เร่งด่วน" : "ไม่เร่งด่วน"}
+                            </Grid2>
+                            <Grid2 xs={12} sm={6}>
+                                <strong>ประเภทอุบัติการณ์:</strong> {eventData.isnew === "0" ? "อุบัติการณ์ใหม่" : "อุบัติการณ์ซ้ำ"}
+                            </Grid2> */}
 
-                            {isHA && (
+                            {/* {isHA && (
                                 <Grid2 xs={12}>
                                     <u><strong>บันทึกรายละเอียด</strong></u>
                                     <pre>{eventData.description}</pre>
                                 </Grid2>
-                            )}
+                            )} */}
 
-                            <Grid2 xs={12}>
+                            {/* <Grid2 xs={12}>
                                 <u><strong>สรุปรายละเอียดเหตุการณ์</strong></u>
                                 <pre>{eventData.summarydetail}</pre>
-                            </Grid2>
+                            </Grid2> */}
 
-                            <Grid2 xs={12}>
+                            {/* <Grid2 xs={12}>
                                 <u><strong>ความคลาดเคลื่อน / การละเมิดที่เกิดขึ้น</strong></u>
                                 <pre>{eventData.activefailure ? eventData.activefailure : '-'}</pre>
-                            </Grid2>
+                            </Grid2> */}
 
-                            {eventData.comment && (
+                            {/* {eventData.comment && (
                                 <Grid2 xs={12}>
                                     <u><strong>สรุปเหตุการณ์ไม่พึงประสงค์</strong></u>
                                     <pre>{eventData.comment}</pre>
                                 </Grid2>
-                            )}
+                            )} */}
                         </Grid2>
                     </DialogContent>
                 </>

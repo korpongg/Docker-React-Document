@@ -150,6 +150,53 @@ export const TranferDialogBox = styled(Dialog)`
   @media screen and (max-width: 901px) {
     #tranfer-dialog-title {
       font-size: 1.125rem;
+      // color:red;
     }
   }
+.EventBox{
+  border:2px solid #cacaca;
+  margin:2.5px;
+  background:#f1f1f1;
+}
+.EventRow{
+  display:flex;
+  width:100%;
+  border-bottom:1px solid #cacaca;
+}
+.EventRow:last-child{
+  border:unset;
+}
+.EventCol{
+  display:flex;
+  width:100%;
+  border-right:3px solid #cacaca;
+}
+.EventCol:last-child{
+  border:unset;
+}
+
+.EventCell{
+  border-right:3px solid #cacaca;
+  padding:5px;
+  width:100%;
+}
+.EventCell:last-child{
+  border:unset;
+}
+.Topic{
+  width:40%;
+  background:#cacaca;
+}
+.Content{
+  width:60%;
+}
+.AreaTopic{
+  width:100%;
+  background:#cacaca;
+}
+.AreaContent{
+  width:100%;
+  height:100px;
+  overflow:scroll;
+}
 `;

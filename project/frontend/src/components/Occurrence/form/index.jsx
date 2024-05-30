@@ -38,6 +38,7 @@ import FiberNewIcon from '@mui/icons-material/FiberNew';
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { chkAdmins, chkAdmin } from "../../Function";
+import { Description } from "@mui/icons-material";
 
 const Occurrence = ({ Mode }) => {
   let { id } = useParams();
@@ -47,7 +48,7 @@ const Occurrence = ({ Mode }) => {
     headers: { Authorization: `Bearer ${storedAuth.accessToken}` },
   };
   const navigate = useNavigate();
-  const UserData = JSON.parse(localStorage.getItem("userData"));
+  const UserData = JSON.parse(localStorage.getItem("userData"))|| null;
   const TempFormData = JSON.parse(localStorage.getItem("FormData")) || {};
   const [Stage, setStage] = useState(1);
   const [OccStage, setOccStage] = useState(0);
@@ -57,8 +58,9 @@ const Occurrence = ({ Mode }) => {
   const [AlertType, setAlertType] = useState("error");
   const [AlertText, setAlertText] = useState("");
   const [AlertBorder,setAlertBorder] =useState([]);
-  // const isAdmin = chkAdmins(UserData?.role);
-  // const isEXEC = chkAdmin(UserData?.level);
+  const [Access,setAccess] = useState(false);
+  const isAdmin = chkAdmins(UserData?.role);
+  const isEXEC = chkAdmin(UserData?.level);
 
   const handleDataChange = (event, name) => {
     const Text = event.target.value;
@@ -83,34 +85,82 @@ const Occurrence = ({ Mode }) => {
 
   // Get Data For Mode Edit&Show 
   const FetchOccurranceById = async () => {
-    console.log("FetchOccurranceById : "+id);
+    // console.log("FetchOccurranceById : "+id);
     try {
         const response = await axios.get(`${apiUrl}/occurrences/${id}`,config);
-        console.log("Fetched Data : ",response.data);
+        // console.log("Fetched Data : ",response.data);
 
         if (response.status === 200 || response.status === 201) 
         {
-          // setFormData(response.data)   
-          setFormData({
-            ...response.data,
-            userreport: response.data.createby,
-            // hn: UserData.hn,
-            // an: UserData.an,
-            // age: "",
-            // gender: response.data.gender,
-            reportdate: new Date(response.data.createAt),
-            occurrencedate: new Date(response.data.occurrencedate),
-            aff: response.data.requestaff,
-            faction: response.data.requestfac,
-            dep: response.data.requestdep,
-            // type: "opd",
-            // reporttype: "0",
-            // aff: UserData.affiliation,
-            // faction: UserData.faction,
-            // dep: UserData.dep,
-            // // deptrelate: "",
-            // createby: UserData.userid,
-          })
+          
+          if(Mode==="Edit"){
+            // console.log("Edit");
+            if(UserData.userid===response.data.createby){
+              // console.log("NotAllow");
+              setFormData({
+                ...response.data,
+                userreport: response.data.createby,
+                reportdate: new Date(response.data.createAt),
+                occurrencedate: new Date(response.data.occurrencedate),
+                aff: response.data.requestaff,
+                faction: response.data.requestfac,
+                dep: response.data.requestdep,
+              }),
+              setAccess(true);
+            }else{
+              setAccess(false);
+            }
+          }else{
+            // console.log("Show");
+            //
+
+            if(isAdmin || UserData.userid===response.data.createby){
+              setFormData({
+                ...response.data,
+                userreport: response.data.createby,
+                reportdate: new Date(response.data.createAt),
+                occurrencedate: new Date(response.data.occurrencedate),
+                aff: response.data.requestaff,
+                faction: response.data.requestfac,
+                dep: response.data.requestdep,
+              }),
+              setAccess(true);
+            } else if(isEXEC){
+              if (UserData.affiliation === "งานคุณภาพ") {
+                setFormData({
+                  ...response.data,
+                  userreport: response.data.createby,
+                  reportdate: new Date(response.data.createAt),
+                  occurrencedate: new Date(response.data.occurrencedate),
+                  aff: response.data.requestaff,
+                  faction: response.data.requestfac,
+                  dep: response.data.requestdep,
+                }),
+                setAccess(true);
+              }
+            } else {
+              // console.log("Match Data",UserData.affiliation,response.data.requestaff);
+              if(UserData.affiliation === response.data.requestaff){
+              // console.log("match")
+              
+                setFormData({
+                  ...response.data,
+                  userreport: response.data.createby,
+                  reportdate: new Date(response.data.createAt),
+                  occurrencedate: new Date(response.data.occurrencedate),
+                  aff: response.data.requestaff,
+                  faction: response.data.requestfac,
+                  dep: response.data.requestdep,
+                  description:"...",
+                }),
+                setAccess(true);
+              } else {
+                setAccess(false);
+              }
+            }
+            //
+          }
+          
         }
     } catch (error) {
         console.error(`Error fetching user data: ${error.message}`);
@@ -188,8 +238,9 @@ const Occurrence = ({ Mode }) => {
   };
 
   useEffect(() => {
-    console.log("Mode",Mode);
+    // console.log("Mode",Mode);
     if(Mode==="Add"){
+      setAccess(true),
       setFormData({
         ...TempFormData,
         userreport: UserData.userid,
@@ -212,7 +263,7 @@ const Occurrence = ({ Mode }) => {
       })
   }
   else {
-    console.log("Edit/Show Mode : "+id);
+    // console.log("Edit/Show Mode : "+id);
     FetchOccurranceById();
     setEditFormData({id:parseInt(id,10)});
     // console.log("EditFormData",EditFormData);
@@ -447,8 +498,8 @@ const Occurrence = ({ Mode }) => {
 
   return (
     <>
-      {console.log("FormData", FormData)}
-      {console.log("AlertBorder", AlertBorder)}
+      {/* {console.log("FormData", FormData)} */}
+      {/* {console.log("AlertBorder", AlertBorder)} */}
       {/* {console.log("allKeysExist", allKeysExist)} */}
       {/* <ReportView Mode={Mode} data={FormData}/> */}
       <AlertBar open={Alert} setOpen={setAlert} AlertType={AlertType} AlertText={AlertText}/>
@@ -469,6 +520,7 @@ const Occurrence = ({ Mode }) => {
           </span>
         </Box>
 
+{Access ? 
         <Box className="MainContainer">
 
         
@@ -675,9 +727,20 @@ const Occurrence = ({ Mode }) => {
             </>
           )}
         </Box>
-
+:
+  <Box className="MainContainer">
+    <div className="AccessBox">
+      {Mode==="Edit"?
+      "คุณไม่มีสิทธิในการแก้ไขนี้ ขออภัยในความไม่สะดวก"
+      :
+      "คุณไม่มีสิทธิในการเข้าถึงข้อมูลนี้ ขออภัยในความไม่สะดวก"
+      }
+    </div>
+  </Box>
+}
         <NavForm
           Mode={Mode}
+          Access={FormData.createby===UserData.userid}
           submitfunction={handleSubmit}
           handleSubmitEdit={handleSubmitEdit}
           Stage={Stage}

@@ -16,6 +16,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Divider from "@mui/material/Divider";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import { CheckCircleRounded as AcceptIcon } from "@mui/icons-material";
 import LogoutIcon from "@mui/icons-material/Logout";
 // import Logo from "../assets/logo.png";
 import LogoWhite from "../assets/logo-white.svg";
@@ -215,6 +216,12 @@ const Header = () => {
                   <Divider key="divider2" />
                   {[
                     isAdmin && <MenuAdmin key="admin-menu" />,
+                    <MenuItem key="accept" onClick={() => navigate("/occurrence/event", { replace: true })}>
+                      <ListItemIcon>
+                        <AcceptIcon fontSize="small" style={{ color: "green" }} />
+                      </ListItemIcon>
+                      รับมอบหมายงาน
+                    </MenuItem>,
                     <MenuItem key="logout" onClick={() => navigate("/logout", { replace: true })}>
                       <ListItemIcon>
                         <LogoutIcon fontSize="small" style={{ color: "red" }} />

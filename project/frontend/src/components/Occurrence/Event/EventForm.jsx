@@ -2,7 +2,8 @@ import React from "react";
 import { DialogTitle, DialogContent, TextField, Radio, RadioGroup, FormControlLabel, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 
-const EventForm = ({ mode, isHA, reportData, departments, formData, handleSelectChange, handleUrgentChange, handleISNewChange, handleInputChange }) => {
+const EventForm = ({ mode, isHA, reportData, eventData, departments, formData, summarydetailRef, commentRef, handleSelectChange, handleUrgentChange, handleISNewChange, handleInputChange }) => {
+
     return (
         <>
             <DialogTitle id="tranfer-dialog-title">
@@ -19,7 +20,7 @@ const EventForm = ({ mode, isHA, reportData, departments, formData, handleSelect
                                 labelId="deptrelate-label"
                                 id="deptrelate"
                                 name="deptrelate"
-                                value={formData.deptrelate}
+                                value={formData.deptrelate || eventData?.deptrelate || "0"}
                                 label="หน่วยงานที่เกี่ยวข้อง"
                                 onChange={handleSelectChange}
                                 disabled={!isHA || mode === 'Accept'}
@@ -39,7 +40,7 @@ const EventForm = ({ mode, isHA, reportData, departments, formData, handleSelect
                             <RadioGroup
                                 id="urgenttype"
                                 name="urgenttype"
-                                value={formData.urgenttype}
+                                value={formData.urgenttype || eventData?.urgenttype || "0"}
                                 onChange={handleUrgentChange}
                                 row
                             >
@@ -51,7 +52,7 @@ const EventForm = ({ mode, isHA, reportData, departments, formData, handleSelect
                             <RadioGroup
                                 id="isnew"
                                 name="isnew"
-                                value={formData.isnew}
+                                value={formData.isnew || eventData?.isnew || "0"}
                                 onChange={handleISNewChange}
                                 row
                             >
@@ -65,7 +66,7 @@ const EventForm = ({ mode, isHA, reportData, departments, formData, handleSelect
                 {isHA && mode !== 'Accept' && (
                     <TextField
                         id="description"
-                        value={reportData?.description || '-'}
+                        value={reportData?.description || eventData?.description || '-'}
                         label="รายละเอียดเหตุการณ์"
                         fullWidth
                         InputProps={{ readOnly: true }}
@@ -80,10 +81,10 @@ const EventForm = ({ mode, isHA, reportData, departments, formData, handleSelect
                     <>
                         <TextField
                             id="summarydetail"
-                            value={formData.summarydetail}
+                            defaultValue={eventData?.summarydetail}
                             label="สรุปรายละเอียดเหตุการณ์"
-                            onChange={handleInputChange}
                             disabled={!isHA || mode === 'Accept'}
+                            inputRef={summarydetailRef}
                             fullWidth
                             multiline
                             rows={3}
@@ -92,7 +93,7 @@ const EventForm = ({ mode, isHA, reportData, departments, formData, handleSelect
 
                         <TextField
                             id="activefailure"
-                            value={reportData?.activefailure || '-'}
+                            defaultValue={reportData?.activefailure || eventData?.activefailure || '-'}
                             label="ความคลาดเคลื่อน"
                             fullWidth
                             InputProps={{ readOnly: true }}
@@ -104,9 +105,9 @@ const EventForm = ({ mode, isHA, reportData, departments, formData, handleSelect
 
                         <TextField
                             id="comment"
-                            value={formData.comment}
-                            onChange={handleInputChange}
+                            defaultValue={eventData?.comment}
                             label="สรุปเหตุการณ์ไม่พึงประสงค์"
+                            inputRef={commentRef}
                             fullWidth
                             multiline
                             rows={3}
@@ -118,7 +119,7 @@ const EventForm = ({ mode, isHA, reportData, departments, formData, handleSelect
                     <>
                         <TextField
                             id="activefailure"
-                            value={reportData?.activefailure || '-'}
+                            defaultValue={reportData?.activefailure || eventData?.activefailure || '-'}
                             label="ความคลาดเคลื่อน"
                             fullWidth
                             InputProps={{ readOnly: true }}
@@ -130,10 +131,10 @@ const EventForm = ({ mode, isHA, reportData, departments, formData, handleSelect
 
                         <TextField
                             id="summarydetail"
-                            value={formData.summarydetail}
+                            defaultValue={eventData?.summarydetail}
                             label="สรุปรายละเอียดเหตุการณ์"
-                            onChange={handleInputChange}
                             disabled={!isHA || mode === 'Accept'}
+                            inputRef={summarydetailRef}
                             fullWidth
                             multiline
                             rows={3}

@@ -85,7 +85,7 @@ const executeSQLQueryEvent = async (dep) => {
       SELECT e.id,
         e.reportid,
         e.code,
-        o.hn,
+        CASE WHEN o.hn IS NULL THEN o.an ELSE o.hn END AS hn,
         o.occurrencedate,
         e.deptrelate,
         d.name AS depname,

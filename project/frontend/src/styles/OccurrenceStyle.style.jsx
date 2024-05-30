@@ -56,7 +56,7 @@ export const OccurrenceStyle = styled(Box)`
     position:;
     display:flex;
   flex-direction:row;
-  justify-content:space-between;
+  justify-content:flex-end;
   align-items:center;
   font-size:12px;
   // position: absolute;
@@ -458,5 +458,9 @@ export const OccurrenceStyle = styled(Box)`
   }
   .MuiInputBase-root.MuiFilledInput-root.Mui-disabled{
     background:#f1f1f1;
+  }
+
+  .AccessBox{
+    margin:200px;
   }
 `;

@@ -128,8 +128,8 @@ const ListSelectData = ({
             ลบ
           </div> */}
         </div>
-        {KeyMapping.map((KeyM) => (
-          <>
+        {KeyMapping.map((KeyM,KeyMindex) => (
+          <React.Fragment key={KeyMindex}>
             {data[KeyM] && data[KeyM].length > 0 && (
               <>
                 {/* <div>{KeyM}</div> */}
@@ -195,7 +195,7 @@ const ListSelectData = ({
                 ))}
               </>
             )}
-          </>
+          </React.Fragment>
         ))}
       </div>
 

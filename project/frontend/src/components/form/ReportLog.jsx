@@ -10,7 +10,7 @@ const ReportLog = ({Mode,data,setDataFunction,handleDateChange,handleDataChangeC
 
   return (
     <>
-    <Box className="TopicHeader">ข้อมูลสถานการณ์</Box>
+    <div className="TopicHeader">ข้อมูลสถานการณ์</div>
     <div className="GeneralBox">
       <div className="ContentBox">
           <div className="ContentRow">

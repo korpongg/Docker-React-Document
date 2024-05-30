@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import axios from "axios";
 import { DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import Swal from 'sweetalert2';
@@ -13,6 +13,9 @@ const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 const EventDialog = ({ mode, isHA, userData, config, isDialogOpen, handleCloseDialog, reportData, eventData, formData, setFormData }) => {
     const [loading, setLoading] = useState(false);
     const [departments, setDepartments] = useState([]);
+
+    const summarydetailRef = useRef(null);
+    const commentRef = useRef(null);
 
     useEffect(() => {
         if (reportData == null || (reportData?.deptAffInfo && reportData.deptAffInfo.length === 0)) {
@@ -46,10 +49,6 @@ const EventDialog = ({ mode, isHA, userData, config, isDialogOpen, handleCloseDi
             });
         } else if (mode === 'Accept' && eventData) {
             setFormData({
-                deptrelate: eventData.deptrelate,
-                urgenttype: eventData.urgenttype,
-                isnew: eventData.isnew,
-                summarydetail: eventData.summarydetail,
                 comment: eventData?.comment || '',
                 acceptby: userData.userid
             });
@@ -85,13 +84,16 @@ const EventDialog = ({ mode, isHA, userData, config, isDialogOpen, handleCloseDi
         let isValid = true;
         let errorMessage = '';
 
+        const summarydetail = summarydetailRef.current ? summarydetailRef.current.value.trim() : '';
+        const comment = commentRef.current ? commentRef.current.value.trim() : '';
+
         if (mode === 'Add' || mode === 'Edit') {
-            if (formData.deptrelate === '0' || formData.summarydetail.trim() === '') {
+            if (formData.deptrelate === '0' || summarydetail === '') {
                 isValid = false;
                 errorMessage = 'กรุณากรอกข้อมูลในฟิลด์ที่จำเป็นทั้งหมด';
             }
         } else if (mode === 'Accept') {
-            if (formData.comment.trim() === '') {
+            if (comment === '') {
                 isValid = false;
                 errorMessage = 'กรุณากรอกข้อมูล สรุปเหตุการณ์ไม่พึงประสงค์';
             }
@@ -100,21 +102,25 @@ const EventDialog = ({ mode, isHA, userData, config, isDialogOpen, handleCloseDi
         if (isValid) {
             try {
                 let response;
+                let formDataToSend;
 
                 if (mode === 'Add') {
-                    response = await axios.post(`${apiUrl}/events`, formData, { ...config });
+                    formDataToSend = { ...formData, summarydetail };
+                    response = await axios.post(`${apiUrl}/events`, formDataToSend, { ...config });
                 } else {
-                    response = await axios.put(`${apiUrl}/events/${eventData.id}`, formData, { ...config });
+                    if (mode === 'Edit') {
+                        formDataToSend = { ...formData, summarydetail };
+                    } else {
+                        formDataToSend = { ...formData, comment };
+                    }
+                    response = await axios.put(`${apiUrl}/events/${eventData.id}`, formDataToSend, { ...config });
                 }
 
                 if (response.status === 200 || response.status === 201) {
-                    if (mode === 'Add') {
-                        Swal.fire({ icon: 'success', title: 'Success', text: 'เพิ่มรายงานเรียบร้อยแล้ว' });
-                    } else if (mode === 'Add') {
-                        Swal.fire({ icon: 'success', title: 'Success', text: 'แก้ไขรายงานเรียบร้อยแล้ว' });
-                    } else {
-                        Swal.fire({ icon: 'success', title: 'Success', text: 'ตอบกลับรายงานเรียบร้อยแล้ว' });
-                    }
+                    const successMessage = mode === 'Add' ? 'เพิ่มรายงานเรียบร้อยแล้ว' :
+                                          mode === 'Edit' ? 'แก้ไขรายงานเรียบร้อยแล้ว' :
+                                          'ตอบกลับรายงานเรียบร้อยแล้ว';
+                    Swal.fire({ icon: 'success', title: 'Success', text: successMessage });
                     handleCloseDialog();
                 }
             } catch (err) {
@@ -145,8 +151,11 @@ const EventDialog = ({ mode, isHA, userData, config, isDialogOpen, handleCloseDi
                             mode={mode}
                             isHA={isHA}
                             reportData={reportData}
+                            eventData={eventData}
                             departments={departments}
                             formData={formData}
+                            summarydetailRef={summarydetailRef}
+                            commentRef={commentRef}
                             handleSelectChange={handleSelectChange}
                             handleUrgentChange={handleUrgentChange}
                             handleISNewChange={handleISNewChange}

@@ -16,7 +16,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import LastPageIcon from '@mui/icons-material/LastPage';
 
-const NavForm = ({Mode,submitfunction,handleSubmitEdit,Stage,MaxStage,FirstStage,LastStage,PrevStage,NextStage,ToStage}) => {
+const NavForm = ({Mode,Access,submitfunction,handleSubmitEdit,Stage,MaxStage,FirstStage,LastStage,PrevStage,NextStage,ToStage}) => {
   const NavPage = [];
   for (let i = 0; i < MaxStage; i++) {
     NavPage.push(
@@ -27,11 +27,9 @@ const NavForm = ({Mode,submitfunction,handleSubmitEdit,Stage,MaxStage,FirstStage
   }
   return (
   <>
+  {/* {console.log(Access)} */}
     <Box className="FormFooter" >
-      {/* <Box sx={{width:"10px"}}>
-        Test
-      </Box> */}
-    <span>
+    {/* <span>
       {Stage>1 ?
       <>
         <Tooltip title="หน้าแรก">
@@ -52,22 +50,24 @@ const NavForm = ({Mode,submitfunction,handleSubmitEdit,Stage,MaxStage,FirstStage
           </IconButton>
         </Tooltip>
       }
-    </span>
+    </span> */}
     {Stage===MaxStage ? 
     Mode!=="Show" &&(
-      (Mode==="Add" ?
-        <ConfirmDialog submitfunction={submitfunction} Mode={Mode}/> 
+      Access && (
+
+        (Mode==="Add" ?
+        <ConfirmDialog submitfunction={submitfunction} Access={Access} Mode={Mode}/> 
         :
-        <ConfirmDialog submitfunction={handleSubmitEdit} Mode={Mode}/> ))
-    : "Page "+Stage+" of "+MaxStage}
-    <span>
+        <ConfirmDialog submitfunction={handleSubmitEdit} Access={Access} Mode={Mode}/> ))
+      )
+        : "Page "+Stage+" of "+MaxStage}
+    {/* <span>
       {Stage===MaxStage ? 
         <Tooltip title="ไม่สามารถย้อนไปได้อีก">
           <IconButton aria-label="stop" >
             <DoDisturbOnIcon sx={{opacity:0.25}}/>
           </IconButton>
         </Tooltip>
-        // <ConfirmDialog submitfunction={submitfunction}/>
       :
       <>
         <Tooltip title="ต่อไป">
@@ -82,7 +82,7 @@ const NavForm = ({Mode,submitfunction,handleSubmitEdit,Stage,MaxStage,FirstStage
         </Tooltip>
       </>
       }
-    </span>
+    </span> */}
   </Box>
   </>
   );

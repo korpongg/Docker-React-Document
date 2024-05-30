@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Button, Tooltip } from "@mui/material";
+import { Button, Link, Tooltip } from "@mui/material";
 import { DataGrid, GridToolbarContainer, GridToolbar, GridToolbarQuickFilter, GridActionsCellItem } from "@mui/x-data-grid";
 import { Add as AddIcon, FindInPageRounded as FileIcon, RestartAltRounded as RepeatIcon, Edit as EditIcon, CheckCircleRounded as AcceptIcon } from "@mui/icons-material";
 import Swal from 'sweetalert2';
@@ -27,6 +27,26 @@ const EditToolbar = ({ reportData, handleAddEvent }) => (
     {/* <GridToolbarQuickFilter /> */}
   </GridToolbarContainer>
 );
+
+function ExpandableCell({ value }) {
+  const [expanded, setExpanded] = React.useState(false);
+
+  return (
+    <div>
+      {expanded ? value : value.slice(0, 200)}&nbsp;
+      {value.length > 200 && (
+        <Link
+          type="button"
+          component="button"
+          sx={{ fontSize: 'inherit' }}
+          onClick={() => setExpanded(!expanded)}
+        >
+          {expanded ? 'ดูน้อยลง' : 'ดูเพิ่มเติม'}
+        </Link>
+      )}
+    </div>
+  );
+}
 
 const isWithinDays = (dateString, days) => {
   const date = new Date(dateString);
@@ -142,7 +162,7 @@ const TranferTable = ({ reportData, dataEvent, isAdmin, userData, config, loadin
     {
       field: "status",
       headerName: "สถานะ",
-      minWidth: 95, flex: 1, align: "center", headerAlign: "center",
+      minWidth: 105, flex: 1, align: "center", headerAlign: "center",
       renderCell: (params) => {
         const statusInfo = statusMap[params.row.status];
         return <div className={`post-status ${statusInfo.color}`}>{statusInfo.text}</div>;
@@ -156,7 +176,10 @@ const TranferTable = ({ reportData, dataEvent, isAdmin, userData, config, loadin
     { field: "depname", headerName: "แผนก", minWidth: 160, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false },
     { field: "reporttypename", headerName: "ประเภท", minWidth: 110, flex: 1, align: "center", headerAlign: "center" },
     { field: "level", headerName: "ความรุนแรง", minWidth: 90, flex: 1, align: "center", headerAlign: "center" },
-    { field: "summarydetail", headerName: "รายละเอียดเหตุการณ์", minWidth: 300, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false },
+    {
+      field: "summarydetail", headerName: "รายละเอียดเหตุการณ์", minWidth: 300, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false,
+      renderCell: (params) => <ExpandableCell {...params} />,
+     },
     {
       field: "actions", type: "actions", headerName: "จัดการ", minWidth: 140, cellClassName: "actions", align: "center", headerAlign: "center",
       renderCell: (params) => (
@@ -248,6 +271,8 @@ const TranferTable = ({ reportData, dataEvent, isAdmin, userData, config, loadin
         autoHeight
         rows={eventData}
         columns={columns}
+        getRowHeight={() => 'auto'}
+        getEstimatedRowHeight={() => 200}
         disableRowSelectionOnClick
         hideFooterSelectedRowCount
         initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
@@ -256,6 +281,20 @@ const TranferTable = ({ reportData, dataEvent, isAdmin, userData, config, loadin
         slots={{ toolbar: () => <EditToolbar reportData={reportData} handleAddEvent={handleAddEvent} /> }}
         localeText={{ toolbarColumns: "คอลัมน์", toolbarFilters: "ตัวกรอง", toolbarDensity: "ระยะห่าง", toolbarExport: "ส่งออก" }}
         loading={loading}
+        sx={{
+          '&.MuiDataGrid-root--densityCompact .MuiDataGrid-cell': {
+            py: 1,
+          },
+          '&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell': {
+            py: '15px',
+          },
+          '&.MuiDataGrid-root--densityComfortable .MuiDataGrid-cell': {
+            py: '22px',
+          },
+          '& .MuiDataGrid-cell': {
+            alignItems: 'flex-start',
+          },
+        }}
       />
 
       <EventDialog
