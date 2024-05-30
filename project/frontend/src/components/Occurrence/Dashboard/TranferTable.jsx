@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Button, Box, Tooltip } from "@mui/material";
+import axios from "axios";
+import { Button, Tooltip } from "@mui/material";
 import { DataGrid, GridToolbarContainer, GridToolbar, GridToolbarQuickFilter, GridActionsCellItem } from "@mui/x-data-grid";
-import { Add as AddIcon, FindInPageRounded as FileIcon, RestartAltRounded as RepeatIcon, Edit as EditIcon } from "@mui/icons-material";
+import { Add as AddIcon, FindInPageRounded as FileIcon, RestartAltRounded as RepeatIcon, Edit as EditIcon, CheckCircleRounded as AcceptIcon } from "@mui/icons-material";
+import Swal from 'sweetalert2';
 import { formatDateTimeN7 } from "../../Function";
 import requestStatusData from "../../label.json";
 import EventDialog from "../Event/EventDialog";
+
+const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
 const EditToolbar = ({ reportData, handleAddEvent }) => (
   <GridToolbarContainer style={{ justifyContent: "space-between", padding: "10px 10px 0" }}>
@@ -32,7 +36,7 @@ const isWithinDays = (dateString, days) => {
   return diffDays <= days;
 };
 
-const ActionButtons = ({ id, row, isAdmin, handleViewEvent, handleRepeatEvent, handleEditEvent }) => (
+const ActionButtons = ({ id, row, isAdmin, userData, handleViewEvent, handleRepeatEvent, handleEditEvent, handleAcceptEvent }) => (
   <>
     <Tooltip title="ดูรายงาน">
       <GridActionsCellItem
@@ -42,26 +46,60 @@ const ActionButtons = ({ id, row, isAdmin, handleViewEvent, handleRepeatEvent, h
         color="primary"
       />
     </Tooltip>
+
     {row.status === '1' && isWithinDays(row.createAt, 7) && (
-      <Tooltip title="แก้ไขรายงาน">
-        <GridActionsCellItem
-          icon={<EditIcon />}
-          label="แก้ไขรายงาน"
-          onClick={() => handleEditEvent(id, row, isAdmin)}
-          color="warning"
-        />
-      </Tooltip>
+      <>
+        {isAdmin && (
+          <Tooltip title="แก้ไขรายงาน">
+            <GridActionsCellItem
+              icon={<EditIcon />}
+              label="แก้ไขรายงาน"
+              onClick={() => handleEditEvent(id, row, isAdmin)}
+              color="warning"
+            />
+          </Tooltip>
+        )}
+
+        {row?.depname === userData?.dep && (
+          <Tooltip title="ตอบกลับรายงาน">
+            <GridActionsCellItem
+              icon={<AcceptIcon />}
+              label="ตอบกลับรายงาน"
+              onClick={() => handleAcceptEvent(id, row, isAdmin)}
+              color="success"
+            />
+          </Tooltip>
+        )}
+      </>
     )}
+
     {row.status === '3' && isWithinDays(row.repeatAt, 3) && (
-      <Tooltip title="แก้ไขรายงาน">
-        <GridActionsCellItem
-          icon={<EditIcon />}
-          label="แก้ไขรายงาน"
-          onClick={() => handleEditEvent(id, row, isAdmin)}
-          color="warning"
-        />
-      </Tooltip>
+      <>
+        {isAdmin && (
+
+          <Tooltip title="แก้ไขรายงาน">
+            <GridActionsCellItem
+              icon={<EditIcon />}
+              label="แก้ไขรายงาน"
+              onClick={() => handleEditEvent(id, row, isAdmin)}
+              color="warning"
+            />
+          </Tooltip>
+        )}
+
+        {row?.depname === userData?.dep && (
+          <Tooltip title="ตอบกลับรายงาน">
+            <GridActionsCellItem
+              icon={<AcceptIcon />}
+              label="ตอบกลับรายงาน"
+              onClick={() => handleAcceptEvent(id, row, isAdmin)}
+              color="success"
+            />
+          </Tooltip>
+        )}
+      </>
     )}
+
     {isAdmin && row.status === '2' && (
       <Tooltip title="ส่งทบทวนซ้ำ">
         <GridActionsCellItem
@@ -75,11 +113,18 @@ const ActionButtons = ({ id, row, isAdmin, handleViewEvent, handleRepeatEvent, h
   </>
 );
 
-const TranferTable = ({ reportData, dataEvent, isAdmin, userData, config, handleViewEvent, handleRepeatEvent, loading, setLoading }) => {
+const TranferTable = ({ reportData, dataEvent, isAdmin, userData, config, loading, setLoading }) => {
   const [mode, setMode] = useState(null);
   const [isHA, setIsHA] = useState(false);
   const [eventData, setEventData] = useState([]);
+  const [rowData, setRowData] = useState(null);
   const [isDialogOpen, setDialogOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    deptrelate: 0,
+    urgenttype: "0",
+    isnew: "0",
+    summarydetail: ""
+  });
 
   useEffect(() => {
     const filteredData = isAdmin ? dataEvent : dataEvent.filter(item => item.depname === userData.dep);
@@ -119,9 +164,11 @@ const TranferTable = ({ reportData, dataEvent, isAdmin, userData, config, handle
           id={params.id}
           row={params.row}
           isAdmin={isAdmin}
+          userData={userData}
           handleViewEvent={handleViewEvent}
           handleRepeatEvent={handleRepeatEvent}
           handleEditEvent={handleEditEvent}
+          handleAcceptEvent={handleAcceptEvent}
         />
       ),
     },
@@ -142,12 +189,54 @@ const TranferTable = ({ reportData, dataEvent, isAdmin, userData, config, handle
   };
 
   const handleEditEvent = (id, data, role) => {
+    setRowData(data);
     setMode('Edit');
     setIsHA(role);
     setDialogOpen(true);
   };
 
+  const handleAcceptEvent = (id, data, role) => {
+    setRowData(data);
+    setMode('Accept');
+    setIsHA(role);
+    setDialogOpen(true);
+  };
+
+  const handleViewEvent = (id, data, role) => {
+    setRowData(data);
+    setMode('View');
+    setIsHA(isAdmin);
+    setDialogOpen(true);
+  };
+
+  const handleRepeatEvent = async (id, data) => {
+    const confirmed = await Swal.fire({
+      title: 'ยืนยันการส่งทบทวนซ้ำ?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'ยืนยัน',
+      cancelButtonText: 'ยกเลิก',
+    });
+    if (confirmed.isConfirmed) {
+      try {
+        const response = await axios.put(`${apiUrl}/events/${id}`, { status: '3' }, { ...config });
+        console.log(response.data);
+        Swal.fire('สำเร็จ', 'รายงานถูกส่งทบทวนซ้ำเรียบร้อยแล้ว', 'success');
+      } catch (error) {
+        console.error(error);
+        Swal.fire('ผิดพลาด', 'เกิดข้อผิดพลาดในการส่งทบทวนซ้ำ', 'error');
+      }
+    }
+  };
+
   const handleCloseDialog = () => {
+    setRowData(null);
+    setFormData({
+      deptrelate: 0,
+      urgenttype: "0",
+      isnew: "0",
+      summarydetail: ""
+    })
     setMode(null);
     setIsHA(false);
     setDialogOpen(false);
@@ -177,6 +266,9 @@ const TranferTable = ({ reportData, dataEvent, isAdmin, userData, config, handle
         isDialogOpen={isDialogOpen}
         handleCloseDialog={handleCloseDialog}
         reportData={reportData}
+        eventData={rowData}
+        formData={formData}
+        setFormData={setFormData}
       />
     </>
   );

@@ -112,8 +112,14 @@ export const EventBox = styled(Box)`
 `;
 
 export const TranferDialogBox = styled(Dialog)`
-  #tranfer-dialog-title {
-    font-family: inherit;
+  font-size: 16px;
+
+  #tranfer-dialog-title, label, pre, .MuiDataGrid-toolbarContainer .MuiButton-root, button, textarea, .MuiTypography-root {
+    font-family: 'Prompt', sans-serif !important;
+  }
+
+  pre {
+    margin: 0;
   }
 
   .odd-row {
@@ -126,8 +132,10 @@ export const TranferDialogBox = styled(Dialog)`
     background: #ff0000 !important;
   }
 
-  .MuiDataGrid-toolbarContainer .MuiButton-root {
-    font-family: inherit;
+  .validate {
+    color: red;
+    font-family: 'Prompt', sans-serif;
+    font-size: 14px;
   }
 
   .MuiDataGrid-root,
@@ -135,7 +143,7 @@ export const TranferDialogBox = styled(Dialog)`
   .MuiDataGrid-cell,
   .MuiTablePagination-selectLabel,
   .MuiTablePagination-displayedRows {
-    font-family: inherit;
+    font-family: 'Prompt', sans-serif;
     outline: unset !important;
   }
 

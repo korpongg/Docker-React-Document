@@ -10,7 +10,7 @@ import { getCurrentDate } from "../Function";
 
 import GeneralInfoStyle from "../../styles/GeneralInfoStyle.style";
 
-const GeneralInfo = ({data,setDataFunction,userdata}) => {
+const GeneralInfo = ({Mode,data,setDataFunction,userdata,missingKeys}) => {
   
   return (
     <>
@@ -20,14 +20,15 @@ const GeneralInfo = ({data,setDataFunction,userdata}) => {
             <div className="ContentRow">
               <div className="w30P">HN</div>
               <div className="w70P">
-                <input className="TextInputContent" type="text" id="hn" label="HN" value={data?.hn || ""} onChange={(e) => setDataFunction(e, "hn")}/>
+                
+                <input className={missingKeys.some(item => item.key === "hn") ? "TextInputContent SETERROR":"TextInputContent" } disabled={Mode==="Show"} type="text" id="hn" label="HN" value={data?.hn || ""} onChange={(e) => setDataFunction(e, "hn")}/>
                 {/* <button className="SyncBTN"><AutorenewIcon/></button> */}
               </div>
             </div>
             <div className="ContentRow">
               <div className="w30P">AN/VN</div>
               <div className="w70P">
-                <input className="TextInputContent" type="text" id="an" label="AN" value={data?.an || ""} onChange={(e) => setDataFunction(e, "an")} />
+                <input className={missingKeys.some(item => item.key === "an") ? "TextInputContent SETERROR":"TextInputContent" } disabled={Mode==="Show"} type="text" id="an" label="AN" value={data?.an || ""} onChange={(e) => setDataFunction(e, "an")} />
               </div>
             </div>
             <div className="ContentRow">
@@ -35,15 +36,19 @@ const GeneralInfo = ({data,setDataFunction,userdata}) => {
               <div className="w70P">
               <div className="ContentRow">
               <div className="w70P">
-                <input className="TextInputContent" type="text" id="age" label="อายุ" value={data?.age || ""} onChange={(e) => setDataFunction(e, "age")} />
+                <input className={missingKeys.some(item => item.key === "age") ? "TextInputContent SETERROR":"TextInputContent" } disabled={Mode==="Show"} type="text" id="age" label="อายุ" value={data?.age || ""} onChange={(e) => setDataFunction(e, "age")} />
               </div>
               <div className="w30P">เพศ</div>
               <div className="w70P">
-                {/* <input className="TextInputContent" type="text" id="gender" label="เพศ" value={data?.gender && data?.gender==="M" ? "ชาย" : "หญิง" || ""} /> */}
+                {/* <input className={missingKeys.some(item => item.key === "hn") ? "TextInputContent SETERROR":"TextInputContent" } type="text" id="gender" label="เพศ" value={data?.gender && data?.gender==="M" ? "ชาย" : "หญิง" || ""} /> */}
+                {Mode==="Show" ?
+                <input className={missingKeys.some(item => item.key === "gender") ? "TextInputContent SETERROR":"TextInputContent" } disabled type="text" id="gender" label="ID" value={(data?.gender &&( data?.gender==="M"?"ชาย":"หญิง")|| "")} />
+                :
                 <select className="SelectInput" id="gender" name="gender" form="gender" value={data?.gender || "M"} onChange={(e) => setDataFunction(e, "gender")}>
                   <option value="M">ชาย</option>
                   <option value="F">หญิง</option>
                 </select>
+}
               </div>
             </div>
               </div>
@@ -79,15 +84,21 @@ const GeneralInfo = ({data,setDataFunction,userdata}) => {
             <div className="ContentRow">
               <div className="w30P">Dx.</div>
               <div className="w70P">
-                <input className="TextInputContent" type="text" id="dx" label="Dx." value={data?.dx || ""} onChange={(e) => setDataFunction(e, "dx")} />
+                <input className={missingKeys.some(item => item.key === "dx") ? "TextInputContent SETERROR":"TextInputContent" } disabled={Mode==="Show"} type="text" id="dx" label="Dx." value={data?.dx || ""} onChange={(e) => setDataFunction(e, "dx")} />
               </div>
             </div>
 
             <div className="ContentRow">
             <div className="" style={{justifyContent:"flex-start", paddingLeft:"50px" , paddingRight:"50px"}}>PCT ที่เกี่ยวข้อง</div>
             <div className="">
-              {/* <input className="TextInputContent" id="reportlocation" label="สถานที่เกิดเหตุ" value={data?.reportlocation || ""} onChange={(e) => setDataFunction(e, "reportlocation")} /> */}
-              <select className="SelectInput" id="pct" name="pct" form="pct" value={data?.pct || null}>
+              {/* <input className={missingKeys.some(item => item.key === "hn") ? "TextInputContent SETERROR":"TextInputContent" } id="reportlocation" label="สถานที่เกิดเหตุ" value={data?.reportlocation || ""} onChange={(e) => setDataFunction(e, "reportlocation")} /> */}
+              {Mode==="Show" ? 
+              
+              <input disabled id="pct" className={missingKeys.some(item => item.key === "pct") ? "TextInputContent SETERROR":"TextInputContent" }  placeholder="pct" value={data?.pct}/>
+              
+              : (
+
+              <select className="SelectInput" id="pct" name="pct" form="pct" value={data?.pct || null} onChange={(e) => setDataFunction(e, "pct")}>
                   <option value="PCT ศัลยกรรม">PCT ศัลยกรรม</option>
                   <option value="PCT สูตินรีเวช-ปริกำเนิด">PCT สูตินรีเวช-ปริกำเนิด</option>
                   <option value="PCT หัวใจและหลอดเลือด">PCT หัวใจและหลอดเลือด</option>
@@ -98,6 +109,7 @@ const GeneralInfo = ({data,setDataFunction,userdata}) => {
                   <option value="PCT กุมารเวชกรรม">PCT กุมารเวชกรรม</option>
                   <option value="PCT ฉุกเฉิน">PCT ฉุกเฉิน</option>
                 </select>
+              )}
             </div>
             
           </div>
@@ -111,25 +123,25 @@ const GeneralInfo = ({data,setDataFunction,userdata}) => {
             <div className="ContentRow">
               <div className="w30P">รหัสพนักงาน</div>
               <div className="w70P">
-                <input className="TextInputContent" disabled type="text" id="userreport" label="ID" value={data?.userreport || ""} />
+                <input className={missingKeys.some(item => item.key === "userreport") ? "TextInputContent SETERROR":"TextInputContent" } disabled type="text" id="userreport" label="ID" value={data?.userreport || ""} />
               </div>
             </div>
             <div className="ContentRow">
               <div className="w30P">สังกัด</div>
               <div className="w70P">
-                <input className="TextInputContent" disabled type="text" id="aff" label="สังกัด" value={data?.aff || ""} />
+                <input className={missingKeys.some(item => item.key === "aff") ? "TextInputContent SETERROR":"TextInputContent" } disabled type="text" id="aff" label="สังกัด" value={data?.aff || ""} />
               </div>
             </div>
             <div className="ContentRow">
               <div className="w30P">ฝ่าย</div>
               <div className="w70P">
-                <input className="TextInputContent" disabled type="text" id="faction" label="ฝ่าย" value={data?.faction || ""} />
+                <input className={missingKeys.some(item => item.key === "faction") ? "TextInputContent SETERROR":"TextInputContent" } disabled type="text" id="faction" label="ฝ่าย" value={data?.faction || ""} />
               </div>
             </div>
             <div className="ContentRow">
               <div className="w30P">แผนก</div>
               <div className="w70P">
-                <input className="TextInputContent" disabled type="text" id="dep" label="แผนก" value={data?.dep || ""} />
+                <input className={missingKeys.some(item => item.key === "dep") ? "TextInputContent SETERROR":"TextInputContent" } disabled type="text" id="dep" label="แผนก" value={data?.dep || ""} />
               </div>
             </div>
             <div className="ContentRow">

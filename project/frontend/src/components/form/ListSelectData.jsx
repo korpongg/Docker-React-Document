@@ -14,11 +14,7 @@ const ListSelectData = ({
   data,
   Mode,
   DeleteFunction,
-  optionsdata,
-  datacolumn,
-  tocolumn,
-  handleDataChange,
-  missingKeys,
+  setOccStage,
 }) => {
   function getTopicByKey(key) {
     const section = DataDict_OccurrenceForm[key];
@@ -101,9 +97,9 @@ const ListSelectData = ({
     {/* {console.log(data, KeyMapping)} */}
       {/* {data && sumLengths(data, KeyMapping)>0 && ( */}
 
-      <div className="ListSelectTable">
+      <div id="ListSelect" className="ListSelectTable">
         <div className="ListSelectTable_Row">
-          <div className="ListSelectTable_Cell" style={{ width: 300 }}>
+          <div className="ListSelectTable_Cell" style={{ width: 300 ,  color: Mode === "Show" && "#00000050"}}>
             Code
           </div>
           <Divider
@@ -112,14 +108,14 @@ const ListSelectData = ({
             flexItem
             sx={{ m: 0.5 }}
           />
-          <div className="ListSelectTable_Cell">รายละเอียด</div>
+          <div className="ListSelectTable_Cell" style={{ color: Mode === "Show" && "#00000050"}}>รายละเอียด</div>
           <Divider
             orientation="vertical"
             variant="middle"
             flexItem
             sx={{ m: 0.5 }}
           />
-          <div className="ListSelectTable_Cell" style={{ width: 600 }}>
+          <div className="ListSelectTable_Cell" style={{ width: 600 ,  color: Mode === "Show" && "#00000050"}}>
             หัวข้อ
           </div>
           {/* <Divider
@@ -137,14 +133,14 @@ const ListSelectData = ({
             {data[KeyM] && data[KeyM].length > 0 && (
               <>
                 {/* <div>{KeyM}</div> */}
-                {data[KeyM].map((row) => (
+                {data[KeyM].map((row,index) => (
                   <>
                     {/* {console.log("row", row)} */}
                     {/* {let klkkbju = 0} */}
-                    <div className="ListSelectTable_Row">
+                    <div className="ListSelectTable_Row" onClick={()=>setOccStage(parseInt(row[0],10))}>
                       <div
                         className="ListSelectTable_Cell"
-                        style={{ width: 300 }}
+                        style={{ width: 300 ,  color: Mode === "Show" && "#00000050"}}
                       >
                         {row}
                       </div>
@@ -156,7 +152,7 @@ const ListSelectData = ({
                       />
                       <div
                         className="ListSelectTable_Cell"
-                        style={{ textAlign: "left" }}
+                        style={{ textAlign: "left" ,  color: Mode === "Show" && "#00000050"}}
                       >
                         {getTitleByCode(row)}
                       </div>
@@ -168,7 +164,7 @@ const ListSelectData = ({
                       />
                       <div
                         className="ListSelectTable_Cell"
-                        style={{ width: 600 }}
+                        style={{ width: 600 ,  color: Mode === "Show" && "#00000050"}}
                       >
                         {getTopicByKey(KeyM)}
                       </div>

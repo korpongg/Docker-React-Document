@@ -3,8 +3,6 @@ import { useWebSocket } from '../../../context/WebSocketContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import Box from "@mui/material/Box";
-import Link from "@mui/material/Link";
 
 import { chkAdmins, chkAdmin } from "../../Function";
 import DataTable from "./DataTable";
@@ -60,11 +58,13 @@ const IndexPage = () => {
   }, [dataCenter, dataEvent]);
 
   const handleAddItem = () => {
+    disconnectWebSocket();
     localStorage.removeItem("FormData");
     navigate(`/occurrence/form`);
   };
 
   const handleViewClick = (id, data, role) => {
+    disconnectWebSocket();
     navigate(`/occurrence/${id}`);
   };
 
@@ -74,6 +74,7 @@ const IndexPage = () => {
   };
 
   const handleEditClick = (id, data) => {
+    disconnectWebSocket();
     navigate(`/occurrence/form/${id}`);
   };
 

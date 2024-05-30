@@ -88,6 +88,7 @@ exports.getAllEventLogs = async (req, res) => {
       e.summarydetail,
       o.activefailure,
       e.urgenttype,
+      e.isnew,
       e.status,
       e.createby,
       e.createAt,
@@ -193,6 +194,7 @@ exports.getEventLogById = async (req, res) => {
       e.summarydetail,
       o.activefailure,
       e.urgenttype,
+      e.isnew,
       e.status,
       e.createby,
       e.createAt,
@@ -259,6 +261,7 @@ exports.updateEventLog = async (req, res) => {
       req.body.acceptAt = sequelize.literal("CURRENT_TIMESTAMP");
     }
 
+    // Repeat Event
     if (req.body.status === '3') {
       req.body.repeatAt = sequelize.literal("CURRENT_TIMESTAMP");
     }

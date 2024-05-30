@@ -20,7 +20,7 @@ function filterDataByIds(data, ids) {
   return data.filter(item => ids.includes(item.id));
 }
 
-function AutoCompleteText({ data, datacolumn, handleDataChangeCheckbox, label }) {
+function AutoCompleteText({ Mode,data, datacolumn, handleDataChangeCheckbox, label }) {
   const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
   const [departmentData, setDepartmentData] = useState([]);
@@ -58,8 +58,11 @@ function AutoCompleteText({ data, datacolumn, handleDataChangeCheckbox, label })
     <>
       <Autocomplete
         multiple
+        id="deptrelate"
+        disabled={Mode==="Show"}
         sx={{width:"860px",padding:"unset"}}
         options={departmentData}
+        
         getOptionLabel={(option) => option.DepName}
         value={selectedDepartments}
         onChange={handleChange}

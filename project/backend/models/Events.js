@@ -28,6 +28,10 @@ const Events = sequelize.define('Events', {
     type: DataTypes.STRING(1),
     allowNull: false
   },
+  isnew: {
+    type: DataTypes.STRING(1),
+    allowNull: false
+  },
   comment: {
     type: DataTypes.TEXT,
     allowNull: true

@@ -45,7 +45,7 @@ const DataDict_Risk = {
     options: [
       {
         code: "1",
-        title: "ยังไม่มีมีผลกระทบ",
+        title: "ยังไม่มีผลกระทบ",
       },
       {
         code: "2",

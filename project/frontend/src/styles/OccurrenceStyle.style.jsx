@@ -71,7 +71,7 @@ export const OccurrenceStyle = styled(Box)`
   }
   .TopicHeader{
     display:flex;
-    background: rgb(221,230,214);
+    // background: rgb(221,230,214,0.4);
     // background: linear-gradient(180deg, rgba(231,230,214,1) 0%, rgba(254,254,254,1) 90%, rgba(255,255,255,0) 100%);
     color:#000000;
     font-size:18px;
@@ -178,7 +178,8 @@ export const OccurrenceStyle = styled(Box)`
 }
   .DatetimeInput:disabled{
     // background: unset;
-    background: #f1f1f1
+    background: #f1f1f1;
+    color: rgba(0, 0, 0, 0.38);
     // cursor:pointer;
   }
   .DatetimeInput:hover{
@@ -231,11 +232,23 @@ export const OccurrenceStyle = styled(Box)`
   .SETERROR{
     background: #ffe5e580;
     border: 1px solid #ff000080;
-    border-radius:8px;
+    border-radius:5px;
+  }
+  .AreaBOX{
+    background: unset;
+    border: unset ;
+    border-radius:5px;
+    padding:5px;
+    margin:10px 0px 15px 20px;
+  }
+  .SETERRORBOX{
+    background: #ffe5e580;
+    border: 1px solid #ff000080;
   }
   .RadioBoxED{
     width:100%;
     height:100%;
+    margin:15px;
   }
 
   .ReportViewStyle{
@@ -266,11 +279,20 @@ export const OccurrenceStyle = styled(Box)`
     display:flex;
     justify-content: flex-start;
     text-align: left;
-    height:50px;
+    min-height:50px;
     align-items: center;
     // span{
     //   border:1px solid blue;
     // }
+  }
+  .ContentMultiRow{
+    // border:1px solid red;
+    width:100%;
+    display:flex;
+    justify-content: flex-start;
+    text-align: left;
+    height:fit-content;
+    align-items: center;
   }
   
   .w30P{
@@ -294,6 +316,15 @@ export const OccurrenceStyle = styled(Box)`
     // padding:5px;
     height:50px;
   }
+  .w70PM{
+    // display:flex;
+    // justify-content:space-between;
+    // align-items: center;
+    // border:1px solid blue;
+    // width:70%;
+    // padding:5px;
+    // height:50px;
+  }
   .TextInputContent{
     font-family:inherit;
     padding:5px;
@@ -306,8 +337,8 @@ export const OccurrenceStyle = styled(Box)`
     border-radius:3px;
     // height:30px;
   }
-  .TextInputContent:disable{
-    color: rgba(51, 51, 51, 0.87);
+  .TextInputContent:disabled{
+    color: rgba(0, 0, 0, 0.38);
   }
   .SyncBTN{
     margin:15px;
@@ -390,6 +421,7 @@ export const OccurrenceStyle = styled(Box)`
     display:flex;
     width:100%;
     // border-bottom:1px solid #a6a6a6;
+    cursor:pointer
   }
 
   .ListSelectTable_Row:hover{
@@ -410,5 +442,21 @@ export const OccurrenceStyle = styled(Box)`
     width:100%;
     // border:1px solid #fe0;
     padding:4px;
+  }
+
+  .MuiAutocomplete-root .Mui-disabled{
+    background:#f1f1f1;
+    // color:yellow;
+    // padding: 9px;
+    .MuiButtonBase-root.Mui-disabled{
+      background:#cacaca;
+      color:#000000;
+    }
+    .MuiAutocomplete-popupIndicator{
+      display:none;
+    }
+  }
+  .MuiInputBase-root.MuiFilledInput-root.Mui-disabled{
+    background:#f1f1f1;
   }
 `;

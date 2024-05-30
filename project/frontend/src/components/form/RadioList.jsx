@@ -7,6 +7,7 @@ import Box from '@mui/material/Box';
 import RadioListStyle from "../../styles/RadioListStyle.style";
 
 const RadioList = ({
+  Mode,
   data,
   optionsdata,
   datacolumn,
@@ -17,12 +18,12 @@ const RadioList = ({
 
   return (
     <>
-    <div className="TopicHeader">
+    <div className="TopicHeader" id={tocolumn}>
       {/* {optionsdata[datacolumn].topic && optionsdata[datacolumn].topic} */}
     ระดับความเสี่ยง</div>
       {optionsdata && datacolumn && (
         <RadioListStyle>
-          <Box className={missingKeys.some(item => item.key === tocolumn) ? "RadioBoxED SETERROR":"RadioBoxED FormInputBorder" }>
+          <div className={missingKeys.some(item => item.key === tocolumn) ? "RadioBoxED SETERROR":"RadioBoxED FormInputBorder" }>
 
           <RadioGroup
             sx={{ p: 1 }}
@@ -39,13 +40,14 @@ const RadioList = ({
               <FormControlLabel
               key={radiodatakey}
               sx={{ p: 1 }}
+              disabled={Mode==="Show"}
               value={datarow.code}
               control={<Radio />}
               label={datarow.code+" "+datarow.title}
               />
             ))}
           </RadioGroup>
-            </Box>
+            </div>
         </RadioListStyle>
       )}
     </>

@@ -16,6 +16,7 @@ import RadioList from "./RadioList";
 import ReportTypeStyle from "../../styles/ReportTypeStyle.style";
 
 const ReportRiskType = ({
+  Mode,
   data,
   setDataFunction,
   optionsdata,
@@ -44,15 +45,17 @@ const ReportRiskType = ({
               >
                 <FormControlLabel
                   sx={{ p: 1 }}
+                  disabled={Mode==="Show"}
                   value="opd"
                   control={<Radio />}
-                  label="opd"
+                  label="OPD"
                 />
                 <FormControlLabel
                   sx={{ p: 1 }}
+                  disabled={Mode==="Show"}
                   value="ipd"
                   control={<Radio />}
-                  label="ipd"
+                  label="IPD"
                 />
               </RadioGroup>
               <Divider orientation="vertical" variant="middle" flexItem sx={{m:1,marginLeft:"50px",marginRight:"50px"}} />
@@ -68,12 +71,14 @@ const ReportRiskType = ({
         >
           <FormControlLabel
             sx={{ p: 1 }}
+            disabled={Mode==="Show"}
             value="0"
             control={<Radio />}
             label="General Risk"
           />
           <FormControlLabel
             sx={{ p: 1 }}
+            disabled={Mode==="Show"}
             value="1"
             control={<Radio />}
             label="Clinical Risk"
@@ -88,6 +93,7 @@ const ReportRiskType = ({
         {data?.reporttype==="0" && 
           <>
             <RadioList
+              Mode={Mode}
               data={data}
               optionsdata={optionsdata}
               datacolumn={datacolumn[0]}
@@ -102,6 +108,7 @@ const ReportRiskType = ({
         {data?.reporttype==="1" && 
           <>
             <RadioList
+              Mode={Mode}
               data={data}
               optionsdata={optionsdata}
               datacolumn={datacolumn[1]}

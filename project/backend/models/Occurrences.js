@@ -72,14 +72,14 @@ const Occurrences = sequelize.define('Occurrences', {
     type: DataTypes.DATE,
     allowNull: true
   },
-  urgenttype: {
-    type: DataTypes.STRING(1),
-    allowNull: true
-  },
-  isnew: {
-    type: DataTypes.STRING(1),
-    allowNull: true
-  },
+  // urgenttype: {
+  //   type: DataTypes.STRING(1),
+  //   allowNull: true
+  // },
+  // isnew: {
+  //   type: DataTypes.STRING(1),
+  //   allowNull: true
+  // },
   patientcare: {
     type: DataTypes.TEXT,
     allowNull: true

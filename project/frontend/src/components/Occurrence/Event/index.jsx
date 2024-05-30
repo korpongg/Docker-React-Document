@@ -13,7 +13,6 @@ const EventOcc = () => {
     const isAdmin = chkAdmins(userData?.role);
     const isEXEC = chkAdmin(userData?.level);
     const config = { headers: { Authorization: `Bearer ${storedAuth.accessToken}` } };
-    const [rowData, setRowData] = useState(null);
     const [eventData, setEventData] = useState([]);
     const [loading, setLoading] = useState(load);
 
@@ -37,7 +36,6 @@ const EventOcc = () => {
         <EventBox>
             <h1>รายงานอุบัติการณ์ที่เกี่ยวข้องกับแผนก</h1>
             <TranferTable
-                reportData={rowData}
                 dataEvent={eventData}
                 isAdmin={isAdmin}
                 userData={userData}
