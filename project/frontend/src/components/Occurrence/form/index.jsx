@@ -320,20 +320,20 @@ const Occurrence = ({ Mode }) => {
     };
     console.log("submitFormData",submitFormData)
     
-    // try {
-      //     const response = await axios.post(
-        //       `${apiUrl}/occurrences`,
-        //       submitFormData,
-        //       { ...config }
-        //     );
-        //     const responseStatus = response.status;
+    try {
+          const response = await axios.post(
+              `${apiUrl}/occurrences`,
+              submitFormData,
+              { ...config }
+            );
+            const responseStatus = response.status;
         
-        //     if (responseStatus === 200 || responseStatus === 201) {
-    //       navigate("/occurrence");
-    //     }
-    //   } catch (err) {
-      //     console.error(err);
-      //   }
+            if (responseStatus === 200 || responseStatus === 201) {
+          navigate("/occurrence");
+        }
+      } catch (err) {
+          console.error(err);
+        }
       
     }else{
       setStage(1);

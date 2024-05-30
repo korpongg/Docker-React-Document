@@ -71,7 +71,7 @@ export const OccurrenceStyle = styled(Box)`
   }
   .TopicHeader{
     display:flex;
-    // background: rgb(221,230,214,0.4);
+    background: rgb(221,230,214,0.4);
     // background: linear-gradient(180deg, rgba(231,230,214,1) 0%, rgba(254,254,254,1) 90%, rgba(255,255,255,0) 100%);
     color:#000000;
     font-size:18px;
