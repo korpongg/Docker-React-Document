@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Routes, Route, useNavigate, useLocation, Navigate } from "react-router-dom";
+import { useWebSocket } from "./context/WebSocketContext";
 import "./App.css";
 
 import Layout from "./components/Layout";
@@ -26,7 +27,12 @@ const ROLES = {
 };
 
 function App() {
+  const { disconnectWebSocket } = useWebSocket();
   const location = useLocation();
+  
+  useEffect(() => {
+    disconnectWebSocket(); // Call disconnectWebSocket when the location changes
+  }, [location.pathname]);
 
   return (
     <>

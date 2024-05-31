@@ -133,7 +133,7 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
             />
           </Tooltip>
 
-          {isAdmin && row.formstatus === '1' && (
+          {isAdmin && (row.formstatus === '1' || row.formstatus === '2') && (
             <Tooltip title={row.formstatus === '1' ? 'ส่งต่อรายงาน' : 'ดูรายงานส่งต่อ'}>
               <GridActionsCellItem
                 icon={row.formstatus === '1' ? <RotateIcon /> : <ViewIcon />}

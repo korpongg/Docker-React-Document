@@ -98,6 +98,7 @@ const executeSQLQueryEvent = async (dep) => {
         e.urgenttype,
         e.isnew,
         e.status,
+        o.formstatus,
         e.createby,
         CONCAT(u_request.title, ' ', u_request.name, ' ', u_request.lastname) AS createname,
         u_request.dep AS createdep,

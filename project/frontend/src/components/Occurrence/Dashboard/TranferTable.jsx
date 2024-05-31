@@ -67,68 +67,71 @@ const ActionButtons = ({ id, row, isAdmin, userData, handleViewEvent, handleRepe
       />
     </Tooltip>
 
-    {row.status === '1' && isWithinDays(row.createAt, 7) && (
+    {row.formstatus === '1' && (
       <>
-        {isAdmin && (
-          <Tooltip title="แก้ไขรายงาน">
-            <GridActionsCellItem
-              icon={<EditIcon />}
-              label="แก้ไขรายงาน"
-              onClick={() => handleEditEvent(id, row, isAdmin)}
-              color="warning"
-            />
-          </Tooltip>
+        {row.status === '1' && isWithinDays(row.createAt, 7) && (
+          <>
+            {isAdmin && (
+              <Tooltip title="แก้ไขรายงาน">
+                <GridActionsCellItem
+                  icon={<EditIcon />}
+                  label="แก้ไขรายงาน"
+                  onClick={() => handleEditEvent(id, row, isAdmin)}
+                  color="warning"
+                />
+              </Tooltip>
+            )}
+
+            {row?.depname === userData?.dep && (
+              <Tooltip title="ตอบกลับรายงาน">
+                <GridActionsCellItem
+                  icon={<AcceptIcon />}
+                  label="ตอบกลับรายงาน"
+                  onClick={() => handleAcceptEvent(id, row, isAdmin)}
+                  color="success"
+                />
+              </Tooltip>
+            )}
+          </>
         )}
 
-        {row?.depname === userData?.dep && (
-          <Tooltip title="ตอบกลับรายงาน">
+        {row.status === '3' && isWithinDays(row.repeatAt, 3) && (
+          <>
+            {isAdmin && (
+              <Tooltip title="แก้ไขรายงาน">
+                <GridActionsCellItem
+                  icon={<EditIcon />}
+                  label="แก้ไขรายงาน"
+                  onClick={() => handleEditEvent(id, row, isAdmin)}
+                  color="warning"
+                />
+              </Tooltip>
+            )}
+
+            {row?.depname === userData?.dep && (
+              <Tooltip title="ตอบกลับรายงาน">
+                <GridActionsCellItem
+                  icon={<AcceptIcon />}
+                  label="ตอบกลับรายงาน"
+                  onClick={() => handleAcceptEvent(id, row, isAdmin)}
+                  color="success"
+                />
+              </Tooltip>
+            )}
+          </>
+        )}
+
+        {isAdmin && row.status === '2' && (
+          <Tooltip title="ส่งทบทวนซ้ำ">
             <GridActionsCellItem
-              icon={<AcceptIcon />}
-              label="ตอบกลับรายงาน"
-              onClick={() => handleAcceptEvent(id, row, isAdmin)}
-              color="success"
+              icon={<RepeatIcon />}
+              label="ส่งทบทวนซ้ำ"
+              onClick={() => handleRepeatEvent(id, row)}
+              color="error"
             />
           </Tooltip>
         )}
       </>
-    )}
-
-    {row.status === '3' && isWithinDays(row.repeatAt, 3) && (
-      <>
-        {isAdmin && (
-
-          <Tooltip title="แก้ไขรายงาน">
-            <GridActionsCellItem
-              icon={<EditIcon />}
-              label="แก้ไขรายงาน"
-              onClick={() => handleEditEvent(id, row, isAdmin)}
-              color="warning"
-            />
-          </Tooltip>
-        )}
-
-        {row?.depname === userData?.dep && (
-          <Tooltip title="ตอบกลับรายงาน">
-            <GridActionsCellItem
-              icon={<AcceptIcon />}
-              label="ตอบกลับรายงาน"
-              onClick={() => handleAcceptEvent(id, row, isAdmin)}
-              color="success"
-            />
-          </Tooltip>
-        )}
-      </>
-    )}
-
-    {isAdmin && row.status === '2' && (
-      <Tooltip title="ส่งทบทวนซ้ำ">
-        <GridActionsCellItem
-          icon={<RepeatIcon />}
-          label="ส่งทบทวนซ้ำ"
-          onClick={() => handleRepeatEvent(id, row)}
-          color="error"
-        />
-      </Tooltip>
     )}
   </>
 );
@@ -162,7 +165,7 @@ const TranferTable = ({ reportData, dataEvent, isAdmin, userData, config, loadin
     {
       field: "status",
       headerName: "สถานะ",
-      minWidth: 105, flex: 1, align: "center", headerAlign: "center",
+      minWidth: 115, flex: 1, align: "center", headerAlign: "center",
       renderCell: (params) => {
         const statusInfo = statusMap[params.row.status];
         return <div className={`post-status ${statusInfo.color}`}>{statusInfo.text}</div>;
@@ -179,7 +182,7 @@ const TranferTable = ({ reportData, dataEvent, isAdmin, userData, config, loadin
     {
       field: "summarydetail", headerName: "รายละเอียดเหตุการณ์", minWidth: 300, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false,
       renderCell: (params) => <ExpandableCell {...params} />,
-     },
+    },
     {
       field: "actions", type: "actions", headerName: "จัดการ", minWidth: 140, cellClassName: "actions", align: "center", headerAlign: "center",
       renderCell: (params) => (
@@ -196,6 +199,8 @@ const TranferTable = ({ reportData, dataEvent, isAdmin, userData, config, loadin
       ),
     },
   ];
+
+  console.log(eventData)
 
   const getRowClassName = (params) => {
     const { status, createAt, repeatAt } = params.row;
