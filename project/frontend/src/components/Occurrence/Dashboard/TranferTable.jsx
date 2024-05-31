@@ -200,8 +200,6 @@ const TranferTable = ({ reportData, dataEvent, isAdmin, userData, config, loadin
     },
   ];
 
-  console.log(eventData)
-
   const getRowClassName = (params) => {
     const { status, createAt, repeatAt } = params.row;
     if ((status === '1' && !isWithinDays(createAt, 7)) || (status === '3' && !isWithinDays(repeatAt, 3))) {

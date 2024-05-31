@@ -114,7 +114,7 @@ export const EventBox = styled(Box)`
 export const TranferDialogBox = styled(Dialog)`
   font-size: 16px;
 
-  #tranfer-dialog-title, label, pre, .MuiDataGrid-toolbarContainer .MuiButton-root, button, textarea, .MuiTypography-root {
+  #tranfer-dialog-title, label, pre, .MuiDataGrid-toolbarContainer .MuiButton-root, button, textarea, .MuiTypography-root, .MuiSelect-select {
     font-family: 'Prompt', sans-serif !important;
   }
 
@@ -146,6 +146,60 @@ export const TranferDialogBox = styled(Dialog)`
     font-family: 'Prompt', sans-serif;
     outline: unset !important;
   }
+  .EventBox{
+    border:2px solid #cacaca;
+    margin:2.5px;
+    background:#f1f1f1;
+  }
+  .EventRow{
+    display:flex;
+    width:100%;
+    border-bottom:1px solid #cacaca;
+  }
+  .EventRow:last-child{
+    border:unset;
+  }
+  .EventCol{
+    display:flex;
+    width:100%;
+    border-right:3px solid #cacaca;
+  }
+  .EventCol:last-child{
+    border:unset;
+  }
+
+  .EventCell{
+    border-right:3px solid #cacaca;
+    padding:5px;
+    width:100%;
+  }
+  .EventCell:last-child{
+    border:unset;
+  }
+  .Topic{
+    width:40%;
+    background:#cacaca;
+  }
+  .Content{
+    width:60%;
+  }
+  .AreaTopic{
+    width:100%;
+    background:#cacaca;
+  }
+  .AreaContent{
+    width:100%;
+    height:100px;
+    overflow:scroll;
+  }
+
+  .MuiInputBase-root.MuiOutlinedInput-root.Mui-disabled.Mui-disabled {
+    background: whitesmoke;
+    div, textarea {
+      color: #555555;
+      -webkit-text-fill-color: unset;
+    }
+  }
 
   @media screen and (max-width: 901px) {
     #tranfer-dialog-title {
@@ -153,50 +207,4 @@ export const TranferDialogBox = styled(Dialog)`
       // color:red;
     }
   }
-.EventBox{
-  border:2px solid #cacaca;
-  margin:2.5px;
-  background:#f1f1f1;
-}
-.EventRow{
-  display:flex;
-  width:100%;
-  border-bottom:1px solid #cacaca;
-}
-.EventRow:last-child{
-  border:unset;
-}
-.EventCol{
-  display:flex;
-  width:100%;
-  border-right:3px solid #cacaca;
-}
-.EventCol:last-child{
-  border:unset;
-}
-
-.EventCell{
-  border-right:3px solid #cacaca;
-  padding:5px;
-  width:100%;
-}
-.EventCell:last-child{
-  border:unset;
-}
-.Topic{
-  width:40%;
-  background:#cacaca;
-}
-.Content{
-  width:60%;
-}
-.AreaTopic{
-  width:100%;
-  background:#cacaca;
-}
-.AreaContent{
-  width:100%;
-  height:100px;
-  overflow:scroll;
-}
 `;

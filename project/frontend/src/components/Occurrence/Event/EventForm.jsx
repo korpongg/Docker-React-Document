@@ -25,9 +25,9 @@ const EventForm = ({ mode, isHA, reportData, eventData, departments, formData, s
                                 onChange={handleSelectChange}
                                 disabled={!isHA || mode === 'Accept'}
                             >
-                                <MenuItem value="0">เลือกหน่วยงานที่เกี่ยวข้อง</MenuItem>
+                                <MenuItem value="0" sx={{ fontFamily: 'Prompt, sans-serif !important' }}>เลือกหน่วยงานที่เกี่ยวข้อง</MenuItem>
                                 {(reportData?.deptAffInfo && reportData.deptAffInfo.length > 0 ? reportData.deptAffInfo : departments).map(dept => (
-                                    <MenuItem key={dept.id} value={dept.id}>
+                                    <MenuItem key={dept.id} value={dept.id} sx={{ fontFamily: 'Prompt, sans-serif !important' }}>
                                         {dept.DepName}
                                     </MenuItem>
                                 ))}
