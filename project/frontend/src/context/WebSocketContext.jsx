@@ -57,6 +57,7 @@ export const WebSocketProvider = ({ children }) => {
     // Function to close the WebSocket connection
     const disconnectWebSocket = useCallback(() => {
         if (socket) {
+            clearReloadTimeout();
             socket.close();
             setSocket(null); // Reset the socket state
             console.log('WebSocket connection closed by disconnect function.');
