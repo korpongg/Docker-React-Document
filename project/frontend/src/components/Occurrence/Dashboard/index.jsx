@@ -72,6 +72,26 @@ const IndexPage = () => {
     setDialogOpen(true);
   };
 
+  const handleCloseClick = async (id, data) => {
+    const confirmed = await Swal.fire({
+      title: 'ยืนยันปิดอุบัติการณ์?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'ยืนยัน',
+      cancelButtonText: 'ยกเลิก',
+    });
+    if (confirmed.isConfirmed) {
+      try {
+        const response = await axios.put(`${apiUrl}/occurrences`, { id: id, formstatus: '2' }, { ...config });
+        console.log(response.data);
+        Swal.fire('สำเร็จ', 'ปิดอุบัติการณ์เรียบร้อยแล้ว', 'success');
+      } catch (error) {
+        console.error(error);
+        Swal.fire('ผิดพลาด', 'เกิดข้อผิดพลาดในการปิดอุบัติการณ์', 'error');
+      }
+    }
+  };
+
   const handleEditClick = (id, data) => {
     disconnectWebSocket();
     navigate(`/occurrence/form/${id}`);
@@ -117,6 +137,7 @@ const IndexPage = () => {
         handleAddItem={handleAddItem}
         handleViewClick={handleViewClick}
         handleTranfClick={handleTranfClick}
+        handleCloseClick={handleCloseClick}
         handleEditClick={handleEditClick}
         handleDeleteClick={handleDeleteClick}
         loading={loading}

@@ -182,11 +182,11 @@ CREATE TABLE [occurrences](
 	[formstatus] [nvarchar](1) NOT NULL,
 
 	[createby] [varchar](20) NOT NULL,
-	[acceptby] [varchar](20) NULL,
-	[updateby] [varchar](20) NULL,
 	[createAt] [datetime] NULL,
-	[acceptAt] [datetime] NULL,
+	[updateby] [varchar](20) NULL,
 	[updateAt] [datetime] NULL,
+	[acceptby] [varchar](20) NULL,
+	[acceptAt] [datetime] NULL,
 	[deleteAt] [datetime] NULL,
 );
 

@@ -192,23 +192,23 @@ const Occurrences = sequelize.define('Occurrences', {
     type: DataTypes.STRING(20),
     allowNull: false
   },
-  acceptby: {
-    type: DataTypes.STRING(20),
+  createAt: {
+    type: DataTypes.DATE,
     allowNull: true
   },
   updateby: {
     type: DataTypes.STRING(20),
     allowNull: true
   },
-  createAt: {
+  updateAt: {
     type: DataTypes.DATE,
+    allowNull: true
+  },
+  acceptby: {
+    type: DataTypes.STRING(20),
     allowNull: true
   },
   acceptAt: {
-    type: DataTypes.DATE,
-    allowNull: true
-  },
-  updateAt: {
     type: DataTypes.DATE,
     allowNull: true
   },
