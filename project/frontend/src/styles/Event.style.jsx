@@ -147,14 +147,14 @@ export const TranferDialogBox = styled(Dialog)`
     outline: unset !important;
   }
   .EventBox{
-    border:2px solid #cacaca;
+    border:2px solid #e9e9e9;
     margin:2.5px;
-    background:#f1f1f1;
+    background:unset;
   }
   .EventRow{
     display:flex;
     width:100%;
-    border-bottom:1px solid #cacaca;
+    border-bottom:1px solid #e9e9e9;
   }
   .EventRow:last-child{
     border:unset;
@@ -162,14 +162,14 @@ export const TranferDialogBox = styled(Dialog)`
   .EventCol{
     display:flex;
     width:100%;
-    border-right:3px solid #cacaca;
+    border-right:3px solid #e9e9e9;
   }
   .EventCol:last-child{
     border:unset;
   }
 
   .EventCell{
-    border-right:3px solid #cacaca;
+    border-right:3px solid #e9e9e9;
     padding:5px;
     width:100%;
   }
@@ -178,14 +178,14 @@ export const TranferDialogBox = styled(Dialog)`
   }
   .Topic{
     width:40%;
-    background:#cacaca;
+    background:#e9e9e9;
   }
   .Content{
     width:60%;
   }
   .AreaTopic{
     width:100%;
-    background:#cacaca;
+    background:#e9e9e9;
   }
   .AreaContent{
     width:100%;
