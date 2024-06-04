@@ -24,7 +24,7 @@ function AutoCompleteText({ Mode,data, datacolumn, handleDataChangeCheckbox, lab
   const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
   const [departmentData, setDepartmentData] = useState([]);
-  const [selectedDepartments, setSelectedDepartments] = useState(data[datacolumn]||[]);
+  const [selectedDepartments, setSelectedDepartments] = useState(data[datacolumn]);
   const fetchDeptData = useCallback(async () => {
     try {
       const response = await axios.get(apiUrl + "/departments");

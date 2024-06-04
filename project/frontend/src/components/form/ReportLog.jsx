@@ -1,53 +1,10 @@
-import React, { useState, useEffect, useCallback } from "react";
-// import React from "react";
+import React from "react";
 import PropTypes from 'prop-types';
-// import AutoCompleteText from "./AutoCompleteText";
+import AutoCompleteText from "./AutoCompleteText";
 import { getCurrentDate } from "../Function";
 import Divider from '@mui/material/Divider';
-import { TextField, Autocomplete } from '@mui/material';
-import axios from "axios";
 
-const datacolumn="deptrelate";
-
-function filterDataByIds(data, ids) {
-  return data.filter(item => ids.includes(item.id));
-};
-
-const ReportLog = ({ Mode, data, setDataFunction, handleDateChange,handleDataChangeCheckbox,label, missingKeys }) => {
-  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
-
-  const [departmentData, setDepartmentData] = useState([]);
-  const [selectedDepartments, setSelectedDepartments] = useState(data[datacolumn]||[]);
-  const fetchDeptData = useCallback(async () => {
-    try {
-      const response = await axios.get(apiUrl + "/departments");
-      setDepartmentData(response.data);
-
-      if (data[datacolumn]) {
-        const initialSelectedDepartments = response.data.filter(dept => data[datacolumn].includes(dept.id));
-        setSelectedDepartments(initialSelectedDepartments);
-      }
-    } catch (error) {
-      console.error("Error fetching departments:", error);
-    }
-  }, [apiUrl, data, datacolumn]);
-
-  useEffect(() => {
-    fetchDeptData();
-  }, []);
-  useEffect(() => {
-    setSelectedDepartments(filterDataByIds(departmentData, data[datacolumn]))
-  }, [departmentData]);
-
-  useEffect(() => {
-    handleDataChangeCheckbox(selectedDepartments.map(dept => dept.id), datacolumn);
-  }, [selectedDepartments]);
-
-  const handleChange = (event, values) => {
-    setSelectedDepartments(values);
-  };
-
-  console.log("ReportLog Data : ",data.deptrelate);
+const ReportLog = ({ Mode, data, setDataFunction, handleDateChange, handleDataChangeCheckbox, missingKeys }) => {
   return (
     <>
       <div className="TopicHeader">ข้อมูลสถานการณ์</div>
@@ -86,28 +43,13 @@ const ReportLog = ({ Mode, data, setDataFunction, handleDateChange,handleDataCha
           </div>
           <div className="ContentRow" style={{ margin: "5px", paddingLeft: "0px", flexDirection: "column" }}>
             <div className={missingKeys.some(item => item.key === "deptrelate") ? "SETERROR" : ""}>
-              {/* <AutoCompleteText
+              <AutoCompleteText
                 required
                 Mode={Mode}
                 data={data}
                 datacolumn="deptrelate"
                 handleDataChangeCheckbox={handleDataChangeCheckbox}
-              /> */}
-              <Autocomplete
-                      multiple
-                      id="deptrelate"
-                      disabled={Mode==="Show"}
-                      sx={{width:"860px",padding:"unset"}}
-                      options={departmentData}
-                      
-                      getOptionLabel={(option) => option.DepName}
-                      value={selectedDepartments}
-                      onChange={handleChange}
-                      isOptionEqualToValue={(option, value) => option.id === value.id}
-                      renderInput={(params) => (
-                        <TextField {...params} label={label} variant="outlined" />
-                      )}
-                    />
+              />
             </div>
           </div>
         </div>
