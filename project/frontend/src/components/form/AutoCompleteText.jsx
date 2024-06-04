@@ -24,7 +24,7 @@ function AutoCompleteText({ Mode,data, datacolumn, handleDataChangeCheckbox, lab
   const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
   const [departmentData, setDepartmentData] = useState([]);
-  const [selectedDepartments, setSelectedDepartments] = useState(data[datacolumn]);
+  const [selectedDepartments, setSelectedDepartments] = useState([]);
   const fetchDeptData = useCallback(async () => {
     try {
       const response = await axios.get(apiUrl + "/departments");
@@ -37,13 +37,14 @@ function AutoCompleteText({ Mode,data, datacolumn, handleDataChangeCheckbox, lab
     } catch (error) {
       console.error("Error fetching departments:", error);
     }
-  }, [apiUrl, data, datacolumn]);
+  }, [apiUrl]);
 
   useEffect(() => {
     fetchDeptData();
   }, []);
   useEffect(() => {
-    setSelectedDepartments(filterDataByIds(departmentData, data[datacolumn]))
+    setSelectedDepartments(filterDataByIds(departmentData, data[datacolumn]));
+    // setSelectedDepartments([1]);
   }, [departmentData]);
 
   useEffect(() => {
@@ -53,6 +54,9 @@ function AutoCompleteText({ Mode,data, datacolumn, handleDataChangeCheckbox, lab
   const handleChange = (event, values) => {
     setSelectedDepartments(values);
   };
+
+  console.log("ATC selectedDepartments : ",selectedDepartments);
+  console.log("ATC departmentData : ",departmentData);
 
   return (
     <>
