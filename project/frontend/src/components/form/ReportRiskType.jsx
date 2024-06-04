@@ -1,19 +1,10 @@
-import React, { useState, useEffect } from "react";
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
+import React from "react";
+import Box from "@mui/material/Box";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import Divider from '@mui/material/Divider';
-// import StatusLable from "../label.json";
-import ReportLog from "./ReportLog";
+import Divider from "@mui/material/Divider";
 import RadioList from "./RadioList";
-
-import ReportTypeStyle from "../../styles/ReportTypeStyle.style";
 
 const ReportRiskType = ({
   Mode,
@@ -26,40 +17,42 @@ const ReportRiskType = ({
   handleDataChange,
   missingKeys,
 }) => {
-
   return (
     <>
-      <ReportTypeStyle>        
-        <Box className="TopicHeader">ประเภทอุบัติการณ์</Box>
-        <div className="ContentRow" style={{paddingLeft:"50px"}}>
-
-              <RadioGroup
-                sx={{ p: 1 }}
-                row
-                id="type"
-                aria-labelledby="type"
-                defaultValue="opd"
-                name="type"
-                onChange={(e) => setDataFunction(e, "type")}
-                value={data?.type || "opd"}
-              >
-                <FormControlLabel
-                  sx={{ p: 1 }}
-                  disabled={Mode==="Show"}
-                  value="opd"
-                  control={<Radio />}
-                  label="OPD"
-                />
-                <FormControlLabel
-                  sx={{ p: 1 }}
-                  disabled={Mode==="Show"}
-                  value="ipd"
-                  control={<Radio />}
-                  label="IPD"
-                />
-              </RadioGroup>
-              <Divider orientation="vertical" variant="middle" flexItem sx={{m:1,marginLeft:"50px",marginRight:"50px"}} />
-              <RadioGroup
+      <Box className="TopicHeader">ประเภทอุบัติการณ์</Box>
+      <div className="ContentRow" style={{ paddingLeft: "50px" }}>
+        <RadioGroup
+          sx={{ p: 1 }}
+          row
+          id="type"
+          aria-labelledby="type"
+          defaultValue="opd"
+          name="type"
+          onChange={(e) => setDataFunction(e, "type")}
+          value={data?.type || "opd"}
+        >
+          <FormControlLabel
+            sx={{ p: 1 }}
+            disabled={Mode === "Show"}
+            value="opd"
+            control={<Radio />}
+            label="OPD"
+          />
+          <FormControlLabel
+            sx={{ p: 1 }}
+            disabled={Mode === "Show"}
+            value="ipd"
+            control={<Radio />}
+            label="IPD"
+          />
+        </RadioGroup>
+        <Divider
+          orientation="vertical"
+          variant="middle"
+          flexItem
+          sx={{ m: 1, marginLeft: "50px", marginRight: "50px" }}
+        />
+        <RadioGroup
           sx={{ p: 1 }}
           row
           id="reporttype"
@@ -71,62 +64,52 @@ const ReportRiskType = ({
         >
           <FormControlLabel
             sx={{ p: 1 }}
-            disabled={Mode==="Show"}
+            disabled={Mode === "Show"}
             value="0"
             control={<Radio />}
             label="General Risk"
           />
           <FormControlLabel
             sx={{ p: 1 }}
-            disabled={Mode==="Show"}
+            disabled={Mode === "Show"}
             value="1"
             control={<Radio />}
             label="Clinical Risk"
           />
         </RadioGroup>
-        
-            </div>
-        
-        
-        {/* <Box className={missingKeys.some(item => item.key === 'deptrelate') ? "SETERROR":"FormInputBorder" }> */}
-{/* test */}
-        {data?.reporttype==="0" && 
-          <>
-            <RadioList
-              Mode={Mode}
-              data={data}
-              optionsdata={optionsdata}
-              datacolumn={datacolumn[0]}
-              tocolumn={tocolumn}
-              remark={false}
-              handleDataChangeCheckbox={handleDataChangeCheckbox}
-              handleDataChange={handleDataChange}
-              missingKeys={missingKeys}
-              />
-          </>
-        }
-        {data?.reporttype==="1" && 
-          <>
-            <RadioList
-              Mode={Mode}
-              data={data}
-              optionsdata={optionsdata}
-              datacolumn={datacolumn[1]}
-              tocolumn={tocolumn}
-              remark={false}
-              handleDataChangeCheckbox={handleDataChangeCheckbox}
-              handleDataChange={handleDataChange}
-              missingKeys={missingKeys}
-              />
-          </>
-        }
-        {/* </Box> */}
-        
-      </ReportTypeStyle>
+      </div>
+      {data?.reporttype === "0" && (
+        <>
+          <RadioList
+            Mode={Mode}
+            data={data}
+            optionsdata={optionsdata}
+            datacolumn={datacolumn[0]}
+            tocolumn={tocolumn}
+            remark={false}
+            handleDataChangeCheckbox={handleDataChangeCheckbox}
+            handleDataChange={handleDataChange}
+            missingKeys={missingKeys}
+          />
+        </>
+      )}
+      {data?.reporttype === "1" && (
+        <>
+          <RadioList
+            Mode={Mode}
+            data={data}
+            optionsdata={optionsdata}
+            datacolumn={datacolumn[1]}
+            tocolumn={tocolumn}
+            remark={false}
+            handleDataChangeCheckbox={handleDataChangeCheckbox}
+            handleDataChange={handleDataChange}
+            missingKeys={missingKeys}
+          />
+        </>
+      )}
     </>
   );
 };
-
-
 
 export default ReportRiskType;

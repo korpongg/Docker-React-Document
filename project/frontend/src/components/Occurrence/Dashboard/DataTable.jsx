@@ -38,7 +38,7 @@ function ExpandableCell({ value }) {
 }
 
 const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewClick, handleTranfClick, handleCloseClick, handleEditClick, handleDeleteClick, loading }) => {
-  console.log(data);
+  // console.log(data);
   const statusMap = {};
   requestStatusData.reportStatus.forEach(status => {
     statusMap[status.id] = { text: status.statusText, color: status.statusColor };
