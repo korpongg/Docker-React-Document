@@ -2,19 +2,19 @@ import React, { useState, useEffect, useCallback } from "react";
 import { TextField, Autocomplete } from '@mui/material';
 import axios from "axios";
 
-function jsonStringToArray(jsonString) {
-  try {
-    const parsedValue = JSON.parse(jsonString);
-    if (Array.isArray(parsedValue)) {
-      return parsedValue;
-    } else {
-      throw new Error('The parsed value is not an array.');
-    }
-  } catch (error) {
-    console.error('Invalid JSON string:', error);
-    return null;
-  }
-}
+// function jsonStringToArray(jsonString) {
+//   try {
+//     const parsedValue = JSON.parse(jsonString);
+//     if (Array.isArray(parsedValue)) {
+//       return parsedValue;
+//     } else {
+//       throw new Error('The parsed value is not an array.');
+//     }
+//   } catch (error) {
+//     console.error('Invalid JSON string:', error);
+//     return null;
+//   }
+// }
 
 function filterDataByIds(data, ids) {
   return data.filter(item => ids.includes(item.id));
@@ -32,6 +32,7 @@ function AutoCompleteText({ Mode,data, datacolumn, handleDataChangeCheckbox, lab
 
       if (data[datacolumn]) {
         const initialSelectedDepartments = response.data.filter(dept => data[datacolumn].includes(dept.id));
+        // console.log("initialSelectedDepartments",initialSelectedDepartments)
         setSelectedDepartments(initialSelectedDepartments);
       }
     } catch (error) {
@@ -42,10 +43,10 @@ function AutoCompleteText({ Mode,data, datacolumn, handleDataChangeCheckbox, lab
   useEffect(() => {
     fetchDeptData();
   }, []);
-  useEffect(() => {
-    setSelectedDepartments(filterDataByIds(departmentData, data[datacolumn]));
+  // useEffect(() => {
+    // setSelectedDepartments(filterDataByIds(departmentData, data[datacolumn]));
     // setSelectedDepartments([1]);
-  }, [departmentData]);
+  // }, [departmentData]);
 
   useEffect(() => {
     handleDataChangeCheckbox(selectedDepartments.map(dept => dept.id), datacolumn);
