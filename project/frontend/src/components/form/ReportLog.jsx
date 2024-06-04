@@ -47,6 +47,7 @@ const ReportLog = ({ Mode, data, setDataFunction, handleDateChange,handleDataCha
     setSelectedDepartments(values);
   };
 
+  console.log("ReportLog Data : ",data.deptrelate);
   return (
     <>
       <div className="TopicHeader">ข้อมูลสถานการณ์</div>
