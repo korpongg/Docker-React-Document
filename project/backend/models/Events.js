@@ -36,6 +36,14 @@ const Events = sequelize.define('Events', {
     type: DataTypes.TEXT,
     allowNull: true
   },
+  suggestion: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  forwardtxt: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
   summarydetail: {
     type: DataTypes.TEXT,
     allowNull: false

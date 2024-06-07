@@ -93,6 +93,8 @@ const executeSQLQueryEvent = async (dep) => {
         o.level,
         o.description,
         e.comment,
+        e.suggestion,
+        e.forwardtxt,
         e.summarydetail,
         o.activefailure,
         e.urgenttype,

@@ -200,7 +200,9 @@ CREATE TABLE [event_logs](
     [deptrelate] INT NOT NULL,							-- แผนกที่เกี่ยวข้อง by HA
 	[urgenttype] [nvarchar](1) NOT NULL,				-- ความเร่งด่วน by HA
 	[isnew] [nvarchar](1) NULL,							-- อุบัติการณ์ใหม่, อุบัติการณ์ซ้ำ by HA
-	[comment] NVARCHAR(MAX) NULL,						-- สรุปเหตุการณ์ไม่พึงประสงค์ by deptrelate
+	[comment] NVARCHAR(MAX) NULL,						-- สาเหตุที่แท้จริงของความเสี่ยง / เหตุการณ์ไม่พึงประสงค์ที่เกิดขึ้น by deptrelate
+	[suggestion] NVARCHAR(MAX) NULL,					-- แนวทางการแก้ไขปัญหา / มาตรการป้องกันความเสี่ยงที่กำหนดขึ้น by deptrelate
+	[forwardtxt] NVARCHAR(MAX) NULL,					-- สิ่งที่หน่วยงานต้องการประสานงานกับหน่วยงานอื่น / คณะกรรมการที่เกี่ยวข้อง by deptrelate
 	[summarydetail] NVARCHAR(MAX) NOT NULL,				-- สรุปรายละเอียดเหตุการณ์ by HA
 	[status] [nvarchar](1) NOT NULL,					-- ส่งทบทวน หลังจากสร้าง 1, ทบทวนแล้ว	มีการอัพเดท comment 2, ทบทวนซ้ำ	กดจากปุ่ม จะโชว์เฉพาะ 2
 	[createby] [varchar](20) NOT NULL,					-- create by HA

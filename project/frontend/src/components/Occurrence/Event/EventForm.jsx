@@ -2,7 +2,7 @@ import React from "react";
 import { DialogTitle, DialogContent, TextField, Radio, RadioGroup, FormControlLabel, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 
-const EventForm = ({ mode, isHA, reportData, eventData, departments, formData, summarydetailRef, commentRef, handleSelectChange, handleUrgentChange, handleISNewChange, handleInputChange }) => {
+const EventForm = ({ mode, isHA, reportData, eventData, departments, formData, summarydetailRef, commentRef, suggestionRef, forwardtxtRef, handleSelectChange, handleUrgentChange, handleISNewChange, handleInputChange }) => {
 
     return (
         <>
@@ -106,14 +106,38 @@ const EventForm = ({ mode, isHA, reportData, eventData, departments, formData, s
                         <TextField
                             id="comment"
                             defaultValue={eventData?.comment}
-                            label="สรุปเหตุการณ์ไม่พึงประสงค์"
+                            label="สาเหตุที่แท้จริงของความเสี่ยง / เหตุการณ์ไม่พึงประสงค์ที่เกิดขึ้น"
                             inputRef={commentRef}
                             fullWidth
                             multiline
                             rows={3}
                             sx={{ marginTop: 2 }}
                         />
-                        <span className="validate">*กรอกข้อมูล สรุปเหตุการณ์ไม่พึงประสงค์</span>
+                        <span className="validate">*กรอกข้อมูล สาเหตุที่แท้จริงของความเสี่ยง / เหตุการณ์ไม่พึงประสงค์ที่เกิดขึ้น</span>
+
+                        <TextField
+                            id="suggestion"
+                            defaultValue={eventData?.suggestion}
+                            label="แนวทางการแก้ไขปัญหา / มาตรการป้องกันความเสี่ยงที่กำหนดขึ้น"
+                            inputRef={suggestionRef}
+                            fullWidth
+                            multiline
+                            rows={3}
+                            sx={{ marginTop: 2 }}
+                        />
+                        <span className="validate">*กรอกข้อมูล แนวทางการแก้ไขปัญหา / มาตรการป้องกันความเสี่ยงที่กำหนดขึ้น</span>
+
+                        <TextField
+                            id="forwardtxt"
+                            defaultValue={eventData?.forwardtxt}
+                            label="สิ่งที่หน่วยงานต้องการประสานงานกับหน่วยงานอื่น / คณะกรรมการที่เกี่ยวข้อง"
+                            inputRef={forwardtxtRef}
+                            fullWidth
+                            multiline
+                            rows={3}
+                            sx={{ marginTop: 2 }}
+                        />
+                        <span className="validate">*กรอกข้อมูล สิ่งที่หน่วยงานต้องการประสานงานกับหน่วยงานอื่น / คณะกรรมการที่เกี่ยวข้อง</span>
                     </>
                 ) : (
                     <>

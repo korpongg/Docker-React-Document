@@ -16,6 +16,8 @@ const EventDialog = ({ mode, isHA, userData, config, isDialogOpen, handleCloseDi
 
     const summarydetailRef = useRef(null);
     const commentRef = useRef(null);
+    const suggestionRef = useRef(null);
+    const forwardtxtRef = useRef(null);
 
     useEffect(() => {
         if (reportData == null || (reportData?.deptAffInfo && reportData.deptAffInfo.length === 0)) {
@@ -86,6 +88,8 @@ const EventDialog = ({ mode, isHA, userData, config, isDialogOpen, handleCloseDi
 
         const summarydetail = summarydetailRef.current ? summarydetailRef.current.value.trim() : '';
         const comment = commentRef.current ? commentRef.current.value.trim() : '';
+        const suggestion = suggestionRef.current ? suggestionRef.current.value.trim() : '';
+        const forwardtxt = forwardtxtRef.current ? forwardtxtRef.current.value.trim() : '';
 
         if (mode === 'Add' || mode === 'Edit') {
             if (formData.deptrelate === '0' || summarydetail === '') {
@@ -93,7 +97,7 @@ const EventDialog = ({ mode, isHA, userData, config, isDialogOpen, handleCloseDi
                 errorMessage = 'กรุณากรอกข้อมูลในฟิลด์ที่จำเป็นทั้งหมด';
             }
         } else if (mode === 'Accept') {
-            if (comment === '') {
+            if (comment === '' || suggestion === '' || forwardtxt === '') {
                 isValid = false;
                 errorMessage = 'กรุณากรอกข้อมูล สรุปเหตุการณ์ไม่พึงประสงค์';
             }
@@ -111,15 +115,15 @@ const EventDialog = ({ mode, isHA, userData, config, isDialogOpen, handleCloseDi
                     if (mode === 'Edit') {
                         formDataToSend = { ...formData, summarydetail };
                     } else {
-                        formDataToSend = { ...formData, comment };
+                        formDataToSend = { ...formData, comment, suggestion, forwardtxt };
                     }
                     response = await axios.put(`${apiUrl}/events/${eventData.id}`, formDataToSend, { ...config });
                 }
 
                 if (response.status === 200 || response.status === 201) {
                     const successMessage = mode === 'Add' ? 'เพิ่มรายงานเรียบร้อยแล้ว' :
-                                          mode === 'Edit' ? 'แก้ไขรายงานเรียบร้อยแล้ว' :
-                                          'ตอบกลับรายงานเรียบร้อยแล้ว';
+                        mode === 'Edit' ? 'แก้ไขรายงานเรียบร้อยแล้ว' :
+                            'ตอบกลับรายงานเรียบร้อยแล้ว';
                     Swal.fire({ icon: 'success', title: 'Success', text: successMessage });
                     handleCloseDialog();
                 }
@@ -156,6 +160,8 @@ const EventDialog = ({ mode, isHA, userData, config, isDialogOpen, handleCloseDi
                             formData={formData}
                             summarydetailRef={summarydetailRef}
                             commentRef={commentRef}
+                            suggestionRef={suggestionRef}
+                            forwardtxtRef={forwardtxtRef}
                             handleSelectChange={handleSelectChange}
                             handleUrgentChange={handleUrgentChange}
                             handleISNewChange={handleISNewChange}

@@ -89,10 +89,32 @@ const EventView = ({ isHA, eventData }) => {
                         {eventData.comment && 
                             <div className="EventBox">
                                 <div className="EventRow">
-                                    <div className="EventCell AreaTopic">สรุปเหตุการณ์ไม่พึงประสงค์</div>
+                                    <div className="EventCell AreaTopic">สาเหตุที่แท้จริงของความเสี่ยง / เหตุการณ์ไม่พึงประสงค์ที่เกิดขึ้น</div>
                                 </div>
                                 <div className="EventRow">
                                     <pre className="EventCell AreaContent">{eventData.comment}</pre>
+                                </div>
+                            </div>
+                        }
+
+                        {eventData.suggestion && 
+                            <div className="EventBox">
+                                <div className="EventRow">
+                                    <div className="EventCell AreaTopic">แนวทางการแก้ปัญหา / มาตราการป้องกันความเสี่ยงที่กำหนดขึ้น</div>
+                                </div>
+                                <div className="EventRow">
+                                    <pre className="EventCell AreaContent">{eventData.suggestion}</pre>
+                                </div>
+                            </div>
+                        }
+
+                        {eventData.forwardtxt && 
+                            <div className="EventBox">
+                                <div className="EventRow">
+                                    <div className="EventCell AreaTopic">สิ่งที่หน่วยงานต้องการประสานกับหน่วยง่านอื่น / คณะกรรมการที่เกี่ยวข้อง</div>
+                                </div>
+                                <div className="EventRow">
+                                    <pre className="EventCell AreaContent">{eventData.forwardtxt}</pre>
                                 </div>
                             </div>
                         }
