@@ -73,7 +73,7 @@ const Occurrence = ({ Mode }) => {
 
       if (response.status === 200 || response.status === 201) {
         if (Mode === "Edit") {
-          if (UserData.userid === response.data.createby) {
+          if (isAdmin || UserData.userid === response.data.createby) {
             setFormData({
               ...response.data,
               userreport: response.data.createby,
@@ -350,6 +350,7 @@ const Occurrence = ({ Mode }) => {
       safety: JSON.stringify(FormData.safety),
       service: JSON.stringify(FormData.service),
       utility: JSON.stringify(FormData.utility),
+      updateby: UserData.userid,
     };
     console.log("submitEditFormData", submitEditFormData);
 
@@ -618,7 +619,7 @@ const Occurrence = ({ Mode }) => {
         )}
         <NavForm
           Mode={Mode}
-          Access={FormData.createby === UserData.userid}
+          Access={FormData.createby === UserData.userid || isAdmin}
           submitfunction={handleSubmit}
           handleSubmitEdit={handleSubmitEdit}
           Stage={Stage}

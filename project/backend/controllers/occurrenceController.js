@@ -259,6 +259,10 @@ exports.updateOccurrence = async (req, res) => {
       req.body.responsedate = sequelize.literal(`'${formattedResponseDate}'`);
     }
 
+    if (req.body.updateby) {
+      req.body.updateAt = sequelize.literal("CURRENT_TIMESTAMP");
+    }
+
     const validColumns = req.body;
     // console.log("Data sets:", validColumns);
 
