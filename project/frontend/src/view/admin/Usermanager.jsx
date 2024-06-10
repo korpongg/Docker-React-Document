@@ -114,9 +114,9 @@ export default function UserManager() {
 
   const processRowUpdate = async (newRow) => {
     try {
-      const response = await axios.put(`${apiUrl}/users`, newRow,  { ...config});
+      const response = await axios.put(`${apiUrl}/users`, newRow, { ...config });
       if (response.status === 200 || response.status === 201) {
-        console.log("Update data Success:",response);
+        // console.log("Update data Success:", response);
       }
     } catch (error) {
       console.error("Error updating data:", error);
@@ -179,7 +179,7 @@ export default function UserManager() {
                 onClick={handleCancelClick(id)}
                 color="inherit"
               />
-            </Tooltip> ,
+            </Tooltip>,
           ];
         }
 
@@ -238,12 +238,14 @@ export default function UserManager() {
           <div className="RoleLimit">
             การจำกัดสิทธิ์ (Role)<br />
             1 คือ User <br />
-            2 คือ Editer<br />
+            2 คือ HA<br />
             3 คือ Admin<br />
             Level (level)<br />
-            1, 2 เห็นเฉพาะงาน<br />
+            1,2 เห็นเฉพาะงาน<br />
             ในแผนกตัวเอง<br />
-            3, 4 เห็นทั้งหมด<br />
+            3 เห็นเฉพาะงานใน<br />
+            Affiliation ตัวเอง<br />
+            4 เห็นทั้งหมด<br />
           </div>
         )}
         <InfoIcon className="BtnInfo" onClick={toggleRoleInfo} />
