@@ -1,5 +1,6 @@
 const sequelize = require('../config/dbConn').sequelize;
 const User = require("../models/User");
+const bcrypt = require('bcrypt');
 
 const getAllUsers = async (req, res) => {
   try {
@@ -70,11 +71,42 @@ const updateUser = async (req, res) => {
     const user = await User.findOne({ where: { userid: userid } });
 
     if (!user) {
-      return res.status(204).json({ message: `No user matches ID ${req.body.userid}.` });
+      if (
+        !req?.body?.title ||
+        !req?.body?.name ||
+        !req?.body?.lastname ||
+        !req?.body?.affiliation ||
+        !req?.body?.faction ||
+        !req?.body?.dep ||
+        typeof req.body.title !== 'string' || req.body.title.trim().length < 1 ||
+        typeof req.body.name !== 'string' || req.body.name.trim().length < 1 ||
+        typeof req.body.lastname !== 'string' || req.body.lastname.trim().length < 1 ||
+        typeof req.body.affiliation !== 'string' || req.body.affiliation.trim().length < 1 ||
+        typeof req.body.faction !== 'string' || req.body.faction.trim().length < 1 ||
+        typeof req.body.dep !== 'string' || req.body.dep.trim().length < 1
+      ) {
+        return res.status(400).json({ message: "userid, title, name, lastname, affiliation, faction and dep are required fields with valid non-empty string values." });
+      }
+
+      console.log(`User with ID ${userid} not found. Creating a new user.`);
+
+      // Generate hashed password
+      const hashedPwd = await bcrypt.hash(req?.body?.userid, 10);
+
+      // Create new user with hashed password
+      user = await User.create({ ...req.body, password: hashedPwd });
+
+      return res.status(201).json(user); // Return newly created user
     }
 
     const validColumns = req.body;
     console.log("Data sets:", validColumns);
+
+    // Validate and format the deleteAt field
+    if (validColumns.deleteAt) {
+      const deleteAtDate = moment(validColumns.deleteAt).format('YYYY-MM-DD HH:mm:ss');
+      validColumns.deleteAt = deleteAtDate
+    }
 
     // Loop through validColumns and update or remove values as needed
     for (const column in validColumns) {
@@ -108,6 +140,56 @@ const updateUser = async (req, res) => {
     res.status(500).json({ message: "An error occurred.", err: err.message });
   }
 };
+// const updateUser = async (req, res) => {
+//   // console.log(req?.body);
+//   if (!req?.body?.userid) {
+//     return res.status(400).json({ message: "ID parameter is required." });
+//   }
+
+//   const userid = req?.body?.userid;
+//   try {
+//     console.log(userid);
+//     const user = await User.findOne({ where: { userid: userid } });
+
+//     if (!user) {
+//       return res.status(204).json({ message: `No user matches ID ${req.body.userid}.` });
+//     }
+
+//     const validColumns = req.body;
+//     console.log("Data sets:", validColumns);
+
+//     // Loop through validColumns and update or remove values as needed
+//     for (const column in validColumns) {
+//       if (
+//         validColumns[column] === undefined ||
+//         validColumns[column] === null ||
+//         validColumns[column] === "Invalid date"
+//       ) {
+//         // Delete the property (column) from jobDescription
+//         delete user[column];
+//         console.log("Removed column:", column);
+//       } else {
+//         // Update the property (column) in jobDescription
+//         user[column] = validColumns[column];
+//         console.log("Updated column:", column);
+//         console.log("Updated value:", validColumns[column]);
+//       }
+//     }
+//     // Additional logging to trace the flow
+//     console.log("Before saving user:");
+//     console.log(user.toJSON());
+
+//     const result = await user.save();
+//     // Additional logging after saving
+//     console.log("After saving user:");
+//     console.log(result.toJSON());
+
+//     res.json(result);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: "An error occurred.", err: err.message });
+//   }
+// };
 
 module.exports = {
   getAllUsers,
