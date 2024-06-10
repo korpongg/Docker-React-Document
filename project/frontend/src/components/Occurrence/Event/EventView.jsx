@@ -120,7 +120,7 @@ const EventView = ({ isHA, eventData }) => {
                         }
 
 
-                        <Grid2 container spacing={1}>
+                        {/* <Grid2 container spacing={1}> */}
                             {/* <Grid2 xs={12} sm={6}>
                                 <strong>ใบที่:</strong> {eventData.code}
                             </Grid2>
@@ -169,7 +169,7 @@ const EventView = ({ isHA, eventData }) => {
                                     <pre>{eventData.comment}</pre>
                                 </Grid2>
                             )} */}
-                        </Grid2>
+                        {/* </Grid2> */}
                     </DialogContent>
                 </>
             ) : (
