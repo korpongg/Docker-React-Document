@@ -163,6 +163,10 @@ const Header = () => {
               </MenuItem>
 
               <MenuItem onClick={handleCloseNavMenu}>
+                <Typography textAlign="center" onClick={() => navigate("/occurrence/event")}>อยู่ระหว่างทบทวน</Typography>
+              </MenuItem>
+
+              <MenuItem onClick={handleCloseNavMenu}>
                 <Typography textAlign="center" onClick={() => navigate("/medication")}>Medication</Typography>
               </MenuItem>
             </StyledMenu>
@@ -190,9 +194,10 @@ const Header = () => {
           <Box sx={{ alignItems: "center", display: "flex", flexGrow: 0 }}>
             {userData && (
               <>
-                <Typography variant="body1" onClick={() => navigate("/home")} sx={{ display: { xs: "none", sm: "block" } }} className="Button-Text">หน้าหลัก</Typography>
-                <Typography variant="body1" onClick={() => navigate("/occurrence")} sx={{ display: { xs: "none", sm: "block" } }} className="Button-Text">Occurrence</Typography>
-                <Typography variant="body1" onClick={() => navigate("/medication")} sx={{ display: { xs: "none", sm: "block" } }} className="Button-Text">Medication</Typography>
+                <Typography variant="body1" onClick={() => navigate("/home")} sx={{ display: { xs: "none", md: "block" } }} className="Button-Text">หน้าหลัก</Typography>
+                <Typography variant="body1" onClick={() => navigate("/occurrence")} sx={{ display: { xs: "none", md: "block" } }} className="Button-Text">Occurrence</Typography>
+                <Typography variant="body1" onClick={() => navigate("/occurrence/event")} sx={{ display: { xs: "none", md: "block" } }} className="Button-Text">อยู่ระหว่างทบทวน</Typography>
+                <Typography variant="body1" onClick={() => navigate("/medication")} sx={{ display: { xs: "none", md: "block" } }} className="Button-Text">Medication</Typography>
 
                 <IconButton onClick={handleClick} sx={{ p: 0 }}>
                   <StyledBadge overlap="circular" anchorOrigin={{ vertical: "bottom", horizontal: "right" }} variant="dot">
@@ -216,12 +221,6 @@ const Header = () => {
                   <Divider key="divider2" />
                   {[
                     isAdmin && <MenuAdmin key="admin-menu" />,
-                    <MenuItem key="accept" onClick={() => navigate("/occurrence/event", { replace: true })}>
-                      <ListItemIcon>
-                        <AcceptIcon fontSize="small" style={{ color: "green" }} />
-                      </ListItemIcon>
-                      รับมอบหมายงาน
-                    </MenuItem>,
                     <MenuItem key="logout" onClick={() => navigate("/logout", { replace: true })}>
                       <ListItemIcon>
                         <LogoutIcon fontSize="small" style={{ color: "red" }} />
@@ -305,7 +304,7 @@ const StyledMenu = styled(Menu)`
   }
 `;
 const LeftContent = styled(Box)`
-  @media screen and (min-width: 681px){
+  @media screen and (min-width: 900px){
     display: none !important;
   }
 `;

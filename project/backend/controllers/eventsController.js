@@ -1,5 +1,6 @@
 const sequelize = require("../config/dbConn").sequelize;
 const Events = require("../models/Events");
+const Occurrences = require("../models/Occurrences");
 const User = require("../models/User");
 const { executeAndStoreQueryResult } = require('../services/broadcastService');
 
@@ -28,6 +29,12 @@ exports.createEventtLog = async (req, res) => {
       acceptAt: formattedAcceptDate ? sequelize.literal(`'${formattedAcceptDate}'`) : null,
       responsedate: formattedResponseDate ? sequelize.literal(`'${formattedResponseDate}'`) : null,
     });
+
+    // Update the Occurrences table
+    await Occurrences.update(
+      { formstatus: '4' },
+      { where: { reportid: reportid } }
+    );
 
     executeAndStoreQueryResult();
     return res.status(201).json(result);

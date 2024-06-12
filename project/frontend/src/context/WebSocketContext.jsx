@@ -16,7 +16,7 @@ export const WebSocketProvider = ({ children }) => {
 
     // Function to initiate the WebSocket connection
     const connectWebSocket = useCallback(() => {
-        setReloadTimeout(); // Call this function to set the initial timeout
+        // setReloadTimeout(); // Call this function to set the initial timeout
         // Establish the WebSocket connection
         const ws = new WebSocket(`${import.meta.env.VITE_REACT_APP_API_BC_PREFIX}${window.location.hostname}${import.meta.env.VITE_REACT_APP_API_BC}`);
 
@@ -29,7 +29,7 @@ export const WebSocketProvider = ({ children }) => {
             // Handle incoming WebSocket messages
             // console.log('Received data:', event.data);
             const data = JSON.parse(event.data);
-            setReloadTimeout(); // Call this function when a message is received.
+            // setReloadTimeout(); // Call this function when a message is received.
 
 
             setDataCenter(data.report_data || []);
@@ -49,7 +49,7 @@ export const WebSocketProvider = ({ children }) => {
 
         setSocket(ws);
         return () => {
-            clearReloadTimeout();
+            // clearReloadTimeout();
             ws.close();
         };
     }, []);
@@ -57,7 +57,7 @@ export const WebSocketProvider = ({ children }) => {
     // Function to close the WebSocket connection
     const disconnectWebSocket = useCallback(() => {
         if (socket) {
-            clearReloadTimeout();
+            // clearReloadTimeout();
             socket.close();
             setSocket(null); // Reset the socket state
             console.log('WebSocket connection closed by disconnect function.');

@@ -17,6 +17,12 @@
       "statusText": "ยกเลิก",
       "statusColor": "cancel",
       "color": "red"
+    },
+    {
+      "id": 4,
+      "statusText": "อยู่ระหว่างทบทวน",
+      "statusColor": "in-progress",
+      "color": "orange"
     }
   ],
   "subStatus": [

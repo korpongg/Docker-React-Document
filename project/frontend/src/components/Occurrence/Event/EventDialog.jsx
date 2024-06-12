@@ -15,6 +15,8 @@ const EventDialog = ({ mode, isHA, userData, config, isDialogOpen, handleCloseDi
     const [departments, setDepartments] = useState([]);
 
     const summarydetailRef = useRef(null);
+    const riskRef = useRef(null);
+    const factorsRef = useRef(null);
     const commentRef = useRef(null);
     const suggestionRef = useRef(null);
     const forwardtxtRef = useRef(null);
@@ -87,19 +89,21 @@ const EventDialog = ({ mode, isHA, userData, config, isDialogOpen, handleCloseDi
         let errorMessage = '';
 
         const summarydetail = summarydetailRef.current ? summarydetailRef.current.value.trim() : '';
+        const risk = riskRef.current ? riskRef.current.value.trim() : '';
+        const factors = factorsRef.current ? factorsRef.current.value.trim() : '';
         const comment = commentRef.current ? commentRef.current.value.trim() : '';
         const suggestion = suggestionRef.current ? suggestionRef.current.value.trim() : '';
         const forwardtxt = forwardtxtRef.current ? forwardtxtRef.current.value.trim() : '';
 
         if (mode === 'Add' || mode === 'Edit') {
-            if (formData.deptrelate === '0' || summarydetail === '') {
+            if (parseInt(formData.deptrelate) === 0 || summarydetail === '') {
                 isValid = false;
                 errorMessage = 'กรุณากรอกข้อมูลในฟิลด์ที่จำเป็นทั้งหมด';
             }
         } else if (mode === 'Accept') {
-            if (comment === '' || suggestion === '' || forwardtxt === '') {
+            if (risk === '' || factors === '' || comment === '' || suggestion === '' || forwardtxt === '') {
                 isValid = false;
-                errorMessage = 'กรุณากรอกข้อมูล สรุปเหตุการณ์ไม่พึงประสงค์';
+                errorMessage = 'กรุณากรอกข้อมูลในฟิลด์ที่จำเป็นทั้งหมด';
             }
         }
 
@@ -115,15 +119,13 @@ const EventDialog = ({ mode, isHA, userData, config, isDialogOpen, handleCloseDi
                     if (mode === 'Edit') {
                         formDataToSend = { ...formData, summarydetail };
                     } else {
-                        formDataToSend = { ...formData, comment, suggestion, forwardtxt };
+                        formDataToSend = { ...formData, risk, factors, comment, suggestion, forwardtxt };
                     }
                     response = await axios.put(`${apiUrl}/events/${eventData.id}`, formDataToSend, { ...config });
                 }
 
                 if (response.status === 200 || response.status === 201) {
-                    const successMessage = mode === 'Add' ? 'เพิ่มรายงานเรียบร้อยแล้ว' :
-                        mode === 'Edit' ? 'แก้ไขรายงานเรียบร้อยแล้ว' :
-                            'ตอบกลับรายงานเรียบร้อยแล้ว';
+                    const successMessage = mode === 'Add' ? 'เพิ่มรายงานเรียบร้อยแล้ว' : mode === 'Edit' ? 'แก้ไขรายงานเรียบร้อยแล้ว' : 'บันทึกผลการทบทวนอุบัติการณ์เรียบร้อยแล้ว';
                     Swal.fire({ icon: 'success', title: 'Success', text: successMessage });
                     handleCloseDialog();
                 }
@@ -138,6 +140,8 @@ const EventDialog = ({ mode, isHA, userData, config, isDialogOpen, handleCloseDi
             setLoading(false);
         }
     }, [mode, formData, config, eventData, handleCloseDialog]);
+
+    console.log(formData)
 
     return (
         isDialogOpen && (
@@ -159,6 +163,8 @@ const EventDialog = ({ mode, isHA, userData, config, isDialogOpen, handleCloseDi
                             departments={departments}
                             formData={formData}
                             summarydetailRef={summarydetailRef}
+                            riskRef={riskRef}
+                            factorsRef={factorsRef}
                             commentRef={commentRef}
                             suggestionRef={suggestionRef}
                             forwardtxtRef={forwardtxtRef}
@@ -175,7 +181,6 @@ const EventDialog = ({ mode, isHA, userData, config, isDialogOpen, handleCloseDi
                 ) : (
                     <>
                         <EventView isHA={isHA} eventData={eventData} />
-
                         <DialogActions>
                             <Button onClick={handleCloseDialog} variant="contained" color="error" disabled={loading}>ปิด</Button>
                         </DialogActions>

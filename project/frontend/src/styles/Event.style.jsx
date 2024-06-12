@@ -161,7 +161,7 @@ export const TranferDialogBox = styled(Dialog)`
   }
   .EventCol{
     display:flex;
-    width:100%;
+    width:50%;
     border-right:3px solid #e9e9e9;
   }
   .EventCol:last-child{

@@ -32,6 +32,18 @@ const Events = sequelize.define('Events', {
     type: DataTypes.STRING(1),
     allowNull: false
   },
+  summarydetail: {
+    type: DataTypes.TEXT,
+    allowNull: false
+  },
+  risk: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  factors: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
   comment: {
     type: DataTypes.TEXT,
     allowNull: true
@@ -43,10 +55,6 @@ const Events = sequelize.define('Events', {
   forwardtxt: {
     type: DataTypes.TEXT,
     allowNull: true
-  },
-  summarydetail: {
-    type: DataTypes.TEXT,
-    allowNull: false
   },
   status: {
     type: DataTypes.STRING(1),

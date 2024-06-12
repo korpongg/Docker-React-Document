@@ -132,14 +132,14 @@ CREATE TABLE [occurrences](
     [dx] NVARCHAR(MAX) NULL,
     [pct] NVARCHAR(MAX) NULL,
 
-    [reportlocation] NVARCHAR(MAX) NOT NULL,
+    [reportlocation] NVARCHAR(MAX) NOT NULL,		-- สถานที่เกิดเหตุ
 	-- [reportdate] [date] NOT NULL,
-	[occurrencedate] [datetime] NOT NULL,
+	[occurrencedate] [datetime] NOT NULL,			-- วัน-เวลาที่เกิดเหตุการณ์
     -- [affrelate] NVARCHAR(100) NOT NULL,
-    [deptrelate] NVARCHAR(100) NOT NULL,
+    [deptrelate] NVARCHAR(100) NOT NULL,			-- หน่วยงานที่เกี่ยวข้อง
 
-	[reporttype] [nvarchar](1) NOT NULL,
-	[type] NVARCHAR(3) NOT NULL,
+	[reporttype] [nvarchar](1) NOT NULL,			-- ประเภทอุบัติการณ์	General Risk, Clinical Risk
+	[type] NVARCHAR(3) NOT NULL,					-- ประเภทอุบัติการณ์	OPD, IPD
 
 	[acceptdate] [datetime] NULL,
 	[responsedate] [datetime] NULL,
@@ -161,9 +161,10 @@ CREATE TABLE [occurrences](
 	[management] NVARCHAR(MAX) NULL,
 	[managementremark] NVARCHAR(MAX) NULL,
 
-	[level] [nvarchar](1) NOT NULL,
-	[description] NVARCHAR(MAX) NOT NULL,
-	[effectremark] NVARCHAR(MAX) NOT NULL,
+	[level] [nvarchar](1) NOT NULL,					-- ระดับความเสี่ยง
+	[description] NVARCHAR(MAX) NOT NULL,			-- บรรยายสรุปเหตุการณ์ (เกิดเหตุการณ์อะไร เกิดที่ไหน เกิดเมื่อไหร่ ใครคือผู้เกี่ยวข้อง เกี่ยวข้องอย่างไร)
+	[renew] NVARCHAR(MAX) NULL,						-- สรุปรายละเอียดเหตุการณ์ by HA 
+	[effectremark] NVARCHAR(MAX) NOT NULL,			-- ระบุความเสียหายที่เกิดขึ้น
 
 	[reportdoc] [nvarchar](1) NULL,
     [docname] NVARCHAR(100) NULL,
@@ -175,11 +176,11 @@ CREATE TABLE [occurrences](
 	[reportother] [nvarchar](1) NULL,
     [otherremark] NVARCHAR(100) NULL,
 
-	[impromptusolution] NVARCHAR(MAX) NULL,
-	[activefailure] NVARCHAR(MAX) NULL,
-	[suggestion] NVARCHAR(MAX) NULL,
+	[impromptusolution] NVARCHAR(MAX) NULL,			-- การแก้ไขปัญหาเฉพาะหน้า
+	[activefailure] NVARCHAR(MAX) NULL,				-- ความคลาดเคลื่อนที่เกิดขึ้น (Active Failure) : ระบุความผิดพลาด/การละเมิดต่อมาตรการที่เกิดขึ้น
+	[suggestion] NVARCHAR(MAX) NULL,				-- ข้อเสนอแนะเพื่อการแก้ไขปัญหา / แนวทางแก้ไขปัญหา (ถ้ามี)
 
-	[formstatus] [nvarchar](1) NOT NULL,
+	[formstatus] [nvarchar](1) NOT NULL,			-- สถานะ Occ
 
 	[createby] [varchar](20) NOT NULL,
 	[createAt] [datetime] NULL,
@@ -200,10 +201,12 @@ CREATE TABLE [event_logs](
     [deptrelate] INT NOT NULL,							-- แผนกที่เกี่ยวข้อง by HA
 	[urgenttype] [nvarchar](1) NOT NULL,				-- ความเร่งด่วน by HA
 	[isnew] [nvarchar](1) NULL,							-- อุบัติการณ์ใหม่, อุบัติการณ์ซ้ำ by HA
+	[summarydetail] NVARCHAR(MAX) NOT NULL,				-- สรุปเหตุการณ์ไม่พึงประสงค์ by HA
+	[risk] NVARCHAR(MAX) NULL,							-- สรุปเหตุการณ์ความเสี่ยง / เหตุการณ์ไม่พึงประสงค์ที่เกิดขึ้น by deptrelate
+	[factors] NVARCHAR(MAX) NULL,						-- ปัจจัยกระตุ้นที่ส่งผลต่อความผิดพลาด / การละเมิดต่อมาตรการป้องกันที่เกิดขึ้น by deptrelate
 	[comment] NVARCHAR(MAX) NULL,						-- สาเหตุที่แท้จริงของความเสี่ยง / เหตุการณ์ไม่พึงประสงค์ที่เกิดขึ้น by deptrelate
 	[suggestion] NVARCHAR(MAX) NULL,					-- แนวทางการแก้ไขปัญหา / มาตรการป้องกันความเสี่ยงที่กำหนดขึ้น by deptrelate
 	[forwardtxt] NVARCHAR(MAX) NULL,					-- สิ่งที่หน่วยงานต้องการประสานงานกับหน่วยงานอื่น / คณะกรรมการที่เกี่ยวข้อง by deptrelate
-	[summarydetail] NVARCHAR(MAX) NOT NULL,				-- สรุปรายละเอียดเหตุการณ์ by HA
 	[status] [nvarchar](1) NOT NULL,					-- ส่งทบทวน หลังจากสร้าง 1, ทบทวนแล้ว	มีการอัพเดท comment 2, ทบทวนซ้ำ	กดจากปุ่ม จะโชว์เฉพาะ 2
 	[createby] [varchar](20) NOT NULL,					-- create by HA
 	[createAt] [datetime] NOT NULL DEFAULT GETDATE(),	-- วันที่สร้าง

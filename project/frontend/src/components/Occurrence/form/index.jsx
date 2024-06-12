@@ -244,11 +244,11 @@ const Occurrence = ({ Mode }) => {
   };
 
   const keydata = [
-    { key: "hn", name: "hn", location: 1 },
-    { key: "an", name: "an", location: 1 },
-    { key: "age", name: "อายุ", location: 1 },
+    // { key: "hn", name: "hn", location: 1 },
+    // { key: "an", name: "an", location: 1 },
+    // { key: "age", name: "อายุ", location: 1 },
     { key: "gender", name: "เพศ", location: 1 },
-    { key: "dx", name: "Dx.", location: 1 },
+    // { key: "dx", name: "Dx.", location: 1 },
     { key: "pct", name: "PCT ที่เกี่ยวข้าง", location: 1 },
     { key: "reportlocation", name: "สถานที่เกิดเหตุ", location: 1 },
     { key: "occurrencedate", name: "วัน-เวลาที่เกิดเหตุการณ์", location: 1 },
@@ -301,6 +301,7 @@ const Occurrence = ({ Mode }) => {
           utility: JSON.stringify(FormData.utility),
         };
 
+        // console.log("submitFormData",submitFormData)
         try {
           const response = await axios.post(
             `${apiUrl}/occurrences`,
@@ -315,6 +316,7 @@ const Occurrence = ({ Mode }) => {
         } catch (err) {
           console.error(err);
         }
+
       } else {
         setStage(1);
         setOccStage(0);

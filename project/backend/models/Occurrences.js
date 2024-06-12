@@ -144,6 +144,10 @@ const Occurrences = sequelize.define('Occurrences', {
     type: DataTypes.TEXT,
     allowNull: false
   },
+  renew: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
   effectremark: {
     type: DataTypes.TEXT,
     allowNull: false

@@ -56,7 +56,7 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
     {
       field: "formstatus",
       headerName: "สถานะ",
-      minWidth: 155,
+      minWidth: 180,
       flex: 1,
       align: "center",
       headerAlign: "center",
@@ -127,19 +127,19 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
               color="primary"
             />
           </Tooltip>
-
-          {isAdmin && (row.formstatus === '1' || row.formstatus === '2') && (
-            <Tooltip title={row.formstatus === '1' ? 'ส่งต่อรายงาน' : 'ดูรายงานส่งต่อ'}>
+          
+          {isAdmin && (row.reporttypename==='General Risk' ? (parseInt(row.level,10)>2) : (row.level>"C")) && (row.formstatus === '1' || row.formstatus === '2' || row.formstatus === '4') && (
+            <Tooltip title={row.formstatus === '1' || row.formstatus === '4' ? 'ส่งต่อรายงาน' : 'ดูรายงานส่งต่อ'}>
               <GridActionsCellItem
-                icon={row.formstatus === '1' ? <RotateIcon /> : <ViewIcon />}
-                label={row.formstatus === '1' ? 'ส่งต่อรายงาน' : 'ดูรายงานส่งต่อ'}
+                icon={row.formstatus === '1' || row.formstatus === '4' ? <RotateIcon /> : <ViewIcon />}
+                label={row.formstatus === '1' || row.formstatus === '4' ? 'ส่งต่อรายงาน' : 'ดูรายงานส่งต่อ'}
                 onClick={() => handleTranfClick(id, row)}
                 color="secondary"
               />
             </Tooltip>
           )}
 
-          {isAdmin && row.formstatus === '1' && (
+          {isAdmin && (row.formstatus === '1' || row.formstatus === '4') && (
             <Tooltip title="ปิดอุบัติการณ์">
               <GridActionsCellItem
                 icon={<CloseIcon />}
@@ -150,7 +150,7 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
             </Tooltip>
           )}
 
-          {(userData.userid === row.createby || isAdmin) && row.deleteAt === null && row.formstatus === '1' && (
+          {(userData.userid === row.createby || isAdmin) && row.deleteAt === null && (row.formstatus === '1' || row.formstatus === '4') && (
             <>
               <Tooltip title="แก้ไขข้อมูลอุบัติการณ์">
                 <GridActionsCellItem

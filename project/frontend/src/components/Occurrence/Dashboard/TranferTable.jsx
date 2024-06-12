@@ -18,7 +18,7 @@ const EditToolbar = ({ reportData, handleAddEvent }) => (
         onClick={handleAddEvent}
         startIcon={<AddIcon />}
         style={{ marginRight: 10 }}
-        disabled={reportData?.formstatus !== '1'}
+        disabled={reportData?.formstatus !== '1' && reportData?.formstatus !== '4'}
       >
         ส่งทบทวน
       </Button>
@@ -32,19 +32,23 @@ function ExpandableCell({ value }) {
   const [expanded, setExpanded] = React.useState(false);
 
   return (
-    <div>
-      {expanded ? value : value.slice(0, 200)}&nbsp;
-      {value.length > 200 && (
-        <Link
-          type="button"
-          component="button"
-          sx={{ fontSize: 'inherit' }}
-          onClick={() => setExpanded(!expanded)}
-        >
-          {expanded ? 'ดูน้อยลง' : 'ดูเพิ่มเติม'}
-        </Link>
+    <>
+      {value && (
+        <div>
+          {expanded ? value : value.slice(0, 200)}&nbsp;
+          {value.length > 200 && (
+            <Link
+              type="button"
+              component="button"
+              sx={{ fontSize: "inherit" }}
+              onClick={() => setExpanded(!expanded)}
+            >
+              {expanded ? "ดูน้อยลง" : "ดูเพิ่มเติม"}
+            </Link>
+          )}
+        </div>
       )}
-    </div>
+    </>
   );
 }
 
@@ -67,7 +71,7 @@ const ActionButtons = ({ id, row, isAdmin, userData, handleViewEvent, handleRepe
       />
     </Tooltip>
 
-    {row.formstatus === '1' && (
+    {row.formstatus === '1' || row.formstatus === '4' && (
       <>
         {row.status === '1' && isWithinDays(row.createAt, 7) && (
           <>
@@ -83,10 +87,10 @@ const ActionButtons = ({ id, row, isAdmin, userData, handleViewEvent, handleRepe
             )}
 
             {row?.depname === userData?.dep && (
-              <Tooltip title="ตอบกลับรายงาน">
+              <Tooltip title="บันทึกผลการทบทวนอุบัติการณ์">
                 <GridActionsCellItem
                   icon={<AcceptIcon />}
-                  label="ตอบกลับรายงาน"
+                  label="บันทึกผลการทบทวนอุบัติการณ์"
                   onClick={() => handleAcceptEvent(id, row, isAdmin)}
                   color="success"
                 />
@@ -109,10 +113,10 @@ const ActionButtons = ({ id, row, isAdmin, userData, handleViewEvent, handleRepe
             )}
 
             {row?.depname === userData?.dep && (
-              <Tooltip title="ตอบกลับรายงาน">
+              <Tooltip title="บันทึกผลการทบทวนอุบัติการณ์">
                 <GridActionsCellItem
                   icon={<AcceptIcon />}
-                  label="ตอบกลับรายงาน"
+                  label="บันทึกผลการทบทวนอุบัติการณ์"
                   onClick={() => handleAcceptEvent(id, row, isAdmin)}
                   color="success"
                 />
@@ -161,17 +165,17 @@ const TranferTable = ({ reportData, dataEvent, isAdmin, userData, config, loadin
   }, {});
 
   const columns = [
-    { field: "code", headerName: "ใบที่", minWidth: 115, flex: 1, align: "center", headerAlign: "center" },
+    { field: "code", headerName: "ใบที่", minWidth: 120, flex: 1, align: "center", headerAlign: "center" },
+    { field: "hn", headerName: "HN", minWidth: 150, flex: 1, align: "center", headerAlign: "center" },
     {
       field: "status",
       headerName: "สถานะ",
-      minWidth: 115, flex: 1, align: "center", headerAlign: "center",
+      minWidth: 140, flex: 1, align: "center", headerAlign: "center",
       renderCell: (params) => {
         const statusInfo = statusMap[params.row.status];
         return <div className={`post-status ${statusInfo.color}`}>{statusInfo.text}</div>;
       },
     },
-    // { field: "hn", headerName: "HN", minWidth: 135, flex: 1, align: "center", headerAlign: "center" },
     {
       field: "occurrencedate", headerName: "วันที่เกิดเหตุ", minWidth: 115, flex: 1, align: "center", headerAlign: "center",
       valueGetter: (params) => params.value ? formatDateTimeN7(params.value, "dmy") : ''
@@ -180,7 +184,11 @@ const TranferTable = ({ reportData, dataEvent, isAdmin, userData, config, loadin
     { field: "reporttypename", headerName: "ประเภท", minWidth: 110, flex: 1, align: "center", headerAlign: "center" },
     { field: "level", headerName: "ความรุนแรง", minWidth: 90, flex: 1, align: "center", headerAlign: "center" },
     {
-      field: "summarydetail", headerName: "รายละเอียดเหตุการณ์", minWidth: 300, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false,
+      field: "summarydetail", headerName: "สรุปเหตุการณ์ไม่พึงประสงค์", minWidth: 300, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false,
+      renderCell: (params) => <ExpandableCell {...params} />,
+    },
+    {
+      field: "renew", headerName: "รายละเอียดเหตุการณ์", minWidth: 300, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false,
       renderCell: (params) => <ExpandableCell {...params} />,
     },
     {
