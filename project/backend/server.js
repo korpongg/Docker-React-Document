@@ -116,7 +116,7 @@ global.resetInterval = () => {
         console.error("Error during periodic execution:", error);
       }
     }
-  }, 8000);
+  }, 30000);
 };
 
 // Initialize the interval
