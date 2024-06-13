@@ -181,6 +181,7 @@ CREATE TABLE [occurrences](
 	[suggestion] NVARCHAR(MAX) NULL,				-- ข้อเสนอแนะเพื่อการแก้ไขปัญหา / แนวทางแก้ไขปัญหา (ถ้ามี)
 
 	[formstatus] [nvarchar](1) NOT NULL,			-- สถานะ Occ
+	[comment] NVARCHAR(MAX) NULL,					-- หมายเหตุการปิดอุบัติการณ์
 
 	[createby] [varchar](20) NOT NULL,
 	[createAt] [datetime] NULL,

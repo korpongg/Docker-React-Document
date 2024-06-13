@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Box, Tooltip, Link } from "@mui/material";
 import { DataGrid, GridToolbarContainer, GridToolbar, GridToolbarQuickFilter, GridActionsCellItem } from "@mui/x-data-grid";
-import { Add as AddIcon, DescriptionRounded as FileIcon, SwapHorizRounded as RotateIcon, FindInPageRounded as ViewIcon, Edit as EditIcon, CheckBoxRounded as CloseIcon, DeleteForeverRounded as DeleteIcon } from "@mui/icons-material";
+import { Add as AddIcon, DescriptionRounded as FileIcon, SwapHorizRounded as RotateIcon, FindInPageRounded as ViewIcon, Edit as EditIcon, RefreshRounded as CloseIcon, DeleteForeverRounded as DeleteIcon } from "@mui/icons-material";
 import { formatDateTimeN7 } from "../../Function";
 import requestStatusData from "../../label.json";
 
@@ -21,7 +21,7 @@ function ExpandableCell({ value }) {
   const [expanded, setExpanded] = React.useState(false);
 
   return (
-    <div>
+    <div style={{ wordBreak: 'break-all' }}>
       {expanded ? value : value.slice(0, 200)}&nbsp;
       {value.length > 200 && (
         <Link
@@ -140,10 +140,11 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
           )}
 
           {isAdmin && (row.formstatus === '1' || row.formstatus === '4') && (
-            <Tooltip title="ปิดอุบัติการณ์">
+            <Tooltip title="Update">
               <GridActionsCellItem
                 icon={<CloseIcon />}
-                label="ปิดอุบัติการณ์"
+                label="Update"
+                className="rotate-icon"
                 onClick={() => handleCloseClick(id, row)}
                 color="success"
               />

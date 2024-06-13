@@ -192,6 +192,10 @@ const Occurrences = sequelize.define('Occurrences', {
     type: DataTypes.STRING(1),
     allowNull: false
   },
+  comment: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
   createby: {
     type: DataTypes.STRING(20),
     allowNull: false

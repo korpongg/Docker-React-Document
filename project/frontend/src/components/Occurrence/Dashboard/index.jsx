@@ -7,6 +7,7 @@ import Swal from 'sweetalert2';
 import { chkAdmins, chkAdmin } from "../../Function";
 import DataTable from "./DataTable";
 import TranferDialog from "./TranferDialog";
+import CloseIncidentDialog from "./CloseIncidentDialog";
 
 import { DashboardBox } from "../../../styles/Dashboard.style";
 
@@ -25,6 +26,9 @@ const IndexPage = () => {
   const [loading, setLoading] = useState(load);
   const [rowData, setRowData] = useState(null);
   const [isDialogOpen, setDialogOpen] = useState(false);
+  const [isCloseIncidentDialogOpen, setCloseIncidentDialogOpen] = useState(false);
+  const [closeReason, setCloseReason] = useState('');
+  const [closeComment, setCloseComment] = useState('');
 
   useEffect(() => {
     connectWebSocket();
@@ -73,24 +77,58 @@ const IndexPage = () => {
   };
 
   const handleCloseClick = async (id, data) => {
-    const confirmed = await Swal.fire({
-      title: 'ยืนยันปิดอุบัติการณ์?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'ยืนยัน',
-      cancelButtonText: 'ยกเลิก',
-    });
-    if (confirmed.isConfirmed) {
-      try {
-        const response = await axios.put(`${apiUrl}/occurrences`, { id: id, formstatus: '2' }, { ...config });
-        console.log(response.data);
-        Swal.fire('สำเร็จ', 'ปิดอุบัติการณ์เรียบร้อยแล้ว', 'success');
-      } catch (error) {
-        console.error(error);
-        Swal.fire('ผิดพลาด', 'เกิดข้อผิดพลาดในการปิดอุบัติการณ์', 'error');
+    setCloseIncidentDialogOpen(true);
+    setRowData({ id, data });
+  };
+
+  const handleConfirmClose = async () => {
+    if (!closeReason) {
+      Swal.fire('ผิดพลาด', 'กรุณาเลือกสถานะอุบัติการณ์', 'error');
+      return;
+    }
+    if (closeReason === '5' && !closeComment) {
+      Swal.fire('ผิดพลาด', 'กรุณาใส่ความคิดเห็นเมื่อเลือก "ไม่ใช่อุบัติการณ์"', 'error');
+      return;
+    }
+
+    try {
+      const payload = { id: rowData.id, formstatus: closeReason };
+      if (closeReason === '5') {
+        payload.comment = closeComment;
       }
+
+      const response = await axios.put(`${apiUrl}/occurrences`, payload, { ...config });
+      console.log(response.data);
+      Swal.fire('สำเร็จ', 'แก้ไขสถานะอุบัติการณ์เรียบร้อยแล้ว', 'success');
+
+      setCloseIncidentDialogOpen(false);
+      setCloseComment("");
+      setCloseReason("");
+    } catch (error) {
+      console.error(error);
+      Swal.fire('ผิดพลาด', 'เกิดข้อผิดพลาดในการแก้ไขสถานะอุบัติการณ์', 'error');
     }
   };
+
+  // const handleCloseClick = async (id, data) => {
+  //   const confirmed = await Swal.fire({
+  //     title: 'ยืนยันปิดอุบัติการณ์?',
+  //     icon: 'warning',
+  //     showCancelButton: true,
+  //     confirmButtonText: 'ยืนยัน',
+  //     cancelButtonText: 'ยกเลิก',
+  //   });
+  //   if (confirmed.isConfirmed) {
+  //     try {
+  //       const response = await axios.put(`${apiUrl}/occurrences`, { id: id, formstatus: '2' }, { ...config });
+  //       console.log(response.data);
+  //       Swal.fire('สำเร็จ', 'ปิดอุบัติการณ์เรียบร้อยแล้ว', 'success');
+  //     } catch (error) {
+  //       console.error(error);
+  //       Swal.fire('ผิดพลาด', 'เกิดข้อผิดพลาดในการปิดอุบัติการณ์', 'error');
+  //     }
+  //   }
+  // };
 
   const handleEditClick = (id, data) => {
     disconnectWebSocket();
@@ -152,6 +190,16 @@ const IndexPage = () => {
         setEventData={setEventData}
         isDialogOpen={isDialogOpen}
         handleCloseDialog={handleCloseDialog}
+      />
+
+      <CloseIncidentDialog
+        isOpen={isCloseIncidentDialogOpen}
+        closeReason={closeReason}
+        setCloseReason={setCloseReason}
+        closeComment={closeComment}
+        setCloseComment={setCloseComment}
+        handleConfirmClose={handleConfirmClose}
+        handleCloseDialog={() => setCloseIncidentDialogOpen(false)}
       />
     </DashboardBox>
   );

@@ -108,6 +108,16 @@ export const DashboardBox = styled(Box)`
   }
 `;
 
+export const IncidentDialog = styled(Dialog)`
+  #incident-dialog-title {
+    font-family: inherit;
+  }
+
+  #incident-dialog-title, label, .MuiButton-root, button, textarea, .MuiTypography-root, .MuiSelect-select {
+    font-family: 'Prompt', sans-serif !important;
+  }
+`
+
 export const TranferDialogBox = styled(Dialog)`
   #tranfer-dialog-title {
     font-family: inherit;

@@ -23,6 +23,12 @@
       "statusText": "อยู่ระหว่างทบทวน",
       "statusColor": "in-progress",
       "color": "orange"
+    },
+    {
+      "id": 5,
+      "statusText": "ไม่ใช่อุบัติการณ์",
+      "statusColor": "cancel",
+      "color": "red"
     }
   ],
   "subStatus": [
