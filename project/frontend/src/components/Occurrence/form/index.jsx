@@ -53,6 +53,21 @@ const Occurrence = ({ Mode }) => {
       setEditFormData({ ...EditFormData, [name]: Text });
     }
   };
+
+  const handleReplaceData = (source, destination) => {
+    const tempsource = FormData[source];
+    // console.log("tempsource",tempsource);
+    setFormData({ ...FormData, [destination]: tempsource });
+    setEditFormData({ ...EditFormData, [destination]: tempsource });
+  };
+
+  const handleClearData = (destination) => {
+    const tempsource = "";
+    // console.log("tempsource",tempsource);
+    setFormData({ ...FormData, [destination]: tempsource });
+    setEditFormData({ ...EditFormData, [destination]: tempsource });
+  };
+
   const handleDataOccStageChange = (event) => {
     const Text = event.target.value;
     setOccStage(parseInt(Text, 10));
@@ -82,6 +97,7 @@ const Occurrence = ({ Mode }) => {
               aff: response.data.requestaff,
               faction: response.data.requestfac,
               dep: response.data.requestdep,
+              // renew: response.data.description || null,
             }),
               setAccess(true);
           } else {
@@ -97,6 +113,7 @@ const Occurrence = ({ Mode }) => {
               aff: response.data.requestaff,
               faction: response.data.requestfac,
               dep: response.data.requestdep,
+              // renew: response.data.description || null,
             }),
               setAccess(true);
           } else if (isEXEC) {
@@ -109,6 +126,7 @@ const Occurrence = ({ Mode }) => {
                 aff: response.data.requestaff,
                 faction: response.data.requestfac,
                 dep: response.data.requestdep,
+                // renew: response.data.description || null,
               }),
                 setAccess(true);
             }
@@ -587,6 +605,9 @@ const Occurrence = ({ Mode }) => {
                   data={FormData}
                   setDataFunction={handleDataChange}
                   missingKeys={AlertBorder}
+                  UserData={UserData}
+                  isAdmin={isAdmin}
+                  handleReplaceData={handleReplaceData}
                 />
               </>
             )}

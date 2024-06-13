@@ -1,7 +1,9 @@
 import React from "react";
 import TextField from "@mui/material/TextField";
+import MoveDownIcon from '@mui/icons-material/MoveDown';
+import IconButton from '@mui/material/IconButton';
 
-const ReportDescription = ({ Mode, data, setDataFunction, missingKeys }) => {
+const ReportDescription = ({ Mode, data, setDataFunction, missingKeys ,UserData,isAdmin,handleReplaceData}) => {
   return (
     <>
       <div className="TopicHeader">บันทึกรายละเอียด</div>
@@ -17,11 +19,14 @@ const ReportDescription = ({ Mode, data, setDataFunction, missingKeys }) => {
                 : "AreaBOX"
             }
           >
-            <TextField
+            {/* {UserData.userid===data.userreport ? ( "is เจ้าของ view") : (isAdmin && ("adminview") )} */}
+            {/* {Mode} */}
+            {/* {Mode==="Add" && ( */}
+              <TextField
               fullWidth
               id="description"
               disabled={Mode === "Show"}
-              label="บรรยายสรุปเหตุการณ์ (เกิดเหตุการณ์อะไร เกิดที่ไหน เกิดเมื่อไหร่ ใครคือผู้เกี่ยวข้อง เกี่ยวข้องอย่างไร)"
+              label="บรรยายสรุปเหตุการณ์ (เกิดเหตุการณ์อะไร เกิดที่ไหน เกิดเมื่อไหร่ ใครคือผู้เกี่ยวข้อง เกี่ยวข้องอย่างไร) Add"
               value={data?.description || ""}
               onChange={(e) => setDataFunction(e, "description")}
               variant="filled"
@@ -29,6 +34,31 @@ const ReportDescription = ({ Mode, data, setDataFunction, missingKeys }) => {
               rows={6}
               sx={{ marginBottom: 1 }}
             />
+            {/* )} */}
+            <div style={{width:"100%",textAlign:"left",paddingLeft:"20px"}}>
+            <IconButton aria-label="Replace" onClick={()=>handleReplaceData("description","renew")} size="large">
+              <MoveDownIcon fontSize="small" />
+            </IconButton>
+            *สำเนา "บรรยายเหตุการณ์" จากต้นฉบับ
+            </div>
+{/* <button onClick={()=>handleReplaceData("description","renew")}><MoveDownIcon/></button> */}
+            {Mode==="Edit" && (
+              isAdmin && (
+                <TextField
+              fullWidth
+              id="renew"
+              disabled={Mode === "Show"}
+              label="ADMIN : บรรยายสรุปเหตุการณ์ (เกิดเหตุการณ์อะไร เกิดที่ไหน เกิดเมื่อไหร่ ใครคือผู้เกี่ยวข้อง เกี่ยวข้องอย่างไร)"
+              value={data?.renew || ""}
+              onChange={(e) => setDataFunction(e, "renew")}
+              variant="filled"
+              multiline
+              rows={6}
+              sx={{ marginBottom: 1 }}
+            />
+              ) 
+            )}
+            
           </div>
           <div
             className={
