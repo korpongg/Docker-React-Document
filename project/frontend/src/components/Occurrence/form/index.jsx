@@ -227,7 +227,7 @@ const Occurrence = ({ Mode }) => {
           userreport: UserData.userid,
           requestby:
             UserData?.title + " " + UserData?.name + " " + UserData?.lastname,
-          pct: "PCT ศัลยกรรม",
+          pct: "ไม่ระบุ",
           gender: "M",
           reportdate: new Date(),
           occurrencedate: new Date(),

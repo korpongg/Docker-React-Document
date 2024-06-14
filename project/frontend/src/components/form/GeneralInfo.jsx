@@ -167,6 +167,7 @@ const GeneralInfo = ({ Mode, data, setDataFunction, missingKeys }) => {
                   <option value="PCT ตา">PCT ตา</option>
                   <option value="PCT กุมารเวชกรรม">PCT กุมารเวชกรรม</option>
                   <option value="PCT ฉุกเฉิน">PCT ฉุกเฉิน</option>
+                  <option value="ไม่ระบุ">ไม่ระบุ</option>
                 </select>
               )}
             </div>
