@@ -35,27 +35,32 @@ const ReportDescription = ({ Mode, data, setDataFunction, missingKeys ,UserData,
               sx={{ marginBottom: 1 }}
             />
             {/* )} */}
-            <div style={{width:"100%",textAlign:"left",paddingLeft:"20px"}}>
-            <IconButton aria-label="Replace" onClick={()=>handleReplaceData("description","renew")} size="large">
-              <MoveDownIcon fontSize="small" />
-            </IconButton>
-            *สำเนา "บรรยายเหตุการณ์" จากต้นฉบับ
-            </div>
+            
 {/* <button onClick={()=>handleReplaceData("description","renew")}><MoveDownIcon/></button> */}
             {Mode==="Edit" && (
               isAdmin && (
+                <>
+                <div style={{width:"100%",textAlign:"left",paddingLeft:"20px"}}>
+                  <IconButton aria-label="Replace" onClick={()=>handleReplaceData("description","renew")} size="large">
+                    <MoveDownIcon fontSize="small" />
+                  </IconButton>
+                  <span style={{fontSize:"14px"}}>
+                    *สำเนา "บรรยายเหตุการณ์" จากต้นฉบับ
+                  </span>
+                </div>
                 <TextField
-              fullWidth
-              id="renew"
-              disabled={Mode === "Show"}
-              label="ADMIN : บรรยายสรุปเหตุการณ์ (เกิดเหตุการณ์อะไร เกิดที่ไหน เกิดเมื่อไหร่ ใครคือผู้เกี่ยวข้อง เกี่ยวข้องอย่างไร)"
-              value={data?.renew || ""}
-              onChange={(e) => setDataFunction(e, "renew")}
-              variant="filled"
-              multiline
-              rows={6}
-              sx={{ marginBottom: 1 }}
-            />
+                  fullWidth
+                  id="renew"
+                  disabled={Mode === "Show"}
+                  label="ADMIN : บรรยายสรุปเหตุการณ์ (เกิดเหตุการณ์อะไร เกิดที่ไหน เกิดเมื่อไหร่ ใครคือผู้เกี่ยวข้อง เกี่ยวข้องอย่างไร)"
+                  value={data?.renew || ""}
+                  onChange={(e) => setDataFunction(e, "renew")}
+                  variant="filled"
+                  multiline
+                  rows={6}
+                  sx={{ marginBottom: 1 }}
+                />
+              </>
               ) 
             )}
             
