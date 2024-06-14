@@ -125,12 +125,12 @@ CREATE TABLE [occurrences](
 	[id] INT IDENTITY(1,1) PRIMARY KEY,
 	[reportid] [varchar](20) NULL,
 	
-	[hn] [nvarchar](20) NULL,
-	[an] [nvarchar](20) NULL,
-	[age] [nvarchar](20) NULL,
-	[gender] [nvarchar](20) NULL,
-    [dx] NVARCHAR(MAX) NULL,
-    [pct] NVARCHAR(MAX) NULL,
+	[hn] [nvarchar](20) NULL,						-- HN
+	[an] [nvarchar](20) NULL,						-- AN
+	[age] [nvarchar](20) NULL,						-- อายุ
+	[gender] [nvarchar](20) NULL,					-- เพศ
+    [dx] NVARCHAR(MAX) NULL,						-- Dx
+    [pct] NVARCHAR(MAX) NULL,						-- PCT ที่เกี่ยวข้อง
 
     [reportlocation] NVARCHAR(MAX) NOT NULL,		-- สถานที่เกิดเหตุ
 	-- [reportdate] [date] NOT NULL,
@@ -141,40 +141,40 @@ CREATE TABLE [occurrences](
 	[reporttype] [nvarchar](1) NOT NULL,			-- ประเภทอุบัติการณ์	General Risk, Clinical Risk
 	[type] NVARCHAR(3) NOT NULL,					-- ประเภทอุบัติการณ์	OPD, IPD
 
-	[acceptdate] [datetime] NULL,
-	[responsedate] [datetime] NULL,
-	-- [urgenttype] [nvarchar](1) NULL,
+	[acceptdate] [datetime] NULL,					-- วันที่รับเรื่อง (ยังไม่ได้ใช้งาน)
+	[responsedate] [datetime] NULL,					-- วันที่รับคืน (ยังไม่ได้ใช้งาน)
+	-- [urgenttype] [nvarchar](1) NULL,				-- เร่งด่วน, ไม่เร่งด่วน
 	-- [isnew] [nvarchar](1) NULL,					-- อุบัติการณ์ใหม่, อุบัติการณ์ซ้ำ
 
-	[patientcare] NVARCHAR(MAX) NULL,
-	[patientcareremark] NVARCHAR(MAX) NULL,
-	[patientsupport] NVARCHAR(MAX) NULL,
-	[patientsupportremark] NVARCHAR(MAX) NULL,
-	[utility] NVARCHAR(MAX) NULL,
-	[utilityremark] NVARCHAR(MAX) NULL,
-	[equipment] NVARCHAR(MAX) NULL,
-	[equipmentremark] NVARCHAR(MAX) NULL,
-	[safety] NVARCHAR(MAX) NULL,
-	[safetyremark] NVARCHAR(MAX) NULL,
-	[service] NVARCHAR(MAX) NULL,
-	[serviceremark] NVARCHAR(MAX) NULL,
-	[management] NVARCHAR(MAX) NULL,
-	[managementremark] NVARCHAR(MAX) NULL,
+	[patientcare] NVARCHAR(MAX) NULL,				-- 1. กระบวนการดูแลผู้ป่วย
+	[patientcareremark] NVARCHAR(MAX) NULL,			-- 1- ตัวเลือก array
+	[patientsupport] NVARCHAR(MAX) NULL,			-- 2. ระบบงานสนับสนุนการดูแลผู้ป่วย
+	[patientsupportremark] NVARCHAR(MAX) NULL,		-- 2- ตัวเลือก array
+	[utility] NVARCHAR(MAX) NULL,					-- 3. ระบบสาธารณูปโภค / ระบบสำรอง
+	[utilityremark] NVARCHAR(MAX) NULL,				-- 3- ตัวเลือก array
+	[equipment] NVARCHAR(MAX) NULL,					-- 4.ระบบเครื่องมือ / อุปกรณ์
+	[equipmentremark] NVARCHAR(MAX) NULL,			-- 4- ตัวเลือก array
+	[safety] NVARCHAR(MAX) NULL,					-- 5. ความปลอดภัย และสิ่งแวดล้อม
+	[safetyremark] NVARCHAR(MAX) NULL,				-- 5- ตัวเลือก array
+	[service] NVARCHAR(MAX) NULL,					-- 6. ระบบงานบริการ
+	[serviceremark] NVARCHAR(MAX) NULL,				-- 6- ตัวเลือก array
+	[management] NVARCHAR(MAX) NULL,				-- 7. ระบบบริหารงาน
+	[managementremark] NVARCHAR(MAX) NULL,			-- 7- ตัวเลือก array
 
-	[level] [nvarchar](1) NOT NULL,					-- ระดับความเสี่ยง
+	[level] [nvarchar](1) NOT NULL,					-- ระดับความรุนแรงของเหตุการณ์
 	[description] NVARCHAR(MAX) NOT NULL,			-- บรรยายสรุปเหตุการณ์ (เกิดเหตุการณ์อะไร เกิดที่ไหน เกิดเมื่อไหร่ ใครคือผู้เกี่ยวข้อง เกี่ยวข้องอย่างไร)
 	[renew] NVARCHAR(MAX) NULL,						-- สรุปรายละเอียดเหตุการณ์ by HA 
 	[effectremark] NVARCHAR(MAX) NOT NULL,			-- ระบุความเสียหายที่เกิดขึ้น
 
-	[reportdoc] [nvarchar](1) NULL,
-    [docname] NVARCHAR(100) NULL,
+	[reportdoc] [nvarchar](1) NULL,					-- รายงานแพทย์
+    [docname] NVARCHAR(100) NULL,					-- ชื่อแพทย์
 
-	[medicalrecorded] [nvarchar](1) NULL,
+	[medicalrecorded] [nvarchar](1) NULL,			-- การบันทึก เวชระเบียน
 
-	[reportacknowledge] [nvarchar](1) NULL,
+	[reportacknowledge] [nvarchar](1) NULL,			-- รายงานหัวหน้าแผนก / ผู้จัดการฝ่าย / ผู้ตรวจการพยาบาล รับทราบ
 
-	[reportother] [nvarchar](1) NULL,
-    [otherremark] NVARCHAR(100) NULL,
+	[reportother] [nvarchar](1) NULL,				-- อื่นๆ
+    [otherremark] NVARCHAR(100) NULL,				-- ระบุอื่นๆ
 
 	[impromptusolution] NVARCHAR(MAX) NULL,			-- การแก้ไขปัญหาเฉพาะหน้า
 	[activefailure] NVARCHAR(MAX) NULL,				-- ความคลาดเคลื่อนที่เกิดขึ้น (Active Failure) : ระบุความผิดพลาด/การละเมิดต่อมาตรการที่เกิดขึ้น
@@ -183,13 +183,13 @@ CREATE TABLE [occurrences](
 	[formstatus] [nvarchar](1) NOT NULL,			-- สถานะ Occ
 	[comment] NVARCHAR(MAX) NULL,					-- หมายเหตุการปิดอุบัติการณ์
 
-	[createby] [varchar](20) NOT NULL,
-	[createAt] [datetime] NULL,
-	[updateby] [varchar](20) NULL,
-	[updateAt] [datetime] NULL,
-	[acceptby] [varchar](20) NULL,
-	[acceptAt] [datetime] NULL,
-	[deleteAt] [datetime] NULL,
+	[createby] [varchar](20) NOT NULL,				-- ผู้ร้องเรียน
+	[createAt] [datetime] NULL,						-- วันที่ร้องเรียน
+	[updateby] [varchar](20) NULL,					-- ผู้แก้ไข
+	[updateAt] [datetime] NULL,						-- วันที่แก้ไข
+	[acceptby] [varchar](20) NULL,					-- ผู้รับ (ยังไม่ได้ใช้งาน)
+	[acceptAt] [datetime] NULL,						-- วันที่รับ (ยังไม่ได้ใช้งาน)
+	[deleteAt] [datetime] NULL,						-- วันที่ลบ (ยกเลิก formstatus 3)
 );
 
 --DELETE event_logs
