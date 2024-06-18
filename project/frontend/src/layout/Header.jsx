@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useWebSocket } from "../context/WebSocketContext";
 import axios from "axios";
 import styled from "styled-components";
 import AppBar from "@mui/material/AppBar";
@@ -16,11 +17,8 @@ import MenuItem from "@mui/material/MenuItem";
 import Divider from "@mui/material/Divider";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
-import { CheckCircleRounded as AcceptIcon } from "@mui/icons-material";
 import LogoutIcon from "@mui/icons-material/Logout";
-// import Logo from "../assets/logo.png";
 import LogoWhite from "../assets/logo-white.svg";
-// import XRay from "../assets/x-ray.png";
 
 import AvatarPic from "../assets/avatar2.png";
 import { chkAdmin, chkAdmins } from "../components/Function";
@@ -29,6 +27,8 @@ const Header = () => {
   const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
   const navigate = useNavigate();
   const location = useLocation();
+  const { disconnectWebSocket } = useWebSocket();
+
   const storedAuth = JSON.parse(localStorage.getItem("auth"));
   const userData = storedAuth ? JSON.parse(localStorage.getItem("userData")) : null;
   const userPic = storedAuth ? JSON.parse(localStorage.getItem("userPic")) : null;
@@ -86,16 +86,18 @@ const Header = () => {
     setAnchorEl(null);
   };
 
+  const handleNavigate = (path) => {
+    if (disconnectWebSocket) {
+      disconnectWebSocket(); // Disconnect WebSocket when navigating away
+    }
+    navigate(path);
+    handleClose();
+  };
+
   const MenuAdmin = () => {
     return (
       <>
-        {/* <MenuItem key="adduser" onClick={() => navigate("/adduser", { replace: true })}>
-          <ListItemIcon>
-            <PersonAddIcon fontSize="small" style={{ color: "orange" }} />
-          </ListItemIcon>
-          เพิ่มผู้ใช้งาน
-        </MenuItem> */}
-        <MenuItem key="usermanager" onClick={() => navigate("/usermanager", { replace: true })}>
+        <MenuItem key="usermanager" onClick={() => handleNavigate("/usermanager")}>
           <ListItemIcon>
             <ManageAccountsIcon fontSize="small" style={{ color: "green" }} />
           </ListItemIcon>
@@ -106,17 +108,11 @@ const Header = () => {
     );
   };
 
-  const AvatarPicDisply = ({ style }) => {
-    return (
-      <>
-        {userPic ? (
-          <Avatar src={userPic} style={style}>{userData.name ? userData.name.charAt(0).toUpperCase() : null}</Avatar>
-        ) : (
-          <Avatar src={AvatarPic} style={style}>{userData.name ? userData.name.charAt(0).toUpperCase() : null}</Avatar>
-        )}
-      </>
-    );
-  };
+  const AvatarPicDisply = ({ style }) => (
+    <Avatar src={userPic || AvatarPic} style={style}>
+      {userData?.name ? userData.name.charAt(0).toUpperCase() : null}
+    </Avatar>
+  );
 
   return (
     <AppBarStyled>
@@ -154,26 +150,15 @@ const Header = () => {
               onClose={handleCloseNavMenu}
               sx={{ display: { xs: "block", md: "none" } }}
             >
-              <MenuItem onClick={handleCloseNavMenu}>
-                <Typography textAlign="center" onClick={() => navigate("/home")}>หน้าหลัก</Typography>
-              </MenuItem>
-
-              <MenuItem onClick={handleCloseNavMenu}>
-                <Typography textAlign="center" onClick={() => navigate("/occurrence")}>Occurrence</Typography>
-              </MenuItem>
-
-              <MenuItem onClick={handleCloseNavMenu}>
-                <Typography textAlign="center" onClick={() => navigate("/occurrence/event")}>อยู่ระหว่างทบทวน</Typography>
-              </MenuItem>
-
-              <MenuItem onClick={handleCloseNavMenu}>
-                <Typography textAlign="center" onClick={() => navigate("/medication")}>Medication</Typography>
-              </MenuItem>
+              <MenuItem onClick={() => handleNavigate("/home")}>หน้าหลัก</MenuItem>
+              <MenuItem onClick={() => handleNavigate("/occurrence")}>Occurrence</MenuItem>
+              <MenuItem onClick={() => handleNavigate("/occurrence/event")}>อยู่ระหว่างทบทวน</MenuItem>
+              <MenuItem onClick={() => handleNavigate("/medication")}>Medication</MenuItem>
             </StyledMenu>
           </LeftContent>
 
           <img
-            onClick={() => navigate("/home")}
+            onClick={() => handleNavigate("/home")}
             height="36"
             width="auto"
             src={LogoWhite}
@@ -181,23 +166,13 @@ const Header = () => {
             style={{ cursor: "pointer" }}
           />
 
-          {/* <Box sx={{ alignItems: "center", display: { xs: "none", md: "flex" }, flexGrow: 0  }}>
-            <img
-              height="50"
-              width="auto"
-              src={XRay}
-              alt="X-Ray CD Request"
-            />
-            <span style={{ fontSize: 24, marginLeft: 10 }}>X-Ray CD Request</span>
-          </Box> */}
-
           <Box sx={{ alignItems: "center", display: "flex", flexGrow: 0 }}>
             {userData && (
               <>
-                <Typography variant="body1" onClick={() => navigate("/home")} sx={{ display: { xs: "none", md: "block" } }} className="Button-Text">หน้าหลัก</Typography>
-                <Typography variant="body1" onClick={() => navigate("/occurrence")} sx={{ display: { xs: "none", md: "block" } }} className="Button-Text">Occurrence</Typography>
-                <Typography variant="body1" onClick={() => navigate("/occurrence/event")} sx={{ display: { xs: "none", md: "block" } }} className="Button-Text">อยู่ระหว่างทบทวน</Typography>
-                <Typography variant="body1" onClick={() => navigate("/medication")} sx={{ display: { xs: "none", md: "block" } }} className="Button-Text">Medication</Typography>
+                <Typography variant="body1" onClick={() => handleNavigate("/home")} sx={{ display: { xs: "none", md: "block" } }} className="Button-Text">หน้าหลัก</Typography>
+                <Typography variant="body1" onClick={() => handleNavigate("/occurrence")} sx={{ display: { xs: "none", md: "block" } }} className="Button-Text">Occurrence</Typography>
+                <Typography variant="body1" onClick={() => handleNavigate("/occurrence/event")} sx={{ display: { xs: "none", md: "block" } }} className="Button-Text">อยู่ระหว่างทบทวน</Typography>
+                <Typography variant="body1" onClick={() => handleNavigate("/medication")} sx={{ display: { xs: "none", md: "block" } }} className="Button-Text">Medication</Typography>
 
                 <IconButton onClick={handleClick} sx={{ p: 0 }}>
                   <StyledBadge overlap="circular" anchorOrigin={{ vertical: "bottom", horizontal: "right" }} variant="dot">
@@ -213,21 +188,18 @@ const Header = () => {
                   transformOrigin={{ horizontal: "center", vertical: "center" }}
                   anchorOrigin={{ horizontal: "center", vertical: "center" }}
                 >
-                  <MenuItem key="profile-home" onClick={() => navigate("/home", { replace: true })}>
-                    {/* <Avatar style={{ marginRight: "10px" }}>{userData.name ? userData.name.charAt(0).toUpperCase() : null}</Avatar> */}
+                  <MenuItem key="profile-home" onClick={() => handleNavigate("/home")}>
                     <AvatarPicDisply style={{ marginRight: "10px" }} />
-                    {userData.name ? userData?.name : "My account"}
+                    {userData?.name || "My account"}
                   </MenuItem>
                   <Divider key="divider2" />
-                  {[
-                    isAdmin && <MenuAdmin key="admin-menu" />,
-                    <MenuItem key="logout" onClick={() => navigate("/logout", { replace: true })}>
-                      <ListItemIcon>
-                        <LogoutIcon fontSize="small" style={{ color: "red" }} />
-                      </ListItemIcon>
-                      ออกระบบ
-                    </MenuItem>,
-                  ]}
+                  {isAdmin && <MenuAdmin key="admin-menu" />}
+                  <MenuItem key="logout" onClick={() => handleNavigate("/logout")}>
+                    <ListItemIcon>
+                      <LogoutIcon fontSize="small" style={{ color: "red" }} />
+                    </ListItemIcon>
+                    ออกระบบ
+                  </MenuItem>
                 </StyledMenu>
               </>
             )}

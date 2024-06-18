@@ -147,19 +147,19 @@ CREATE TABLE [occurrences](
 	-- [isnew] [nvarchar](1) NULL,					-- อุบัติการณ์ใหม่, อุบัติการณ์ซ้ำ
 
 	[patientcare] NVARCHAR(MAX) NULL,				-- 1. กระบวนการดูแลผู้ป่วย
-	[patientcareremark] NVARCHAR(MAX) NULL,			-- 1- ตัวเลือก array
+	[patientcareremark] NVARCHAR(MAX) NULL,			-- 1- อื่นๆ
 	[patientsupport] NVARCHAR(MAX) NULL,			-- 2. ระบบงานสนับสนุนการดูแลผู้ป่วย
-	[patientsupportremark] NVARCHAR(MAX) NULL,		-- 2- ตัวเลือก array
+	[patientsupportremark] NVARCHAR(MAX) NULL,		-- 2- อื่นๆ
 	[utility] NVARCHAR(MAX) NULL,					-- 3. ระบบสาธารณูปโภค / ระบบสำรอง
-	[utilityremark] NVARCHAR(MAX) NULL,				-- 3- ตัวเลือก array
+	[utilityremark] NVARCHAR(MAX) NULL,				-- 3- อื่นๆ
 	[equipment] NVARCHAR(MAX) NULL,					-- 4.ระบบเครื่องมือ / อุปกรณ์
-	[equipmentremark] NVARCHAR(MAX) NULL,			-- 4- ตัวเลือก array
+	[equipmentremark] NVARCHAR(MAX) NULL,			-- 4- อื่นๆ
 	[safety] NVARCHAR(MAX) NULL,					-- 5. ความปลอดภัย และสิ่งแวดล้อม
-	[safetyremark] NVARCHAR(MAX) NULL,				-- 5- ตัวเลือก array
+	[safetyremark] NVARCHAR(MAX) NULL,				-- 5- อื่นๆ
 	[service] NVARCHAR(MAX) NULL,					-- 6. ระบบงานบริการ
-	[serviceremark] NVARCHAR(MAX) NULL,				-- 6- ตัวเลือก array
+	[serviceremark] NVARCHAR(MAX) NULL,				-- 6- อื่นๆ
 	[management] NVARCHAR(MAX) NULL,				-- 7. ระบบบริหารงาน
-	[managementremark] NVARCHAR(MAX) NULL,			-- 7- ตัวเลือก array
+	[managementremark] NVARCHAR(MAX) NULL,			-- 7- อื่นๆ
 
 	[level] [nvarchar](1) NOT NULL,					-- ระดับความรุนแรงของเหตุการณ์
 	[description] NVARCHAR(MAX) NOT NULL,			-- บรรยายสรุปเหตุการณ์ (เกิดเหตุการณ์อะไร เกิดที่ไหน เกิดเมื่อไหร่ ใครคือผู้เกี่ยวข้อง เกี่ยวข้องอย่างไร)
@@ -181,7 +181,7 @@ CREATE TABLE [occurrences](
 	[suggestion] NVARCHAR(MAX) NULL,				-- ข้อเสนอแนะเพื่อการแก้ไขปัญหา / แนวทางแก้ไขปัญหา (ถ้ามี)
 
 	[formstatus] [nvarchar](1) NOT NULL,			-- สถานะ Occ
-	[comment] NVARCHAR(MAX) NULL,					-- หมายเหตุการปิดอุบัติการณ์
+	[comment] NVARCHAR(MAX) NULL,					-- หมายเหตุการปิดอุบัติการณ์ by HA
 
 	[createby] [varchar](20) NOT NULL,				-- ผู้ร้องเรียน
 	[createAt] [datetime] NULL,						-- วันที่ร้องเรียน
@@ -217,6 +217,71 @@ CREATE TABLE [event_logs](
 	[responsedate] [datetime] NULL,						-- วันที่รับคืน (ยังไม่มีการอัพเดทข้อมูลในส่วนนี้)
 );
 
+--DELETE medication
+--Drop table if exists [medication]
+CREATE TABLE [medication](
+	[id] INT IDENTITY(1,1) PRIMARY KEY,
+	[reportid] [varchar](20) NULL,
+	
+	[hn] [nvarchar](20) NULL,						-- HN
+	[an] [nvarchar](20) NULL,						-- AN
+	[age] [nvarchar](20) NULL,						-- อายุ
+	[gender] [nvarchar](20) NULL,					-- เพศ
+    [dx] NVARCHAR(MAX) NULL,						-- Dx
+    [pct] NVARCHAR(MAX) NULL,						-- PCT ที่เกี่ยวข้อง
+	
+	[occurrencedate] [datetime] NOT NULL,			-- วัน-เวลาที่เกิดเหตุการณ์
+    [deptrelate] INT NOT NULL,						-- หน่วยงานที่เกี่ยวข้อง
+
+	[reporttype] [nvarchar](1) NOT NULL,			-- ประเภทอุบัติการณ์	General Risk, Clinical Risk
+	[type] NVARCHAR(3) NOT NULL,					-- ประเภทอุบัติการณ์	OPD, IPD
+
+	[acceptdate] [datetime] NULL,					-- วันที่รับเรื่อง (ยังไม่ได้ใช้งาน)
+	[responsedate] [datetime] NULL,					-- วันที่รับคืน (ยังไม่ได้ใช้งาน)
+
+	[prescribing] NVARCHAR(MAX) NULL,				-- 1. ความคลาดเคลื่อนในการสั่งใช้ยา - คัดลอกยา
+	[prescribingremark] NVARCHAR(MAX) NULL,			-- 1- อื่นๆ
+	[dispensing] NVARCHAR(MAX) NULL,				-- 2. ความคลาดเคลื่อนในการจัดยา - จ่ายยา
+	[dispensingremark] NVARCHAR(MAX) NULL,			-- 2- อื่นๆ
+	[administration] NVARCHAR(MAX) NULL,			-- 3. ความคลาดเคลื่อนในการบริหารยา
+	[administrationremark] NVARCHAR(MAX) NULL,		-- 3- อื่นๆ
+
+	[description] NVARCHAR(MAX) NOT NULL,			-- บรรยายสรุปเหตุการณ์ที่เกิดชึ้น
+	[level] [nvarchar](1) NOT NULL,					-- ระดับความรุนแรงของเหตุการณ์
+	[effect] NVARCHAR(MAX) NOT NULL,				-- ผลลัพธ์ที่เกิดขึ้น
+	[effectremark] NVARCHAR(MAX) NULL,				-- ระบบงาน ระบุผลกระทบที่เกิดขึ้น
+	[drugrelate] NVARCHAR(MAX) NOT NULL,			-- กลุ่มยาที่เกิดปัญหา
+	[drugremark] NVARCHAR(MAX) NULL,				-- อื่นๆ
+
+	[renew] NVARCHAR(MAX) NULL,						-- สรุปรายละเอียดเหตุการณ์ by HA 
+
+	[reportdoc] [nvarchar](1) NULL,					-- รายงานแพทย์
+    [docname] NVARCHAR(100) NULL,					-- ชื่อแพทย์
+
+	[medicalrecorded] [nvarchar](1) NULL,			-- การบันทึก เวชระเบียน
+
+	[reportacknowledge] [nvarchar](1) NULL,			-- รายงานหัวหน้าแผนก / ผู้จัดการฝ่าย / ผู้ตรวจการพยาบาล รับทราบ
+
+	[reportother] [nvarchar](1) NULL,				-- อื่นๆ
+    [otherremark] NVARCHAR(100) NULL,				-- ระบุอื่นๆ
+
+	[analysis] NVARCHAR(MAX) NULL,					-- ผลการวิเคราะห์สาเหตุ	by mng
+	[solution] NVARCHAR(MAX) NULL,					-- แนวทางการแก้ไข / ป้องกันปัญหาในเชิงระบบ by mng
+
+	[rca] NVARCHAR(MAX) NULL,						-- สรุปผลการงิเคราะห์สาเหตุที่แท้จริง by mng
+	[rcaremark] NVARCHAR(MAX) NULL,					-- อื่นๆ (ระบุ) by mng
+
+	[formstatus] [nvarchar](1) NOT NULL,			-- สถานะ medication
+	[comment] NVARCHAR(MAX) NULL,					-- หมายเหตุการปิด medication by HA
+
+	[createby] [varchar](20) NOT NULL,				-- ผู้ร้องเรียน
+	[createAt] [datetime] NULL,						-- วันที่ร้องเรียน
+	[updateby] [varchar](20) NULL,					-- ผู้แก้ไข
+	[updateAt] [datetime] NULL,						-- วันที่แก้ไข
+	[approveby] [varchar](20) NULL,					-- ผู้รับ by mng
+	[approveAt] [datetime] NULL,					-- วันที่รับ by mng
+	[deleteAt] [datetime] NULL,						-- วันที่ลบ (ยกเลิก formstatus 3)
+);
 
 
 

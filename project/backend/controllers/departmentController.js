@@ -69,13 +69,27 @@ exports.getDepartmentById = async (req, res) => {
       type: sequelize.QueryTypes.SELECT
     });
 
-    console.log(results)
-
     if (results) {
       res.status(200).json(results);
     } else {
       res.status(404).json({ message: 'Department not found' });
     }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+exports.getAllDepartmentMed = async (req, res) => {
+  try {
+    const [results, metadata] = await sequelize.query(`
+      SELECT d.id,
+        d.name AS DepName,
+        a.id AS AffID,
+        a.name AS AffName
+      FROM [occurrence].[dbo].[department] d
+      LEFT JOIN [occurrence].[dbo].[affiliation] a ON a.id = d.[relateid]
+      WHERE d.relateid IN ('3','5') OR d.id = '13'
+    `);
+    res.status(200).json(results);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

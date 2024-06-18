@@ -13,7 +13,7 @@ import { DashboardBox } from "../../../styles/Dashboard.style";
 
 const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
-const IndexPage = () => {
+const Dashboard = () => {
   const { connectWebSocket, disconnectWebSocket, dataCenter, dataEvent, load } = useWebSocket();
   const navigate = useNavigate();
   const storedAuth = JSON.parse(localStorage.getItem("auth"));
@@ -167,6 +167,8 @@ const IndexPage = () => {
 
   return (
     <DashboardBox>
+      <h1>รายงานอุบัติการณ์</h1>
+
       <DataTable
         data={dashboard}
         isAdmin={isAdmin}
@@ -205,4 +207,4 @@ const IndexPage = () => {
   );
 };
 
-export default IndexPage;
+export default Dashboard;

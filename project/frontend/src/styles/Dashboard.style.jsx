@@ -21,6 +21,7 @@ export const DashboardBox = styled(Box)`
   h1 {
     font-size: 2rem;
     margin-top: 0;
+    text-align: center;
   }
 
   .MuiDataGrid-toolbarContainer .MuiButton-root {
@@ -105,6 +106,13 @@ export const DashboardBox = styled(Box)`
   @media screen and (max-width: 1600px) {
     margin-top: 40px;
     width: 86vw;
+  }
+
+  @media screen and (max-width: 901px) {
+    padding: 30px 10px;
+    h1 {
+      font-size: 1.375rem;
+    }
   }
 `;
 

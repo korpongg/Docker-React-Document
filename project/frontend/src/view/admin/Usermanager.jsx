@@ -245,6 +245,8 @@ export default function UserManager() {
             ในแผนกตัวเอง<br />
             3 เห็นเฉพาะงานใน<br />
             Affiliation ตัวเอง<br />
+            (Medication เห็น Affiliation<br />
+            ของหน่วยงานที่เกี่ยวข้อง)<br />
             4 เห็นทั้งหมด<br />
           </div>
         )}

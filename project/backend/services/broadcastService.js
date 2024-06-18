@@ -1,5 +1,5 @@
 const { broadcastMessage } = require("./websocketManager");
-const { executeSQLQuery, executeSQLQueryEvent } = require("../controllers/broadcastController"); // Import executeSQLQuery
+const { executeSQLQuery, executeSQLQueryMedication, executeSQLQueryEvent } = require("../controllers/broadcastController");
 
 // Variable to indicate whether broadcasting is in progress
 global.isExecuting = false;
@@ -17,13 +17,15 @@ async function executeAndStoreQueryResult() {
     // Set isExecuting to true to indicate that execution is in progress
     global.isExecuting = true;
 
-    const [queryReport, queryEvent] = await Promise.all([
+    const [queryReport, queryMedic, queryEvent] = await Promise.all([
       executeSQLQuery(),
+      executeSQLQueryMedication(),
       executeSQLQueryEvent(),
     ]);
 
     const dataWithHeader = {
       report_data: queryReport,
+      medic_data: queryMedic,
       event_data: queryEvent,
     };
 

@@ -2,7 +2,7 @@ const { DataTypes, Sequelize } = require("sequelize");
 const sequelize = require("../config/dbConn").sequelize;
 // const User = require("./User");
 
-const Occurrences = sequelize.define('Occurrences', {
+const Medication = sequelize.define('Medication', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -36,24 +36,12 @@ const Occurrences = sequelize.define('Occurrences', {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  reportlocation: {
-    type: DataTypes.TEXT,
-    allowNull: false
-  },
-  // reportdate: {
-  //   type: DataTypes.DATEONLY,
-  //   allowNull: false
-  // },
   occurrencedate: {
     type: DataTypes.DATE,
     allowNull: false
   },
-  // affrelate: {
-  //   type: DataTypes.STRING(100),
-  //   allowNull: false
-  // },
   deptrelate: {
-    type: DataTypes.STRING(100),
+    type: DataTypes.INTEGER,
     allowNull: false
   },
   reporttype: {
@@ -72,85 +60,57 @@ const Occurrences = sequelize.define('Occurrences', {
     type: DataTypes.DATE,
     allowNull: true
   },
-  // urgenttype: {
-  //   type: DataTypes.STRING(1),
-  //   allowNull: true
-  // },
-  // isnew: {
-  //   type: DataTypes.STRING(1),
-  //   allowNull: true
-  // },
-  patientcare: {
+  prescribing: {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  patientcareremark: {
+  prescribingremark: {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  patientsupport: {
+  dispensing: {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  patientsupportremark: {
+  dispensingremark: {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  utility: {
+  administration: {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  utilityremark: {
+  administrationremark: {
     type: DataTypes.TEXT,
     allowNull: true
-  },
-  equipment: {
-    type: DataTypes.TEXT,
-    allowNull: true
-  },
-  equipmentremark: {
-    type: DataTypes.TEXT,
-    allowNull: true
-  },
-  safety: {
-    type: DataTypes.TEXT,
-    allowNull: true
-  },
-  safetyremark: {
-    type: DataTypes.TEXT,
-    allowNull: true
-  },
-  service: {
-    type: DataTypes.TEXT,
-    allowNull: true
-  },
-  serviceremark: {
-    type: DataTypes.TEXT,
-    allowNull: true
-  },
-  management: {
-    type: DataTypes.TEXT,
-    allowNull: true
-  },
-  managementremark: {
-    type: DataTypes.TEXT,
-    allowNull: true
-  },
-  level: {
-    type: DataTypes.STRING(1),
-    allowNull: false
   },
   description: {
     type: DataTypes.TEXT,
     allowNull: false
   },
-  renew: {
+  level: {
+    type: DataTypes.STRING(1),
+    allowNull: false
+  },
+  effect: {
     type: DataTypes.TEXT,
-    allowNull: true
+    allowNull: false
   },
   effectremark: {
     type: DataTypes.TEXT,
+    allowNull: true
+  },
+  drugrelate: {
+    type: DataTypes.TEXT,
     allowNull: false
+  },
+  drugremark: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  renew: {
+    type: DataTypes.TEXT,
+    allowNull: true
   },
   reportdoc: {
     type: DataTypes.STRING(1),
@@ -176,15 +136,19 @@ const Occurrences = sequelize.define('Occurrences', {
     type: DataTypes.STRING(100),
     allowNull: true
   },
-  impromptusolution: {
+  analysis: {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  activefailure: {
+  solution: {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  suggestion: {
+  rca: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  rcaremark: {
     type: DataTypes.TEXT,
     allowNull: true
   },
@@ -212,11 +176,11 @@ const Occurrences = sequelize.define('Occurrences', {
     type: DataTypes.DATE,
     allowNull: true
   },
-  acceptby: {
+  approveby: {
     type: DataTypes.STRING(20),
     allowNull: true
   },
-  acceptAt: {
+  approveAt: {
     type: DataTypes.DATE,
     allowNull: true
   },
@@ -225,8 +189,8 @@ const Occurrences = sequelize.define('Occurrences', {
     allowNull: true
   }
 }, {
-  tableName: 'occurrences',
-  timestamps: false // Disable automatic timestamps
+  tableName: 'medication',
+  timestamps: false
 });
 
 // Occurrences.belongsTo(User, {
@@ -247,4 +211,4 @@ const Occurrences = sequelize.define('Occurrences', {
 //   as: 'UpdateBy',
 // });
 
-module.exports = Occurrences;
+module.exports = Medication;

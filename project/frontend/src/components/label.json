@@ -31,6 +31,32 @@
       "color": "red"
     }
   ],
+  "medicStatus": [
+    {
+      "id": 1,
+      "statusText": "รายงานใหม่",
+      "statusColor": "new",
+      "color": "cadetblue"
+    },
+    {
+      "id": 2,
+      "statusText": "ปิดรายงาน",
+      "statusColor": "success",
+      "color": "green"
+    },
+    {
+      "id": 3,
+      "statusText": "ยกเลิก",
+      "statusColor": "cancel",
+      "color": "red"
+    },
+    {
+      "id": 4,
+      "statusText": "Approve",
+      "statusColor": "in-progress",
+      "color": "orange"
+    }
+  ],
   "subStatus": [
     {
       "id": 1,

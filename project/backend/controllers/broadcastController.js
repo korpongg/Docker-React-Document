@@ -78,6 +78,83 @@ const executeSQLQuery = async () => {
   }
 };
 
+const executeSQLQueryMedication = async () => {
+  try {
+    // First query to get occurrences and user details
+    const medQuery = `
+      SELECT med.*,
+        CONCAT(u_request.title, ' ', u_request.name, ' ', u_request.lastname) AS requestby,
+        u_request.dep AS requestdep,
+        u_request.faction AS requestfac,
+        u_request.affiliation AS requestaff,
+        CASE
+          WHEN u_update.userid IS NULL THEN NULL
+          ELSE CONCAT(u_update.title, ' ', u_update.name, ' ', u_update.lastname)
+        END AS updateby,
+        u_update.dep AS updatedep,
+        u_update.faction AS updatefac,
+        u_update.affiliation AS updateaff,
+        CASE 
+          WHEN u_approve.userid IS NULL THEN NULL
+          ELSE CONCAT(u_approve.title, ' ', u_approve.name, ' ', u_approve.lastname)
+        END AS approveby,
+        u_approve.dep AS approvedep,
+        u_approve.faction AS approvefac,
+        u_approve.affiliation AS approveaff,
+        CASE WHEN med.reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END AS reporttypename,
+        dep.id AS DepID,
+        dep.name AS DepName,
+        aff.id AS AffID,
+        aff.name AS AffName
+      FROM [occurrence].[dbo].[medication] med
+      LEFT JOIN [occurrence].[dbo].[user] AS u_request ON u_request.userid = med.createby
+      LEFT JOIN [occurrence].[dbo].[user] AS u_update ON u_update.userid = med.updateby
+      LEFT JOIN [occurrence].[dbo].[user] AS u_approve ON u_approve.userid = med.approveby
+      LEFT JOIN [occurrence].[dbo].[department] as dep ON dep.id = med.deptrelate
+      LEFT JOIN [occurrence].[dbo].[affiliation] as aff ON aff.id = dep.relateid
+      ORDER BY CASE WHEN med.formstatus = '1' THEN 0 ELSE 1 END;
+    `;
+    const results = await sequelize.query(medQuery, {
+      type: sequelize.QueryTypes.SELECT,
+    });
+
+    if (results.length > 0) {
+      // Use map to parse JSON fields before sending the response
+      const parsedResults = results.map(medication => {
+        const {
+          DepID,
+          DepName,
+          AffID,
+          AffName,
+          ...rest
+        } = medication;
+
+        return {
+          ...rest,
+          prescribing: JSON.parse(medication.prescribing || '[]'),
+          dispensing: JSON.parse(medication.dispensing || '[]'),
+          administration: JSON.parse(medication.administration || '[]'),
+          effect: JSON.parse(medication.effect || '[]'),
+          drugrelate: JSON.parse(medication.drugrelate || '[]'),
+          rca: JSON.parse(medication.rca || '[]'),
+          deptAffInfo: {
+            AffID,
+            AffName,
+            DepID,
+            DepName,
+          },
+        };
+      });
+
+      return parsedResults;
+    }
+    return [];
+  } catch (error) {
+    console.error("An error occurred while executing:", error);
+    return [];
+  }
+};
+
 const executeSQLQueryEvent = async (dep) => {
   try {
     // First query to get occurrences and user details
@@ -147,5 +224,6 @@ const executeSQLQueryEvent = async (dep) => {
 
 module.exports = {
   executeSQLQuery,
+  executeSQLQueryMedication,
   executeSQLQueryEvent
 };

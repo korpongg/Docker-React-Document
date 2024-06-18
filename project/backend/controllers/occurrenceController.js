@@ -1,6 +1,6 @@
 const sequelize = require("../config/dbConn").sequelize;
 const Occurrences = require("../models/Occurrences");
-const User = require("../models/User");
+// const User = require("../models/User");
 const { executeAndStoreQueryResult } = require('../services/broadcastService');
 
 // Create a new occurrence
@@ -65,25 +65,25 @@ exports.getAllOccurrences = async (req, res) => {
   try {
     // First query to get occurrences and user details
     const occQuery = `
-    SELECT occ.*,
-      CONCAT(u_request.title, ' ', u_request.name, ' ', u_request.lastname) AS requestby,
-      u_request.dep AS requestdep,
-      u_request.faction AS requestfac,
-      u_request.affiliation AS requestaff,
-      CONCAT(u_update.title, ' ', u_update.name, ' ', u_update.lastname) AS updateby,
-      u_update.dep AS updatedep,
-      u_update.faction AS updatefac,
-      u_update.affiliation AS updateaff,
-      CONCAT(u_accept.title, ' ', u_accept.name, ' ', u_accept.lastname) AS acceptby,
-      u_accept.dep AS acceptdep,
-      u_accept.faction AS acceptfac,
-      u_accept.affiliation AS acceptaff,
-      CASE WHEN occ.reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END AS reporttypename
-    FROM [occurrence].[dbo].[occurrences] occ
-    LEFT JOIN [occurrence].[dbo].[user] AS u_request ON u_request.userid = occ.createby
-    LEFT JOIN [occurrence].[dbo].[user] AS u_update ON u_update.userid = occ.updateby
-    LEFT JOIN [occurrence].[dbo].[user] AS u_accept ON u_accept.userid = occ.acceptby
-    ORDER BY CASE WHEN occ.formstatus = '1' THEN 0 ELSE 1 END;
+      SELECT occ.*,
+        CONCAT(u_request.title, ' ', u_request.name, ' ', u_request.lastname) AS requestby,
+        u_request.dep AS requestdep,
+        u_request.faction AS requestfac,
+        u_request.affiliation AS requestaff,
+        CONCAT(u_update.title, ' ', u_update.name, ' ', u_update.lastname) AS updateby,
+        u_update.dep AS updatedep,
+        u_update.faction AS updatefac,
+        u_update.affiliation AS updateaff,
+        CONCAT(u_accept.title, ' ', u_accept.name, ' ', u_accept.lastname) AS acceptby,
+        u_accept.dep AS acceptdep,
+        u_accept.faction AS acceptfac,
+        u_accept.affiliation AS acceptaff,
+        CASE WHEN occ.reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END AS reporttypename
+      FROM [occurrence].[dbo].[occurrences] occ
+      LEFT JOIN [occurrence].[dbo].[user] AS u_request ON u_request.userid = occ.createby
+      LEFT JOIN [occurrence].[dbo].[user] AS u_update ON u_update.userid = occ.updateby
+      LEFT JOIN [occurrence].[dbo].[user] AS u_accept ON u_accept.userid = occ.acceptby
+      ORDER BY CASE WHEN occ.formstatus = '1' THEN 0 ELSE 1 END;
     `;
 
     const results = await sequelize.query(occQuery, {
@@ -150,25 +150,25 @@ exports.getOccurrenceById = async (req, res) => {
   try {
     // First query to get occurrences and user details
     const occQuery = `
-    SELECT occ.*,
-      CONCAT(u_request.title, ' ', u_request.name, ' ', u_request.lastname) AS requestby,
-      u_request.dep AS requestdep,
-      u_request.faction AS requestfac,
-      u_request.affiliation AS requestaff,
-      CONCAT(u_update.title, ' ', u_update.name, ' ', u_update.lastname) AS updateby,
-      u_update.dep AS updatedep,
-      u_update.faction AS updatefac,
-      u_update.affiliation AS updateaff,
-      CONCAT(u_accept.title, ' ', u_accept.name, ' ', u_accept.lastname) AS acceptby,
-      u_accept.dep AS acceptdep,
-      u_accept.faction AS acceptfac,
-      u_accept.affiliation AS acceptaff,
-      CASE WHEN occ.reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END AS reporttypename
-    FROM [occurrence].[dbo].[occurrences] occ
-    LEFT JOIN [occurrence].[dbo].[user] AS u_request ON u_request.userid = occ.createby
-    LEFT JOIN [occurrence].[dbo].[user] AS u_update ON u_update.userid = occ.updateby
-    LEFT JOIN [occurrence].[dbo].[user] AS u_accept ON u_accept.userid = occ.acceptby
-    WHERE occ.id = :reportid;
+      SELECT occ.*,
+        CONCAT(u_request.title, ' ', u_request.name, ' ', u_request.lastname) AS requestby,
+        u_request.dep AS requestdep,
+        u_request.faction AS requestfac,
+        u_request.affiliation AS requestaff,
+        CONCAT(u_update.title, ' ', u_update.name, ' ', u_update.lastname) AS updateby,
+        u_update.dep AS updatedep,
+        u_update.faction AS updatefac,
+        u_update.affiliation AS updateaff,
+        CONCAT(u_accept.title, ' ', u_accept.name, ' ', u_accept.lastname) AS acceptby,
+        u_accept.dep AS acceptdep,
+        u_accept.faction AS acceptfac,
+        u_accept.affiliation AS acceptaff,
+        CASE WHEN occ.reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END AS reporttypename
+      FROM [occurrence].[dbo].[occurrences] occ
+      LEFT JOIN [occurrence].[dbo].[user] AS u_request ON u_request.userid = occ.createby
+      LEFT JOIN [occurrence].[dbo].[user] AS u_update ON u_update.userid = occ.updateby
+      LEFT JOIN [occurrence].[dbo].[user] AS u_accept ON u_accept.userid = occ.acceptby
+      WHERE occ.id = :reportid;
     `;
 
     const results = await sequelize.query(occQuery, {
