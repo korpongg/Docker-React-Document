@@ -10,11 +10,17 @@ const executeSQLQuery = async () => {
         u_request.dep AS requestdep,
         u_request.faction AS requestfac,
         u_request.affiliation AS requestaff,
-        CONCAT(u_update.title, ' ', u_update.name, ' ', u_update.lastname) AS updateby,
+        CASE
+          WHEN u_update.userid IS NULL THEN NULL
+          ELSE CONCAT(u_update.title, ' ', u_update.name, ' ', u_update.lastname)
+        END AS updateby,
         u_update.dep AS updatedep,
         u_update.faction AS updatefac,
         u_update.affiliation AS updateaff,
-        CONCAT(u_accept.title, ' ', u_accept.name, ' ', u_accept.lastname) AS acceptby,
+        CASE 
+          WHEN u_accept.userid IS NULL THEN NULL
+          ELSE CONCAT(u_accept.title, ' ', u_accept.name, ' ', u_accept.lastname)
+        END AS acceptby,
         u_accept.dep AS acceptdep,
         u_accept.faction AS acceptfac,
         u_accept.affiliation AS acceptaff,
