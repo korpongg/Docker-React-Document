@@ -48,8 +48,10 @@ app.use("/api/users", require("./routes/api/users"));
 app.use("/api/affiliations", require("./routes/api/affiliations"));
 app.use("/api/factions", require("./routes/api/factions"));
 app.use("/api/departments", require("./routes/api/departments"));
+app.use("/api/departmentsMed", require("./routes/api/departmentsMed"));
 app.use("/api/occurrences", require("./routes/api/occurrences"));
 app.use("/api/events", require("./routes/api/events"));
+app.use("/api/medication", require("./routes/api/medication"));
 
 const { WebSocketServer } = require("ws");
 const WebSocket = require("ws");
