@@ -290,7 +290,7 @@ exports.updateEventLog = async (req, res) => {
     // Send email
     if (status === '2'){
       emailSubject = `รายงานอุบัติการณ์ เลขที่เอกสาร: ${code}`;
-      emailMessage = `เลขที่เอกสาร: ${code}<br/><br/>หน่วยงานทำงานบันทึกผลการทบทวนอุบัติการณ์แล้ว`;
+      emailMessage = `เลขที่เอกสาร: ${code}<br/><br/>หน่วยงานทำการบันทึกผลการทบทวนอุบัติการณ์แล้ว`;
       recipientEmail = "qdc@thainakarin.co.th";
       sendEmailEventHA(recipientEmail, emailSubject, emailMessage);
     } else if (status === '3') {
