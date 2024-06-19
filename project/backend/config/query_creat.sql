@@ -109,6 +109,7 @@ CREATE TABLE [department](
 	[id] INT IDENTITY(1,1),
 	[relateid] INT NOT NULL,
     [name] NVARCHAR(MAX) NOT NULL,
+    [email] VARCHAR(50) NULL
 );
 
 SELECT d.id,
@@ -397,3 +398,121 @@ INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('ธุ
 INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('นิติการ', 6);
 INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('สำนักอำนวยการบริหาร', 6);
 INSERT INTO [occurrence].[dbo].[department] ([name], [relateid]) VALUES ('สำนักอำนวยการแพทย์', 6);
+
+
+
+
+-----------------------
+
+
+INSERT INTO department (relateid, name, email) VALUES ('1', 'คลังยา', 'pharmaciststore@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('1', 'คอลเซ็นเตอร์', 'callcenter@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('1', 'เคหกรรม', 'hks@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('1', 'งานอาคารและรักษาความปลอดภัย', 'sec@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('1', 'ซักรีด', 'hks@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('1', 'ดูแลรักษาความสะอาด', 'hks@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('1', 'บริการทั่วไป และประสานงานกลาง', 'hks@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('1', 'บริหารงานเวชสารและธุรการ', NULL);
+INSERT INTO department (relateid, name, email) VALUES ('1', 'บริหารจัดการแฟ้ม', 'medicalrecord@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('1', 'บริหารจัดการระบบเบิกจ่ายภาครัฐ', 'rmd@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('1', 'ประเมินราคา และ Finance', 'insurance@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('1', 'ประสานสิทธิ์', 'Insurance@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('1', 'เภสัชกรรมคลินิก', 'pharmaciststore@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('1', 'ยานพาหนะ', 'car_g@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('1', 'ลงทะเบียนผู้ป่วยและเดินแฟ้ม', 'registration@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('1', 'ลูกค้าสัมพันธ์', 'international@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('1', 'วิเคราะห์โรค', 'labtnh@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('1', 'เวชระเบียนอิเล็กทรอนิกส์', 'EMR@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('1', 'เวชสถิติ', 'coder@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('1', 'เวรเปล', NULL);
+INSERT INTO department (relateid, name, email) VALUES ('1', 'ศูนย์สารสนเทศทางยา', 'dis@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('1', 'โอเปอเรเตอร์', 'opt_b@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'Digital Marketing & Creative', 'corporatesales@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'Events', 'Marketing@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'การเงินกลาง', 'fc@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'การเงินนอก', 'cashier_opd@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'การเงินผู้ป่วยนอก', 'cashier_opd@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'การเงินผู้ป่วยใน', 'cashier_ipd@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'การตลาดองค์กร', 'corporatesales@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'การพัฒนาองค์กร', NULL);
+INSERT INTO department (relateid, name, email) VALUES ('2', 'ค่าตอบแทนและผลประโยชน์', 'hrm_recruit@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'จัดซื้อเครื่องมือแพทย์ ยา และเวชภัณฑ์', 'purchase@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'จัดซื้อทั่วไป', 'purchase@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'ซ่อมบำรุง', 'eng_b@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'ตรวจสอบคุณภาพการบันทึกเวชระเบียน', 'medicalrecord@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'บริการ', 'opt_b@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'บริหารโครงการเทคโนโลยีสารสนเทศ', 'mis@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'บริหารจัดการฐานข้อมูล และสารสนเทศขององค์กร', 'mis@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'บริหารจัดการหนี้', 'credit@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'บัญชีจ่าย', 'account@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'บัญชีทั่วไป', 'account@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'บัญชีบริหาร', 'account@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'บันทึกเวลา', 'hris2@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'ปฏิบัติการควบคุมอุปกรณ์คอมพิวเตอร์ และระบบเครือข่าย', 'mis@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'พัฒนาซอฟต์แวร์', 'mis@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'พัฒนาทรัพยากรมนุษย์', 'training@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'พัฒนาผลิตภัณฑ์', NULL);
+INSERT INTO department (relateid, name, email) VALUES ('2', 'โภชนบำบัด', 'cddg@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'โภชนาการ', 'nut_g@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'ระบบคอมพิวเตอร์ทางธุรกิจองค์กร', 'mis@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'รับและทะเบียนคุม', 'account@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'สนับสนุนงานระบบ', 'hrm_dev@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'สรรหาและว่าจ้าง', 'hrm_recruit@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'สวัสดิการและสร้างเสริมสุขภาพ', 'hrm_welfare@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'สารสนเทศทรัพยากรมนุษย์', 'hris2@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'โสตทัศนูปกรณ์', 'hrm_dev@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'ออกแบบและควบคุมโครงการ', 'eng_b@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('2', 'ไอที', 'ittnh@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'กองตรวจการพยาบาล', 'refaral@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'คลินิกแพทย์แผนจีน', 'ctm@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'ฉุกเฉิน', 'err_g@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'ซีซียู', 'ccu@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'ไตเทียม', 'HEM@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'ทันตกรรม', 'dental@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'ทารกแรกเกิด', 'nsy_5@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'ผิวหนัง', 'skin@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'พยาบาล', 'don@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'พัฒนาบุคลากรทางการพยาบาล', 'don@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'รับผู้ป่วยใน', 'admit@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'วิสัญญี', 'ane_2@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'ศัลยกรรม', 'sur_g@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'ศูนย์กระดูกและข้อ', 'bone@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'ศูนย์ตรวจสุขภาพ', 'tnh-checkup@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'ศูนย์ตา', 'eye_opd@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'ศูนย์ทางเดินอาหาร', 'mgi@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'ศูนย์ปลูกถ่ายไต', 'tckttnh@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'ศูนย์มะเร็งและรังสีรักษา', 'hoc@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'ศูนย์เวชศาสตร์ชะลอวัย', 'wellness@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'ศูนย์สมองและระบบประสาท', 'bnc@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'ศูนย์สูติ-นรีเวช', 'opg@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'ศูนย์หัวใจคนไข้นอก', 'heart@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'สราญรมย์', 'mhc@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'สวนหัวใจ', 'ccu@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'สำนักงานพยาบาล', 'don@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'หน่วยจ่ายกลาง', 'suppaly@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'ห้องคลอด', 'lrr_2@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'ห้องผ่าตัด', 'OR@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'ห้องพยาบาลประจำบริษัทคู่สัญญา', 'don@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'ห้องยาผู้ป่วยนอก', 'phr_l@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'ห้องยาผู้ป่วยใน', 'phr_6@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'หอผู้ป่วยในชั้น 10', 'ward10@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'หอผู้ป่วยในชั้น 5', 'ward5@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'หอผู้ป่วยในชั้น 6', 'ward6@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'หอผู้ป่วยในชั้น 7', 'ward7@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'หอผู้ป่วยในชั้น 8', 'ward8@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'หอผู้ป่วยในชั้น 9', 'ward9@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'หู คอ จมูก', 'ent_l@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'อายุรกรรม', 'med_g@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('3', 'ไอซียู', 'icu_1@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('4', 'ควบคุมเอกสารคุณภาพ', 'qdc@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('4', 'บริหารข้อร้องเรียน', 'qdc@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('4', 'บริหารอุบัติการณ์', 'qdc@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('5', 'กายภาพบำบัด', 'ptt_l@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('5', 'กิจกรรมบำบัด', 'ptt_l@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('5', 'กุมารเวช', 'ped@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('6', 'คลังพัสดุ', 'str2_11@thainakarin.co.th');
+INSERT INTO department (relateid, name, email) VALUES ('6', 'ธุรการ', 'lgb_3@thainakarin.coth');
+INSERT INTO department (relateid, name, email) VALUES ('6', 'ธุรการ นิติการ', 'legal@thainakarin.coth');
+INSERT INTO department (relateid, name, email) VALUES ('6', 'นิติการ', 'legal@thainakarin.coth');
+INSERT INTO department (relateid, name, email) VALUES ('6', 'สำนักอำนวยการบริหาร', 'mdo@thainakarin.coth');
+INSERT INTO department (relateid, name, email) VALUES ('6', 'สำนักอำนวยการแพทย์', 'doctor@thainakarin.co.th');

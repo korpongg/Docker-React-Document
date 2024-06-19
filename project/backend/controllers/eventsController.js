@@ -4,6 +4,8 @@ const Occurrences = require("../models/Occurrences");
 const User = require("../models/User");
 const { executeAndStoreQueryResult } = require('../services/broadcastService');
 
+const { findDepartmentEmail, sendEmailEvent, sendEmailEventHA } = require("./emailController");
+
 // Utility function to format dates to SQL Server's format
 const formatDate = (date) => date ? date.toISOString().replace("T", " ").replace("Z", "") : null;
 
@@ -35,6 +37,12 @@ exports.createEventtLog = async (req, res) => {
       { formstatus: '4' },
       { where: { reportid: reportid } }
     );
+
+    const emailSubject = "รายงานอุบัติการณ์ เลขที่เอกสาร: " + newCode;
+    const emailMessage ="เลขที่เอกสาร: " + newCode + `<br/><br/>` + "มีรายงานอุบัติการณ์ถึงหน่วยงาน";
+    const depEmail = await findDepartmentEmail(newCode);
+    // Send email
+    sendEmailEvent(depEmail, emailSubject, emailMessage);
 
     executeAndStoreQueryResult();
     return res.status(201).json(result);
@@ -278,6 +286,20 @@ exports.updateEventLog = async (req, res) => {
     }
 
     await events.update(req.body);
+
+    if (events.dataValues.status === '2'){
+      const emailSubject = "รายงานอุบัติการณ์ เลขที่เอกสาร: " + events.dataValues.code;
+      const emailMessage ="เลขที่เอกสาร: " + events.dataValues.code + `<br/><br/>` + "หน่วยงานทำงานบันทึกผลการทบทวนอุบัติการณ์แล้ว";
+      const haEmail = "qdc@thainakarin.co.th";
+      // Send email
+      sendEmailEventHA(haEmail, emailSubject, emailMessage);
+    } else if (events.dataValues.status === '3'){
+      const emailSubject = "รายงานอุบัติการณ์ เลขที่เอกสาร: " + events.dataValues.code;
+      const emailMessage ="เลขที่เอกสาร: " + events.dataValues.code + `<br/><br/>` + "มีรายงานส่งทบทวนอุบัติการณ์ถึงหน่วยงาน";
+      const depEmail = await findDepartmentEmail(events.dataValues.code);
+      // Send email
+      sendEmailEvent(depEmail, emailSubject, emailMessage);
+    }
 
     executeAndStoreQueryResult();
     

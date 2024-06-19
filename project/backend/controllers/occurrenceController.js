@@ -3,6 +3,8 @@ const Occurrences = require("../models/Occurrences");
 // const User = require("../models/User");
 const { executeAndStoreQueryResult } = require('../services/broadcastService');
 
+const { sendEmail } = require("./emailController");
+
 // Create a new occurrence
 exports.createOccurrence = async (req, res) => {
   try {
@@ -52,6 +54,15 @@ exports.createOccurrence = async (req, res) => {
       reportid: reportId, // Assign the generated reportId
     });
 
+    // Get the ID of the newly created occurrence
+    const newOccurrenceId = result.id;
+
+    // Email
+    const emailSubject = "รายงานอุบัติการณ์ เลขที่เอกสาร: " + reportId;
+    const emailMessage = "เลขที่เอกสาร: " + reportId + `<br/><br/>` + "สร้างรายงานสำเร็จ รอตรวจสอบ";
+    const haEmail = "qdc@thainakarin.co.th";
+
+    sendEmail(haEmail, newOccurrenceId, emailSubject, emailMessage);
     executeAndStoreQueryResult();
     
     res.status(201).json(result);
