@@ -2,7 +2,6 @@ const sequelize = require("../config/dbConn").sequelize;
 const Occurrences = require("../models/Occurrences");
 // const User = require("../models/User");
 const { executeAndStoreQueryResult } = require('../services/broadcastService');
-
 const { sendEmail } = require("./emailController");
 
 // Create a new occurrence
@@ -62,7 +61,7 @@ exports.createOccurrence = async (req, res) => {
     const emailMessage = "เลขที่เอกสาร: " + reportId + `<br/><br/>` + "สร้างรายงานสำเร็จ รอตรวจสอบ";
     const recipientEmail = "qdc@thainakarin.co.th";
     sendEmail(recipientEmail, newOccurrenceId, emailSubject, emailMessage);
-    
+
     executeAndStoreQueryResult();
     res.status(201).json(result);
   } catch (error) {

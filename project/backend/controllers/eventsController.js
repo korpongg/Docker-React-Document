@@ -3,7 +3,6 @@ const Events = require("../models/Events");
 const Occurrences = require("../models/Occurrences");
 const User = require("../models/User");
 const { executeAndStoreQueryResult } = require('../services/broadcastService');
-
 const { findDepartmentEmail, sendEmailEvent, sendEmailEventHA } = require("./emailController");
 
 // Utility function to format dates to SQL Server's format
