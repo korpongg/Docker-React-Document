@@ -20,6 +20,7 @@ exports.createEventtLog = async (req, res) => {
     const existingEvents = await Events.findAll({ where: { reportid } });
 
     // Generate code based on the count of existing events
+    // const eventCount = await Events.count({ where: { reportid } }) + 1;
     const eventCount = existingEvents.length + 1;
     const newCode = `${reportid}-${String(eventCount).padStart(2, "0")}`;
 
@@ -33,16 +34,13 @@ exports.createEventtLog = async (req, res) => {
     });
 
     // Update the Occurrences table
-    await Occurrences.update(
-      { formstatus: '4' },
-      { where: { reportid: reportid } }
-    );
-
+    await Occurrences.update({ formstatus: '4' }, { where: { reportid } });
+    
+    // Send email
     const emailSubject = "รายงานอุบัติการณ์ เลขที่เอกสาร: " + newCode;
     const emailMessage ="เลขที่เอกสาร: " + newCode + `<br/><br/>` + "มีรายงานอุบัติการณ์ถึงหน่วยงาน";
-    const depEmail = await findDepartmentEmail(newCode);
-    // Send email
-    sendEmailEvent(depEmail, emailSubject, emailMessage);
+    const recipientEmail = await findDepartmentEmail(newCode);
+    sendEmailEvent(recipientEmail, emailSubject, emailMessage);
 
     executeAndStoreQueryResult();
     return res.status(201).json(result);
@@ -287,22 +285,23 @@ exports.updateEventLog = async (req, res) => {
 
     await events.update(req.body);
 
-    if (events.dataValues.status === '2'){
-      const emailSubject = "รายงานอุบัติการณ์ เลขที่เอกสาร: " + events.dataValues.code;
-      const emailMessage ="เลขที่เอกสาร: " + events.dataValues.code + `<br/><br/>` + "หน่วยงานทำงานบันทึกผลการทบทวนอุบัติการณ์แล้ว";
-      const haEmail = "qdc@thainakarin.co.th";
-      // Send email
-      sendEmailEventHA(haEmail, emailSubject, emailMessage);
-    } else if (events.dataValues.status === '3'){
-      const emailSubject = "รายงานอุบัติการณ์ เลขที่เอกสาร: " + events.dataValues.code;
-      const emailMessage ="เลขที่เอกสาร: " + events.dataValues.code + `<br/><br/>` + "มีรายงานส่งทบทวนอุบัติการณ์ถึงหน่วยงาน";
-      const depEmail = await findDepartmentEmail(events.dataValues.code);
-      // Send email
-      sendEmailEvent(depEmail, emailSubject, emailMessage);
+    const { code, status } = events.dataValues;
+    let emailSubject, emailMessage, recipientEmail;
+
+    // Send email
+    if (status === '2'){
+      emailSubject = `รายงานอุบัติการณ์ เลขที่เอกสาร: ${code}`;
+      emailMessage = `เลขที่เอกสาร: ${code}<br/><br/>หน่วยงานทำงานบันทึกผลการทบทวนอุบัติการณ์แล้ว`;
+      recipientEmail = "qdc@thainakarin.co.th";
+      sendEmailEventHA(recipientEmail, emailSubject, emailMessage);
+    } else if (status === '3') {
+      emailSubject = `รายงานอุบัติการณ์ เลขที่เอกสาร: ${code}`;
+      emailMessage = `เลขที่เอกสาร: ${code}<br/><br/>มีรายงานส่งทบทวนอุบัติการณ์ถึงหน่วยงาน`;
+      recipientEmail = await findDepartmentEmail(code);
+      sendEmailEvent(recipientEmail, emailSubject, emailMessage);
     }
 
     executeAndStoreQueryResult();
-    
     res.status(200).json(events);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -319,7 +318,6 @@ exports.deleteEventLog = async (req, res) => {
     await events.destroy();
 
     executeAndStoreQueryResult();
-    
     res.status(204).send();
   } catch (error) {
     res.status(500).json({ message: error.message });
