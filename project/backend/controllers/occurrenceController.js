@@ -57,14 +57,13 @@ exports.createOccurrence = async (req, res) => {
     // Get the ID of the newly created occurrence
     const newOccurrenceId = result.id;
 
-    // Email
+    // Send email
     const emailSubject = "รายงานอุบัติการณ์ เลขที่เอกสาร: " + reportId;
     const emailMessage = "เลขที่เอกสาร: " + reportId + `<br/><br/>` + "สร้างรายงานสำเร็จ รอตรวจสอบ";
-    const haEmail = "qdc@thainakarin.co.th";
-
-    sendEmail(haEmail, newOccurrenceId, emailSubject, emailMessage);
-    executeAndStoreQueryResult();
+    const recipientEmail = "qdc@thainakarin.co.th";
+    sendEmail(recipientEmail, newOccurrenceId, emailSubject, emailMessage);
     
+    executeAndStoreQueryResult();
     res.status(201).json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
