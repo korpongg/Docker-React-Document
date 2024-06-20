@@ -46,81 +46,60 @@ const findDepartmentEmail = async ( reportCode ) => {
   }
 };
 
-function sendEmail(to, reportId, subject, text) {
-  // Add <br/> for line breaks in HTML
-  const htmlContent = `${text}<br/><br/><br/>
-    เข้าสู่ระบบรายงานอุบัติการณ์: <a href="http://10.1.1.95:3001/login">Login</a><br/><br/>
-    หากเข้าสู่ระบบแล้ว ดูรายงานอุบัติการณ์: <a href="http://10.1.1.95:3001/occurrence/form/${reportId}">ดูรายงาน</a>
-  `;
+const sendEmail = async (to, reportId, subject, text) => {
+  try {
+    const htmlContent = `${text}<br/><br/><br/>
+      เข้าสู่ระบบรายงานอุบัติการณ์: <a href="http://10.1.1.95:3001/login">Login</a><br/><br/>
+      หากเข้าสู่ระบบแล้ว ดูรายงานอุบัติการณ์: <a href="http://10.1.1.95:3001/occurrence/form/${reportId}">ดูรายงาน</a>`;
 
-  const mailOptions = {
-    from: "mkt_design@thainakarin.co.th",
-    to: to,
-    subject: subject,
-    html: htmlContent, // Use HTML-formatted content
-  };
+    const mailOptions = {
+      from: "mis@thainakarin.co.th",
+      to,
+      subject,
+      html: htmlContent,
+    };
 
-  console.log("Email sent to HA", mailOptions);
+    console.log("Sending email with options:", mailOptions);
 
-  transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-      console.error("Error sending email:", error);
-    } else {
-      console.log("Email sent:", info.response);
-    }
-  });
-}
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Email sent:", info.response);
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
+};
 
-function sendEmailEvent(to, subject, text) {
-  // Add <br/> for line breaks in HTML
-  const htmlContent = `${text}<br/><br/><br/>
-    เข้าสู่ระบบรายงานอุบัติการณ์: <a href="http://10.1.1.95:3001/login">Login</a><br/><br/>
-    หากเข้าสู่ระบบแล้ว ดูรายงานอุบัติการณ์ที่เกี่ยวข้องกับแผนก: <a href="http://10.1.1.95:3001/occurrence/event">ดูรายงาน</a>
-  `;
+const sendGenericEmail = async (to, subject, text, link) => {
+  try {
+    const htmlContent = `${text}<br/><br/><br/>
+      เข้าสู่ระบบรายงานอุบัติการณ์: <a href="http://10.1.1.95:3001/login">Login</a><br/><br/>
+      หากเข้าสู่ระบบแล้ว ${link}`;
 
-  const mailOptions = {
-    from: "mkt_design@thainakarin.co.th",
-    to: to,
-    subject: subject,
-    html: htmlContent, // Use HTML-formatted content
-  };
+    const mailOptions = {
+      from: "mis@thainakarin.co.th",
+      to,
+      subject,
+      html: htmlContent,
+    };
 
-  console.log("Email sent to Department", mailOptions);
+    console.log("Sending generic email with options:", mailOptions);
 
-  transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-      console.error("Error sending email:", error);
-    } else {
-      console.log("Email sent:", info.response);
-    }
-  });
-}
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Email sent:", info.response);
+  } catch (error) {
+    console.error("Error sending generic email:", error);
+  }
+};
 
-function sendEmailEventHA(to, subject, text) {
-  // Add <br/> for line breaks in HTML
-  const htmlContent = `${text}<br/><br/><br/>
-    เข้าสู่ระบบรายงานอุบัติการณ์: <a href="http://10.1.1.95:3001/login">Login</a><br/><br/>
-    หากเข้าสู่ระบบแล้ว ดูรายงานอุบัติการณ์: <a href="http://10.1.1.95:3001/occurrence">ดูรายงานอุบัติการณ์</a><br/><br/>
-    หรือ ดูรายงานอุบัติการณ์ที่เกี่ยวข้องกับแผนก: <a href="http://10.1.1.95:3001/occurrence/event">ดูรายงาน</a>
-  `;
+const sendEmailEvent = (to, subject, text) => {
+  const link = `ดูรายงานอุบัติการณ์ที่เกี่ยวข้องกับแผนก: <a href="http://10.1.1.95:3001/occurrence/event">ดูรายงาน</a>`;
+  return sendGenericEmail(to, subject, text, link);
+};
 
-  const mailOptions = {
-    from: "mkt_design@thainakarin.co.th",
-    to: to,
-    subject: subject,
-    html: htmlContent, // Use HTML-formatted content
-  };
-
-  console.log("Email sent to Department", mailOptions);
-
-  transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-      console.error("Error sending email:", error);
-    } else {
-      console.log("Email sent:", info.response);
-    }
-  });
-}
+const sendEmailEventHA = (to, subject, text) => {
+  const link = `ดูรายงานอุบัติการณ์: <a href="http://10.1.1.95:3001/occurrence">ดูรายงานอุบัติการณ์</a><br/><br/>
+    หรือ ดูรายงานอุบัติการณ์ที่เกี่ยวข้องกับแผนก: <a href="http://10.1.1.95:3001/occurrence/event">ดูรายงาน</a>`;
+  return sendGenericEmail(to, subject, text, link);
+};
 
 module.exports = {
   sendEmail,
