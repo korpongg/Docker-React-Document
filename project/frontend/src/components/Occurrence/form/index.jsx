@@ -326,13 +326,7 @@ const Occurrence = ({ Mode }) => {
           reportdate:TimeConverter(FormData.reportdate,7),
           formstatus:"0"
         };
-        // if(Mode==="Draft"){
-        //   submitFormData = {
-        //     ...submitFormData,
-        //     formstatus:"0"
-        //   };
-        // }
-        // console.log("submitFormData",submitFormData)
+        
         try {
           const response = await axios.post(
             `${apiUrl}/occurrences`,
@@ -370,7 +364,7 @@ const Occurrence = ({ Mode }) => {
     }
   };
 
-  const handleSubmitEdit = async () => {
+  const handleSubmitEdit = async (Mode) => {
     // console.log("handleSubmitEdit");
     const missingKeys = keydata.filter(({ key }) => {
       if (key === "deptrelate") {
@@ -389,7 +383,7 @@ const Occurrence = ({ Mode }) => {
       setAlertBorder(missingKeys);
     };
     if (missingKeys.length === 0 || Mode==="Draft") {
-    let submitFormData;
+    let submitEditFormData;
     if (totalLength > 0 || Mode==="Draft") {
       submitEditFormData = {
         ...EditFormData,
@@ -404,10 +398,18 @@ const Occurrence = ({ Mode }) => {
         updateby: UserData.userid,
       };
       if(Mode==="Draft"){
-        submitFormData = {
-          ...submitFormData,
+        submitEditFormData = {
+          ...submitEditFormData,
           formstatus:"0"
         };
+      }
+      if(Mode==="Submit"){
+        if(FormData.formstatus==="0"){
+          submitEditFormData = {
+            ...submitEditFormData,
+            formstatus:"1"
+          };
+        }
       }
       // console.log("submitEditFormData", submitEditFormData);
 
@@ -704,6 +706,7 @@ const Occurrence = ({ Mode }) => {
         )}
         <NavForm
           Mode={Mode}
+          Data={FormData}
           Access={FormData.createby === UserData.userid || isAdmin}
           submitfunction={handleSubmit}
           handleSubmitEdit={handleSubmitEdit}

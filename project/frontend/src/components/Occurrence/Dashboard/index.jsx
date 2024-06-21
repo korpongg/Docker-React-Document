@@ -2,13 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useWebSocket } from "../../../context/WebSocketContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Swal from "sweetalert2";
 
 import { chkAdmins, chkAdmin } from "../../Function";
+import SearchBox from "./SearchBox";
 import DataTable from "./DataTable";
 import TranferDialog from "./TranferDialog";
 import CloseIncidentDialog from "./CloseIncidentDialog";
@@ -34,6 +31,13 @@ const Dashboard = () => {
   const [closeReason, setCloseReason] = useState("");
   const [closeComment, setCloseComment] = useState("");
 
+  const [reportNo, setReportNo] = useState("");
+  const [hn, setHn] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [depSelect, setDepSelect] = useState([]);
+  const [incidentType, setIncidentType] = useState("0");
+
   useEffect(() => {
     connectWebSocket();
 
@@ -42,28 +46,37 @@ const Dashboard = () => {
     };
   }, []);
 
+  const filterDataSearch = (rowData) => {
+    return (
+      (reportNo === "" || rowData.reportid === reportNo) &&
+      (hn === "" || rowData.hn === hn) &&
+      (depSelect.length === 0 || depSelect.includes(rowData.deptrelate)) &&
+      (incidentType === "0" || rowData.reporttypename === incidentType)
+    );
+  };
+
   useEffect(() => {
     const filterData = () => {
       if (isAdmin) {
-        setDashboard(dataCenter);
+        setDashboard(dataCenter.filter(filterDataSearch));
         setEventData(dataEvent);
       } else if (isEXEC) {
         if (userData.affiliation === "งานคุณภาพ") {
-          setDashboard(dataCenter);
+          setDashboard(dataCenter.filter(filterDataSearch));
           setEventData(dataEvent);
         } else {
           const filteredData = dataCenter.filter((item) => item.requestaff === userData.affiliation);
-          setDashboard(filteredData);
+          setDashboard(filteredData.filter(filterDataSearch));
         }
       } else {
         const filteredData = dataCenter.filter((item) =>item.requestaff === userData.affiliation &&item.requestdep === userData.dep);
-        setDashboard(filteredData);
+        setDashboard(filteredData.filter(filterDataSearch));
       }
       setLoading(false);
     };
 
     filterData();
-  }, [dataCenter, dataEvent]);
+  }, [dataCenter, dataEvent, reportNo, hn, startDate, endDate, depSelect, incidentType]);
 
   const handleAddItem = () => {
     disconnectWebSocket();
@@ -186,47 +199,19 @@ const Dashboard = () => {
     <DashboardBox>
       <h1>รายงานอุบัติการณ์</h1>
 
-      <div>
-        <Accordion>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="panel1-content"
-            id="panel1-header"
-          >
-            Accordion 1
-          </AccordionSummary>
-          <AccordionDetails>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-            malesuada lacus ex, sit amet blandit leo lobortis eget.
-          </AccordionDetails>
-        </Accordion>
-        <Accordion>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="panel2-content"
-            id="panel2-header"
-          >
-            Accordion 2
-          </AccordionSummary>
-          <AccordionDetails>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-            malesuada lacus ex, sit amet blandit leo lobortis eget.
-          </AccordionDetails>
-        </Accordion>
-        <Accordion defaultExpanded>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="panel3-content"
-            id="panel3-header"
-          >
-            Accordion Actions
-          </AccordionSummary>
-          <AccordionDetails>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-            malesuada lacus ex, sit amet blandit leo lobortis eget.
-          </AccordionDetails>
-        </Accordion>
-      </div>
+      <SearchBox
+        reportNo={reportNo}
+        setReportNo={setReportNo}
+        hn={hn}
+        setHn={setHn}
+        startDate={startDate}
+        setStartDate={setStartDate}
+        endDate={endDate}
+        setEndDate={setEndDate}
+        setDepSelect={setDepSelect}
+        incidentType={incidentType}
+        setIncidentType={setIncidentType}
+      />
 
       <DataTable
         data={dashboard}

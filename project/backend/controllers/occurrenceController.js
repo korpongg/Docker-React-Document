@@ -48,7 +48,7 @@ exports.createOccurrence = async (req, res) => {
     const result = await Occurrences.create({
       ...req.body,
       occurrencedate: sequelize.literal(`'${formattedOccurrenceDate}'`),
-      formstatus: "1",
+      formstatus: req.body.formstatus ? req.body.formstatus : "1",
       createAt: sequelize.literal("CURRENT_TIMESTAMP"),
       reportid: reportId, // Assign the generated reportId
     });

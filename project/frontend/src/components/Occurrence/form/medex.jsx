@@ -298,7 +298,7 @@ const Medication = ({ Mode }) => {
   const keysToCheck = ["prescribing", "dispensing", "administration"];
   // const keysToCheck = [];
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (Mode) => {
     const missingKeys = keydata.filter(({ key }) => {
       if (key === "deptrelate") {
         return !(FormData[key] && FormData[key].length);
@@ -312,11 +312,14 @@ const Medication = ({ Mode }) => {
       }
       return sum;
     }, 0);
-    setAlertBorder(missingKeys);
+    if(Mode!=="Draft"){
+      setAlertBorder(missingKeys);
+    };
 
-    if (missingKeys.length === 0) {
-      if (totalLength >= 0) {
-        const submitFormData = {
+    if (missingKeys.length === 0 || Mode==="Draft") {
+      let submitFormData;
+      if (totalLength > 0 || Mode==="Draft") {
+        submitFormData = {
           ...FormData,
           prescribing: JSON.stringify(FormData.prescribing),
           dispensing: JSON.stringify(FormData.dispensing),
@@ -326,6 +329,7 @@ const Medication = ({ Mode }) => {
           drugrelate: JSON.stringify(FormData.drugrelate),
           occurrencedate:TimeConverter(FormData.occurrencedate,7),
           reportdate:TimeConverter(FormData.reportdate,7),
+          formstatus:"0"
           // deptrelate: JSON.stringify(FormData.deptrelate),
         };
 
@@ -366,10 +370,28 @@ const Medication = ({ Mode }) => {
     }
   };
 
-  const handleSubmitEdit = async () => {
+  const handleSubmitEdit = async (Mode) => {
     // console.log("handleSubmitEdit");
-
-    const submitEditFormData = {
+    const missingKeys = keydata.filter(({ key }) => {
+      if (key === "deptrelate") {
+        return !(FormData[key] && FormData[key].length);
+      } else {
+        return !(key in FormData);
+      }
+    });
+    const totalLength = keysToCheck.reduce((sum, key) => {
+      if (Array.isArray(FormData[key])) {
+        return sum + FormData[key].length;
+      }
+      return sum;
+    }, 0);
+    if(Mode!=="Draft"){
+      setAlertBorder(missingKeys);
+    };
+    if (missingKeys.length === 0 || Mode==="Draft") {
+      let submitEditFormData;
+      if (totalLength > 0 || Mode==="Draft") {
+    submitEditFormData = {
       ...EditFormData,
       prescribing: JSON.stringify(FormData.prescribing),
       dispensing: JSON.stringify(FormData.dispensing),
@@ -379,7 +401,20 @@ const Medication = ({ Mode }) => {
       drugrelate: JSON.stringify(FormData.drugrelate),
       updateby: UserData.userid,
     };
-
+    if(Mode==="Draft"){
+      submitEditFormData = {
+        ...submitEditFormData,
+        formstatus:"0"
+      };
+    }
+    if(Mode==="Submit"){
+      if(FormData.formstatus==="0"){
+        submitEditFormData = {
+          ...submitEditFormData,
+          formstatus:"1"
+        };
+      }
+    }
     // console.log("submitEditFormData", submitEditFormData);
 
     try {
@@ -396,6 +431,28 @@ const Medication = ({ Mode }) => {
     } catch (err) {
       console.error(err);
     }
+
+  } else {
+    setStage(1);
+    setOccStage(0);
+    setAlertText("ไม่สามารถบันทึกข้อมูลได้ กรุณาเลือกอย่างน้อย 1 หัวข้อ");
+    console.log("ไม่สามารถบันทึกข้อมูลได้ กรุณาเลือกอย่างน้อย 1 หัวข้อ");
+    setAlert(true);
+    scrollToSection("ListSelect");
+  }
+}else {
+  setStage(missingKeys[0].location);
+  setAlertText(
+    "ไม่สามารถบันทึกข้อมูลได้ โปรดระบุ '" + missingKeys[0].name + "'"
+  );
+  console.log(
+    "Some keys are missing.Cannot submit form data.",
+    missingKeys[0].key
+  );
+  setAlert(true);
+  scrollToSection(missingKeys[0].key);
+}
+
   };
 
   const handleScrollToTop = () => {
@@ -447,6 +504,7 @@ const Medication = ({ Mode }) => {
                   Mode={Mode}
                   data={FormData}
                   setDataFunction={handleDataChange}
+                  setSingleDataFunction={handleDataChangeSingle}
                   missingKeys={AlertBorder}
                 />
 
@@ -670,6 +728,7 @@ const Medication = ({ Mode }) => {
         )}
         <NavForm
           Mode={Mode}
+          Data={FormData}
           Access={FormData.createby === UserData.userid || isAdmin}
           submitfunction={handleSubmit}
           handleSubmitEdit={handleSubmitEdit}

@@ -20,8 +20,8 @@ export default function ConfirmDialog({Mode,submitfunction,SubmitMode,Lable}) {
 
   return (
     <React.Fragment>
-      <Button sx={{fontSize:22,width:180,p:0.25}} variant="contained" color="success" onClick={handleClickOpen}>
-        {Mode==="Add"?Lable:"บันทึกการแก้ไข้"}
+      <Button sx={{fontSize:22,width:180,p:0.25,marginRight:1}} variant="contained" color={SubmitMode==="Draft" ? "info" : "success"} onClick={handleClickOpen}>
+        {Lable}
       </Button>
       <Dialog
         open={open}

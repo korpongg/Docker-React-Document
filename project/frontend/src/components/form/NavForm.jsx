@@ -16,7 +16,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import LastPageIcon from '@mui/icons-material/LastPage';
 
-const NavForm = ({Mode,Access,submitfunction,handleSubmitEdit,Stage,MaxStage,FirstStage,LastStage,PrevStage,NextStage,ToStage}) => {
+const NavForm = ({Mode,Data,Access,submitfunction,handleSubmitEdit,Stage,MaxStage,FirstStage,LastStage,PrevStage,NextStage,ToStage}) => {
   const NavPage = [];
   for (let i = 0; i < MaxStage; i++) {
     NavPage.push(
@@ -61,7 +61,12 @@ const NavForm = ({Mode,Access,submitfunction,handleSubmitEdit,Stage,MaxStage,Fir
         {/* <ConfirmDialog submitfunction={submitfunction} SubmitMode="Submit" Access={Access} Mode={Mode} Lable="บันทึก"/>  */}
           </>
         :
-        <ConfirmDialog submitfunction={handleSubmitEdit} Access={Access} Mode={Mode}/> ))
+        <>
+        {Data?.formstatus==="0" && <ConfirmDialog submitfunction={handleSubmitEdit} Access={Access} Mode={Mode} SubmitMode="Draft" Lable="บันทึกแบบร่าง"/>}
+        <ConfirmDialog submitfunction={handleSubmitEdit} Access={Access} Mode={Mode} SubmitMode="Submit" Lable="บันทึก"/>
+        </>
+      
+      ))
       )
         : "Page "+Stage+" of "+MaxStage}
     {/* <span>

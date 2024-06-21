@@ -231,11 +231,11 @@ CREATE TABLE [medication](
 	[dx] NVARCHAR(MAX) NULL,						-- Dx
 	[pct] NVARCHAR(MAX) NULL,						-- PCT ที่เกี่ยวข้อง
 	
-	[occurrencedate] [datetime] NOT NULL,			-- วัน-เวลาที่เกิดเหตุการณ์
-	[deptrelate] INT NOT NULL,						-- หน่วยงานที่เกี่ยวข้อง
+	[occurrencedate] [datetime] NULL,			-- วัน-เวลาที่เกิดเหตุการณ์
+	[deptrelate] INT NULL,						-- หน่วยงานที่เกี่ยวข้อง
 
-	[reporttype] [nvarchar](1) NOT NULL,			-- ประเภทอุบัติการณ์	General Risk, Clinical Risk
-	[type] NVARCHAR(3) NOT NULL,					-- ประเภทอุบัติการณ์	OPD, IPD
+	[reporttype] [nvarchar](1) NULL,			-- ประเภทอุบัติการณ์	General Risk, Clinical Risk
+	[type] NVARCHAR(3) NULL,					-- ประเภทอุบัติการณ์	OPD, IPD
 
 	[acceptdate] [datetime] NULL,					-- วันที่รับเรื่อง (ยังไม่ได้ใช้งาน)
 	[responsedate] [datetime] NULL,					-- วันที่รับคืน (ยังไม่ได้ใช้งาน)
@@ -247,11 +247,11 @@ CREATE TABLE [medication](
 	[administration] NVARCHAR(MAX) NULL,			-- 3. ความคลาดเคลื่อนในการบริหารยา
 	[administrationremark] NVARCHAR(MAX) NULL,		-- 3- อื่นๆ
 
-	[description] NVARCHAR(MAX) NOT NULL,			-- บรรยายสรุปเหตุการณ์ที่เกิดชึ้น
-	[level] [nvarchar](1) NOT NULL,					-- ระดับความรุนแรงของเหตุการณ์
-	[effect] NVARCHAR(MAX) NOT NULL,				-- ผลลัพธ์ที่เกิดขึ้น
+	[description] NVARCHAR(MAX) NULL,			-- บรรยายสรุปเหตุการณ์ที่เกิดชึ้น
+	[level] [nvarchar](1) NULL,					-- ระดับความรุนแรงของเหตุการณ์
+	[effect] NVARCHAR(MAX) NULL,				-- ผลลัพธ์ที่เกิดขึ้น
 	[effectremark] NVARCHAR(MAX) NULL,				-- ระบบงาน ระบุผลกระทบที่เกิดขึ้น
-	[drugrelate] NVARCHAR(MAX) NOT NULL,			-- กลุ่มยาที่เกิดปัญหา
+	[drugrelate] NVARCHAR(MAX) NULL,			-- กลุ่มยาที่เกิดปัญหา
 	[drugremark] NVARCHAR(MAX) NULL,				-- อื่นๆ
 
 	[renew] NVARCHAR(MAX) NULL,						-- สรุปรายละเอียดเหตุการณ์ by HA 

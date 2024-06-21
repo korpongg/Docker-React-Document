@@ -152,7 +152,7 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
             </Tooltip>
           )}
 
-          {(userData.userid === row.createby || isAdmin) && row.deleteAt === null && (row.formstatus === '1' || row.formstatus === '4') && (
+          {(userData.userid === row.createby || isAdmin) && row.deleteAt === null && (row.formstatus === '0' || row.formstatus === '1' || row.formstatus === '4') && (
             <>
               <Tooltip title="แก้ไขข้อมูลอุบัติการณ์">
                 <GridActionsCellItem

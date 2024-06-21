@@ -20,6 +20,7 @@ function EditToolbar({ handleAddItem, loading }) {
 
 function ExpandableCell({ value }) {
   const [expanded, setExpanded] = React.useState(false);
+  if (!value) { return null; }
 
   return (
     <div style={{ wordBreak: 'break-all' }}>

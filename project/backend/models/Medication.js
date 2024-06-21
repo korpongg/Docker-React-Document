@@ -38,19 +38,19 @@ const Medication = sequelize.define('Medication', {
   },
   occurrencedate: {
     type: DataTypes.DATE,
-    allowNull: false
+    allowNull: true
   },
   deptrelate: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: true
   },
   reporttype: {
     type: DataTypes.STRING(1),
-    allowNull: false
+    allowNull: true
   },
   type: {
     type: DataTypes.STRING(3),
-    allowNull: false
+    allowNull: true
   },
   acceptdate: {
     type: DataTypes.DATE,
@@ -86,15 +86,15 @@ const Medication = sequelize.define('Medication', {
   },
   description: {
     type: DataTypes.TEXT,
-    allowNull: false
+    allowNull: true
   },
   level: {
     type: DataTypes.STRING(1),
-    allowNull: false
+    allowNull: true
   },
   effect: {
     type: DataTypes.TEXT,
-    allowNull: false
+    allowNull: true
   },
   effectremark: {
     type: DataTypes.TEXT,
@@ -102,7 +102,7 @@ const Medication = sequelize.define('Medication', {
   },
   drugrelate: {
     type: DataTypes.TEXT,
-    allowNull: false
+    allowNull: true
   },
   drugremark: {
     type: DataTypes.TEXT,

@@ -71,6 +71,10 @@ export const DashboardBox = styled(Box)`
     // -moz-animation: glow 1s ease-in-out infinite alternate;
     // animation: glow 1s ease-in-out infinite alternate;
   }
+  .post-status.draft {
+    background: dimgray;
+    box-shadow: 1px 1px 2px 0px #494949cc;
+  }
   .post-status.repeat {
     background: black;
     box-shadow: 1px 1px 2px 0px #0000008c;
@@ -116,6 +120,15 @@ export const DashboardBox = styled(Box)`
   }
 `;
 
+export const SearchContainer = styled(Box)`
+  border-radius: 16px;
+  border: 3px solid green;
+  margin: auto;
+  margin-bottom: 15px;
+  padding: 20px;
+  width: 80%;
+`;
+
 export const IncidentDialog = styled(Dialog)`
   #incident-dialog-title {
     font-family: inherit;
@@ -124,7 +137,7 @@ export const IncidentDialog = styled(Dialog)`
   #incident-dialog-title, label, .MuiButton-root, button, textarea, .MuiTypography-root, .MuiSelect-select {
     font-family: 'Prompt', sans-serif !important;
   }
-`
+`;
 
 export const TranferDialogBox = styled(Dialog)`
   #tranfer-dialog-title {

@@ -1,6 +1,12 @@
 {
   "reportStatus": [
     {
+      "id": 0,
+      "statusText": "แบบร่าง",
+      "statusColor": "draft",
+      "color": "gray"
+    },
+    {
       "id": 1,
       "statusText": "อุบัติการณ์ใหม่",
       "statusColor": "new",
