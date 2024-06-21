@@ -122,7 +122,7 @@ export const DashboardBox = styled(Box)`
 
 export const SearchContainer = styled(Box)`
   border-radius: 16px;
-  border: 2px solid #c9c9c9;
+  border: 1px solid #c9c9c9;
   margin: auto;
   margin-bottom: 15px;
   padding: 20px;

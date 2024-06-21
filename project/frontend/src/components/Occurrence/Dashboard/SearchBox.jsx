@@ -50,7 +50,7 @@ const SearchBox = ({reportNo, setReportNo, hn, setHn, startDate, setStartDate, e
       <SearchContainer>
         <Grid2 container spacing={2}>
           <Grid2 container xs={12} md={6} align="center" justify="center" alignItems="center">
-            <Grid2 xs={4} style={{textAlign: "center"}}>เลขที่เอกสาร</Grid2>
+            <Grid2 xs={4} style={{textAlign: "right"}}>เลขที่เอกสาร</Grid2>
             <Grid2 xs={8}>
               <TextField
                 id="reportNo"
@@ -61,7 +61,7 @@ const SearchBox = ({reportNo, setReportNo, hn, setHn, startDate, setStartDate, e
             </Grid2>
           </Grid2>
           <Grid2 container xs={12} md={6} align="center" justify="center" alignItems="center">
-            <Grid2 xs={4}>HN</Grid2>
+            <Grid2 xs={4} align="right">HN</Grid2>
             <Grid2 xs={8}>
               <TextField
                 id="hn"
@@ -72,7 +72,7 @@ const SearchBox = ({reportNo, setReportNo, hn, setHn, startDate, setStartDate, e
             </Grid2>
           </Grid2>
           <Grid2 container xs={12} md={6} align="center" justify="center" alignItems="center">
-            <Grid2 xs={4}>วันที่เกิดเหตุ</Grid2>
+            <Grid2 xs={4} align="right">วันที่เกิดเหตุ</Grid2>
             <Grid2 xs={8}>
               <TextField
                 id="startDate"
@@ -84,11 +84,16 @@ const SearchBox = ({reportNo, setReportNo, hn, setHn, startDate, setStartDate, e
                 InputLabelProps={{
                   shrink: true
                 }}
+                // InputProps={{
+                //   inputProps: {
+                //     max: formatDate(new Date().toISOString()),
+                //   },
+                // }}
               />
             </Grid2>
           </Grid2>
           <Grid2 container xs={12} md={6} align="center" justify="center" alignItems="center">
-            <Grid2 xs={4}>ถึงวันที่</Grid2>
+            <Grid2 xs={4} align="right">ถึงวันที่</Grid2>
             <Grid2 xs={8}>
               <TextField
                 id="endDate"
@@ -100,11 +105,16 @@ const SearchBox = ({reportNo, setReportNo, hn, setHn, startDate, setStartDate, e
                 InputLabelProps={{
                   shrink: true
                 }}
+                // InputProps={{
+                //   inputProps: {
+                //     max: formatDate(new Date().toISOString()),
+                //   },
+                // }}
               />
             </Grid2>
           </Grid2>
           <Grid2 container xs={12} md={6} align="center" justify="center" alignItems="center">
-            <Grid2 xs={4}>แผนก</Grid2>
+            <Grid2 xs={4} align="right">แผนก</Grid2>
             <Grid2 xs={8}>
               <FormControl fullWidth variant="outlined">
                 <Autocomplete
@@ -138,7 +148,7 @@ const SearchBox = ({reportNo, setReportNo, hn, setHn, startDate, setStartDate, e
             </Grid2>
           </Grid2>
           <Grid2 container xs={12} md={6} align="center" justify="center" alignItems="center">
-            <Grid2 xs={4}>ประเภทอุบัติการณ์</Grid2>
+            <Grid2 xs={4} align="right">ประเภทอุบัติการณ์</Grid2>
             <Grid2 xs={8}>
               <FormControl fullWidth variant="outlined">
                 <InputLabel>ประเภทอุบัติการณ์</InputLabel>
