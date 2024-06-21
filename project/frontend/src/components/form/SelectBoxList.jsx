@@ -6,6 +6,7 @@ import Checkbox from "@mui/material/Checkbox";
 import TextField from "@mui/material/TextField";
 
 const SelectBoxList = ({
+  Mode,
   data,
   optionsdata,
   datacolumn,
@@ -40,6 +41,7 @@ const SelectBoxList = ({
             {optionsdata[datacolumn].options.map((datarow, datakey) => (
               <FormControlLabel
                 key={datakey}
+                disabled={Mode==="Show"}
                 value={datarow.code}
                 control={
                   <Checkbox
@@ -54,6 +56,7 @@ const SelectBoxList = ({
               <>
                 <FormControlLabel
                   value={remarkno}
+                  disabled={Mode==="Show"}
                   control={
                     <Checkbox
                       checked={pickdata.includes(remarkno.toString())}
@@ -64,7 +67,9 @@ const SelectBoxList = ({
                 />
                 {pickdata.includes(remarkno.toString()) && (
                   <TextField
-                    fullWidth
+                    // fullWidth
+                    disabled={Mode==="Show"}
+                    sx={{width:"900px"}}
                     id={remarkcolumn}
                     label="ระบุรายละเอียด"
                     value={data[remarkcolumn] || ""}

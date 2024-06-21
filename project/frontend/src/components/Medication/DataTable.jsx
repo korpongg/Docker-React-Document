@@ -2,14 +2,15 @@ import React, { useState, useEffect } from "react";
 import { Button, Box, Tooltip, Link } from "@mui/material";
 import { DataGrid, GridToolbarContainer, GridToolbar, GridToolbarQuickFilter, GridActionsCellItem } from "@mui/x-data-grid";
 import { Add as AddIcon, DescriptionRounded as FileIcon, SwapHorizRounded as RotateIcon, FindInPageRounded as ViewIcon, Edit as EditIcon, RefreshRounded as CloseIcon, DeleteForeverRounded as DeleteIcon } from "@mui/icons-material";
-import { formatDateTimeN7 } from "../../Function";
-import requestStatusData from "../../label.json";
+import { formatDateTimeN7 } from "../Function";
+import requestStatusData from "../label.json";
+import TroubleshootIcon from '@mui/icons-material/Troubleshoot';
 
 function EditToolbar({ handleAddItem, loading }) {
   return (
     <GridToolbarContainer style={{ justifyContent: "space-between", padding: "10px 10px 0" }}>
       <div>
-        <Button variant="contained" onClick={handleAddItem} startIcon={<AddIcon />} style={{ marginRight: 10 }}>บันทึกอุบัติการณ์</Button>
+        <Button variant="contained" onClick={handleAddItem} startIcon={<AddIcon />} style={{ marginRight: 10 }}>บันทึกรายงาน</Button>
       </div>
       {/* <GridToolbar /> */}
       <GridToolbarQuickFilter />
@@ -19,8 +20,7 @@ function EditToolbar({ handleAddItem, loading }) {
 
 function ExpandableCell({ value }) {
   const [expanded, setExpanded] = React.useState(false);
-  if (!value) { return null; }
-  
+
   return (
     <div style={{ wordBreak: 'break-all' }}>
       {expanded ? value : value.slice(0, 200)}&nbsp;
@@ -38,16 +38,16 @@ function ExpandableCell({ value }) {
   );
 }
 
-const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewClick, handleTranfClick, handleCloseClick, handleEditClick, handleDeleteClick, loading }) => {
+const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewClick, handleCloseClick, handleEditClick, handleDeleteClick,handleApproveClick, loading }) => {
   // console.log(data);
   const statusMap = {};
-  requestStatusData.reportStatus.forEach(status => {
+  requestStatusData.medicStatus.forEach(status => {
     statusMap[status.id] = { text: status.statusText, color: status.statusColor };
   });
 
   const renderDeptrelateCell = (params) => {
-    const deptAffInfo = Array.isArray(params.row.deptAffInfo) ? params.row.deptAffInfo : [];
-    const deptNames = deptAffInfo.map(dept => dept.DepName).join(", ");
+    const deptAffInfo = params.row.deptAffInfo || '';
+    const deptNames = deptAffInfo?.DepName;
     return (
       <Tooltip title={deptNames}><div className="MuiDataGrid-cellContent" role="presentation">{deptNames}</div></Tooltip>
     );
@@ -102,12 +102,7 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
       headerAlign: "center",
       sortable: false,
       filterable: false,
-      renderCell: (params) => {
-        const { row } = params;
-        const showDescription = isAdmin || (isEXEC && userData.affiliation === "งานคุณภาพ") || (row.createby === userData.userid);
-
-        return showDescription ? <ExpandableCell {...params} /> : "-";
-      },
+      renderCell: (params) => <ExpandableCell {...params} />,
     },
     {
       field: "actions",
@@ -120,27 +115,16 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
       headerAlign: "center",
       renderCell: ({ id, row }) => (
         <>
-          <Tooltip title="ดูบันทึกอุบัติการณ์">
+          <Tooltip title="ดูบันทึกรายงาน">
             <GridActionsCellItem
               icon={<FileIcon />}
-              label="ดูบันทึกอุบัติการณ์"
+              label="ดูบันทึกรายงาน"
               onClick={() => handleViewClick(id, row)}
               color="primary"
             />
           </Tooltip>
-          
-          {isAdmin && (row.reporttypename==='General Risk' ? (parseInt(row.level, 10) > 2) : (row.level > "C")) && (row.formstatus === '1' || row.formstatus === '2' || row.formstatus === '4') && (
-            <Tooltip title={row.formstatus === '1' || row.formstatus === '4' ? 'ส่งต่อรายงาน' : 'ดูรายงานส่งต่อ'}>
-              <GridActionsCellItem
-                icon={row.formstatus === '1' || row.formstatus === '4' ? <RotateIcon /> : <ViewIcon />}
-                label={row.formstatus === '1' || row.formstatus === '4' ? 'ส่งต่อรายงาน' : 'ดูรายงานส่งต่อ'}
-                onClick={() => handleTranfClick(id, row)}
-                color="secondary"
-              />
-            </Tooltip>
-          )}
 
-          {isAdmin && (row.formstatus === '1' || row.formstatus === '4') && (
+          {/* {isAdmin && (row.formstatus === '1' || row.formstatus === '4') && (
             <Tooltip title="Update">
               <GridActionsCellItem
                 icon={<CloseIcon />}
@@ -150,14 +134,27 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
                 color="success"
               />
             </Tooltip>
-          )}
+          )} */}
+
+          {/* {isEXEC && (
+            <> */}
+              <Tooltip title="วิเคราะห์ความคลาดเคลื่อน">
+                <GridActionsCellItem
+                  icon={<TroubleshootIcon />}
+                  label="วิเคราะห์ความคลาดเคลื่อน"
+                  onClick={() => handleApproveClick(id, row)}
+                  color="warning"
+                />
+              </Tooltip>
+            {/* </>
+          )} */}
 
           {(userData.userid === row.createby || isAdmin) && row.deleteAt === null && (row.formstatus === '1' || row.formstatus === '4') && (
             <>
-              <Tooltip title="แก้ไขข้อมูลอุบัติการณ์">
+              <Tooltip title="แก้ไขข้อมูลรายงาน">
                 <GridActionsCellItem
                   icon={<EditIcon />}
-                  label="แก้ไขข้อมูลอุบัติการณ์"
+                  label="แก้ไขข้อมูลรายงาน"
                   onClick={() => handleEditClick(id, row)}
                   color="warning"
                 />

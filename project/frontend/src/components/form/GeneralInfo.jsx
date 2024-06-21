@@ -1,11 +1,48 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import { getCurrentDate } from "../Function";
+import { Autocomplete, TextField } from '@mui/material';
 
-const GeneralInfo = ({ Mode, data, setDataFunction, missingKeys }) => {
+const options = [
+  "ไม่ระบุ",
+  "PCT ศัลยกรรม",
+  "PCT สูตินรีเวช-ปริกำเนิด",
+  "PCT หัวใจและหลอดเลือด",
+  "PCT อายุรกรรม",
+  "PCT หู คอ จมูก",
+  "PCT อายุรกรรมทางเดินอาหาร",
+  "PCT ตา",
+  "PCT กุมารเวชกรรม",
+  "PCT ฉุกเฉิน"
+  ]
+
+const GeneralInfo = ({ Mode, data, setDataFunction,setSingleDataFunction, missingKeys }) => {
+  const [value, setValue] = useState(null);
+  const [inputValue, setInputValue] = useState('');
+  const [tosentvalue, settosentvalue] = useState("select"); // select or textinput
+
+  useEffect(()=>{
+    if(data.pct){
+      if(options.includes(data.pct)){
+        settosentvalue("select");
+        setValue(data.pct);
+      }else{
+        settosentvalue("textinput");
+        setInputValue(data.pct);
+      }
+    }
+  },[])
+
   return (
     <>
+    {console.log("Test : ",value)}
+    {console.log("Test : ",inputValue)}
+    {console.log("Test : ",tosentvalue)}
+    {console.log("------------------")}
+    {console.log("Result",data.pct)}
+    {console.log("------------------")}
+    
       <Box className="TopicHeader">ข้อมูลทั่วไป</Box>
       <div className="GeneralBox" style={{ marginTop: "15px" }}>
         <div className="ContentBox">
@@ -119,7 +156,7 @@ const GeneralInfo = ({ Mode, data, setDataFunction, missingKeys }) => {
             </div>
           </div>
 
-          <div className="ContentRow">
+          <div className="ContentRow" >
             <div
               className=""
               style={{
@@ -130,7 +167,7 @@ const GeneralInfo = ({ Mode, data, setDataFunction, missingKeys }) => {
             >
               PCT ที่เกี่ยวข้อง
             </div>
-            <div className="">
+            <div className="Test">
               {Mode === "Show" ? (
                 <input
                   disabled
@@ -144,7 +181,9 @@ const GeneralInfo = ({ Mode, data, setDataFunction, missingKeys }) => {
                   value={data?.pct}
                 />
               ) : (
-                <select
+                <div style={{width:"245px"}}>
+
+                {/* <select
                   className="SelectInput"
                   id="pct"
                   name="pct"
@@ -152,6 +191,9 @@ const GeneralInfo = ({ Mode, data, setDataFunction, missingKeys }) => {
                   value={data?.pct || null}
                   onChange={(e) => setDataFunction(e, "pct")}
                 >
+                  
+                  
+                  <option value="ไม่ระบุ">ไม่ระบุ</option>
                   <option value="PCT ศัลยกรรม">PCT ศัลยกรรม</option>
                   <option value="PCT สูตินรีเวช-ปริกำเนิด">
                     PCT สูตินรีเวช-ปริกำเนิด
@@ -167,8 +209,31 @@ const GeneralInfo = ({ Mode, data, setDataFunction, missingKeys }) => {
                   <option value="PCT ตา">PCT ตา</option>
                   <option value="PCT กุมารเวชกรรม">PCT กุมารเวชกรรม</option>
                   <option value="PCT ฉุกเฉิน">PCT ฉุกเฉิน</option>
-                  <option value="ไม่ระบุ">ไม่ระบุ</option>
-                </select>
+                  <option value="99">อื่นๆ</option>
+                </select> */}
+                
+                <Autocomplete
+                freeSolo
+                fullWidth
+                value={value}
+                onChange={(event, newValue) => {
+                  setValue(newValue);
+                  settosentvalue("select");
+                  setSingleDataFunction(newValue,"pct")
+                }}
+                inputValue={inputValue}
+                onInputChange={(event, newInputValue) => {
+                  setInputValue(newInputValue);
+                  settosentvalue("textinput");
+                  setSingleDataFunction(newInputValue,"pct")
+                }}
+                options={options}
+                renderInput={(params) => (
+                  <TextField {...params} label="อื่นๆโปรดระบุ" variant="outlined" />
+                )}
+              />
+              </div>
+              
               )}
             </div>
           </div>

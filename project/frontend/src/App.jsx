@@ -13,8 +13,10 @@ import EventOcc from "./components/Occurrence/Event";
 
 import Home from "./view/pages/Home";
 
-import IndexPage from "./components/Occurrence/Dashboard"
+import Dashboard from "./components/Occurrence/Dashboard"
 import Occurrence from "./components/Occurrence/form";
+import Medication from "./components/Medication";
+import MedicationF from "./components/Occurrence/form/medex";
 
 import Usermanager from "./view/admin/Usermanager";
 
@@ -51,11 +53,18 @@ function App() {
             }
           >
             <Route path="/home" element={<Home />} />
-            <Route path="/occurrence" element={<IndexPage />} />
+
+            <Route path="/occurrence" element={<Dashboard />} />
             <Route path="/occurrence/event" element={<EventOcc />} />
             <Route path="/occurrence/:id" element={<Occurrence Mode="Show" />} />
             <Route path="/occurrence/form" element={<Occurrence Mode="Add" />} />
             <Route path="/occurrence/form/:id" element={<Occurrence Mode="Edit" />} />
+
+            <Route path="/medication" element={<Medication />} />
+            <Route path="/medication/:id" element={<MedicationF Mode="Show" />} />
+            <Route path="/medication/form" element={<MedicationF Mode="Add" />} />
+            <Route path="/medication/form/:id" element={<MedicationF Mode="Edit" />} />
+            <Route path="/medication/form/approve/:id" element={<MedicationF Mode="Aprove" />} />
           </Route>
 
           <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>

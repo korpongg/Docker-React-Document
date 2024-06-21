@@ -11,6 +11,7 @@ export const useWebSocket = () => useContext(WebSocketContext);
 export const WebSocketProvider = ({ children }) => {
     const [socket, setSocket] = useState(null);
     const [dataCenter, setDataCenter] = useState([]);
+    const [dataMedic, setDataMedic] = useState([]);
     const [dataEvent, setDataEvent] = useState([]);
     const [load, setLoad] = useState(true);
 
@@ -33,6 +34,7 @@ export const WebSocketProvider = ({ children }) => {
 
 
             setDataCenter(data.report_data || []);
+            setDataMedic(data.medic_data || []);
             setDataEvent(data.event_data || []);
             setLoad(false);
         };
@@ -69,6 +71,7 @@ export const WebSocketProvider = ({ children }) => {
         disconnectWebSocket,
         socket,
         dataCenter,
+        dataMedic,
         dataEvent,
         load
     };

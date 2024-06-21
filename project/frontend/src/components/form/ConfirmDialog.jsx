@@ -7,7 +7,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
-export default function ConfirmDialog({Mode,submitfunction}) {
+export default function ConfirmDialog({Mode,submitfunction,SubmitMode,Lable}) {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -21,7 +21,7 @@ export default function ConfirmDialog({Mode,submitfunction}) {
   return (
     <React.Fragment>
       <Button sx={{fontSize:22,width:180,p:0.25}} variant="contained" color="success" onClick={handleClickOpen}>
-        {Mode==="Add"?"บันทึก":"บันทึกการแก้ไข้"}
+        {Mode==="Add"?Lable:"บันทึกการแก้ไข้"}
       </Button>
       <Dialog
         open={open}
@@ -30,7 +30,7 @@ export default function ConfirmDialog({Mode,submitfunction}) {
           component: 'form',
           onSubmit: (event) => {
             event.preventDefault();
-            submitfunction();
+            submitfunction(SubmitMode);
             // const formData = new FormData(event.currentTarget);
             // const formJson = Object.fromEntries(formData.entries());
             // const email = formJson.email;

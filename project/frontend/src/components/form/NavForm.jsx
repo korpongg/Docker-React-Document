@@ -56,7 +56,10 @@ const NavForm = ({Mode,Access,submitfunction,handleSubmitEdit,Stage,MaxStage,Fir
       Access && (
 
         (Mode==="Add" ?
-        <ConfirmDialog submitfunction={submitfunction} Access={Access} Mode={Mode}/> 
+          <>
+          <ConfirmDialog submitfunction={submitfunction} SubmitMode="Draft" Access={Access} Mode={Mode} Lable="บันทึกแบบร่าง"/> 
+        {/* <ConfirmDialog submitfunction={submitfunction} SubmitMode="Submit" Access={Access} Mode={Mode} Lable="บันทึก"/>  */}
+          </>
         :
         <ConfirmDialog submitfunction={handleSubmitEdit} Access={Access} Mode={Mode}/> ))
       )

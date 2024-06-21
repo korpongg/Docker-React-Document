@@ -53,14 +53,16 @@ exports.createOccurrence = async (req, res) => {
       reportid: reportId, // Assign the generated reportId
     });
 
-    // Get the ID of the newly created occurrence
-    const newOccurrenceId = result.id;
-
     // Send email
-    const emailSubject = "รายงานอุบัติการณ์ เลขที่เอกสาร: " + reportId;
-    const emailMessage = "เลขที่เอกสาร: " + reportId + `<br/><br/>` + "สร้างรายงานสำเร็จ รอตรวจสอบ";
-    const recipientEmail = "qdc@thainakarin.co.th";
-    sendEmail(recipientEmail, newOccurrenceId, emailSubject, emailMessage);
+    if (!req.body.formstatus) {
+      // Get the ID of the newly created occurrence
+      const newOccurrenceId = result.id;
+      const emailSubject = "รายงานอุบัติการณ์ เลขที่เอกสาร: " + reportId;
+      const emailMessage = "เลขที่เอกสาร: " + reportId + `<br/><br/>` + "สร้างรายงานสำเร็จ รอตรวจสอบ";
+      // const recipientEmail = "qdc@thainakarin.co.th";
+      const recipientEmail = "nateetond.l@thainakarin.co.th";
+      sendEmail(recipientEmail, newOccurrenceId, emailSubject, emailMessage);
+    }
 
     executeAndStoreQueryResult();
     res.status(201).json(result);
@@ -308,6 +310,17 @@ exports.updateOccurrence = async (req, res) => {
     console.log(occurrence.toJSON());
 
     const result = await occurrence.save();
+
+    // Send email
+    if (req.body.formstatus === '1') {
+      // Get the ID of the newly created occurrence
+      const reportId = result.reportid;
+      const emailSubject = "รายงานอุบัติการณ์ เลขที่เอกสาร: " + reportId;
+      const emailMessage = "เลขที่เอกสาร: " + reportId + `<br/><br/>` + "สร้างรายงานสำเร็จ รอตรวจสอบ";
+      // const recipientEmail = "qdc@thainakarin.co.th";
+      const recipientEmail = "nateetond.l@thainakarin.co.th";
+      sendEmail(recipientEmail, id, emailSubject, emailMessage);
+    }
 
     executeAndStoreQueryResult();
 

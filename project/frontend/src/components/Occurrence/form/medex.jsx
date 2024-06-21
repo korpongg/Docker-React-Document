@@ -11,22 +11,25 @@ import GeneralInfo from "../../form/GeneralInfo";
 import ReportLog from "../../form/ReportLog";
 import ReportRiskType from "../../form/ReportRiskType";
 import SelectBoxList from "../../form/SelectBoxList";
+import SelectBoxListRCA from "../../form/SelectBoxListRCA";
 import ReportDescription from "../../form/ReportDescription";
 import ReportStaff from "../../form/ReportStaff";
-import ReportSugestions from "../../form/ReportSugestions";
+import ReportSugestionsMed from "../../form/ReportSugestionsMed";
 import NavForm from "../../form/NavForm";
 import ListSelectData from "../../form/ListSelectData";
 
-import DataDict_OccurrenceForm from "../../../data/form/DataDict_OccurrenceForm";
+// import DataDict_OccurrenceForm from "../../../data/form/DataDict_OccurrenceForm";
+import DataDict_MedicationForm from "../../../data/form/DataDict_MedicationForm";
 import DataDict_Risk from "../../../data/form/DataDict_Risk";
-import { OccurrenceStyle } from "../../../styles/OccurrenceStyle.style";
+import DataDict_Med from "../../../data/form/DataDict_Med";
+import { MedicationStyle } from "../../../styles/MedicationStyle.style";
 import departmentRaw from "../../../data/rawData.json";
 import AlertBar from "../../form/AlertBar";
 import { chkAdmins, chkAdmin,TimeConverter } from "../../Function";
 
-const Occurrence = ({ Mode }) => {
+const Medication = ({ Mode }) => {
   let { id } = useParams();
-  const OccType = "Occurrence";
+  const OccType = "Medication";
   const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
   const storedAuth = JSON.parse(localStorage.getItem("auth"));
   const config = {
@@ -54,6 +57,7 @@ const Occurrence = ({ Mode }) => {
       setEditFormData({ ...EditFormData, [name]: Text });
     }
   };
+
   const handleDataChangeSingle = (datavalue, name) => {
     const Text = datavalue;
     setFormData({ ...FormData, [name]: Text });
@@ -86,16 +90,20 @@ const Occurrence = ({ Mode }) => {
   // Get Data For Mode Edit&Show
   const FetchOccurranceById = async () => {
     try {
-      const response = await axios.get(`${apiUrl}/occurrences/${id}`, config);
+      const response = await axios.get(`${apiUrl}/medication/${id}`, config);
 
       if (response.status === 200 || response.status === 201) {
         if (Mode === "Edit") {
           if (isAdmin || UserData.userid === response.data.createby) {
+            // console.log(TimeConverter(response.data.occurrencedate,0))
+            // console.log(TimeConverter(response.data.occurrencedate,-7))
+            // console.log(response.data.occurrencedate)
             setFormData({
               ...response.data,
               userreport: response.data.createby,
               reportdate: TimeConverter(response.data.createAt,-7),
               occurrencedate: TimeConverter(response.data.occurrencedate,-7),
+              // occurrencedate: TimeConverter(response.data.occurrencedate,-7),
               aff: response.data.requestaff,
               faction: response.data.requestfac,
               dep: response.data.requestdep,
@@ -239,6 +247,7 @@ const Occurrence = ({ Mode }) => {
           faction: UserData.faction,
           dep: UserData.dep,
           createby: UserData.userid,
+          // deptrelate:62,
         });
     } else {
       FetchOccurranceById();
@@ -270,28 +279,26 @@ const Occurrence = ({ Mode }) => {
     { key: "gender", name: "เพศ", location: 1 },
     // { key: "dx", name: "Dx.", location: 1 },
     { key: "pct", name: "PCT ที่เกี่ยวข้าง", location: 1 },
-    { key: "reportlocation", name: "สถานที่เกิดเหตุ", location: 1 },
+    // { key: "reportlocation", name: "สถานที่เกิดเหตุ", location: 1 },
+    
     { key: "occurrencedate", name: "วัน-เวลาที่เกิดเหตุการณ์", location: 1 },
     { key: "deptrelate", name: "หน่วยงานที่เกี่ยวข้อง", location: 1 },
     { key: "level", name: "ระดับความเสี่ยง", location: 1 },
     { key: "description", name: "บรรยายสรุปเหตุการณ์ที่เกิดขึ้น", location: 1 },
-    { key: "effectremark", name: "ระบุความเสียหายที่เกิดขึ้น", location: 1 },
-    { key: "impromptusolution", name: "การแก้ปัญหาเฉพาะหน้า", location: 1 },
-    { key: "activefailure", name: "ความคลาดเคลื่อนที่เกิดขึ้น", location: 1 },
-    { key: "suggestion", name: "ข้อเสนอแนะ", location: 1 },
+
+    // { key: "effectremark", name: "ระบุความเสียหายที่เกิดขึ้น", location: 1 },
+    // { key: "impromptusolution", name: "การแก้ปัญหาเฉพาะหน้า", location: 1 },
+    // { key: "activefailure", name: "ความคลาดเคลื่อนที่เกิดขึ้น", location: 1 },
+    // { key: "suggestion", name: "ข้อเสนอแนะ", location: 1 },
+    // { key: "description", name: "บรรยายสรุปเหตุการณ์ที่เกิดขึ้น", location: 1 },
+    // { key: "description", name: "บรรยายสรุปเหตุการณ์ที่เกิดขึ้น", location: 1 },
+    // { key: "description", name: "บรรยายสรุปเหตุการณ์ที่เกิดขึ้น", location: 1 },
   ];
 
-  const keysToCheck = [
-    "equipment",
-    "management",
-    "patientcare",
-    "patientsupport",
-    "safety",
-    "service",
-    "utility",
-  ];
+  const keysToCheck = ["prescribing", "dispensing", "administration"];
+  // const keysToCheck = [];
 
-  const handleSubmit = async (Mode) => {
+  const handleSubmit = async () => {
     const missingKeys = keydata.filter(({ key }) => {
       if (key === "deptrelate") {
         return !(FormData[key] && FormData[key].length);
@@ -305,49 +312,38 @@ const Occurrence = ({ Mode }) => {
       }
       return sum;
     }, 0);
-    if(Mode!=="Draft"){
-      setAlertBorder(missingKeys);
-    };
+    setAlertBorder(missingKeys);
 
-    if (missingKeys.length === 0 || Mode==="Draft") {
-      let submitFormData;
-      if (totalLength > 0 || Mode==="Draft") {
-        submitFormData = {
+    if (missingKeys.length === 0) {
+      if (totalLength >= 0) {
+        const submitFormData = {
           ...FormData,
-          deptrelate: JSON.stringify(FormData.deptrelate),
-          equipment: JSON.stringify(FormData.equipment),
-          management: JSON.stringify(FormData.management),
-          patientcare: JSON.stringify(FormData.patientcare),
-          patientsupport: JSON.stringify(FormData.patientsupport),
-          safety: JSON.stringify(FormData.safety),
-          service: JSON.stringify(FormData.service),
-          utility: JSON.stringify(FormData.utility),
+          prescribing: JSON.stringify(FormData.prescribing),
+          dispensing: JSON.stringify(FormData.dispensing),
+          administration: JSON.stringify(FormData.administration),
+          rca: JSON.stringify(FormData.rca),
+          effect: JSON.stringify(FormData.effect),
+          drugrelate: JSON.stringify(FormData.drugrelate),
           occurrencedate:TimeConverter(FormData.occurrencedate,7),
           reportdate:TimeConverter(FormData.reportdate,7),
-          formstatus:"0"
+          // deptrelate: JSON.stringify(FormData.deptrelate),
         };
-        // if(Mode==="Draft"){
-        //   submitFormData = {
-        //     ...submitFormData,
-        //     formstatus:"0"
-        //   };
-        // }
-        // console.log("submitFormData",submitFormData)
+
+        // console.log("submitFormData", submitFormData);
         try {
           const response = await axios.post(
-            `${apiUrl}/occurrences`,
+            `${apiUrl}/medication`,
             submitFormData,
             { ...config }
           );
           const responseStatus = response.status;
 
           if (responseStatus === 200 || responseStatus === 201) {
-            navigate("/occurrence");
+            navigate("/medication");
           }
         } catch (err) {
           console.error(err);
         }
-
       } else {
         setStage(1);
         setOccStage(0);
@@ -372,80 +368,34 @@ const Occurrence = ({ Mode }) => {
 
   const handleSubmitEdit = async () => {
     // console.log("handleSubmitEdit");
-    const missingKeys = keydata.filter(({ key }) => {
-      if (key === "deptrelate") {
-        return !(FormData[key] && FormData[key].length);
-      } else {
-        return !(key in FormData);
-      }
-    });
-    const totalLength = keysToCheck.reduce((sum, key) => {
-      if (Array.isArray(FormData[key])) {
-        return sum + FormData[key].length;
-      }
-      return sum;
-    }, 0);
-    if(Mode!=="Draft"){
-      setAlertBorder(missingKeys);
+
+    const submitEditFormData = {
+      ...EditFormData,
+      prescribing: JSON.stringify(FormData.prescribing),
+      dispensing: JSON.stringify(FormData.dispensing),
+      administration: JSON.stringify(FormData.administration),
+      rca: JSON.stringify(FormData.rca),
+      effect: JSON.stringify(FormData.effect),
+      drugrelate: JSON.stringify(FormData.drugrelate),
+      updateby: UserData.userid,
     };
-    if (missingKeys.length === 0 || Mode==="Draft") {
-    let submitFormData;
-    if (totalLength > 0 || Mode==="Draft") {
-      submitEditFormData = {
-        ...EditFormData,
-        deptrelate: JSON.stringify(FormData.deptrelate),
-        equipment: JSON.stringify(FormData.equipment),
-        management: JSON.stringify(FormData.management),
-        patientcare: JSON.stringify(FormData.patientcare),
-        patientsupport: JSON.stringify(FormData.patientsupport),
-        safety: JSON.stringify(FormData.safety),
-        service: JSON.stringify(FormData.service),
-        utility: JSON.stringify(FormData.utility),
-        updateby: UserData.userid,
-      };
-      if(Mode==="Draft"){
-        submitFormData = {
-          ...submitFormData,
-          formstatus:"0"
-        };
+
+    // console.log("submitEditFormData", submitEditFormData);
+
+    try {
+      const response = await axios.put(
+        `${apiUrl}/medication`,
+        submitEditFormData,
+        { ...config }
+      );
+      const responseStatus = response.status;
+
+      if (responseStatus === 200 || responseStatus === 201) {
+        navigate("/medication");
       }
-      // console.log("submitEditFormData", submitEditFormData);
-
-      try {
-        const response = await axios.put(
-          `${apiUrl}/occurrences`,
-          submitEditFormData,
-          { ...config }
-        );
-        const responseStatus = response.status;
-
-        if (responseStatus === 200 || responseStatus === 201) {
-          navigate("/occurrence");
-        }
-      } catch (err) {
-        console.error(err);
-      }
-
-    } else {
-      setStage(1);
-      setOccStage(0);
-      setAlertText("ไม่สามารถบันทึกข้อมูลได้ กรุณาเลือกอย่างน้อย 1 หัวข้อ");
-      console.log("ไม่สามารถบันทึกข้อมูลได้ กรุณาเลือกอย่างน้อย 1 หัวข้อ");
-      setAlert(true);
-      scrollToSection("ListSelect");
+    } catch (err) {
+      console.error(err);
     }
-  }else {
-    setStage(missingKeys[0].location);
-    setAlertText(
-      "ไม่สามารถบันทึกข้อมูลได้ โปรดระบุ '" + missingKeys[0].name + "'"
-    );
-    console.log(
-      "Some keys are missing.Cannot submit form data.",
-      missingKeys[0].key
-    );
-    setAlert(true);
-    scrollToSection(missingKeys[0].key);
-  }
   };
 
   const handleScrollToTop = () => {
@@ -464,17 +414,19 @@ const Occurrence = ({ Mode }) => {
 
   return (
     <>
+      {/* {console.log("EditFormData",EditFormData)} */}
       <AlertBar
         open={Alert}
         setOpen={setAlert}
         AlertType={AlertType}
         AlertText={AlertText}
       />
-      <OccurrenceStyle>
+      <MedicationStyle>
         <Box className="FormHeader">
-          {Mode === "Add" && <span>รายงานเหตุการณ์(ใหม่)</span>}
-          {Mode === "Edit" && <span>รายงานเหตุการณ์(แก้ไข)</span>}
-          {Mode === "Show" && <span>รายงานเหตุการณ์</span>}
+          {Mode === "Add" && <span>รายการความคลาดเคลื่อนทางยา(ใหม่)</span>}
+          {Mode === "Edit" && <span>รายการความคลาดเคลื่อนทางยา(แก้ไข)</span>}
+          {Mode === "Show" && <span>รายการความคลาดเคลื่อนทางยา</span>}
+          {Mode === "Approve" && <span>วิเคราะห์รายการความคลาดเคลื่อนทางยา</span>}
 
           <span>
             {Mode !== "Show" && (
@@ -495,15 +447,15 @@ const Occurrence = ({ Mode }) => {
                   Mode={Mode}
                   data={FormData}
                   setDataFunction={handleDataChange}
-                  setSingleDataFunction={handleDataChangeSingle}
                   missingKeys={AlertBorder}
                 />
 
                 <Divider variant="middle" flexItem sx={{ m: 1 }} />
                 <ReportLog
-                  FormType="Occ"
+                  FormType="Med"
                   Mode={Mode}
                   data={FormData}
+                  setSingleDataFunction={handleDataChangeSingle}
                   setDataFunction={handleDataChange}
                   handleDateChange={handleDateChange}
                   handleDataChangeCheckbox={handleDataChangeCheckbox}
@@ -517,7 +469,7 @@ const Occurrence = ({ Mode }) => {
                   data={FormData}
                   setDataFunction={handleDataChange}
                   optionsdata={DataDict_Risk}
-                  datacolumn={["GeneralRisk", "ClinicalRisk"]}
+                  datacolumn={["ClinicalRisk", "ClinicalRisk"]}
                   tocolumn="level"
                   handleDataChangeCheckbox={handleDataChangeCheckbox}
                   handleDataChange={handleDataChange}
@@ -548,13 +500,13 @@ const Occurrence = ({ Mode }) => {
                       value={OccStage}
                       onChange={handleDataOccStageChange}
                     >
-                      <option value={1}>กระบวนการดูแลผู้ป่วย</option>
-                      <option value={2}>ระบบงานสนับสนุนการดูแลผู้ป่วย</option>
-                      <option value={3}>ระบบสาธารณูปโภค / ระบบสำรอง</option>
-                      <option value={4}>ระบบเครื่องมือ / อุปกรณ์</option>
-                      <option value={5}>ความปลอดภัย และสิ่งแวดล้อม</option>
-                      <option value={6}>ระบบงานบริการ</option>
-                      <option value={7}>ระบบบริหารงาน</option>
+                      <option value={1}>
+                        ความคลาดเคลื่อนในการสั่งใช้ยา – คัดลอกยา
+                      </option>
+                      <option value={2}>
+                        ความคลาดเคลื่อนในการจัด – จ่ายยา
+                      </option>
+                      <option value={3}>ความคลาดเคลื่อนในการบริหารยา</option>
                       <option value={0}>-กรุณาเลือกหัวข้อ-</option>
                     </select>
 
@@ -570,12 +522,13 @@ const Occurrence = ({ Mode }) => {
 
                     {OccStage === 1 && (
                       <SelectBoxList
+                        Mode={Mode}
                         data={FormData}
-                        optionsdata={DataDict_OccurrenceForm}
-                        datacolumn="patientcare"
+                        optionsdata={DataDict_MedicationForm}
+                        datacolumn="prescribing"
                         remark={true}
-                        remarkno="199"
-                        remarkcolumn="patientcareremark"
+                        remarkno="4.1.99"
+                        remarkcolumn="prescribingremark"
                         handleDataChangeCheckbox={handleDataChangeCheckbox}
                         handleDataChange={handleDataChange}
                         OccStage={OccStage}
@@ -584,72 +537,26 @@ const Occurrence = ({ Mode }) => {
                     )}
                     {OccStage === 2 && (
                       <SelectBoxList
+                        Mode={Mode}
                         data={FormData}
-                        optionsdata={DataDict_OccurrenceForm}
-                        datacolumn="patientsupport"
+                        optionsdata={DataDict_MedicationForm}
+                        datacolumn="dispensing"
                         remark={true}
-                        remarkno="299"
-                        remarkcolumn="patientsupportremark"
+                        remarkno="4.2.99"
+                        remarkcolumn="dispensingremark"
                         handleDataChangeCheckbox={handleDataChangeCheckbox}
                         handleDataChange={handleDataChange}
                       />
                     )}
                     {OccStage === 3 && (
                       <SelectBoxList
+                        Mode={Mode}
                         data={FormData}
-                        optionsdata={DataDict_OccurrenceForm}
-                        datacolumn="utility"
+                        optionsdata={DataDict_MedicationForm}
+                        datacolumn="administration"
                         remark={true}
-                        remarkno="399"
-                        remarkcolumn="utilityremark"
-                        handleDataChangeCheckbox={handleDataChangeCheckbox}
-                        handleDataChange={handleDataChange}
-                      />
-                    )}
-                    {OccStage === 4 && (
-                      <SelectBoxList
-                        data={FormData}
-                        optionsdata={DataDict_OccurrenceForm}
-                        datacolumn="equipment"
-                        remark={true}
-                        remarkno="499"
-                        remarkcolumn="equipmentremark"
-                        handleDataChangeCheckbox={handleDataChangeCheckbox}
-                        handleDataChange={handleDataChange}
-                      />
-                    )}
-                    {OccStage === 5 && (
-                      <SelectBoxList
-                        data={FormData}
-                        optionsdata={DataDict_OccurrenceForm}
-                        datacolumn="safety"
-                        remark={true}
-                        remarkno="599"
-                        remarkcolumn="safetyremark"
-                        handleDataChangeCheckbox={handleDataChangeCheckbox}
-                        handleDataChange={handleDataChange}
-                      />
-                    )}
-                    {OccStage === 6 && (
-                      <SelectBoxList
-                        data={FormData}
-                        optionsdata={DataDict_OccurrenceForm}
-                        datacolumn="service"
-                        remark={true}
-                        remarkno="699"
-                        remarkcolumn="serviceremark"
-                        handleDataChangeCheckbox={handleDataChangeCheckbox}
-                        handleDataChange={handleDataChange}
-                      />
-                    )}
-                    {OccStage === 7 && (
-                      <SelectBoxList
-                        data={FormData}
-                        optionsdata={DataDict_OccurrenceForm}
-                        datacolumn="management"
-                        remark={true}
-                        remarkno="799"
-                        remarkcolumn="managementremark"
+                        remarkno="4.3.99"
+                        remarkcolumn="administrationremark"
                         handleDataChangeCheckbox={handleDataChangeCheckbox}
                         handleDataChange={handleDataChange}
                       />
@@ -673,22 +580,81 @@ const Occurrence = ({ Mode }) => {
                 />
               </>
             )}
+
             <Divider variant="middle" flexItem sx={{ m: 1 }} />
             {Stage === 1 && (
               <>
-                <ReportStaff
+                <Box className="TopicHeader">ผลลัพธ์ที่เกิดขึ้น</Box>
+                <SelectBoxList
                   Mode={Mode}
                   data={FormData}
-                  setDataFunction={handleDataChange}
-                  setData={handleDataSingleChange}
-                  missingKeys={AlertBorder}
+                  optionsdata={DataDict_Med}
+                  datacolumn="effect"
+                  remark={true}
+                  remarkno="99"
+                  remarkcolumn="effectremark"
+                  handleDataChangeCheckbox={handleDataChangeCheckbox}
+                  handleDataChange={handleDataChange}
                 />
+              </>
+            )}
 
-                <ReportSugestions
+            <Divider variant="middle" flexItem sx={{ m: 1 }} />
+            {Stage === 1 && (
+              <>
+                <Box className="TopicHeader">กลุ่มยาที่เกิดปัญหา</Box>
+                <SelectBoxList
                   Mode={Mode}
                   data={FormData}
-                  setDataFunction={handleDataChange}
-                  missingKeys={AlertBorder}
+                  optionsdata={DataDict_Med}
+                  datacolumn="drugrelate"
+                  remark={true}
+                  remarkno="99"
+                  remarkcolumn="drugremark"
+                  handleDataChangeCheckbox={handleDataChangeCheckbox}
+                  handleDataChange={handleDataChange}
+                />
+              </>
+            )}
+
+            <Divider variant="middle" flexItem sx={{ m: 1 }} />
+
+            {Stage === 1 && (
+              <ReportStaff
+                Mode={Mode}
+                data={FormData}
+                setDataFunction={handleDataChange}
+                setData={handleDataSingleChange}
+                missingKeys={AlertBorder}
+              />
+            )}
+
+            {Mode!=="Add" && isAdmin && Stage === 1 && (
+              <ReportSugestionsMed
+                OccType={OccType}
+                Mode={Mode}
+                data={FormData}
+                setDataFunction={handleDataChange}
+                missingKeys={AlertBorder}
+              />
+            )}
+
+            {Mode!=="Add" && isAdmin && Stage === 1 && (
+              <>
+                <Divider variant="middle" flexItem sx={{ m: 1 }} />
+                <Box className="TopicHeader">
+                  สรุปผลการวิเคราะห์สาเหตุที่แท้จริง (RCA) ของความคลาดเคลื่อน
+                </Box>
+                <SelectBoxListRCA
+                  Mode={Mode}
+                  data={FormData}
+                  optionsdata={DataDict_Med}
+                  datacolumn="rca"
+                  remark={true}
+                  remarkno="999"
+                  remarkcolumn="rcaremark"
+                  handleDataChangeCheckbox={handleDataChangeCheckbox}
+                  handleDataChange={handleDataChange}
                 />
               </>
             )}
@@ -716,9 +682,9 @@ const Occurrence = ({ Mode }) => {
           ToStage={ToStage}
           ClearData={ClearData}
         />
-      </OccurrenceStyle>
+      </MedicationStyle>
     </>
   );
 };
 
-export default Occurrence;
+export default Medication;

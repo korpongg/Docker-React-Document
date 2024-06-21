@@ -7,7 +7,7 @@ import Radio from "@mui/material/Radio";
 import FormGroup from "@mui/material/FormGroup";
 import Checkbox from "@mui/material/Checkbox";
 
-const ReportStaff = ({ Mode, data, setDataFunction, setData }) => {
+const ReportDrug = ({ Mode, data, setDataFunction, setData }) => {
   const [isChecked, setIsChecked] = useState(data?.reportdoc === "0");
   const [isCheckedAcknowledge, setIsCheckedAcknowledge] = useState(
     data?.reportacknowledge === "0"
@@ -129,11 +129,11 @@ const ReportStaff = ({ Mode, data, setDataFunction, setData }) => {
         {isCheckedOther && (
           <TextField
             fullWidth
-            id="otherremark"
+            id="reportotherremark"
             disabled={Mode === "Show"}
             label="อื่นๆ"
-            value={data?.otherremark || ""}
-            onChange={(e) => setDataFunction(e, "otherremark")}
+            value={data?.reportotherremark || ""}
+            onChange={(e) => setDataFunction(e, "reportotherremark")}
             variant="filled"
           />
         )}
@@ -142,4 +142,4 @@ const ReportStaff = ({ Mode, data, setDataFunction, setData }) => {
   );
 };
 
-export default ReportStaff;
+export default ReportDrug;

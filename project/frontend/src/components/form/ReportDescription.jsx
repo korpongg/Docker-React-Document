@@ -3,7 +3,7 @@ import TextField from "@mui/material/TextField";
 import MoveDownIcon from '@mui/icons-material/MoveDown';
 import IconButton from '@mui/material/IconButton';
 
-const ReportDescription = ({ Mode, data, setDataFunction, missingKeys ,UserData,isAdmin,handleReplaceData}) => {
+const ReportDescription = ({ OccType,Mode, data, setDataFunction, missingKeys ,UserData,isAdmin,handleReplaceData}) => {
   return (
     <>
       <div className="TopicHeader">บันทึกรายละเอียด</div>
@@ -37,9 +37,10 @@ const ReportDescription = ({ Mode, data, setDataFunction, missingKeys ,UserData,
             {/* )} */}
             
 {/* <button onClick={()=>handleReplaceData("description","renew")}><MoveDownIcon/></button> */}
-            {Mode==="Edit" && (
+            {Mode!=="Add" && (
               isAdmin && (
                 <>
+                {Mode!=="Show" && 
                 <div style={{width:"100%",textAlign:"left",paddingLeft:"20px"}}>
                   <IconButton aria-label="Replace" onClick={()=>handleReplaceData("description","renew")} size="large">
                     <MoveDownIcon fontSize="small" />
@@ -48,6 +49,7 @@ const ReportDescription = ({ Mode, data, setDataFunction, missingKeys ,UserData,
                     *สำเนา "บรรยายเหตุการณ์" จากต้นฉบับ
                   </span>
                 </div>
+                }
                 <TextField
                   fullWidth
                   id="renew"
@@ -65,26 +67,30 @@ const ReportDescription = ({ Mode, data, setDataFunction, missingKeys ,UserData,
             )}
             
           </div>
-          <div
-            className={
-              missingKeys.some((item) => item.key === "effectremark")
-                ? "AreaBOX SETERRORBOX"
-                : "AreaBOX"
-            }
-          >
-            <TextField
-              fullWidth
-              id="effectremark"
-              disabled={Mode === "Show"}
-              label="ระบุความเสียหายที่เกิดขึ้น"
-              value={data?.effectremark || ""}
-              onChange={(e) => setDataFunction(e, "effectremark")}
-              variant="filled"
-              multiline
-              rows={3}
-              sx={{ marginBottom: 1 }}
-            />
-          </div>
+
+          {OccType==="Occurrence" &&
+            <div
+              className={
+                missingKeys.some((item) => item.key === "effectremark")
+                  ? "AreaBOX SETERRORBOX"
+                  : "AreaBOX"
+              }
+            >
+              <TextField
+                fullWidth
+                id="effectremark"
+                disabled={Mode === "Show"}
+                label="ระบุความเสียหายที่เกิดขึ้น"
+                value={data?.effectremark || ""}
+                onChange={(e) => setDataFunction(e, "effectremark")}
+                variant="filled"
+                multiline
+                rows={3}
+                sx={{ marginBottom: 1 }}
+              />
+            </div>
+          }
+
         </div>
       </div>
     </>

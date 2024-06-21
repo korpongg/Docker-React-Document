@@ -1,8 +1,10 @@
 import React from "react";
 import Divider from "@mui/material/Divider";
 import DataDict_OccurrenceForm from "../../data/form/DataDict_OccurrenceForm";
+import DataDict_MedicationForm from "../../data/form/DataDict_MedicationForm";
 
-const ListSelectData = ({ data, Mode, setOccStage }) => {
+const ListSelectData = ({ OccType,data, Mode, setOccStage }) => {
+  
   function getTopicByKey(key) {
     const section = DataDict_OccurrenceForm[key];
     if (!section) {
@@ -10,28 +12,39 @@ const ListSelectData = ({ data, Mode, setOccStage }) => {
     }
 
     return section.topic;
-  }
+  };
+  function getTopicByKeyMed(key) {
+    const section = DataDict_MedicationForm[key];
+    if (!section) {
+      return `Section with key ${key} not found.`;
+    }
 
+    return section.topic;
+  };
+
+  // if(OccType==="Occurrence"){
+
+  // }
   function getTitleByCode(code) {
     if (code === "199") {
       return data.patientcareremark;
     }
-    if (code === "299") {
+    else if (code === "299") {
       return data.patientsupportremark;
     }
-    if (code === "399") {
+    else if (code === "399") {
       return data.utilityremark;
     }
-    if (code === "499") {
+    else if (code === "499") {
       return data.equipmentremark;
     }
-    if (code === "599") {
+    else if (code === "599") {
       return data.safetyremark;
     }
-    if (code === "699") {
+    else if (code === "699") {
       return data.serviceremark;
     }
-    if (code === "799") {
+    else if (code === "799") {
       return data.managementremark;
     } else {
       for (const key in DataDict_OccurrenceForm) {
@@ -45,17 +58,40 @@ const ListSelectData = ({ data, Mode, setOccStage }) => {
       }
     }
     return `Title with code ${code} not found.`;
-  }
+  };
 
-  function sumLengths(data, keyMapping) {
-    let sum = 0;
-    keyMapping.forEach((key) => {
-      if (data[key]) {
-        sum += data[key].length;
+  function getTitleByCodeMed(code) {
+    if (code === "4.1.99") {
+      return data.prescribingremark;
+    }
+    else if (code === "4.2.99") {
+      return data.dispensingremark;
+    }
+    else if (code === "4.3.99") {
+      return data.administrationremark;
+    } else {
+      for (const key in DataDict_MedicationForm) {
+        const section = DataDict_MedicationForm[key];
+        const option = section.options.find(
+          (option) => option.code === code
+        );
+        if (option) {
+          return option.title;
+        }
       }
-    });
-    return sum;
-  }
+    }
+    return `Title with code ${code} not found.`;
+  };
+
+  // function sumLengths(data, keyMapping) {
+  //   let sum = 0;
+  //   keyMapping.forEach((key) => {
+  //     if (data[key]) {
+  //       sum += data[key].length;
+  //     }
+  //   });
+  //   return sum;
+  // }
 
   const KeyMapping = [
     "patientcare",
@@ -65,6 +101,12 @@ const ListSelectData = ({ data, Mode, setOccStage }) => {
     "safety",
     "service",
     "management",
+  ];
+
+  const KeyMappingMed = [
+    "prescribing",
+    "dispensing",
+    "administration",
   ];
 
   return (
@@ -102,7 +144,7 @@ const ListSelectData = ({ data, Mode, setOccStage }) => {
             หัวข้อ
           </div>
         </div>
-        {KeyMapping.map((KeyM, KeyMindex) => (
+        {OccType==="Occurrence" && KeyMapping.map((KeyM, KeyMindex) => (
           <React.Fragment key={KeyMindex}>
             {data[KeyM] && data[KeyM].length > 0 && (
               <>
@@ -112,6 +154,7 @@ const ListSelectData = ({ data, Mode, setOccStage }) => {
                       className="ListSelectTable_Row"
                       onClick={() => setOccStage(parseInt(row[0], 10))}
                     >
+                      {/* {console.log(row[0])} */}
                       <div
                         className="ListSelectTable_Cell"
                         style={{
@@ -150,6 +193,64 @@ const ListSelectData = ({ data, Mode, setOccStage }) => {
                         }}
                       >
                         {getTopicByKey(KeyM)}
+                      </div>
+                    </div>
+                  </React.Fragment>
+                ))}
+              </>
+            )}
+          </React.Fragment>
+        ))}
+
+        {OccType==="Medication" && KeyMappingMed.map((KeyM, KeyMindex) => (
+          <React.Fragment key={KeyMindex}>
+            {data[KeyM] && data[KeyM].length > 0 && (
+              <>
+                {data[KeyM].map((row, subKeyMindex) => (
+                  <React.Fragment key={subKeyMindex}>
+                    <div
+                      className="ListSelectTable_Row"
+                      onClick={() => setOccStage(parseFloat(row[2], 10))}
+                    >
+                      {/* {console.log(row)} */}
+                      <div
+                        className="ListSelectTable_Cell"
+                        style={{
+                          width: 300,
+                          color: Mode === "Show" && "#00000050",
+                        }}
+                      >
+                        {row}
+                      </div>
+                      <Divider
+                        orientation="vertical"
+                        variant="middle"
+                        flexItem
+                        sx={{ m: 0.5 }}
+                      />
+                      <div
+                        className="ListSelectTable_Cell"
+                        style={{
+                          textAlign: "left",
+                          color: Mode === "Show" && "#00000050",
+                        }}
+                      >
+                        {getTitleByCodeMed(row)}
+                      </div>
+                      <Divider
+                        orientation="vertical"
+                        variant="middle"
+                        flexItem
+                        sx={{ m: 0.5 }}
+                      />
+                      <div
+                        className="ListSelectTable_Cell"
+                        style={{
+                          width: 600,
+                          color: Mode === "Show" && "#00000050",
+                        }}
+                      >
+                        {getTopicByKeyMed(KeyM)}
                       </div>
                     </div>
                   </React.Fragment>

@@ -488,3 +488,9 @@ export function getCurrentDateNoT(date) {
   
   return `${year}-${month}-${day} ${hours}:${minutes}`;
 }
+
+export function TimeConverter(date,hours) {
+  const currentDate = new Date(date);
+  currentDate.setHours(currentDate.getHours() + hours);
+  return currentDate;
+}

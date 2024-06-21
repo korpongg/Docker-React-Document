@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useWebSocket } from '../../../context/WebSocketContext';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import Swal from 'sweetalert2';
+import { useWebSocket } from "../../../context/WebSocketContext";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import Swal from "sweetalert2";
 
 import { chkAdmins, chkAdmin } from "../../Function";
 import DataTable from "./DataTable";
@@ -27,8 +31,8 @@ const Dashboard = () => {
   const [rowData, setRowData] = useState(null);
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [isCloseIncidentDialogOpen, setCloseIncidentDialogOpen] = useState(false);
-  const [closeReason, setCloseReason] = useState('');
-  const [closeComment, setCloseComment] = useState('');
+  const [closeReason, setCloseReason] = useState("");
+  const [closeComment, setCloseComment] = useState("");
 
   useEffect(() => {
     connectWebSocket();
@@ -48,11 +52,11 @@ const Dashboard = () => {
           setDashboard(dataCenter);
           setEventData(dataEvent);
         } else {
-          const filteredData = dataCenter.filter(item => item.requestaff === userData.affiliation);
+          const filteredData = dataCenter.filter((item) => item.requestaff === userData.affiliation);
           setDashboard(filteredData);
         }
       } else {
-        const filteredData = dataCenter.filter(item => item.requestaff === userData.affiliation && item.requestdep === userData.dep);
+        const filteredData = dataCenter.filter((item) =>item.requestaff === userData.affiliation &&item.requestdep === userData.dep);
         setDashboard(filteredData);
       }
       setLoading(false);
@@ -83,30 +87,36 @@ const Dashboard = () => {
 
   const handleConfirmClose = async () => {
     if (!closeReason) {
-      Swal.fire('ผิดพลาด', 'กรุณาเลือกสถานะอุบัติการณ์', 'error');
+      Swal.fire("ผิดพลาด", "กรุณาเลือกสถานะอุบัติการณ์", "error");
       return;
     }
-    if (closeReason === '5' && !closeComment) {
-      Swal.fire('ผิดพลาด', 'กรุณาใส่ความคิดเห็นเมื่อเลือก "ไม่ใช่อุบัติการณ์"', 'error');
+    if (closeReason === "5" && !closeComment) {
+      Swal.fire(
+        "ผิดพลาด",
+        'กรุณาใส่ความคิดเห็นเมื่อเลือก "ไม่ใช่อุบัติการณ์"',
+        "error"
+      );
       return;
     }
 
     try {
       const payload = { id: rowData.id, formstatus: closeReason };
-      if (closeReason === '5') {
+      if (closeReason === "5") {
         payload.comment = closeComment;
       }
 
-      const response = await axios.put(`${apiUrl}/occurrences`, payload, { ...config });
+      const response = await axios.put(`${apiUrl}/occurrences`, payload, {
+        ...config,
+      });
       console.log(response.data);
-      Swal.fire('สำเร็จ', 'แก้ไขสถานะอุบัติการณ์เรียบร้อยแล้ว', 'success');
+      Swal.fire("สำเร็จ", "แก้ไขสถานะอุบัติการณ์เรียบร้อยแล้ว", "success");
 
       setCloseIncidentDialogOpen(false);
       setCloseComment("");
       setCloseReason("");
     } catch (error) {
       console.error(error);
-      Swal.fire('ผิดพลาด', 'เกิดข้อผิดพลาดในการแก้ไขสถานะอุบัติการณ์', 'error');
+      Swal.fire("ผิดพลาด", "เกิดข้อผิดพลาดในการแก้ไขสถานะอุบัติการณ์", "error");
     }
   };
 
@@ -137,25 +147,32 @@ const Dashboard = () => {
 
   const handleDeleteClick = async (id) => {
     const result = await Swal.fire({
-      title: 'ยืนยันยกเลิกรายการ?',
+      title: "ยืนยันยกเลิกรายการ?",
       text: "คุณจะไม่สามารถย้อนกลับสิ่งนี้ได้!",
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'ยืนยัน',
-      cancelButtonText: 'ปิด'
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ยืนยัน",
+      cancelButtonText: "ปิด",
     });
 
     if (result.isConfirmed) {
       try {
-        const response = await axios.delete(`${apiUrl}/occurrences/${id}`, config);
+        const response = await axios.delete(
+          `${apiUrl}/occurrences/${id}`,
+          config
+        );
         if (response.status === 200 || response.status === 201) {
-          Swal.fire('สำเร็จ!', 'ยกเลิกรายการเรียบร้อย.', 'success');
+          Swal.fire("สำเร็จ!", "ยกเลิกรายการเรียบร้อย.", "success");
         }
       } catch (error) {
         console.error("ไม่สามารถทำการยกเลิกรายการได้:", error);
-        Swal.fire('พบข้อผิดพลาด!', 'ไม่สามารถทำการยกเลิกรายการได้, กรุณาลองอีกครั้ง.', 'error');
+        Swal.fire(
+          "พบข้อผิดพลาด!",
+          "ไม่สามารถทำการยกเลิกรายการได้, กรุณาลองอีกครั้ง.",
+          "error"
+        );
       }
     }
   };
@@ -168,6 +185,48 @@ const Dashboard = () => {
   return (
     <DashboardBox>
       <h1>รายงานอุบัติการณ์</h1>
+
+      <div>
+        <Accordion>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1-content"
+            id="panel1-header"
+          >
+            Accordion 1
+          </AccordionSummary>
+          <AccordionDetails>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
+            malesuada lacus ex, sit amet blandit leo lobortis eget.
+          </AccordionDetails>
+        </Accordion>
+        <Accordion>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel2-content"
+            id="panel2-header"
+          >
+            Accordion 2
+          </AccordionSummary>
+          <AccordionDetails>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
+            malesuada lacus ex, sit amet blandit leo lobortis eget.
+          </AccordionDetails>
+        </Accordion>
+        <Accordion defaultExpanded>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel3-content"
+            id="panel3-header"
+          >
+            Accordion Actions
+          </AccordionSummary>
+          <AccordionDetails>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
+            malesuada lacus ex, sit amet blandit leo lobortis eget.
+          </AccordionDetails>
+        </Accordion>
+      </div>
 
       <DataTable
         data={dashboard}

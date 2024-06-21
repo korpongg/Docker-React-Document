@@ -36,7 +36,7 @@ const SubmitForm_Medication = {
   effect:null,
   effectremark:"",
   drugrelate:null,
-  drugrelateremark:"",
+  drugremark:"",
   //
   userreport:"",
   approvereportby:"",

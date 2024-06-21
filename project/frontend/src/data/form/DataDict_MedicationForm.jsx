@@ -84,12 +84,6 @@ const DataDict_MedicationForm = {
           title: "สั่งจ่ายยาที่ไม่มีจำหน่ายใน รพ.",
           status: false,
         },
-        {
-          code: "4.1.17",
-          title: "Remark",
-          status: false,
-          remark: "",
-        },
       ],
     },
     dispensing: {
@@ -190,15 +184,9 @@ const DataDict_MedicationForm = {
           title: "ให้ข้อมูลในการใช้ / เก็บรักษายาผิดพลาด, ไม่ชัดเจน",
           status: false,
         },
-        {
-          code: "4.2.20",
-          title: "Remark",
-          status: false,
-          remark: "",
-        },
       ],
     },
-    Administration: {
+    administration: {
       topic: "ความคลาดเคลื่อนในการบริหารยา (Administration Errors)",
       options: [
         {
@@ -298,12 +286,6 @@ const DataDict_MedicationForm = {
           title:
             "บันทึกการให้ยาผู้ป่วยผิดพลาด / ไม่ได้บันทึก / บันทึกไม่ชัดเจน",
           status: false,
-        },
-        {
-          code: "4.3.20",
-          title: "Remark",
-          status: false,
-          remark: "",
         },
       ],
     },
