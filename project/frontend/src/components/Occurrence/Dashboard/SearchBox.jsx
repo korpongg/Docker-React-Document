@@ -45,6 +45,13 @@ const SearchBox = ({reportNo, setReportNo, hn, setHn, startDate, setStartDate, e
     setEndDate(e.target.value);
   };
 
+  const getMinEndDate = () => {
+    if (!startDate) return "";
+    const date = new Date(startDate);
+    date.setDate(date.getDate() + 1);
+    return date.toISOString().split("T")[0];
+  };
+
   return (
     <>
       <SearchContainer>
@@ -104,6 +111,9 @@ const SearchBox = ({reportNo, setReportNo, hn, setHn, startDate, setStartDate, e
                 variant="outlined"
                 InputLabelProps={{
                   shrink: true
+                }}
+                inputProps={{
+                  min: getMinEndDate(), // Set min date to startDate + 1
                 }}
                 // InputProps={{
                 //   inputProps: {

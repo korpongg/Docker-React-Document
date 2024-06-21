@@ -47,9 +47,41 @@ const Dashboard = () => {
   }, []);
 
   const filterDataSearch = (rowData) => {
+    const OccurrenceDate = new Date(rowData.occurrencedate);
+
+    const parseDate = (dateStr, endOfDay = false) => {
+      const [day, month, year] = dateStr.split('/');
+      const date = new Date(`${year}-${month}-${day}`);
+      if (endOfDay) {
+        date.setHours(23, 59, 59, 999); // Set time to 23:59:59 for end date
+      } else {
+        date.setHours(0, 0, 0, 0); // Set time to 00:00:00 for start date
+      }
+      return date;
+    };
+
+    const startDateObj = startDate ? parseDate(startDate) : null;
+    const endDateObj = endDate ? parseDate(endDate, true) : null;
+  
+    // Helper function to format date as "YYYY-MM-DD"
+    const formatDate = (date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+  
+    const isSameDate = (date1, date2) => {
+      return formatDate(date1) === formatDate(date2);
+    };
+  
+    const isStartDateValid = startDateObj ? isSameDate(OccurrenceDate, startDateObj) : true;
+    const isBetweenDates = startDateObj && endDateObj ? OccurrenceDate >= startDateObj && OccurrenceDate <= endDateObj : true;
+
     return (
       (reportNo === "" || rowData.reportid === reportNo) &&
       (hn === "" || rowData.hn === hn) &&
+      (startDateObj && endDateObj ? isBetweenDates : isStartDateValid) &&
       (depSelect.length === 0 || depSelect.includes(rowData.deptrelate)) &&
       (incidentType === "0" || rowData.reporttypename === incidentType)
     );
@@ -194,6 +226,10 @@ const Dashboard = () => {
     setRowData(null);
     setDialogOpen(false);
   };
+
+  console.log(startDate);
+  console.log(endDate);
+  console.log(dashboard);
 
   return (
     <DashboardBox>
