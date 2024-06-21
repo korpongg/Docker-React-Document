@@ -11,7 +11,7 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
-const SearchBox = ({reportNo, setReportNo, hn, setHn, startDate, setStartDate, endDate, setEndDate, setDepSelect, incidentType, setRiskLevel }) => {
+const SearchBox = ({reportNo, setReportNo, hn, setHn, startDate, setStartDate, endDate, setEndDate, setDepSelect, incidentType, setIncidentType }) => {
   const [departmentData, setDepartmentData] = useState([]);
   
   const fetchDeptData = useCallback(async () => {
@@ -154,7 +154,7 @@ const SearchBox = ({reportNo, setReportNo, hn, setHn, startDate, setStartDate, e
                 <InputLabel>ประเภทอุบัติการณ์</InputLabel>
                 <Select
                   value={incidentType}
-                  onChange={(e) => setRiskLevel(e.target.value)}
+                  onChange={(e) => setIncidentType(e.target.value)}
                   label="ประเภทอุบัติการณ์"
                 >
                     <MenuItem value="0">แสดงผลทั้งหมด</MenuItem>
