@@ -128,7 +128,7 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
             />
           </Tooltip>
           
-          {isAdmin && (row.reporttypename==='General Risk' ? (parseInt(row.level,10)>2) : (row.level>"C")) && (row.formstatus === '1' || row.formstatus === '2' || row.formstatus === '4') && (
+          {isAdmin && (row.reporttypename==='General Risk' ? (parseInt(row.level, 10) > 2) : (row.level > "C")) && (row.formstatus === '1' || row.formstatus === '2' || row.formstatus === '4') && (
             <Tooltip title={row.formstatus === '1' || row.formstatus === '4' ? 'ส่งต่อรายงาน' : 'ดูรายงานส่งต่อ'}>
               <GridActionsCellItem
                 icon={row.formstatus === '1' || row.formstatus === '4' ? <RotateIcon /> : <ViewIcon />}

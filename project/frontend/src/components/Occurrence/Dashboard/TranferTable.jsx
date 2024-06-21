@@ -30,7 +30,6 @@ const EditToolbar = ({ reportData, handleAddEvent }) => (
 
 function ExpandableCell({ value }) {
   const [expanded, setExpanded] = React.useState(false);
-
   return (
     <>
       {value && (
@@ -293,18 +292,10 @@ const TranferTable = ({ reportData, dataEvent, isAdmin, userData, config, loadin
         localeText={{ toolbarColumns: "คอลัมน์", toolbarFilters: "ตัวกรอง", toolbarDensity: "ระยะห่าง", toolbarExport: "ส่งออก" }}
         loading={loading}
         sx={{
-          '&.MuiDataGrid-root--densityCompact .MuiDataGrid-cell': {
-            py: 1,
-          },
-          '&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell': {
-            py: '15px',
-          },
-          '&.MuiDataGrid-root--densityComfortable .MuiDataGrid-cell': {
-            py: '22px',
-          },
-          '& .MuiDataGrid-cell': {
-            alignItems: 'flex-start',
-          },
+          '&.MuiDataGrid-root--densityCompact .MuiDataGrid-cell': { py: 1 },
+          '&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell': { py: '15px' },
+          '&.MuiDataGrid-root--densityComfortable .MuiDataGrid-cell': { py: '22px' },
+          '& .MuiDataGrid-cell': { alignItems: 'flex-start' },
         }}
       />
 

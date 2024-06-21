@@ -9,7 +9,7 @@ const TranferDialog = ({ userData, config, isAdmin, rowData, eventData, isDialog
     const [loading, setLoading] = useState(true);
 
     const fetchData = useCallback(async () => {
-        if (isDialogOpen && reportID) {
+        if (isDialogOpen && reportID && eventData.length > 0) {
             setLoading(true);
             const filteredData = eventData.filter(item => item.reportid === reportID);
             setFilterData(filteredData);
