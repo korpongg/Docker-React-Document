@@ -11,9 +11,9 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
-const SearchBox = ({reportNo, setReportNo, hn, setHn, startDate, setStartDate, endDate, setEndDate, setDepSelect, incidentType, setIncidentType }) => {
+const SearchBox = ({ reportNo, setReportNo, hn, setHn, startDate, setStartDate, endDate, setEndDate, setDepSelect, incidentType, setIncidentType }) => {
   const [departmentData, setDepartmentData] = useState([]);
-  
+
   const fetchDeptData = useCallback(async () => {
     let response;
     try {
@@ -23,7 +23,7 @@ const SearchBox = ({reportNo, setReportNo, hn, setHn, startDate, setStartDate, e
       console.error("Error fetching departments:", error);
     }
   }, [apiUrl]);
-  
+
   useEffect(() => {
     fetchDeptData();
   }, []);
@@ -57,7 +57,7 @@ const SearchBox = ({reportNo, setReportNo, hn, setHn, startDate, setStartDate, e
       <SearchContainer>
         <Grid2 container spacing={2}>
           <Grid2 container xs={12} md={6} align="center" justify="center" alignItems="center">
-            <Grid2 xs={4} style={{textAlign: "right"}}>เลขที่เอกสาร</Grid2>
+            <Grid2 xs={4} style={{ textAlign: "right" }}>เลขที่เอกสาร</Grid2>
             <Grid2 xs={8}>
               <TextField
                 id="reportNo"
@@ -133,7 +133,7 @@ const SearchBox = ({reportNo, setReportNo, hn, setHn, startDate, setStartDate, e
                   id="checkboxes-deps"
                   options={departmentData}
                   onChange={(event, newValue) => {
-                    const selectedIds = newValue.map(option => option.id);
+                    const selectedIds = newValue.map((option) => option.id);
                     setDepSelect(selectedIds);
                   }}
                   disableCloseOnSelect
@@ -167,9 +167,9 @@ const SearchBox = ({reportNo, setReportNo, hn, setHn, startDate, setStartDate, e
                   onChange={(e) => setIncidentType(e.target.value)}
                   label="ประเภทอุบัติการณ์"
                 >
-                    <MenuItem value="0">แสดงผลทั้งหมด</MenuItem>
-                    <MenuItem value="Clinical Risk">Clinical Risk</MenuItem>
-                    <MenuItem value="General Risk">General Risk</MenuItem>
+                  <MenuItem value="0">แสดงผลทั้งหมด</MenuItem>
+                  <MenuItem value="Clinical Risk">Clinical Risk</MenuItem>
+                  <MenuItem value="General Risk">General Risk</MenuItem>
                 </Select>
               </FormControl>
             </Grid2>

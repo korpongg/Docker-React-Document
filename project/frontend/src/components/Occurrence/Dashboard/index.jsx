@@ -12,6 +12,14 @@ import CloseIncidentDialog from "./CloseIncidentDialog";
 
 import { DashboardBox } from "../../../styles/Dashboard.style";
 
+import { createGlobalStyle } from "styled-components";
+
+export const GlobalStyle = createGlobalStyle`
+  * {
+    font-family: 'Prompt', sans-serif !important;
+  }
+`;
+
 const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
 const Dashboard = () => {
@@ -232,58 +240,61 @@ const Dashboard = () => {
   console.log(dashboard);
 
   return (
-    <DashboardBox>
-      <h1>รายงานอุบัติการณ์</h1>
+    <>
+      <GlobalStyle />
+      <DashboardBox>
+        <h1>รายงานอุบัติการณ์</h1>
 
-      <SearchBox
-        reportNo={reportNo}
-        setReportNo={setReportNo}
-        hn={hn}
-        setHn={setHn}
-        startDate={startDate}
-        setStartDate={setStartDate}
-        endDate={endDate}
-        setEndDate={setEndDate}
-        setDepSelect={setDepSelect}
-        incidentType={incidentType}
-        setIncidentType={setIncidentType}
-      />
+        <SearchBox
+          reportNo={reportNo}
+          setReportNo={setReportNo}
+          hn={hn}
+          setHn={setHn}
+          startDate={startDate}
+          setStartDate={setStartDate}
+          endDate={endDate}
+          setEndDate={setEndDate}
+          setDepSelect={setDepSelect}
+          incidentType={incidentType}
+          setIncidentType={setIncidentType}
+        />
 
-      <DataTable
-        data={dashboard}
-        isAdmin={isAdmin}
-        isEXEC={isEXEC}
-        userData={userData}
-        handleAddItem={handleAddItem}
-        handleViewClick={handleViewClick}
-        handleTranfClick={handleTranfClick}
-        handleCloseClick={handleCloseClick}
-        handleEditClick={handleEditClick}
-        handleDeleteClick={handleDeleteClick}
-        loading={loading}
-      />
+        <DataTable
+          data={dashboard}
+          isAdmin={isAdmin}
+          isEXEC={isEXEC}
+          userData={userData}
+          handleAddItem={handleAddItem}
+          handleViewClick={handleViewClick}
+          handleTranfClick={handleTranfClick}
+          handleCloseClick={handleCloseClick}
+          handleEditClick={handleEditClick}
+          handleDeleteClick={handleDeleteClick}
+          loading={loading}
+        />
 
-      <TranferDialog
-        userData={userData}
-        config={config}
-        isAdmin={isAdmin}
-        rowData={rowData}
-        eventData={eventData}
-        setEventData={setEventData}
-        isDialogOpen={isDialogOpen}
-        handleCloseDialog={handleCloseDialog}
-      />
+        <TranferDialog
+          userData={userData}
+          config={config}
+          isAdmin={isAdmin}
+          rowData={rowData}
+          eventData={eventData}
+          setEventData={setEventData}
+          isDialogOpen={isDialogOpen}
+          handleCloseDialog={handleCloseDialog}
+        />
 
-      <CloseIncidentDialog
-        isOpen={isCloseIncidentDialogOpen}
-        closeReason={closeReason}
-        setCloseReason={setCloseReason}
-        closeComment={closeComment}
-        setCloseComment={setCloseComment}
-        handleConfirmClose={handleConfirmClose}
-        handleCloseDialog={() => setCloseIncidentDialogOpen(false)}
-      />
-    </DashboardBox>
+        <CloseIncidentDialog
+          isOpen={isCloseIncidentDialogOpen}
+          closeReason={closeReason}
+          setCloseReason={setCloseReason}
+          closeComment={closeComment}
+          setCloseComment={setCloseComment}
+          handleConfirmClose={handleConfirmClose}
+          handleCloseDialog={() => setCloseIncidentDialogOpen(false)}
+        />
+      </DashboardBox>
+    </>
   );
 };
 
