@@ -235,10 +235,6 @@ const Dashboard = () => {
     setDialogOpen(false);
   };
 
-  console.log(startDate);
-  console.log(endDate);
-  console.log(dashboard);
-
   return (
     <>
       <GlobalStyle />
