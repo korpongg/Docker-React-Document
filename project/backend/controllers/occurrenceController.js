@@ -59,8 +59,8 @@ exports.createOccurrence = async (req, res) => {
       const newOccurrenceId = result.id;
       const emailSubject = "รายงานอุบัติการณ์ เลขที่เอกสาร: " + reportId;
       const emailMessage = "เลขที่เอกสาร: " + reportId + `<br/><br/>` + "สร้างรายงานสำเร็จ รอตรวจสอบ";
-      // const recipientEmail = "qdc@thainakarin.co.th";
-      const recipientEmail = "nateetond.l@thainakarin.co.th";
+      const recipientEmail = "qdc@thainakarin.co.th";
+      // const recipientEmail = "nateetond.l@thainakarin.co.th";
       sendEmail(recipientEmail, newOccurrenceId, emailSubject, emailMessage);
     }
 
@@ -317,8 +317,8 @@ exports.updateOccurrence = async (req, res) => {
       const reportId = result.reportid;
       const emailSubject = "รายงานอุบัติการณ์ เลขที่เอกสาร: " + reportId;
       const emailMessage = "เลขที่เอกสาร: " + reportId + `<br/><br/>` + "สร้างรายงานสำเร็จ รอตรวจสอบ";
-      // const recipientEmail = "qdc@thainakarin.co.th";
-      const recipientEmail = "nateetond.l@thainakarin.co.th";
+      const recipientEmail = "qdc@thainakarin.co.th";
+      // const recipientEmail = "nateetond.l@thainakarin.co.th";
       sendEmail(recipientEmail, id, emailSubject, emailMessage);
     }
 
