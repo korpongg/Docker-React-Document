@@ -38,7 +38,7 @@ const Occurrences = sequelize.define('Occurrences', {
   },
   reportlocation: {
     type: DataTypes.TEXT,
-    allowNull: false
+    allowNull: true
   },
   // reportdate: {
   //   type: DataTypes.DATEONLY,
@@ -46,7 +46,7 @@ const Occurrences = sequelize.define('Occurrences', {
   // },
   occurrencedate: {
     type: DataTypes.DATE,
-    allowNull: false
+    allowNull: true
   },
   // affrelate: {
   //   type: DataTypes.STRING(100),
@@ -54,15 +54,15 @@ const Occurrences = sequelize.define('Occurrences', {
   // },
   deptrelate: {
     type: DataTypes.STRING(100),
-    allowNull: false
+    allowNull: true
   },
   reporttype: {
     type: DataTypes.STRING(1),
-    allowNull: false
+    allowNull: true
   },
   type: {
     type: DataTypes.STRING(3),
-    allowNull: false
+    allowNull: true
   },
   acceptdate: {
     type: DataTypes.DATE,
@@ -138,11 +138,11 @@ const Occurrences = sequelize.define('Occurrences', {
   },
   level: {
     type: DataTypes.STRING(1),
-    allowNull: false
+    allowNull: true
   },
   description: {
     type: DataTypes.TEXT,
-    allowNull: false
+    allowNull: true
   },
   renew: {
     type: DataTypes.TEXT,
@@ -150,7 +150,7 @@ const Occurrences = sequelize.define('Occurrences', {
   },
   effectremark: {
     type: DataTypes.TEXT,
-    allowNull: false
+    allowNull: true
   },
   reportdoc: {
     type: DataTypes.STRING(1),

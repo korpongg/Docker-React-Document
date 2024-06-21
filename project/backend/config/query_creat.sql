@@ -130,17 +130,17 @@ CREATE TABLE [occurrences](
 	[an] [nvarchar](20) NULL,						-- AN
 	[age] [nvarchar](20) NULL,						-- อายุ
 	[gender] [nvarchar](20) NULL,					-- เพศ
-    [dx] NVARCHAR(MAX) NULL,						-- Dx
-    [pct] NVARCHAR(MAX) NULL,						-- PCT ที่เกี่ยวข้อง
-
-    [reportlocation] NVARCHAR(MAX) NOT NULL,		-- สถานที่เกิดเหตุ
+	[dx] NVARCHAR(MAX) NULL,						-- Dx
+	[pct] NVARCHAR(MAX) NULL,						-- PCT ที่เกี่ยวข้อง
+	
+	[reportlocation] NVARCHAR(MAX) NULL,		-- สถานที่เกิดเหตุ
 	-- [reportdate] [date] NOT NULL,
-	[occurrencedate] [datetime] NOT NULL,			-- วัน-เวลาที่เกิดเหตุการณ์
-    -- [affrelate] NVARCHAR(100) NOT NULL,
-    [deptrelate] NVARCHAR(100) NOT NULL,			-- หน่วยงานที่เกี่ยวข้อง
+	[occurrencedate] [datetime] NULL,			-- วัน-เวลาที่เกิดเหตุการณ์
+	-- [affrelate] NVARCHAR(100) NOT NULL,
+	[deptrelate] NVARCHAR(100) NULL,			-- หน่วยงานที่เกี่ยวข้อง
 
-	[reporttype] [nvarchar](1) NOT NULL,			-- ประเภทอุบัติการณ์	General Risk, Clinical Risk
-	[type] NVARCHAR(3) NOT NULL,					-- ประเภทอุบัติการณ์	OPD, IPD
+	[reporttype] [nvarchar](1) NULL,			-- ประเภทอุบัติการณ์	General Risk, Clinical Risk
+	[type] NVARCHAR(3) NULL,					-- ประเภทอุบัติการณ์	OPD, IPD
 
 	[acceptdate] [datetime] NULL,					-- วันที่รับเรื่อง (ยังไม่ได้ใช้งาน)
 	[responsedate] [datetime] NULL,					-- วันที่รับคืน (ยังไม่ได้ใช้งาน)
@@ -162,20 +162,20 @@ CREATE TABLE [occurrences](
 	[management] NVARCHAR(MAX) NULL,				-- 7. ระบบบริหารงาน
 	[managementremark] NVARCHAR(MAX) NULL,			-- 7- อื่นๆ
 
-	[level] [nvarchar](1) NOT NULL,					-- ระดับความรุนแรงของเหตุการณ์
-	[description] NVARCHAR(MAX) NOT NULL,			-- บรรยายสรุปเหตุการณ์ (เกิดเหตุการณ์อะไร เกิดที่ไหน เกิดเมื่อไหร่ ใครคือผู้เกี่ยวข้อง เกี่ยวข้องอย่างไร)
+	[level] [nvarchar](1) NULL,					-- ระดับความรุนแรงของเหตุการณ์
+	[description] NVARCHAR(MAX) NULL,			-- บรรยายสรุปเหตุการณ์ (เกิดเหตุการณ์อะไร เกิดที่ไหน เกิดเมื่อไหร่ ใครคือผู้เกี่ยวข้อง เกี่ยวข้องอย่างไร)
 	[renew] NVARCHAR(MAX) NULL,						-- สรุปรายละเอียดเหตุการณ์ by HA 
-	[effectremark] NVARCHAR(MAX) NOT NULL,			-- ระบุความเสียหายที่เกิดขึ้น
+	[effectremark] NVARCHAR(MAX) NULL,			-- ระบุความเสียหายที่เกิดขึ้น
 
 	[reportdoc] [nvarchar](1) NULL,					-- รายงานแพทย์
-    [docname] NVARCHAR(100) NULL,					-- ชื่อแพทย์
+	[docname] NVARCHAR(100) NULL,					-- ชื่อแพทย์
 
 	[medicalrecorded] [nvarchar](1) NULL,			-- การบันทึก เวชระเบียน
 
 	[reportacknowledge] [nvarchar](1) NULL,			-- รายงานหัวหน้าแผนก / ผู้จัดการฝ่าย / ผู้ตรวจการพยาบาล รับทราบ
 
 	[reportother] [nvarchar](1) NULL,				-- อื่นๆ
-    [otherremark] NVARCHAR(100) NULL,				-- ระบุอื่นๆ
+	[otherremark] NVARCHAR(100) NULL,				-- ระบุอื่นๆ
 
 	[impromptusolution] NVARCHAR(MAX) NULL,			-- การแก้ไขปัญหาเฉพาะหน้า
 	[activefailure] NVARCHAR(MAX) NULL,				-- ความคลาดเคลื่อนที่เกิดขึ้น (Active Failure) : ระบุความผิดพลาด/การละเมิดต่อมาตรการที่เกิดขึ้น
@@ -199,8 +199,8 @@ CREATE TABLE [event_logs](
 	[id] INT IDENTITY(1,1),
 	[reportid] [varchar](20) NOT NULL,					-- Parent Report ID : 0010524
 	[code] [varchar](20) NOT NULL,						-- Running No with reportid-running no : 0010524-01, -02
-    -- [affrelate] INT NULL,							-- สังกัดที่เกี่ยวข้อง by HA
-    [deptrelate] INT NOT NULL,							-- แผนกที่เกี่ยวข้อง by HA
+	-- [affrelate] INT NULL,							-- สังกัดที่เกี่ยวข้อง by HA
+	[deptrelate] INT NOT NULL,							-- แผนกที่เกี่ยวข้อง by HA
 	[urgenttype] [nvarchar](1) NOT NULL,				-- ความเร่งด่วน by HA
 	[isnew] [nvarchar](1) NULL,							-- อุบัติการณ์ใหม่, อุบัติการณ์ซ้ำ by HA
 	[summarydetail] NVARCHAR(MAX) NOT NULL,				-- สรุปเหตุการณ์ไม่พึงประสงค์ by HA
@@ -228,11 +228,11 @@ CREATE TABLE [medication](
 	[an] [nvarchar](20) NULL,						-- AN
 	[age] [nvarchar](20) NULL,						-- อายุ
 	[gender] [nvarchar](20) NULL,					-- เพศ
-    [dx] NVARCHAR(MAX) NULL,						-- Dx
-    [pct] NVARCHAR(MAX) NULL,						-- PCT ที่เกี่ยวข้อง
+	[dx] NVARCHAR(MAX) NULL,						-- Dx
+	[pct] NVARCHAR(MAX) NULL,						-- PCT ที่เกี่ยวข้อง
 	
 	[occurrencedate] [datetime] NOT NULL,			-- วัน-เวลาที่เกิดเหตุการณ์
-    [deptrelate] INT NOT NULL,						-- หน่วยงานที่เกี่ยวข้อง
+	[deptrelate] INT NOT NULL,						-- หน่วยงานที่เกี่ยวข้อง
 
 	[reporttype] [nvarchar](1) NOT NULL,			-- ประเภทอุบัติการณ์	General Risk, Clinical Risk
 	[type] NVARCHAR(3) NOT NULL,					-- ประเภทอุบัติการณ์	OPD, IPD
@@ -257,14 +257,14 @@ CREATE TABLE [medication](
 	[renew] NVARCHAR(MAX) NULL,						-- สรุปรายละเอียดเหตุการณ์ by HA 
 
 	[reportdoc] [nvarchar](1) NULL,					-- รายงานแพทย์
-    [docname] NVARCHAR(100) NULL,					-- ชื่อแพทย์
+	[docname] NVARCHAR(100) NULL,					-- ชื่อแพทย์
 
 	[medicalrecorded] [nvarchar](1) NULL,			-- การบันทึก เวชระเบียน
 
 	[reportacknowledge] [nvarchar](1) NULL,			-- รายงานหัวหน้าแผนก / ผู้จัดการฝ่าย / ผู้ตรวจการพยาบาล รับทราบ
 
 	[reportother] [nvarchar](1) NULL,				-- อื่นๆ
-    [otherremark] NVARCHAR(100) NULL,				-- ระบุอื่นๆ
+	[otherremark] NVARCHAR(100) NULL,				-- ระบุอื่นๆ
 
 	[analysis] NVARCHAR(MAX) NULL,					-- ผลการวิเคราะห์สาเหตุ	by mng
 	[solution] NVARCHAR(MAX) NULL,					-- แนวทางการแก้ไข / ป้องกันปัญหาในเชิงระบบ by mng
