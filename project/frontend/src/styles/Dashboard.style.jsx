@@ -128,9 +128,16 @@ export const SearchContainer = styled(Box)`
   padding: 20px;
   width: 80%;
 
-  ::-webkit-calendar-picker-indicator {
-    filter: invert(1);
+  input[type="date"]::-webkit-calendar-picker-indicator {
     cursor: pointer;
+    border-radius: 4px;
+    margin-right: 2px;
+    opacity: 0.6;
+    filter: invert(0.8);
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1
   }
 `;
 
