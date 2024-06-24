@@ -127,6 +127,11 @@ export const SearchContainer = styled(Box)`
   margin-bottom: 15px;
   padding: 20px;
   width: 80%;
+
+  ::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+  }
 `;
 
 export const IncidentDialog = styled(Dialog)`
