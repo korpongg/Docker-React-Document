@@ -95,7 +95,15 @@ exports.getAllMedications = async (req, res) => {
       LEFT JOIN [occurrence].[dbo].[user] AS u_approve ON u_approve.userid = med.approveby
       LEFT JOIN [occurrence].[dbo].[department] as dep ON dep.id = med.deptrelate
       LEFT JOIN [occurrence].[dbo].[affiliation] as aff ON aff.id = dep.relateid
-      ORDER BY CASE WHEN med.formstatus = '1' THEN 0 ELSE 1 END;
+      ORDER BY 
+        CASE 
+          WHEN med.formstatus = '1' THEN 1
+          WHEN med.formstatus = '4' THEN 2
+          WHEN med.formstatus = '0' THEN 3
+          WHEN med.formstatus = '2' THEN 4
+          WHEN med.formstatus = '3' THEN 5
+          ELSE 6 
+        END;
     `;
 
     const results = await sequelize.query(medQuery, {
