@@ -86,11 +86,15 @@ const Dashboard = () => {
     const isStartDateValid = startDateObj ? isSameDate(OccurrenceDate, startDateObj) : true;
     const isBetweenDates = startDateObj && endDateObj ? OccurrenceDate >= startDateObj && OccurrenceDate <= endDateObj : true;
 
+    const reportNoMatch = reportNo === "" || (rowData.reportid && rowData.reportid.includes(reportNo));
+    const hnMatch = hn === "" || (rowData.hn && rowData.hn.includes(hn));
+    const isDepSelectValid = depSelect.length === 0 || rowData.deptrelate.some(dept => depSelect.includes(dept));
+
     return (
-      (reportNo === "" || rowData.reportid === reportNo) &&
-      (hn === "" || rowData.hn === hn) &&
+      reportNoMatch &&
+      hnMatch &&
       (startDateObj && endDateObj ? isBetweenDates : isStartDateValid) &&
-      (depSelect.length === 0 || depSelect.includes(rowData.deptrelate)) &&
+      isDepSelectValid &&
       (incidentType === "0" || rowData.reporttypename === incidentType)
     );
   };

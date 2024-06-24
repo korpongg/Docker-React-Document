@@ -343,7 +343,7 @@ const Medication = ({ Mode }) => {
           const responseStatus = response.status;
 
           if (responseStatus === 200 || responseStatus === 201) {
-            navigate("/medication");
+            // navigate("/medication");
           }
         } catch (err) {
           console.error(err);
@@ -371,7 +371,7 @@ const Medication = ({ Mode }) => {
   };
 
   const handleSubmitEdit = async (Mode) => {
-    // console.log("handleSubmitEdit");
+    console.log("handleSubmitEdit",FormData);
     const missingKeys = keydata.filter(({ key }) => {
       if (key === "deptrelate") {
         return !(FormData[key] && FormData[key].length);
@@ -400,6 +400,7 @@ const Medication = ({ Mode }) => {
       effect: JSON.stringify(FormData.effect),
       drugrelate: JSON.stringify(FormData.drugrelate),
       updateby: UserData.userid,
+      formstatus: FormData.formstatus,
     };
     if(Mode==="Draft"){
       submitEditFormData = {
@@ -426,7 +427,7 @@ const Medication = ({ Mode }) => {
       const responseStatus = response.status;
 
       if (responseStatus === 200 || responseStatus === 201) {
-        navigate("/medication");
+        // navigate("/medication");
       }
     } catch (err) {
       console.error(err);
@@ -471,7 +472,7 @@ const Medication = ({ Mode }) => {
 
   return (
     <>
-      {/* {console.log("EditFormData",EditFormData)} */}
+      {/* {console.log("FormData",FormData)} */}
       <AlertBar
         open={Alert}
         setOpen={setAlert}
