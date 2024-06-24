@@ -29,7 +29,16 @@ const executeSQLQuery = async () => {
       LEFT JOIN [occurrence].[dbo].[user] AS u_request ON u_request.userid = occ.createby
       LEFT JOIN [occurrence].[dbo].[user] AS u_update ON u_update.userid = occ.updateby
       LEFT JOIN [occurrence].[dbo].[user] AS u_accept ON u_accept.userid = occ.acceptby
-      ORDER BY CASE WHEN occ.formstatus = '1' THEN 0 ELSE 1 END;
+      ORDER BY 
+        CASE 
+          WHEN occ.formstatus = '1' THEN 1
+          WHEN occ.formstatus = '2' THEN 2
+          WHEN occ.formstatus = '4' THEN 3
+          WHEN occ.formstatus = '0' THEN 4
+          WHEN occ.formstatus = '5' THEN 5
+          WHEN occ.formstatus = '3' THEN 6
+          ELSE 6 
+        END;
     `;
     const results = await sequelize.query(occQuery, {
       type: sequelize.QueryTypes.SELECT,
@@ -118,7 +127,15 @@ const executeSQLQueryMedication = async () => {
       LEFT JOIN [occurrence].[dbo].[user] AS u_approve ON u_approve.userid = med.approveby
       LEFT JOIN [occurrence].[dbo].[department] as dep ON dep.id = med.deptrelate
       LEFT JOIN [occurrence].[dbo].[affiliation] as aff ON aff.id = dep.relateid
-      ORDER BY CASE WHEN med.formstatus = '1' THEN 0 ELSE 1 END;
+      ORDER BY 
+        CASE 
+          WHEN med.formstatus = '1' THEN 1
+          WHEN med.formstatus = '4' THEN 2
+          WHEN med.formstatus = '0' THEN 3
+          WHEN med.formstatus = '2' THEN 4
+          WHEN med.formstatus = '3' THEN 5
+          ELSE 6 
+        END;
     `;
     const results = await sequelize.query(medQuery, {
       type: sequelize.QueryTypes.SELECT,

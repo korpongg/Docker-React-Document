@@ -39,6 +39,12 @@
   ],
   "medicStatus": [
     {
+      "id": 0,
+      "statusText": "แบบร่าง",
+      "statusColor": "draft",
+      "color": "gray"
+    },
+    {
       "id": 1,
       "statusText": "รายงานใหม่",
       "statusColor": "new",

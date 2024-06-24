@@ -137,8 +137,8 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
             </Tooltip>
           )} */}
 
-          {/* {isEXEC && (
-            <> */}
+          {(isAdmin || isEXEC) && (row.formstatus === '1' || row.formstatus === '4') && (
+            <>
               <Tooltip title="วิเคราะห์ความคลาดเคลื่อน">
                 <GridActionsCellItem
                   icon={<TroubleshootIcon />}
@@ -147,10 +147,10 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
                   color="warning"
                 />
               </Tooltip>
-            {/* </>
-          )} */}
+            </>
+          )}
 
-          {(userData.userid === row.createby || isAdmin) && row.deleteAt === null && (row.formstatus === '1' || row.formstatus === '4') && (
+          {(userData.userid === row.createby || isAdmin) && row.deleteAt === null && (row.formstatus === '0' || row.formstatus === '1' || row.formstatus === '4') && (
             <>
               <Tooltip title="แก้ไขข้อมูลรายงาน">
                 <GridActionsCellItem
