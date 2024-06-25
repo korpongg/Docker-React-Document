@@ -5,9 +5,69 @@ const User = require("../models/User");
 const { executeAndStoreQueryResult } = require('../services/broadcastService');
 const { findDepartmentEmail, sendEmailEvent, sendEmailEventHA } = require("./emailController");
 const DB_NAME = process.env.DB_NAME;
+const DataDict_Occurrence = require("./dataDictOccurrence");
 
 // Utility function to format dates to SQL Server's format
 const formatDate = (date) => date ? date.toISOString().replace("T", " ").replace("Z", "") : null;
+// Utility function to format date to dd/mm/yyyy hh:mm:ss
+const formatDateTime_N7 = (date) => {
+  if (!date) return null;
+    const d = new Date(date);
+
+    const day = d.getUTCDate();
+    const month = d.getUTCMonth() + 1;
+    const year = d.getUTCFullYear();
+    const hours = d.getUTCHours();
+    const minutes = d.getUTCMinutes();
+    const seconds = d.getUTCSeconds();
+
+    // Pad single-digit day, month, hours, minutes, and seconds with leading zeros
+    const formattedDay = day < 10 ? `0${day}` : `${day}`;
+    const formattedMonth = month < 10 ? `0${month}` : `${month}`;
+    const formattedHours = hours < 10 ? `0${hours}` : `${hours}`;
+    const formattedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
+    const formattedSeconds = seconds < 10 ? `0${seconds}` : `${seconds}`;
+    
+    return `${formattedDay}/${formattedMonth}/${year} ${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+}
+
+// Function to get title by code
+function getTitleByCode(code, occurrences) {
+  const codeString = code.toString();
+  if (codeString === "199") {
+    return occurrences.patientcareremark;
+  } else if (codeString === "299") {
+    return occurrences.patientsupportremark;
+  } else if (codeString === "399") {
+    return occurrences.utilityremark;
+  } else if (codeString === "499") {
+    return occurrences.equipmentremark;
+  } else if (codeString === "599") {
+    return occurrences.safetyremark;
+  } else if (codeString === "699") {
+    return occurrences.serviceremark;
+  } else if (codeString === "799") {
+    return occurrences.managementremark;
+  } else {
+    for (const key in DataDict_Occurrence) {
+      const section = DataDict_Occurrence[key];
+      const option = section.options.find((option) => option.code === parseInt(code));
+      if (option) {
+        return option.title;
+      }
+    }
+  }
+  return ``;
+}
+
+function getTopicByKey(key) {
+  const section = DataDict_Occurrence[key];
+  if (!section) {
+    return `Section with key ${key} not found.`;
+  }
+
+  return section.topic;
+}
 
 // Create a new report log
 exports.createEventtLog = async (req, res) => {
@@ -35,12 +95,85 @@ exports.createEventtLog = async (req, res) => {
 
     // Update the Occurrences table
     await Occurrences.update({ formstatus: '4' }, { where: { reportid } });
-    
-    // Send email
-    const emailSubject = "รายงานอุบัติการณ์ เลขที่เอกสาร: " + newCode;
-    const emailMessage ="เลขที่เอกสาร: " + newCode + `<br/><br/>` + "มีรายงานอุบัติการณ์ถึงหน่วยงาน";
-    const recipientEmail = await findDepartmentEmail(newCode);
-    sendEmailEvent(recipientEmail, emailSubject, emailMessage);
+
+    // Fetch Occurrences data for the reportid
+    const occurrences = await Occurrences.findOne({ where: { reportid } });
+    if (occurrences) {
+      // console.log(occurrences);
+      const renewDesc = req.body.summarydetail.replace(/\n/g, '<br/>');
+  
+      // Map patientcare
+      const patientcare = JSON.parse(occurrences.patientcare || '[]');
+      const patientcareDetails = patientcare.length > 0 ? patientcare.map(code => {
+        const title = getTitleByCode(code, occurrences);
+        return `${title} (${code})`;
+      }).join(", ") : null;
+
+      // Map patientsupport
+      const patientsupport = JSON.parse(occurrences.patientsupport || '[]');
+      const patientsupportDetails = patientsupport.length > 0 ? patientsupport.map(code => {
+        const title = getTitleByCode(code, occurrences);
+        return `${title} (${code})`;
+      }).join(", ") : null;
+      
+      // Map utility
+      const utility = JSON.parse(occurrences.utility || '[]');
+      const utilityDetails = utility.length > 0 ? utility.map(code => {
+        const title = getTitleByCode(code, occurrences);
+        return `${title} (${code})`;
+      }).join(", ") : null;
+      
+      // Map equipment
+      const equipment = JSON.parse(occurrences.equipment || '[]');
+      const equipmentDetails = equipment.length > 0 ? equipment.map(code => {
+        const title = getTitleByCode(code, occurrences);
+        return `${title} (${code})`;
+      }).join(", ") : null;
+      
+      // Map safety
+      const safety = JSON.parse(occurrences.safety || '[]');
+      const safetyDetails = safety.length > 0 ? safety.map(code => {
+        const title = getTitleByCode(code, occurrences);
+        return `${title} (${code})`;
+      }).join(", ") : null;
+      
+      // Map service
+      const service = JSON.parse(occurrences.service || '[]');
+      const serviceDetails = service.length > 0 ? service.map(code => {
+        const title = getTitleByCode(code, occurrences);
+        return `${title} (${code})`;
+      }).join(", ") : null;
+      
+      // Map management
+      const management = JSON.parse(occurrences.management || '[]');
+      const managementDetails = management.length > 0 ? management.map(code => {
+        const title = getTitleByCode(code, occurrences);
+        return `${title} (${code})`;
+      }).join(", ") : null;
+      
+      // Send email
+      const emailSubject = "รายงานอุบัติการณ์ เลขที่เอกสาร: " + newCode;
+      // const emailMessage ="เลขที่เอกสาร: " + newCode + `<br/><br/>` + "มีรายงานอุบัติการณ์ถึงหน่วยงาน";
+      const emailMessage = `
+        เลขที่เอกสาร: ${newCode}<br/><br/>
+        มีรายงานอุบัติการณ์ถึงหน่วยงาน<br/><br/>
+        <strong>รายละเอียดอุบัติการณ์:</strong><br/>
+        เกิดเมื่อ: ${formatDateTime_N7(occurrences.occurrencedate)}<br/>
+        ประเภท: ${occurrences.reporttype === '0' ? 'General Risk' : 'Clinical Risk'}<br/>
+        ระดับความรุนแรง: ${occurrences.level}<br/><br/>
+        ${patientcareDetails ? `<u>${getTopicByKey('patientcare')}:</u> ${patientcareDetails}<br/><br/>` : ""}
+        ${patientsupportDetails ? `<u>${getTopicByKey('patientsupport')}:</u> ${patientsupportDetails}<br/><br/>` : ""}
+        ${utilityDetails ? `<u>${getTopicByKey('utility')}:</u> ${utilityDetails}<br/><br/>` : ""}
+        ${equipmentDetails ? `<u>${getTopicByKey('equipment')}:</u> ${equipmentDetails}<br/><br/>` : ""}
+        ${safetyDetails ? `<u>${getTopicByKey('safety')}:</u> ${safetyDetails}<br/><br/>` : ""}
+        ${serviceDetails ? `<u>${getTopicByKey('service')}:</u> ${serviceDetails}<br/><br/>` : ""}
+        ${managementDetails ? `<u>${getTopicByKey('management')}:</u> ${managementDetails}<br/><br/>` : ""}
+        <u>สรุปเหตุการณ์ไม่พึงประสงค์:</u><br/> ${renewDesc}
+      `;
+      const recipientEmail = await findDepartmentEmail(newCode);
+      // const recipientEmail = "nateeton.l@thainakarin.co.th";
+      sendEmailEvent(recipientEmail, emailSubject, emailMessage);
+    }
 
     executeAndStoreQueryResult();
     return res.status(201).json(result);
