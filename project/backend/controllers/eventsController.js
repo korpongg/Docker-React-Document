@@ -4,6 +4,7 @@ const Occurrences = require("../models/Occurrences");
 const User = require("../models/User");
 const { executeAndStoreQueryResult } = require('../services/broadcastService');
 const { findDepartmentEmail, sendEmailEvent, sendEmailEventHA } = require("./emailController");
+const DB_NAME = process.env.DB_NAME;
 
 // Utility function to format dates to SQL Server's format
 const formatDate = (date) => date ? date.toISOString().replace("T", " ").replace("Z", "") : null;
@@ -110,9 +111,9 @@ exports.getAllEventLogs = async (req, res) => {
       e.acceptAt,
       e.repeatAt,
       e.responsedate
-      FROM [occurrence].[dbo].[event_logs] e
-      LEFT JOIN [occurrence].[dbo].[occurrences] o ON o.reportid = e.reportid
-      LEFT JOIN [occurrence].[dbo].[department] d ON d.id = e.deptrelate
+      FROM ${DB_NAME}.[dbo].[event_logs] e
+      LEFT JOIN ${DB_NAME}.[dbo].[occurrences] o ON o.reportid = e.reportid
+      LEFT JOIN ${DB_NAME}.[dbo].[department] d ON d.id = e.deptrelate
       WHERE e.reportid = :reportId
       ORDER BY e.createAt DESC
     `;
@@ -218,9 +219,9 @@ exports.getEventLogById = async (req, res) => {
       e.acceptAt,
       e.repeatAt,
       e.responsedate
-      FROM [occurrence].[dbo].[event_logs] e
-      LEFT JOIN [occurrence].[dbo].[occurrences] o ON o.reportid = e.reportid
-      LEFT JOIN [occurrence].[dbo].[department] d ON d.id = e.deptrelate
+      FROM ${DB_NAME}.[dbo].[event_logs] e
+      LEFT JOIN ${DB_NAME}.[dbo].[occurrences] o ON o.reportid = e.reportid
+      LEFT JOIN ${DB_NAME}.[dbo].[department] d ON d.id = e.deptrelate
       WHERE e.reportid = :reportId
       AND e.id = :id
       ORDER BY e.createAt DESC;

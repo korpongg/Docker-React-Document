@@ -1,4 +1,5 @@
 const sequelize = require('../config/dbConn').sequelize; // Import the sequelize instance
+const DB_NAME = process.env.DB_NAME;
 
 // Main function to construct the JSON structure
 const executeSQLQuery = async () => {
@@ -25,10 +26,10 @@ const executeSQLQuery = async () => {
         u_accept.faction AS acceptfac,
         u_accept.affiliation AS acceptaff,
         CASE WHEN occ.reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END AS reporttypename
-      FROM [occurrence].[dbo].[occurrences] occ
-      LEFT JOIN [occurrence].[dbo].[user] AS u_request ON u_request.userid = occ.createby
-      LEFT JOIN [occurrence].[dbo].[user] AS u_update ON u_update.userid = occ.updateby
-      LEFT JOIN [occurrence].[dbo].[user] AS u_accept ON u_accept.userid = occ.acceptby
+      FROM ${DB_NAME}.[dbo].[occurrences] occ
+      LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_request ON u_request.userid = occ.createby
+      LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_update ON u_update.userid = occ.updateby
+      LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_accept ON u_accept.userid = occ.acceptby
       ORDER BY 
         CASE 
           WHEN occ.formstatus = '1' THEN 1
@@ -48,8 +49,8 @@ const executeSQLQuery = async () => {
       // Fetch department and affiliation data using raw query
       const deptAffData = await sequelize.query(
         `SELECT d.id, d.name AS DepName, a.id AS AffID, a.name AS AffName
-         FROM [occurrence].[dbo].[department] d
-         LEFT JOIN [occurrence].[dbo].[affiliation] a ON a.id = d.relateid`,
+         FROM ${DB_NAME}.[dbo].[department] d
+         LEFT JOIN ${DB_NAME}.[dbo].[affiliation] a ON a.id = d.relateid`,
         { type: sequelize.QueryTypes.SELECT }
       );
 
@@ -121,12 +122,12 @@ const executeSQLQueryMedication = async () => {
         dep.name AS DepName,
         aff.id AS AffID,
         aff.name AS AffName
-      FROM [occurrence].[dbo].[medication] med
-      LEFT JOIN [occurrence].[dbo].[user] AS u_request ON u_request.userid = med.createby
-      LEFT JOIN [occurrence].[dbo].[user] AS u_update ON u_update.userid = med.updateby
-      LEFT JOIN [occurrence].[dbo].[user] AS u_approve ON u_approve.userid = med.approveby
-      LEFT JOIN [occurrence].[dbo].[department] as dep ON dep.id = med.deptrelate
-      LEFT JOIN [occurrence].[dbo].[affiliation] as aff ON aff.id = dep.relateid
+      FROM ${DB_NAME}.[dbo].[medication] med
+      LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_request ON u_request.userid = med.createby
+      LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_update ON u_update.userid = med.updateby
+      LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_approve ON u_approve.userid = med.approveby
+      LEFT JOIN ${DB_NAME}.[dbo].[department] as dep ON dep.id = med.deptrelate
+      LEFT JOIN ${DB_NAME}.[dbo].[affiliation] as aff ON aff.id = dep.relateid
       ORDER BY 
         CASE 
           WHEN med.formstatus = '1' THEN 1
@@ -222,11 +223,11 @@ const executeSQLQueryEvent = async (dep) => {
         e.acceptAt,
         e.repeatAt,
         e.responsedate
-      FROM [occurrence].[dbo].[event_logs] e
-      LEFT JOIN [occurrence].[dbo].[occurrences] o ON o.reportid = e.reportid
-      LEFT JOIN [occurrence].[dbo].[department] d ON d.id = e.deptrelate
-      LEFT JOIN [occurrence].[dbo].[user] AS u_request ON u_request.userid = e.createby
-      LEFT JOIN [occurrence].[dbo].[user] AS u_accept ON u_accept.userid = e.acceptby
+      FROM ${DB_NAME}.[dbo].[event_logs] e
+      LEFT JOIN ${DB_NAME}.[dbo].[occurrences] o ON o.reportid = e.reportid
+      LEFT JOIN ${DB_NAME}.[dbo].[department] d ON d.id = e.deptrelate
+      LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_request ON u_request.userid = e.createby
+      LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_accept ON u_accept.userid = e.acceptby
       ${dep ? `WHERE d.name = :dep` : ''}
       ORDER BY e.createAt DESC;
     `;

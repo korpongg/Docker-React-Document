@@ -1,5 +1,6 @@
 const sequelize = require("../config/dbConn").sequelize;
 const Department = require('../models/Department');
+const DB_NAME = process.env.DB_NAME;
 
 // Create a new department
 exports.createDepartment = async (req, res) => {
@@ -29,8 +30,8 @@ exports.getAllDepartments = async (req, res) => {
         d.name AS DepName,
         a.id AS AffID,
         a.name AS AffName
-      FROM [occurrence].[dbo].[department] d
-      LEFT JOIN [occurrence].[dbo].[affiliation] a ON a.id = d.[relateid]
+      FROM ${DB_NAME}.[dbo].[department] d
+      LEFT JOIN ${DB_NAME}.[dbo].[affiliation] a ON a.id = d.[relateid]
     `);
     res.status(200).json(results);
   } catch (error) {
@@ -61,8 +62,8 @@ exports.getDepartmentById = async (req, res) => {
         d.name AS DepName,
         a.id AS AffID,
         a.name AS AffName
-      FROM [occurrence].[dbo].[department] d
-      LEFT JOIN [occurrence].[dbo].[affiliation] a ON a.id = d.[relateid]
+      FROM ${DB_NAME}.[dbo].[department] d
+      LEFT JOIN ${DB_NAME}.[dbo].[affiliation] a ON a.id = d.[relateid]
       WHERE d.id = :id
     `, {
       replacements: { id },
@@ -85,8 +86,8 @@ exports.getAllDepartmentMed = async (req, res) => {
         d.name AS DepName,
         a.id AS AffID,
         a.name AS AffName
-      FROM [occurrence].[dbo].[department] d
-      LEFT JOIN [occurrence].[dbo].[affiliation] a ON a.id = d.[relateid]
+      FROM ${DB_NAME}.[dbo].[department] d
+      LEFT JOIN ${DB_NAME}.[dbo].[affiliation] a ON a.id = d.[relateid]
       WHERE d.relateid IN ('3','5') OR d.id = '13'
     `);
     res.status(200).json(results);

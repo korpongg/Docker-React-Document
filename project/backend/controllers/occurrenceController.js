@@ -3,6 +3,7 @@ const Occurrences = require("../models/Occurrences");
 // const User = require("../models/User");
 const { executeAndStoreQueryResult } = require('../services/broadcastService');
 const { sendEmail } = require("./emailController");
+const DB_NAME = process.env.DB_NAME;
 
 // Create a new occurrence
 exports.createOccurrence = async (req, res) => {
@@ -60,7 +61,7 @@ exports.createOccurrence = async (req, res) => {
       const emailSubject = "รายงานอุบัติการณ์ เลขที่เอกสาร: " + reportId;
       const emailMessage = "เลขที่เอกสาร: " + reportId + `<br/><br/>` + "สร้างรายงานสำเร็จ รอตรวจสอบ";
       const recipientEmail = "qdc@thainakarin.co.th";
-      // const recipientEmail = "nateetond.l@thainakarin.co.th";
+      // const recipientEmail = "nateeton.l@thainakarin.co.th";
       sendEmail(recipientEmail, newOccurrenceId, emailSubject, emailMessage);
     }
 
@@ -96,10 +97,10 @@ exports.getAllOccurrences = async (req, res) => {
         u_accept.faction AS acceptfac,
         u_accept.affiliation AS acceptaff,
         CASE WHEN occ.reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END AS reporttypename
-      FROM [occurrence].[dbo].[occurrences] occ
-      LEFT JOIN [occurrence].[dbo].[user] AS u_request ON u_request.userid = occ.createby
-      LEFT JOIN [occurrence].[dbo].[user] AS u_update ON u_update.userid = occ.updateby
-      LEFT JOIN [occurrence].[dbo].[user] AS u_accept ON u_accept.userid = occ.acceptby
+      FROM ${DB_NAME}.[dbo].[occurrences] occ
+      LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_request ON u_request.userid = occ.createby
+      LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_update ON u_update.userid = occ.updateby
+      LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_accept ON u_accept.userid = occ.acceptby
       ORDER BY 
         CASE 
           WHEN occ.formstatus = '1' THEN 1
@@ -120,8 +121,8 @@ exports.getAllOccurrences = async (req, res) => {
       // Fetch department and affiliation data using raw query
       const deptAffData = await sequelize.query(
         `SELECT d.id, d.name AS DepName, a.id AS AffID, a.name AS AffName
-         FROM [occurrence].[dbo].[department] d
-         LEFT JOIN [occurrence].[dbo].[affiliation] a ON a.id = d.relateid`,
+         FROM ${DB_NAME}.[dbo].[department] d
+         LEFT JOIN ${DB_NAME}.[dbo].[affiliation] a ON a.id = d.relateid`,
         { type: sequelize.QueryTypes.SELECT }
       );
 
@@ -196,10 +197,10 @@ exports.getOccurrenceById = async (req, res) => {
         u_accept.faction AS acceptfac,
         u_accept.affiliation AS acceptaff,
         CASE WHEN occ.reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END AS reporttypename
-      FROM [occurrence].[dbo].[occurrences] occ
-      LEFT JOIN [occurrence].[dbo].[user] AS u_request ON u_request.userid = occ.createby
-      LEFT JOIN [occurrence].[dbo].[user] AS u_update ON u_update.userid = occ.updateby
-      LEFT JOIN [occurrence].[dbo].[user] AS u_accept ON u_accept.userid = occ.acceptby
+      FROM ${DB_NAME}.[dbo].[occurrences] occ
+      LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_request ON u_request.userid = occ.createby
+      LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_update ON u_update.userid = occ.updateby
+      LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_accept ON u_accept.userid = occ.acceptby
       WHERE occ.id = :reportid;
     `;
 
@@ -212,8 +213,8 @@ exports.getOccurrenceById = async (req, res) => {
       // Fetch department and affiliation data using raw query
       const deptAffData = await sequelize.query(
         `SELECT d.id, d.name AS DepName, a.id AS AffID, a.name AS AffName
-         FROM [occurrence].[dbo].[department] d
-         LEFT JOIN [occurrence].[dbo].[affiliation] a ON a.id = d.relateid`,
+         FROM ${DB_NAME}.[dbo].[department] d
+         LEFT JOIN ${DB_NAME}.[dbo].[affiliation] a ON a.id = d.relateid`,
         { type: sequelize.QueryTypes.SELECT }
       );
 
@@ -303,20 +304,20 @@ exports.updateOccurrence = async (req, res) => {
       if (validColumns[column] === undefined || validColumns[column] === null || validColumns[column] === "Invalid date") {
         // Delete the property (column) from Occurrences
         delete occurrence[column];
-        console.log("Removed column:", column);
+        // console.log("Removed column:", column);
       } else {
         // Update the property (column) in Occurrences
         occurrence[column] = validColumns[column];
-        console.log("Updated column:", column);
-        console.log("Updated value:", validColumns[column]);
+        // console.log("Updated column:", column);
+        // console.log("Updated value:", validColumns[column]);
       }
     }
 
     occurrence.updatedAt = sequelize.literal("CURRENT_TIMESTAMP");
 
     // Additional logging to trace the flow
-    console.log("Before saving Occurrences:");
-    console.log(occurrence.toJSON());
+    // console.log("Before saving Occurrences:");
+    // console.log(occurrence.toJSON());
 
     const result = await occurrence.save();
 
@@ -327,15 +328,15 @@ exports.updateOccurrence = async (req, res) => {
       const emailSubject = "รายงานอุบัติการณ์ เลขที่เอกสาร: " + reportId;
       const emailMessage = "เลขที่เอกสาร: " + reportId + `<br/><br/>` + "สร้างรายงานสำเร็จ รอตรวจสอบ";
       const recipientEmail = "qdc@thainakarin.co.th";
-      // const recipientEmail = "nateetond.l@thainakarin.co.th";
+      // const recipientEmail = "nateeton.l@thainakarin.co.th";
       sendEmail(recipientEmail, id, emailSubject, emailMessage);
     }
 
     executeAndStoreQueryResult();
 
     // Additional logging after saving
-    console.log("After saving Occurrences:");
-    console.log(result.toJSON());
+    // console.log("After saving Occurrences:");
+    // console.log(result.toJSON());
 
     // const updatedOccurrence = await Occurrences.findByPk(req.params.id);
     res.status(200).json(result);

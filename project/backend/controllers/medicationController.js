@@ -2,6 +2,7 @@ const sequelize = require("../config/dbConn").sequelize;
 const Medication = require('../models/Medication');
 // const User = require("../models/User");
 const { executeAndStoreQueryResult } = require('../services/broadcastService');
+const DB_NAME = process.env.DB_NAME;
 
 // Create a new medication record
 exports.createMedication = async (req, res) => {
@@ -89,12 +90,12 @@ exports.getAllMedications = async (req, res) => {
         u_approve.faction AS approvefac,
         u_approve.affiliation AS approveaff,
         CASE WHEN med.reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END AS reporttypename
-      FROM [occurrence].[dbo].[medication] med
-      LEFT JOIN [occurrence].[dbo].[user] AS u_request ON u_request.userid = med.createby
-      LEFT JOIN [occurrence].[dbo].[user] AS u_update ON u_update.userid = med.updateby
-      LEFT JOIN [occurrence].[dbo].[user] AS u_approve ON u_approve.userid = med.approveby
-      LEFT JOIN [occurrence].[dbo].[department] as dep ON dep.id = med.deptrelate
-      LEFT JOIN [occurrence].[dbo].[affiliation] as aff ON aff.id = dep.relateid
+      FROM ${DB_NAME}.[dbo].[medication] med
+      LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_request ON u_request.userid = med.createby
+      LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_update ON u_update.userid = med.updateby
+      LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_approve ON u_approve.userid = med.approveby
+      LEFT JOIN ${DB_NAME}.[dbo].[department] as dep ON dep.id = med.deptrelate
+      LEFT JOIN ${DB_NAME}.[dbo].[affiliation] as aff ON aff.id = dep.relateid
       ORDER BY 
         CASE 
           WHEN med.formstatus = '1' THEN 1
@@ -182,12 +183,12 @@ exports.getMedicationById = async (req, res) => {
         u_approve.faction AS approvefac,
         u_approve.affiliation AS approveaff,
         CASE WHEN med.reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END AS reporttypename
-      FROM [occurrence].[dbo].[medication] med
-      LEFT JOIN [occurrence].[dbo].[user] AS u_request ON u_request.userid = med.createby
-      LEFT JOIN [occurrence].[dbo].[user] AS u_update ON u_update.userid = med.updateby
-      LEFT JOIN [occurrence].[dbo].[user] AS u_approve ON u_approve.userid = med.approveby
-      LEFT JOIN [occurrence].[dbo].[department] as dep ON dep.id = med.deptrelate
-      LEFT JOIN [occurrence].[dbo].[affiliation] as aff ON aff.id = dep.relateid
+      FROM ${DB_NAME}.[dbo].[medication] med
+      LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_request ON u_request.userid = med.createby
+      LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_update ON u_update.userid = med.updateby
+      LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_approve ON u_approve.userid = med.approveby
+      LEFT JOIN ${DB_NAME}.[dbo].[department] as dep ON dep.id = med.deptrelate
+      LEFT JOIN ${DB_NAME}.[dbo].[affiliation] as aff ON aff.id = dep.relateid
       WHERE med.id = :reportid;
     `;
 
