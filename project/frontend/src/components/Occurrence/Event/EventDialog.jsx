@@ -141,7 +141,7 @@ const EventDialog = ({ mode, isHA, userData, config, isDialogOpen, handleCloseDi
         }
     }, [mode, formData, config, eventData, handleCloseDialog]);
 
-    console.log(formData)
+    // console.log(formData)
 
     return (
         isDialogOpen && (

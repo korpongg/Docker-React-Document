@@ -56,9 +56,9 @@ const SearchBox = ({ reportNo, setReportNo, hn, setHn, startDate, setStartDate, 
     <>
       <SearchContainer>
         <Grid2 container spacing={2}>
-          <Grid2 container xs={12} md={6} align="center" justify="center" alignItems="center">
-            <Grid2 xs={4} style={{ textAlign: "right" }}>เลขที่เอกสาร</Grid2>
-            <Grid2 xs={8}>
+          <Grid2 container spacing={1} xs={12} md={6} align="center" justify="center" alignItems="center">
+            <Grid2 xs={12} md={4} style={{ textAlign: "right" }}>เลขที่เอกสาร</Grid2>
+            <Grid2 xs={12} md={8}>
               <TextField
                 id="reportNo"
                 fullWidth
@@ -67,9 +67,9 @@ const SearchBox = ({ reportNo, setReportNo, hn, setHn, startDate, setStartDate, 
               />
             </Grid2>
           </Grid2>
-          <Grid2 container xs={12} md={6} align="center" justify="center" alignItems="center">
-            <Grid2 xs={4} align="right">HN</Grid2>
-            <Grid2 xs={8}>
+          <Grid2 container spacing={1} xs={12} md={6} align="center" justify="center" alignItems="center">
+            <Grid2 xs={12} md={4} align="right">HN</Grid2>
+            <Grid2 xs={12} md={8}>
               <TextField
                 id="hn"
                 fullWidth
@@ -78,9 +78,9 @@ const SearchBox = ({ reportNo, setReportNo, hn, setHn, startDate, setStartDate, 
               />
             </Grid2>
           </Grid2>
-          <Grid2 container xs={12} md={6} align="center" justify="center" alignItems="center">
-            <Grid2 xs={4} align="right">วันที่เกิดเหตุ</Grid2>
-            <Grid2 xs={8}>
+          <Grid2 container spacing={1} xs={12} md={6} align="center" justify="center" alignItems="center">
+            <Grid2 xs={12} md={4} align="right">วันที่เกิดเหตุ</Grid2>
+            <Grid2 xs={12} md={8}>
               <TextField
                 id="startDate"
                 fullWidth
@@ -99,9 +99,9 @@ const SearchBox = ({ reportNo, setReportNo, hn, setHn, startDate, setStartDate, 
               />
             </Grid2>
           </Grid2>
-          <Grid2 container xs={12} md={6} align="center" justify="center" alignItems="center">
-            <Grid2 xs={4} align="right">ถึงวันที่</Grid2>
-            <Grid2 xs={8}>
+          <Grid2 container spacing={1} xs={12} md={6} align="center" justify="center" alignItems="center">
+            <Grid2 xs={12} md={4} align="right">ถึงวันที่</Grid2>
+            <Grid2 xs={12} md={8}>
               <TextField
                 id="endDate"
                 fullWidth
@@ -123,9 +123,9 @@ const SearchBox = ({ reportNo, setReportNo, hn, setHn, startDate, setStartDate, 
               />
             </Grid2>
           </Grid2>
-          <Grid2 container xs={12} md={6} align="center" justify="center" alignItems="center">
-            <Grid2 xs={4} align="right">แผนก</Grid2>
-            <Grid2 xs={8}>
+          <Grid2 container spacing={1} xs={12} md={6} align="center" justify="center" alignItems="center">
+            <Grid2 xs={12} md={4} align="right">แผนก</Grid2>
+            <Grid2 xs={12} md={8}>
               <FormControl fullWidth variant="outlined">
                 <Autocomplete
                   multiple
@@ -157,9 +157,9 @@ const SearchBox = ({ reportNo, setReportNo, hn, setHn, startDate, setStartDate, 
               </FormControl>
             </Grid2>
           </Grid2>
-          <Grid2 container xs={12} md={6} align="center" justify="center" alignItems="center">
-            <Grid2 xs={4} align="right">ประเภทอุบัติการณ์</Grid2>
-            <Grid2 xs={8}>
+          <Grid2 container spacing={1} xs={12} md={6} align="center" justify="center" alignItems="center">
+            <Grid2 xs={12} md={4} align="right">ประเภทอุบัติการณ์</Grid2>
+            <Grid2 xs={12} md={8}>
               <FormControl fullWidth variant="outlined">
                 <InputLabel>ประเภทอุบัติการณ์</InputLabel>
                 <Select
