@@ -31,3 +31,9 @@ user
 ---------------------
 
 edit/cancel =   เฉพาะคนสร้าง  createby (รหัสพนักงาน) / ADMIN, HA
+
+
+admin   role 3
+ha      role 2
+medic   affID = 3,5 + depID = 13
+ผ.อ.    level 3 + affName = งานคุณภาพ

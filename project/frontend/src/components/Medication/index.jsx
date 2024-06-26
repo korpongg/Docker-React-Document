@@ -26,7 +26,8 @@ const Medication = () => {
 
   useEffect(() => {
     if (!showMedicationMenu) {
-      navigate('/unauthorized');
+      disconnectWebSocket();
+      window.location.href = '/unauthorized';
       return;
     }
   }, [showMedicationMenu]);
