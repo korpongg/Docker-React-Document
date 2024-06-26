@@ -16,6 +16,7 @@ import Badge from "@mui/material/Badge";
 import MenuItem from "@mui/material/MenuItem";
 import Divider from "@mui/material/Divider";
 import ListItemIcon from "@mui/material/ListItemIcon";
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import LogoutIcon from "@mui/icons-material/Logout";
 import LogoWhite from "../assets/logo-white.svg";
@@ -97,6 +98,12 @@ const Header = () => {
   const MenuAdmin = () => {
     return (
       <>
+        <MenuItem key="adduser" onClick={() => navigate("/adduser", { replace: true })}>
+          <ListItemIcon>
+            <PersonAddIcon fontSize="small" style={{color: "orange"}} />
+          </ListItemIcon>
+          เพิ่มผู้ใช้งาน
+        </MenuItem>
         <MenuItem key="usermanager" onClick={() => handleNavigate("/usermanager")}>
           <ListItemIcon>
             <ManageAccountsIcon fontSize="small" style={{ color: "green" }} />
