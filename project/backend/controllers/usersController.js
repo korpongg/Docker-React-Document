@@ -48,6 +48,36 @@ const getUser = async (req, res) => {
   const userId = req?.params?.userid;
   if (!userId) return res.status(400).json({ message: "User ID required" });
 
+  try {
+    const [results, metadata] = await sequelize.query(`
+      SELECT u.*,
+        CASE WHEN title LIKE '%นาง%' THEN 'F' ELSE 'M' END sex,
+        CASE WHEN role = '3' THEN 'Admin' WHEN role = '2' THEN 'Edit' ELSE 'User' END rolesname,
+        CASE WHEN level = '1' THEN 'User' WHEN level = '2' THEN 'Staff' ELSE 'Manager' END levelname,
+        a.id AS AffID,
+        d.id AS DepID
+      FROM [user] u
+      LEFT JOIN [affiliation] a ON a.name = u.affiliation
+      LEFT JOIN [department] d ON d.name = u.dep
+      WHERE u.userid = :userId;
+    `, {
+      replacements: { userId }
+    });
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(results[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const getUsers = async (req, res) => {
+  const userId = req?.params?.userid;
+  if (!userId) return res.status(400).json({ message: "User ID required" });
+
   try {    
     const user = await User.findOne({
       attributes: {
