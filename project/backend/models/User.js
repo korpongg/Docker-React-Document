@@ -14,23 +14,23 @@ const User = sequelize.define('User', {
   },
   hn: {
     type: DataTypes.STRING(20),
-    allowNull: false
+    allowNull: true
   },
   password: {
     type: DataTypes.STRING(255),
-    allowNull: false
+    allowNull: true
   },
   title: {
     type: DataTypes.STRING(25),
-    allowNull: false
+    allowNull: true
   },
   name: {
     type: DataTypes.STRING(30),
-    allowNull: false
+    allowNull: true
   },
   lastname: {
     type: DataTypes.STRING(30),
-    allowNull: false
+    allowNull: true
   },
   affiliation: {
     type: DataTypes.STRING(50),

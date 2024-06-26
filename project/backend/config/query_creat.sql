@@ -64,22 +64,22 @@ GO
 --DELETE [user]
 --Drop table if exists [user]
 CREATE TABLE [user] (
-       [id] INT IDENTITY(1,1) PRIMARY KEY
-	  ,[userid] NVARCHAR(20) NOT NULL
-      ,[hn] NVARCHAR(20) NULL
-      ,[password] NVARCHAR(255) NULL
-      ,[title] NVARCHAR(20) NULL
-      ,[name] NVARCHAR(30) NULL
-      ,[lastname] NVARCHAR(30) NULL
-      ,[affiliation] NVARCHAR(100) NULL
-      ,[jobtitle] NVARCHAR(100) NULL
-      ,[faction] NVARCHAR(100) NULL
-      ,[dep] NVARCHAR(100) NULL
-	  ,[role] NVARCHAR(1) NULL
-	  ,[level] NVARCHAR(1) NULL
-	  ,[createAt] [datetime] NULL 
-	  ,[updateAt] [datetime] NOT NULL DEFAULT GETDATE()
-	  ,[deleteAt] [date] NULL 
+	[id] INT IDENTITY(1,1) PRIMARY KEY,
+	[userid] NVARCHAR(20) NOT NULL,
+	[hn] NVARCHAR(20) NULL,
+	[password] NVARCHAR(255) NULL,
+	[title] NVARCHAR(20) NULL,
+	[name] NVARCHAR(30) NULL,
+	[lastname] NVARCHAR(30) NULL,
+	[affiliation] NVARCHAR(100) NULL,
+	[jobtitle] NVARCHAR(100) NULL,
+	[faction] NVARCHAR(100) NULL,
+	[dep] NVARCHAR(100) NULL,
+	[role] NVARCHAR(1) NULL,
+	[level] NVARCHAR(1) NULL,
+	[createAt] [datetime] NULL,
+	[updateAt] [datetime] NOT NULL DEFAULT GETDATE(),
+	[deleteAt] [date] NULL 
 );
 
 INSERT INTO [dbo].[user] (userid, hn,password,title,name , lastname,affiliation, jobtitle,faction,dep,role,level)

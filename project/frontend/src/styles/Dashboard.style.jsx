@@ -128,6 +128,10 @@ export const SearchContainer = styled(Box)`
   padding: 20px;
   width: 80%;
 
+  .MuiInputBase-input.MuiOutlinedInput-input {
+    // padding: 8px 12px;
+  }
+
   input[type="date"]::-webkit-calendar-picker-indicator {
     cursor: pointer;
     border-radius: 4px;

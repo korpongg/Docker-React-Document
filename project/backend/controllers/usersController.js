@@ -2,6 +2,24 @@ const sequelize = require('../config/dbConn').sequelize;
 const User = require("../models/User");
 const bcrypt = require('bcrypt');
 
+// Create a new medication record
+const createUser = async (req, res) => {
+  try {
+    // Generate hashed password
+    const hashedPwd = await bcrypt.hash(req?.body?.userid, 10);
+
+    const user = await User.create({
+      ...req.body,
+      password: hashedPwd,
+      createAt: sequelize.literal("CURRENT_TIMESTAMP")
+    });
+    
+    res.status(201).json(user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.findAll({
@@ -62,7 +80,7 @@ const getUser = async (req, res) => {
 const updateUser = async (req, res) => {
   // console.log(req?.body);
   if (!req?.body?.userid) {
-    return res.status(400).json({ message: "ID parameter is required." });
+    return res.status(400).json({ message: "userid is required." });
   }
 
   const userid = req?.body?.userid;
@@ -70,33 +88,37 @@ const updateUser = async (req, res) => {
     console.log(userid);
     const user = await User.findOne({ where: { userid: userid } });
 
+    // if (!user) {
+    //   if (
+    //     !req?.body?.title ||
+    //     !req?.body?.name ||
+    //     !req?.body?.lastname ||
+    //     !req?.body?.affiliation ||
+    //     !req?.body?.faction ||
+    //     !req?.body?.dep ||
+    //     typeof req.body.title !== 'string' || req.body.title.trim().length < 1 ||
+    //     typeof req.body.name !== 'string' || req.body.name.trim().length < 1 ||
+    //     typeof req.body.lastname !== 'string' || req.body.lastname.trim().length < 1 ||
+    //     typeof req.body.affiliation !== 'string' || req.body.affiliation.trim().length < 1 ||
+    //     typeof req.body.faction !== 'string' || req.body.faction.trim().length < 1 ||
+    //     typeof req.body.dep !== 'string' || req.body.dep.trim().length < 1
+    //   ) {
+    //     return res.status(400).json({ message: "userid, title, name, lastname, affiliation, faction and dep are required fields with valid non-empty string values." });
+    //   }
+
+    //   console.log(`User with ID ${userid} not found. Creating a new user.`);
+
+    //   // Generate hashed password
+    //   const hashedPwd = await bcrypt.hash(req?.body?.userid, 10);
+
+    //   // Create new user with hashed password
+    //   user = await User.create({ ...req.body, password: hashedPwd });
+
+    //   return res.status(201).json(user); // Return newly created user
+    // }
+
     if (!user) {
-      if (
-        !req?.body?.title ||
-        !req?.body?.name ||
-        !req?.body?.lastname ||
-        !req?.body?.affiliation ||
-        !req?.body?.faction ||
-        !req?.body?.dep ||
-        typeof req.body.title !== 'string' || req.body.title.trim().length < 1 ||
-        typeof req.body.name !== 'string' || req.body.name.trim().length < 1 ||
-        typeof req.body.lastname !== 'string' || req.body.lastname.trim().length < 1 ||
-        typeof req.body.affiliation !== 'string' || req.body.affiliation.trim().length < 1 ||
-        typeof req.body.faction !== 'string' || req.body.faction.trim().length < 1 ||
-        typeof req.body.dep !== 'string' || req.body.dep.trim().length < 1
-      ) {
-        return res.status(400).json({ message: "userid, title, name, lastname, affiliation, faction and dep are required fields with valid non-empty string values." });
-      }
-
-      console.log(`User with ID ${userid} not found. Creating a new user.`);
-
-      // Generate hashed password
-      const hashedPwd = await bcrypt.hash(req?.body?.userid, 10);
-
-      // Create new user with hashed password
-      user = await User.create({ ...req.body, password: hashedPwd });
-
-      return res.status(201).json(user); // Return newly created user
+      return res.status(204).json({ message: "not fond user" });
     }
 
     const validColumns = req.body;
@@ -192,6 +214,7 @@ const updateUser = async (req, res) => {
 // };
 
 module.exports = {
+  createUser,
   getAllUsers,
   getUser,
   updateUser,
