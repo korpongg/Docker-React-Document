@@ -22,7 +22,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import LogoWhite from "../assets/logo-white.svg";
 
 import AvatarPic from "../assets/avatar2.png";
-import { chkAdmin, chkAdmins } from "../components/Function";
+import { chkAdmin, chkAdmins, chkMedic } from "../components/Function";
 
 const Header = () => {
   const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
@@ -34,7 +34,10 @@ const Header = () => {
   const userData = storedAuth ? JSON.parse(localStorage.getItem("userData")) : null;
   const userPic = storedAuth ? JSON.parse(localStorage.getItem("userPic")) : null;
   const isAdmin = chkAdmin(userData?.role);
-  const isAdmins = chkAdmins(userData?.role);
+  const isHa = chkAdmins(userData?.role);
+  const isEXEC = chkAdmin(userData?.level);
+
+  const showMedicationMenu = isAdmin || chkMedic(userData?.AffID, userData?.DepID) || isHa || (isEXEC && userData?.affiliation === "งานคุณภาพ");
 
   // Check Authen
   const fetchData = async () => {
@@ -160,7 +163,9 @@ const Header = () => {
               <MenuItem onClick={() => handleNavigate("/home")}>หน้าหลัก</MenuItem>
               <MenuItem onClick={() => handleNavigate("/occurrence")}>Occurrence</MenuItem>
               <MenuItem onClick={() => handleNavigate("/occurrence/event")}>อยู่ระหว่างทบทวน</MenuItem>
-              <MenuItem onClick={() => handleNavigate("/medication")}>Medication</MenuItem>
+              {showMedicationMenu && (
+                <MenuItem onClick={() => handleNavigate("/medication")}>Medication</MenuItem>
+              )}
             </StyledMenu>
           </LeftContent>
 
@@ -179,7 +184,9 @@ const Header = () => {
                 <Typography variant="body1" onClick={() => handleNavigate("/home")} sx={{ display: { xs: "none", md: "block" } }} className="Button-Text">หน้าหลัก</Typography>
                 <Typography variant="body1" onClick={() => handleNavigate("/occurrence")} sx={{ display: { xs: "none", md: "block" } }} className="Button-Text">Occurrence</Typography>
                 <Typography variant="body1" onClick={() => handleNavigate("/occurrence/event")} sx={{ display: { xs: "none", md: "block" } }} className="Button-Text">อยู่ระหว่างทบทวน</Typography>
-                <Typography variant="body1" onClick={() => handleNavigate("/medication")} sx={{ display: { xs: "none", md: "block" } }} className="Button-Text">Medication</Typography>
+                {showMedicationMenu && (
+                  <Typography variant="body1" onClick={() => handleNavigate("/medication")} sx={{ display: { xs: "none", md: "block" } }} className="Button-Text">Medication</Typography>
+                )}
 
                 <IconButton onClick={handleClick} sx={{ p: 0 }}>
                   <StyledBadge overlap="circular" anchorOrigin={{ vertical: "bottom", horizontal: "right" }} variant="dot">

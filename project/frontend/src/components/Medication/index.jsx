@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
-import { chkAdmins, chkAdmin } from "../Function";
+import { chkAdmins, chkAdmin, chkMedic } from "../Function";
 import DataTable from "./DataTable";
 
 import { DashboardBox } from "../../styles/Dashboard.style";
@@ -21,6 +21,15 @@ const Medication = () => {
   const config = { headers: { Authorization: `Bearer ${storedAuth.accessToken}` } };
   const [dashboard, setDashboard] = useState([]);
   const [loading, setLoading] = useState(load);
+
+  const showMedicationMenu = isAdmin || chkMedic(userData?.AffID, userData?.DepID) || (isEXEC && userData?.affiliation === "งานคุณภาพ");
+
+  useEffect(() => {
+    if (!showMedicationMenu) {
+      navigate('/unauthorized');
+      return;
+    }
+  }, [showMedicationMenu]);
 
   useEffect(() => {
     connectWebSocket();
@@ -91,21 +100,23 @@ const Medication = () => {
   };
 
   return (
-    <DashboardBox>
-      <h1>รายงานความคลาดเคลื่อนยา</h1>
-      <DataTable
-        data={dashboard}
-        isAdmin={isAdmin}
-        isEXEC={isEXEC}
-        userData={userData}
-        handleAddItem={handleAddItem}
-        handleViewClick={handleViewClick}
-        handleEditClick={handleEditClick}
-        handleDeleteClick={handleDeleteClick}
-        handleApproveClick={handleApproveClick}
-        loading={loading}
-      />
-    </DashboardBox>
+    showMedicationMenu ? (
+      <DashboardBox>
+        <h1>รายงานความคลาดเคลื่อนยา</h1>
+        <DataTable
+          data={dashboard}
+          isAdmin={isAdmin}
+          isEXEC={isEXEC}
+          userData={userData}
+          handleAddItem={handleAddItem}
+          handleViewClick={handleViewClick}
+          handleEditClick={handleEditClick}
+          handleDeleteClick={handleDeleteClick}
+          handleApproveClick={handleApproveClick}
+          loading={loading}
+        />
+      </DashboardBox>
+    ) : null
   );
 };
 

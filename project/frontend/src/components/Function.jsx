@@ -49,6 +49,10 @@ export function chkAdmins(param) {
   return new Set(["2", "3"]).has(param);
 }
 
+export function chkMedic(aff, dep) {
+  return [3, 5].includes(aff) || dep === 13;
+}
+
 export function isMobileChk() {
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 }

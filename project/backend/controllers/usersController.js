@@ -73,39 +73,38 @@ const getUser = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+// const getUser = async (req, res) => {
+//   const userId = req?.params?.userid;
+//   if (!userId) return res.status(400).json({ message: "User ID required" });
 
-const getUsers = async (req, res) => {
-  const userId = req?.params?.userid;
-  if (!userId) return res.status(400).json({ message: "User ID required" });
-
-  try {    
-    const user = await User.findOne({
-      attributes: {
-        include: [
-          // Include the computed column 'affiliationname'
-          // Add the new computed column based on the 'title' field
-          [sequelize.literal("CASE WHEN title LIKE '%นาง%' THEN 'F' ELSE 'M' END"), "sex"],
-          [sequelize.literal("CASE WHEN role = '3' THEN 'Admin' WHEN role = '2' THEN 'Edit' ELSE 'User' END"), "rolesname"],
-          [sequelize.literal("CASE WHEN level = '1' THEN 'User' WHEN level = '2' THEN 'Staff' ELSE 'Manager' END"), "levelname"],
-        ],
-        exclude: ['updateAt'], // Exclude password column
-      },
-      where: {
-        userid: userId,
-      }
-    });
+//   try {    
+//     const user = await User.findOne({
+//       attributes: {
+//         include: [
+//           // Include the computed column 'affiliationname'
+//           // Add the new computed column based on the 'title' field
+//           [sequelize.literal("CASE WHEN title LIKE '%นาง%' THEN 'F' ELSE 'M' END"), "sex"],
+//           [sequelize.literal("CASE WHEN role = '3' THEN 'Admin' WHEN role = '2' THEN 'Edit' ELSE 'User' END"), "rolesname"],
+//           [sequelize.literal("CASE WHEN level = '1' THEN 'User' WHEN level = '2' THEN 'Staff' ELSE 'Manager' END"), "levelname"],
+//         ],
+//         exclude: ['updateAt'], // Exclude password column
+//       },
+//       where: {
+//         userid: userId,
+//       }
+//     });
     
-    if (!user) {
-      return res.status(204).json({ message: `User ID ${userId} not found` });
-    }
-    // Fetch additional data from [10.1.1.117].[DNHOS].[dbo].[HNPAT_RIGHT]
-    const hn = user.hn; // Assuming 'hn' is the key to match
-    res.status(201).json(user);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: err.message });
-  }
-};
+//     if (!user) {
+//       return res.status(204).json({ message: `User ID ${userId} not found` });
+//     }
+//     // Fetch additional data from [10.1.1.117].[DNHOS].[dbo].[HNPAT_RIGHT]
+//     const hn = user.hn; // Assuming 'hn' is the key to match
+//     res.status(201).json(user);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: err.message });
+//   }
+// };
 
 const updateUser = async (req, res) => {
   // console.log(req?.body);

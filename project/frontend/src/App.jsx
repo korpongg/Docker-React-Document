@@ -22,6 +22,7 @@ import AddUser from "./view/admin/AddUser";
 import Usermanager from "./view/admin/Usermanager";
 
 import Missing from "./components/Missing";
+import Unauthorized from "./components/Unauthorized";
 
 const ROLES = {
   User: "1",
@@ -45,6 +46,7 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route path="login" element={<Login />} />
           <Route path="logout" element={<Logout />} />
+          <Route path="unauthorized" element={<Unauthorized />} />
 
           <Route
             element={
