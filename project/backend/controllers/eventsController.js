@@ -4,8 +4,8 @@ const Occurrences = require("../models/Occurrences");
 const User = require("../models/User");
 const { executeAndStoreQueryResult } = require('../services/broadcastService');
 const { findDepartmentEmail, sendEmailEvent, sendEmailEventHA } = require("./emailController");
-const DB_NAME = process.env.DB_NAME;
 const DataDict_Occurrence = require("./dataDictOccurrence");
+const DB_NAME = process.env.DB_NAME;
 
 // Utility function to format dates to SQL Server's format
 const formatDate = (date) => date ? date.toISOString().replace("T", " ").replace("Z", "") : null;
@@ -63,11 +63,64 @@ function getTitleByCode(code, occurrences) {
 function getTopicByKey(key) {
   const section = DataDict_Occurrence[key];
   if (!section) {
-    return `Section with key ${key} not found.`;
+    return ``;
   }
 
   return section.topic;
 }
+
+// Get Report
+exports.rePort = async (req, res) => {
+  const startDate = req?.params?.startdate;
+  const endDate = req?.params?.enddate;
+
+  try {
+    // Query
+    let eventQuery = `
+      DECLARE @StartDate DATE, @EndDate DATE;
+      SET @StartDate = :startdate;
+      SET @EndDate = :enddate;
+      
+      SELECT e.id,
+      e.reportid,
+      e.code,
+      CASE WHEN o.hn IS NULL THEN o.an ELSE o.hn END AS hn,
+      o.occurrencedate,
+      d.name as depname,
+      CASE WHEN o.reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END AS reporttypename,
+      o.level,
+      e.summarydetail,
+      o.renew,
+      o.activefailure,
+      e.comment,
+      e.suggestion,
+      e.forwardtxt
+      FROM ${DB_NAME}.[dbo].[event_logs] e
+      LEFT JOIN ${DB_NAME}.[dbo].[occurrences] o ON o.reportid = e.reportid
+      LEFT JOIN ${DB_NAME}.[dbo].[department] d ON d.id = e.deptrelate
+    `;
+    
+    // Add the WHERE clause based on the provided dates
+    if (startDate && endDate) {
+      eventQuery += ` WHERE CAST(o.[occurrencedate] AS date) BETWEEN CAST(@StartDate AS date) AND CAST(@EndDate AS date)`;
+    } else if (startDate) {
+      eventQuery += ` WHERE CAST(o.[occurrencedate] AS date) = CAST(@StartDate AS date)`;
+    }
+    
+    // Execute the query with replacements for the dates
+    const results = await sequelize.query(eventQuery, {
+      replacements: {
+        startdate: startDate ? startDate : null,
+        enddate: endDate ? endDate : null
+      },
+      type: sequelize.QueryTypes.SELECT
+    });
+    
+    return res.status(200).json(results);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 // Create a new report log
 exports.createEventtLog = async (req, res) => {

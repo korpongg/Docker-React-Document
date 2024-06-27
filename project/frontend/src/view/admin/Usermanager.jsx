@@ -10,12 +10,20 @@ import CancelIcon from "@mui/icons-material/Close";
 import InfoIcon from "@mui/icons-material/InfoOutlined";
 import { Snackbar } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
-import { DataGrid, GridToolbarContainer, GridActionsCellItem, GridRowModes, GridRowEditStopReasons, GridToolbar, } from "@mui/x-data-grid";
+import { DataGrid, GridToolbarContainer, GridToolbarColumnsButton, GridToolbarFilterButton, GridToolbarDensitySelector, GridToolbarExportContainer, GridCsvExportMenuItem, GridActionsCellItem, GridRowModes, GridRowEditStopReasons } from "@mui/x-data-grid";
+
+
+const csvOptions = { utf8WithBom: true };
 
 function EditToolbar() {
   return (
     <GridToolbarContainer style={{ marginLeft: "auto" }}>
-      <GridToolbar />
+      <GridToolbarColumnsButton />
+      <GridToolbarFilterButton />
+      <GridToolbarDensitySelector />
+      <GridToolbarExportContainer>
+        <GridCsvExportMenuItem options={csvOptions} />
+      </GridToolbarExportContainer>
     </GridToolbarContainer>
   );
 }
@@ -219,6 +227,7 @@ export default function UserManager() {
               className="UserDataTable"
               rows={rows}
               columns={columns}
+              disableRowSelectionOnClick
               hideFooterSelectedRowCount={true}
               initialState={{ ...columns.initialState, pagination: { paginationModel: { pageSize: 10 } }, }}
               pageSizeOptions={[10, 25, 50]}

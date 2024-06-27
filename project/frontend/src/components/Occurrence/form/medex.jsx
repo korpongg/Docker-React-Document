@@ -343,7 +343,7 @@ const Medication = ({ Mode }) => {
           const responseStatus = response.status;
 
           if (responseStatus === 200 || responseStatus === 201) {
-            // navigate("/medication");
+            navigate("/medication");
           }
         } catch (err) {
           console.error(err);
@@ -427,7 +427,7 @@ const Medication = ({ Mode }) => {
       const responseStatus = response.status;
 
       if (responseStatus === 200 || responseStatus === 201) {
-        // navigate("/medication");
+        navigate("/medication");
       }
     } catch (err) {
       console.error(err);

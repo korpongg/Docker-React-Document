@@ -21,6 +21,8 @@ import MedicationF from "./components/Occurrence/form/medex";
 import AddUser from "./view/admin/AddUser";
 import Usermanager from "./view/admin/Usermanager";
 
+import OccurrenceReport from "./components/Report/OccurrenceReport";
+
 import Missing from "./components/Missing";
 import Unauthorized from "./components/Unauthorized";
 
@@ -73,6 +75,7 @@ function App() {
           <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
             <Route path="adduser" element={<AddUser />} />
             <Route path="usermanager" element={<Usermanager />} />
+            <Route path="occurrence/report" element={<OccurrenceReport />} />
           </Route>
 
           {/* catch all */}

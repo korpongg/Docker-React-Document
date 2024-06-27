@@ -2,7 +2,158 @@ const sequelize = require("../config/dbConn").sequelize;
 const Medication = require('../models/Medication');
 // const User = require("../models/User");
 const { executeAndStoreQueryResult } = require('../services/broadcastService');
+const DataDict_Medication = require("./dataDictMedication");
+const DataDict_Med = require("./dataDictMedicationRCA");
 const DB_NAME = process.env.DB_NAME;
+
+// Function to get title by code
+function getTitleByCodeMed(code, medication) {
+  const remarks = {
+    "4.1.99": medication.prescribingremark,
+    "4.2.99": medication.dispensingremark,
+    "4.3.99": medication.administrationremark,
+  };
+  if (remarks[code]) {
+    return `อื่นๆ : ${remarks[code]}`;
+  }
+  
+  for (const section of Object.values(DataDict_Medication)) {
+    const option = section.options.find(option => option.code === code);
+    if (option) {
+      return option.title;
+    }
+  }
+  return '';
+}
+
+function getTopicByKeyMed(key) {
+  return DataDict_Medication[key]?.topic || '';
+}
+
+function getTitleByCode(code, remark, dataDict) {
+  for (const option of dataDict.options) {
+    if (option.code === code) {
+      return " - " + option.title;
+    }
+    if (option.suboption) {
+      const subOption = option.suboption.find(sub => sub.code === code);
+      if (subOption) {
+        return "; " + subOption.title;
+      }
+    }
+  }
+  return ` - อื่นๆ : ${remark}`; // Default title if code not found
+}
+
+function mapRCAtoTitles(rcaCodes, remark, dataDict) {
+  return rcaCodes.map(code => getTitleByCode(code, remark, dataDict)).join('\n');
+}
+
+async function fetchResults(query, replacements) {
+  return await sequelize.query(query, {
+    replacements,
+    type: sequelize.QueryTypes.SELECT
+  });
+}
+
+function parseMedicationResults(results) {
+  return results.map(medication => {
+    const { reportid, prescribing, dispensing, administration, rca, ...rest } = medication;
+
+    const parseField = field => JSON.parse(medication[field] || '[]');
+    const prescribingM = parseField('prescribing');
+    const dispensingM = parseField('dispensing');
+    const administrationM = parseField('administration');
+
+    const reportDetails = [];
+    const errorTypes = [];
+
+    if (prescribingM.length) {
+      reportDetails.push(prescribingM.map(code => getTitleByCodeMed(code, medication)).join(", \n"));
+      errorTypes.push(getTopicByKeyMed('prescribing'));
+    }
+    if (dispensingM.length) {
+      if (reportDetails.length) reportDetails.push(", \n");
+      reportDetails.push(dispensingM.map(code => getTitleByCodeMed(code, medication)).join(", \n"));
+      errorTypes.push(getTopicByKeyMed('dispensing'));
+    }
+    if (administrationM.length) {
+      if (reportDetails.length) reportDetails.push(", \n");
+      reportDetails.push(administrationM.map(code => getTitleByCodeMed(code, medication)).join(", \n"));
+      errorTypes.push(getTopicByKeyMed('administration'));
+    }
+
+    console.log(reportid)
+
+    const mappedTitles = mapRCAtoTitles(parseField('rca'), medication.rcaremark, DataDict_Med);
+
+    return {
+      ...rest,
+      reportid: "\t" + reportid,
+      error: reportDetails.join(""),
+      errortype: errorTypes.join(", \n"),
+      effect: parseField('effect'),
+      drugrelate: parseField('drugrelate'),
+      rca: mappedTitles
+    };
+  });
+}
+
+// Get Report
+exports.rePort = async (req, res) => {
+  const { startdate, enddate } = req.params;
+
+  const baseQuery = `
+    DECLARE @StartDate DATE, @EndDate DATE;
+    SET @StartDate = :startdate;
+    SET @EndDate = :enddate;
+
+    SELECT med.*,
+      dep.name AS depname,
+      CONCAT(u_request.title, ' ', u_request.name, ' ', u_request.lastname) AS requestby,
+      u_request.dep AS requestdep,
+      u_request.faction AS requestfac,
+      u_request.affiliation AS requestaff,
+      CASE
+        WHEN u_update.userid IS NULL THEN NULL
+        ELSE CONCAT(u_update.title, ' ', u_update.name, ' ', u_update.lastname)
+      END AS updateby,
+      u_update.dep AS updatedep,
+      u_update.faction AS updatefac,
+      u_update.affiliation AS updateaff,
+      CASE 
+        WHEN u_approve.userid IS NULL THEN NULL
+        ELSE CONCAT(u_approve.title, ' ', u_approve.name, ' ', u_approve.lastname)
+      END AS approveby,
+      u_approve.dep AS approvedep,
+      u_approve.faction AS approvefac,
+      u_approve.affiliation AS approveaff,
+      CASE WHEN med.reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END AS reporttypename
+    FROM ${DB_NAME}.[dbo].[medication] med
+    LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_request ON u_request.userid = med.createby
+    LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_update ON u_update.userid = med.updateby
+    LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_approve ON u_approve.userid = med.approveby
+    LEFT JOIN ${DB_NAME}.[dbo].[department] as dep ON dep.id = med.deptrelate
+  `;
+
+  const whereClause = startdate && enddate
+    ? ` WHERE CAST(med.[occurrencedate] AS date) BETWEEN CAST(@StartDate AS date) AND CAST(@EndDate AS date)`
+    : startdate ? ` WHERE CAST(med.[occurrencedate] AS date) = CAST(@StartDate AS date)` : '';
+
+  const query = baseQuery + whereClause;
+
+  try {
+    const results = await fetchResults(query, { startdate, enddate });
+    if (results.length) {
+      const parsedResults = parseMedicationResults(results);
+      res.status(200).json(parsedResults);
+    } else {
+      res.status(404).json({ error: "Medication not found" });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 // Create a new medication record
 exports.createMedication = async (req, res) => {

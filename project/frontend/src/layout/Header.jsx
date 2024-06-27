@@ -18,6 +18,7 @@ import Divider from "@mui/material/Divider";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import FileDownloadIcon from '@mui/icons-material/FileDownloadRounded';
 import LogoutIcon from "@mui/icons-material/Logout";
 import LogoWhite from "../assets/logo-white.svg";
 
@@ -112,6 +113,12 @@ const Header = () => {
             <ManageAccountsIcon fontSize="small" style={{ color: "green" }} />
           </ListItemIcon>
           จัดการสิทธิ์
+        </MenuItem>
+        <MenuItem key="exportdata" onClick={() => navigate("/occurrence/report")}>
+          <ListItemIcon>
+            <FileDownloadIcon fontSize="small" style={{color: "#2bcb2b"}} />
+          </ListItemIcon>
+          ดึงรายงานอุบัติการณ์
         </MenuItem>
         <Divider key="divider2" />
       </>
