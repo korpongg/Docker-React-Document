@@ -13,4 +13,6 @@ router.route("/")
 
 router.route("/:userid").get(verifyRoles(ROLES_LIST.User, ROLES_LIST.Editor, ROLES_LIST.Admin), usersController.getUser);
 
+router.post('/resetpassword', verifyRoles(ROLES_LIST.User,ROLES_LIST.Admin, ROLES_LIST.Editor), usersController.resetPassword);
+
 module.exports = router;

@@ -242,9 +242,39 @@ const updateUser = async (req, res) => {
 //   }
 // };
 
+const resetPassword = async (req, res) => {
+  const { userid } = req.body;
+
+  if (!userid) {
+    return res.status(400).json({ message: "User ID is required." });
+  }
+
+  const temporaryPassword = userid; // Generate or set a temporary password
+
+  try {
+    const hashedPassword = await bcrypt.hash(temporaryPassword, 10);
+
+    // Update the user's password in the database
+    const result = await User.update({ password: hashedPassword }, { where: { userid: userid } });
+
+    if (result[0] === 0) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    // Send the temporary password to the user (e.g., via email)
+    // sendEmail(user.email, 'Your Temporary Password', `Your temporary password is: ${temporaryPassword}`);
+
+    res.status(201).json({ message: "Password reset successfully. A temporary password has been sent to the user." });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "An error occurred while resetting the password." });
+  }
+};
+
 module.exports = {
   createUser,
   getAllUsers,
   getUser,
   updateUser,
+  resetPassword
 };

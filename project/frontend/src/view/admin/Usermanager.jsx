@@ -5,6 +5,7 @@ import styled from "styled-components";
 import Box from "@mui/material/Box";
 import Tooltip from "@mui/material/Tooltip";
 import EditIcon from "@mui/icons-material/Edit";
+import KeyIcon from '@mui/icons-material/KeyRounded';
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 import InfoIcon from "@mui/icons-material/InfoOutlined";
@@ -64,8 +65,43 @@ export default function UserManager() {
   const [showRoleInfo, setShowRoleInfo] = useState(true);
   const [loading, setLoading] = useState(true);
   const toggleRoleInfo = () => { setShowRoleInfo(!showRoleInfo); };
+
+  const [userId, setUserId] = useState(null);
+  const [dialogReset, setDialogReset] = useState(false);
   const [error, setError] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+
+  const handleResetClick = async (id) => {
+    setUserId(id);
+    setDialogReset(true);
+  };
+
+  const handleCancelReset = () => {
+    setUserId(null);
+    setDialogReset(false);
+  };
+
+  const handleConfirmReset = async () => {
+    const resetData = {
+      userid : userId
+    }
+    try {
+      const response = await axios.post(`${apiUrl}/users/resetpassword`, resetData, { ...config });
+      const responseStatus = response?.status;
+      if (responseStatus === 200 || responseStatus === 201) {
+        setSuccessMessage("รีเซ็ทรหัสผ่านเรียบร้อยแล้ว!");
+      } else {
+        setError(true);
+        setSuccessMessage("ไม่สามารถรีเซ็ทรหัสผ่านได้, กรุณาลองอีกครั้ง.");
+      }
+    } catch (error) {
+      setError(true);
+      setSuccessMessage("ไม่สามารถรีเซ็ทรหัสผ่านได้", error.message);
+      console.error(`ไม่สามารถรีเซ็ทรหัสผ่านได้ `, error.message);
+    }
+
+    setDialogReset(false);
+  };
 
   const handleCloseSnackbar = (event, reason) => {
     if (reason === "clickaway") {
@@ -200,6 +236,15 @@ export default function UserManager() {
               onClick={handleEditClick(id)}
               color="inherit"
             />
+          </Tooltip>,
+          
+          <Tooltip title="รีเซ็ทรหัสผ่าน">
+            <GridActionsCellItem
+              icon={<KeyIcon />}
+              label="รีเซ็ทรหัสผ่าน"
+              onClick={() => handleResetClick(row.userid)}
+              className="deptbutton reset"
+            />
           </Tooltip>
         ];
       },
@@ -261,6 +306,17 @@ export default function UserManager() {
         )}
         <InfoIcon className="BtnInfo" onClick={toggleRoleInfo} />
 
+        <PassWordModal open={dialogReset} onClose={handleCancelReset}>
+          <DialogTitle>ยืนยันการรีเซ็ทรหัสผ่าน</DialogTitle>
+          <DialogContent>
+            <DialogContentText>คุณแน่ใจหรือไม่ว่าต้องการรีเซ็ทรหัสผ่านยูสนี้?</DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCancelReset} color="warning" variant="contained">ยกเลิก</Button>
+            <Button onClick={handleConfirmReset} color="primary" variant="contained">ยืนยัน</Button>
+          </DialogActions>
+        </PassWordModal>
+
         <Snackbar
           anchorOrigin={{ vertical: "top", horizontal: "left" }}
           open={successMessage !== ""}
@@ -302,3 +358,9 @@ const UserBox = styled(Box)`
     width: 90vw;
   }
 `;
+
+const PassWordModal = styled(Dialog)`
+  .MuiTypography-root, .MuiButtonBase-root {
+    font-family: inherit;
+  }
+`
