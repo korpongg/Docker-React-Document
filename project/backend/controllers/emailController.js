@@ -49,8 +49,8 @@ const findDepartmentEmail = async ( reportCode ) => {
 const sendEmail = async (to, reportId, subject, text) => {
   try {
     const htmlContent = `${text}<br/><br/><br/>
-      เข้าสู่ระบบรายงานอุบัติการณ์: <a href="http://10.1.1.95:3001/login">Login</a><br/><br/>
-      หากเข้าสู่ระบบแล้ว ดูรายงานอุบัติการณ์: <a href="http://10.1.1.95:3001/occurrence/form/${reportId}">ดูรายงาน</a>`;
+      เข้าสู่ระบบรายงานอุบัติการณ์: <a href="https://occurences.thainakarin.co.th/login">Login</a><br/><br/>
+      หากเข้าสู่ระบบแล้ว ดูรายงานอุบัติการณ์: <a href="https://occurences.thainakarin.co.th/occurrence/form/${reportId}">ดูรายงาน</a>`;
 
     const mailOptions = {
       from: "mis@thainakarin.co.th",
@@ -71,7 +71,7 @@ const sendEmail = async (to, reportId, subject, text) => {
 const sendGenericEmail = async (to, subject, text, link) => {
   try {
     const htmlContent = `${text}<br/><br/><br/>
-      เข้าสู่ระบบรายงานอุบัติการณ์: <a href="http://10.1.1.95:3001/login">Login</a><br/><br/>
+      เข้าสู่ระบบรายงานอุบัติการณ์: <a href="https://occurences.thainakarin.co.th/login">Login</a><br/><br/>
       หากเข้าสู่ระบบแล้ว ${link}`;
 
     const mailOptions = {
@@ -91,13 +91,13 @@ const sendGenericEmail = async (to, subject, text, link) => {
 };
 
 const sendEmailEvent = (to, subject, text) => {
-  const link = `ดูรายงานอุบัติการณ์ที่เกี่ยวข้องกับแผนก: <a href="http://10.1.1.95:3001/occurrence/event">ดูรายงาน</a>`;
+  const link = `ดูรายงานอุบัติการณ์ที่เกี่ยวข้องกับแผนก: <a href="https://occurences.thainakarin.co.th/occurrence/event">ดูรายงาน</a>`;
   return sendGenericEmail(to, subject, text, link);
 };
 
 const sendEmailEventHA = (to, subject, text) => {
-  const link = `ดูรายงานอุบัติการณ์: <a href="http://10.1.1.95:3001/occurrence">ดูรายงานอุบัติการณ์</a><br/><br/>
-    หรือ ดูรายงานอุบัติการณ์ที่เกี่ยวข้องกับแผนก: <a href="http://10.1.1.95:3001/occurrence/event">ดูรายงาน</a>`;
+  const link = `ดูรายงานอุบัติการณ์: <a href="https://occurences.thainakarin.co.th/occurrence">ดูรายงานอุบัติการณ์</a><br/><br/>
+    หรือ ดูรายงานอุบัติการณ์ที่เกี่ยวข้องกับแผนก: <a href="https://occurences.thainakarin.co.th/occurrence/event">ดูรายงาน</a>`;
   return sendGenericEmail(to, subject, text, link);
 };
 
