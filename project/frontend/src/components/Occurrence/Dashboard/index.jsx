@@ -55,34 +55,23 @@ const Dashboard = () => {
   }, []);
 
   const filterDataSearch = (rowData) => {
-    const OccurrenceDate = new Date(rowData.occurrencedate);
-
-    const parseDate = (dateStr, endOfDay = false) => {
-      const [day, month, year] = dateStr.split('/');
-      const date = new Date(`${year}-${month}-${day}`);
-      if (endOfDay) {
-        date.setHours(23, 59, 59, 999); // Set time to 23:59:59 for end date
-      } else {
-        date.setHours(0, 0, 0, 0); // Set time to 00:00:00 for start date
-      }
-      return date;
-    };
-
-    const startDateObj = startDate ? parseDate(startDate) : null;
-    const endDateObj = endDate ? parseDate(endDate, true) : null;
-  
     // Helper function to format date as "YYYY-MM-DD"
-    const formatDate = (date) => {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      const day = date.getUTCDate();
+      const month = date.getUTCMonth() + 1;
+      const year = date.getUTCFullYear();
+      const formattedDay = day < 10 ? `0${day}` : `${day}`;
+      const formattedMonth = month < 10 ? `0${month}` : `${month}`;
+      return `${year}-${formattedMonth}-${formattedDay}`;
     };
-  
-    const isSameDate = (date1, date2) => {
-      return formatDate(date1) === formatDate(date2);
-    };
-  
+
+    const startDateObj = startDate ? formatDate(startDate) : null;
+    const endDateObj = endDate ? formatDate(endDate, true) : null;
+    const OccurrenceDate = formatDate(rowData.occurrencedate);
+
+    const isSameDate = (date1, date2) => formatDate(date1) === formatDate(date2);
+
     const isStartDateValid = startDateObj ? isSameDate(OccurrenceDate, startDateObj) : true;
     const isBetweenDates = startDateObj && endDateObj ? OccurrenceDate >= startDateObj && OccurrenceDate <= endDateObj : true;
 
