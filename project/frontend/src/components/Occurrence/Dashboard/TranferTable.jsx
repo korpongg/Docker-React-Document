@@ -27,9 +27,9 @@ const EditToolbar = ({ reportData, tranType, handleAddEvent }) => (
     )}
     {/* <GridToolbar /> */}
     {/* <GridToolbarQuickFilter /> */}
-      <GridToolbarExportContainer>
-        <GridCsvExportMenuItem options={csvOptions} />
-      </GridToolbarExportContainer>
+    <GridToolbarExportContainer sx={{ background: 'green !important', color: 'white', padding: '3px 12px', textTransform: 'none' }} >
+      <GridCsvExportMenuItem options={csvOptions}/>
+    </GridToolbarExportContainer>
   </GridToolbarContainer>
 );
 
@@ -289,7 +289,7 @@ const TranferTable = ({ reportData, tranType, dataEvent, isAdmin, userData, conf
         pageSizeOptions={[10, 25, 50, 100]}
         getRowClassName={getRowClassName}
         slots={{ toolbar: () => <EditToolbar reportData={reportData} tranType={tranType} handleAddEvent={handleAddEvent} /> }}
-        localeText={{ toolbarColumns: "คอลัมน์", toolbarFilters: "ตัวกรอง", toolbarDensity: "ระยะห่าง", toolbarExport: "ส่งออก" }}
+        localeText={{ toolbarColumns: "คอลัมน์", toolbarFilters: "ตัวกรอง", toolbarDensity: "ระยะห่าง", toolbarExport: "Export" }}
         loading={loading}
         sx={{
           '&.MuiDataGrid-root--densityCompact .MuiDataGrid-cell': { py: 1 },

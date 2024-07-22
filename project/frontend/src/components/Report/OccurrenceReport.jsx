@@ -14,7 +14,7 @@ function EditToolbar() {
       <GridToolbarColumnsButton />
       <GridToolbarFilterButton />
       <GridToolbarDensitySelector />
-      <GridToolbarExportContainer>
+      <GridToolbarExportContainer sx={{ background: 'green !important', color: 'white', padding: '3px 12px', textTransform: 'none' }} >
         <GridCsvExportMenuItem options={csvOptions} />
       </GridToolbarExportContainer>
     </GridToolbarContainer>
@@ -187,7 +187,7 @@ const OccurrenceReport = () => {
         pageSizeOptions={[10, 25, 50, 100]}
         getRowClassName={(params) => params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row" }
         slots={{ toolbar: () => <EditToolbar /> }}
-        localeText={{ toolbarColumns: "คอลัมน์", toolbarFilters: "ตัวกรอง", toolbarDensity: "ระยะห่าง", toolbarExport: "ส่งออก" }}
+        localeText={{ toolbarColumns: "คอลัมน์", toolbarFilters: "ตัวกรอง", toolbarDensity: "ระยะห่าง", toolbarExport: "Excel" }}
         loading={loading}
         sx={{
           '&.MuiDataGrid-root--densityCompact .MuiDataGrid-cell': {
