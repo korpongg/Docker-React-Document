@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Button, Link, Tooltip } from "@mui/material";
-import { DataGrid, GridToolbarContainer, GridToolbar, GridToolbarQuickFilter, GridActionsCellItem } from "@mui/x-data-grid";
+import { DataGrid, GridToolbarContainer, GridToolbar, GridToolbarExportContainer, GridCsvExportMenuItem, GridToolbarQuickFilter, GridActionsCellItem } from "@mui/x-data-grid";
 import { Add as AddIcon, FindInPageRounded as FileIcon, RestartAltRounded as RepeatIcon, Edit as EditIcon, CheckCircleRounded as AcceptIcon } from "@mui/icons-material";
 import Swal from 'sweetalert2';
 import { formatDateTimeN7 } from "../../Function";
 import requestStatusData from "../../label.json";
 import EventDialog from "../Event/EventDialog";
+
+const csvOptions = { utf8WithBom: true };
 
 const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -25,6 +27,9 @@ const EditToolbar = ({ reportData, tranType, handleAddEvent }) => (
     )}
     {/* <GridToolbar /> */}
     {/* <GridToolbarQuickFilter /> */}
+      <GridToolbarExportContainer>
+        <GridCsvExportMenuItem options={csvOptions} />
+      </GridToolbarExportContainer>
   </GridToolbarContainer>
 );
 
