@@ -34,6 +34,7 @@ const Dashboard = () => {
   const [eventData, setEventData] = useState([]);
   const [loading, setLoading] = useState(load);
   const [rowData, setRowData] = useState(null);
+  const [tranType, setTranTypeData] = useState(null);
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [isCloseIncidentDialogOpen, setCloseIncidentDialogOpen] = useState(false);
   const [closeReason, setCloseReason] = useState("");
@@ -121,8 +122,9 @@ const Dashboard = () => {
     navigate(`/occurrence/${id}`);
   };
 
-  const handleTranfClick = (id, data, role) => {
+  const handleTranfClick = (id, data, type) => {
     setRowData(data);
+    setTranTypeData(type);
     setDialogOpen(true);
   };
 
@@ -225,6 +227,7 @@ const Dashboard = () => {
 
   const handleCloseDialog = () => {
     setRowData(null);
+    setTranTypeData(null);
     setDialogOpen(false);
   };
 
@@ -267,6 +270,7 @@ const Dashboard = () => {
           config={config}
           isAdmin={isAdmin}
           rowData={rowData}
+          tranType={tranType}
           eventData={eventData}
           setEventData={setEventData}
           isDialogOpen={isDialogOpen}

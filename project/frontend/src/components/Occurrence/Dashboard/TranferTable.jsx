@@ -10,7 +10,7 @@ import EventDialog from "../Event/EventDialog";
 
 const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
-const EditToolbar = ({ reportData, handleAddEvent }) => (
+const EditToolbar = ({ reportData, tranType, handleAddEvent }) => (
   <GridToolbarContainer style={{ justifyContent: "space-between", padding: "10px 10px 0" }}>
     {reportData && (
       <Button
@@ -20,7 +20,7 @@ const EditToolbar = ({ reportData, handleAddEvent }) => (
         style={{ marginRight: 10 }}
         disabled={reportData?.formstatus !== '1' && reportData?.formstatus !== '4'}
       >
-        ส่งทบทวน
+        {tranType ? 'ส่งรายงาน' : 'ส่งทบทวน'}
       </Button>
     )}
     {/* <GridToolbar /> */}
@@ -36,12 +36,7 @@ function ExpandableCell({ value }) {
         <div>
           {expanded ? value : value.slice(0, 200)}&nbsp;
           {value.length > 200 && (
-            <Link
-              type="button"
-              component="button"
-              sx={{ fontSize: "inherit" }}
-              onClick={() => setExpanded(!expanded)}
-            >
+            <Link type="button" component="button" sx={{ fontSize: "inherit" }} onClick={() => setExpanded(!expanded)}>
               {expanded ? "ดูน้อยลง" : "ดูเพิ่มเติม"}
             </Link>
           )}
@@ -139,7 +134,7 @@ const ActionButtons = ({ id, row, isAdmin, userData, handleViewEvent, handleRepe
   </>
 );
 
-const TranferTable = ({ reportData, dataEvent, isAdmin, userData, config, loading, setLoading }) => {
+const TranferTable = ({ reportData, tranType, dataEvent, isAdmin, userData, config, loading, setLoading }) => {
   const [mode, setMode] = useState(null);
   const [isHA, setIsHA] = useState(false);
   const [eventData, setEventData] = useState([]);
@@ -169,7 +164,7 @@ const TranferTable = ({ reportData, dataEvent, isAdmin, userData, config, loadin
     {
       field: "status",
       headerName: "สถานะ",
-      minWidth: 140, flex: 1, align: "center", headerAlign: "center",
+      minWidth: 155, flex: 1, align: "center", headerAlign: "center",
       renderCell: (params) => {
         const statusInfo = statusMap[params.row.status];
         return <div className={`post-status ${statusInfo.color}`}>{statusInfo.text}</div>;
@@ -288,7 +283,7 @@ const TranferTable = ({ reportData, dataEvent, isAdmin, userData, config, loadin
         initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
         pageSizeOptions={[10, 25, 50, 100]}
         getRowClassName={getRowClassName}
-        slots={{ toolbar: () => <EditToolbar reportData={reportData} handleAddEvent={handleAddEvent} /> }}
+        slots={{ toolbar: () => <EditToolbar reportData={reportData} tranType={tranType} handleAddEvent={handleAddEvent} /> }}
         localeText={{ toolbarColumns: "คอลัมน์", toolbarFilters: "ตัวกรอง", toolbarDensity: "ระยะห่าง", toolbarExport: "ส่งออก" }}
         loading={loading}
         sx={{
@@ -300,6 +295,7 @@ const TranferTable = ({ reportData, dataEvent, isAdmin, userData, config, loadin
       />
 
       <EventDialog
+        tranType={tranType}
         mode={mode}
         isHA={isHA}
         userData={userData}

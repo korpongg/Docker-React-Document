@@ -87,6 +87,12 @@
       "statusText": "ทบทวนซ้ำ",
       "statusColor": "repeat",
       "color": "black"
+    },
+    {
+      "id": 4,
+      "statusText": "ไม่ต้องทบทวน",
+      "statusColor": "report",
+      "color": "purple"
     }
   ]
 }

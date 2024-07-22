@@ -10,7 +10,7 @@ import { TranferDialogBox } from "../../../styles/Event.style";
 
 const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
-const EventDialog = ({ mode, isHA, userData, config, isDialogOpen, handleCloseDialog, reportData, eventData, formData, setFormData }) => {
+const EventDialog = ({ tranType, mode, isHA, userData, config, isDialogOpen, handleCloseDialog, reportData, eventData, formData, setFormData }) => {
     const [loading, setLoading] = useState(false);
     const [departments, setDepartments] = useState([]);
 
@@ -42,7 +42,8 @@ const EventDialog = ({ mode, isHA, userData, config, isDialogOpen, handleCloseDi
             setFormData(prevState => ({
                 ...prevState,
                 reportid: reportData.reportid || "",
-                createby: userData.userid
+                createby: userData.userid,
+                ...(tranType && { status: 4 })
             }));
         } else if (mode === 'Edit' && eventData) {
             setFormData({

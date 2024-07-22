@@ -4,6 +4,7 @@ const Occurrences = require("../models/Occurrences");
 const { executeAndStoreQueryResult } = require('../services/broadcastService');
 const { sendEmail } = require("./emailController");
 const DB_NAME = process.env.DB_NAME;
+const HA_EMAIL = process.env.HA_EMAIL;
 
 // Create a new occurrence
 exports.createOccurrence = async (req, res) => {
@@ -60,8 +61,7 @@ exports.createOccurrence = async (req, res) => {
       const newOccurrenceId = result.id;
       const emailSubject = "รายงานอุบัติการณ์ เลขที่เอกสาร: " + reportId;
       const emailMessage = "เลขที่เอกสาร: " + reportId + `<br/><br/>` + "สร้างรายงานสำเร็จ รอตรวจสอบ";
-      const recipientEmail = "qdc@thainakarin.co.th";
-      // const recipientEmail = "nateeton.l@thainakarin.co.th";
+      const recipientEmail = HA_EMAIL;
       sendEmail(recipientEmail, newOccurrenceId, emailSubject, emailMessage);
     }
 
@@ -327,8 +327,7 @@ exports.updateOccurrence = async (req, res) => {
       const reportId = result.reportid;
       const emailSubject = "รายงานอุบัติการณ์ เลขที่เอกสาร: " + reportId;
       const emailMessage = "เลขที่เอกสาร: " + reportId + `<br/><br/>` + "สร้างรายงานสำเร็จ รอตรวจสอบ";
-      const recipientEmail = "qdc@thainakarin.co.th";
-      // const recipientEmail = "nateeton.l@thainakarin.co.th";
+      const recipientEmail = HA_EMAIL;
       sendEmail(recipientEmail, id, emailSubject, emailMessage);
     }
 

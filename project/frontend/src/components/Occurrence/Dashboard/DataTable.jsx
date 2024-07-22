@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Box, Tooltip, Link } from "@mui/material";
 import { DataGrid, GridToolbarContainer, GridToolbar, GridToolbarQuickFilter, GridActionsCellItem } from "@mui/x-data-grid";
-import { Add as AddIcon, DescriptionRounded as FileIcon, SwapHorizRounded as RotateIcon, FindInPageRounded as ViewIcon, Edit as EditIcon, RefreshRounded as CloseIcon, DeleteForeverRounded as DeleteIcon } from "@mui/icons-material";
+import { Add as AddIcon, DescriptionRounded as FileIcon, SwapHorizRounded as RotateIcon, SendRounded as SendIcon, FindInPageRounded as ViewIcon, Edit as EditIcon, RefreshRounded as CloseIcon, DeleteForeverRounded as DeleteIcon } from "@mui/icons-material";
 import { formatDateTimeN7 } from "../../Function";
 import requestStatusData from "../../label.json";
 
@@ -51,6 +51,20 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
     return (
       <Tooltip title={deptNames}><div className="MuiDataGrid-cellContent" role="presentation">{deptNames}</div></Tooltip>
     );
+  };
+
+  const shouldShowButton = (row) => {
+    const isGeneralRisk = row.reporttypename === 'General Risk';
+    const levelCheck = isGeneralRisk ? parseInt(row.level, 10) > 2 : ["A", "B"].includes(row.level);
+    
+    return isAdmin && row.renew && levelCheck && (row.formstatus === '1' || row.formstatus === '2' || row.formstatus === '4');
+  };
+
+  const shouldShowLowlvButton = (row) => {
+    const isGeneralRisk = row.reporttypename === 'General Risk';
+    const levelCheck = isGeneralRisk ? parseInt(row.level, 10) > 2 : ["A", "B"].includes(row.level);
+  
+    return isAdmin && row.renew && !levelCheck && (row.formstatus === '1' || row.formstatus === '2' || row.formstatus === '4');
   };
 
   const columns = [
@@ -129,7 +143,7 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
             />
           </Tooltip>
           
-          {isAdmin && (row.renew) && (row.reporttypename==='General Risk' ? (parseInt(row.level, 10) > 2) : (row.level > "C")) && (row.formstatus === '1' || row.formstatus === '2' || row.formstatus === '4') && (
+          {shouldShowButton(row) && (
             <Tooltip title={row.formstatus === '1' || row.formstatus === '4' ? 'ส่งต่อรายงาน' : 'ดูรายงานส่งต่อ'}>
               <GridActionsCellItem
                 icon={row.formstatus === '1' || row.formstatus === '4' ? <RotateIcon /> : <ViewIcon />}
@@ -139,7 +153,18 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
               />
             </Tooltip>
           )}
-
+          
+          {shouldShowLowlvButton(row) && (
+            <Tooltip title={row.formstatus === '1' || row.formstatus === '4' ? 'ส่งรายงาน' : 'ดูรายงาน'}>
+              <GridActionsCellItem
+                icon={row.formstatus === '1' || row.formstatus === '4' ? <SendIcon /> : <ViewIcon />}
+                label={row.formstatus === '1' || row.formstatus === '4' ? 'ส่งรายงาน' : 'ดูรายงาน'}
+                onClick={() => handleTranfClick(id, row, 1)}
+                color="secondary"
+              />
+            </Tooltip>
+          )}
+          
           {isAdmin && (row.formstatus === '1' || row.formstatus === '4') && (
             <Tooltip title="Update">
               <GridActionsCellItem

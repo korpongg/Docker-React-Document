@@ -6,6 +6,7 @@ const { executeAndStoreQueryResult } = require('../services/broadcastService');
 const { findDepartmentEmail, sendEmailEvent, sendEmailEventHA } = require("./emailController");
 const DataDict_Occurrence = require("./dataDictOccurrence");
 const DB_NAME = process.env.DB_NAME;
+const HA_EMAIL = process.env.HA_EMAIL;
 
 // Utility function to format dates to SQL Server's format
 const formatDate = (date) => date ? date.toISOString().replace("T", " ").replace("Z", "") : null;
@@ -125,7 +126,7 @@ exports.rePort = async (req, res) => {
 // Create a new report log
 exports.createEventtLog = async (req, res) => {
   try {
-    const { reportid, acceptAt, responsedate, ...otherData } = req.body;
+    const { reportid, status, acceptAt, responsedate, ...otherData } = req.body;
     const formattedAcceptDate = formatDate(acceptAt ? new Date(acceptAt) : null);
     const formattedResponseDate = formatDate(responsedate ? new Date(responsedate) : null);
 
@@ -141,7 +142,7 @@ exports.createEventtLog = async (req, res) => {
       ...otherData,
       reportid,
       code: newCode,
-      status: '1',
+      status: status || '1',
       acceptAt: formattedAcceptDate ? sequelize.literal(`'${formattedAcceptDate}'`) : null,
       responsedate: formattedResponseDate ? sequelize.literal(`'${formattedResponseDate}'`) : null,
     });
@@ -478,12 +479,13 @@ exports.updateEventLog = async (req, res) => {
     if (status === '2'){
       emailSubject = `รายงานอุบัติการณ์ เลขที่เอกสาร: ${code}`;
       emailMessage = `เลขที่เอกสาร: ${code}<br/><br/>หน่วยงานทำการบันทึกผลการทบทวนอุบัติการณ์แล้ว`;
-      recipientEmail = "qdc@thainakarin.co.th";
+      recipientEmail = HA_EMAIL;
       sendEmailEventHA(recipientEmail, emailSubject, emailMessage);
     } else if (status === '3') {
       emailSubject = `รายงานอุบัติการณ์ เลขที่เอกสาร: ${code}`;
       emailMessage = `เลขที่เอกสาร: ${code}<br/><br/>มีรายงานส่งทบทวนอุบัติการณ์ถึงหน่วยงาน`;
       recipientEmail = await findDepartmentEmail(code);
+      // recipientEmail = "nateeton.l@thainakarin.co.th";
       sendEmailEvent(recipientEmail, emailSubject, emailMessage);
     }
 

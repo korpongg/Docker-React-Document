@@ -73,6 +73,10 @@ export const EventBox = styled(Box)`
     // -moz-animation: glow 1s ease-in-out infinite alternate;
     // animation: glow 1s ease-in-out infinite alternate;
   }
+  .post-status.report {
+    background: blueviolet;
+    box-shadow: 1px 1px 2px 0px #8000808c;
+  }
   .post-status.repeat {
     background: black;
     box-shadow: 1px 1px 2px 0px #0000008c;

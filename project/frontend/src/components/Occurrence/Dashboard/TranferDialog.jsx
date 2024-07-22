@@ -3,7 +3,7 @@ import { DialogTitle, DialogContent } from '@mui/material';
 import { TranferDialogBox } from "../../../styles/Dashboard.style";
 import TranferTable from "./TranferTable";
 
-const TranferDialog = ({ userData, config, isAdmin, rowData, eventData, isDialogOpen, handleCloseDialog }) => {
+const TranferDialog = ({ userData, config, isAdmin, rowData, tranType, eventData, isDialogOpen, handleCloseDialog }) => {
     const reportID = rowData?.reportid || 0;
     const [filterData, setFilterData] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -40,6 +40,7 @@ const TranferDialog = ({ userData, config, isAdmin, rowData, eventData, isDialog
                 ) : (
                     <TranferTable
                         reportData={rowData}
+                        tranType={tranType}
                         dataEvent={filterData}
                         isAdmin={isAdmin}
                         userData={userData}
