@@ -33,6 +33,10 @@ export function chkLV(param) {
 //   }
 // }
 
+export function chkHead(param) {
+  return new Set("2").has(param);
+}
+
 export function chkAdmin(param) {
   return new Set("3").has(param);
 }

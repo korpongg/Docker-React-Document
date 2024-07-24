@@ -38,7 +38,7 @@ function ExpandableCell({ value }) {
   );
 }
 
-const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewClick, handleTranfClick, handleCloseClick, handleEditClick, handleDeleteClick, loading }) => {
+const DataTable = ({ data, isAdmin, isEXEC, isHead, userData, handleAddItem, handleViewClick, handleTranfClick, handleCloseClick, handleEditClick, handleDeleteClick, loading }) => {
   // console.log(data);
   const statusMap = {};
   requestStatusData.reportStatus.forEach(status => {
@@ -177,7 +177,7 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
             </Tooltip>
           )}
 
-          {(userData.userid === row.createby || isAdmin) && row.deleteAt === null && (row.formstatus === '0' || row.formstatus === '1' || row.formstatus === '4') && (
+          {(userData.userid === row.createby || isAdmin || isHead) && row.deleteAt === null && (row.formstatus === '0' || row.formstatus === '1' || row.formstatus === '4') && (
             <>
               <Tooltip title="แก้ไขข้อมูลอุบัติการณ์">
                 <GridActionsCellItem
