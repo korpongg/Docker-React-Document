@@ -22,7 +22,7 @@ import DataDict_Risk from "../../../data/form/DataDict_Risk";
 import { OccurrenceStyle } from "../../../styles/OccurrenceStyle.style";
 import departmentRaw from "../../../data/rawData.json";
 import AlertBar from "../../form/AlertBar";
-import { chkAdmins, chkAdmin, chkHead, TimeConverter } from "../../Function";
+import { chkAdmins, chkAdmin, TimeConverter } from "../../Function";
 
 const Occurrence = ({ Mode }) => {
   let { id } = useParams();
@@ -46,7 +46,6 @@ const Occurrence = ({ Mode }) => {
   const [Access, setAccess] = useState(false);
   const isAdmin = chkAdmins(UserData?.role);
   const isEXEC = chkAdmin(UserData?.level);
-  const isHead = chkHead(UserData?.level);
 
   const handleDataChange = (event, name) => {
     const Text = event.target.value;
@@ -91,7 +90,7 @@ const Occurrence = ({ Mode }) => {
 
       if (response.status === 200 || response.status === 201) {
         if (Mode === "Edit") {
-          if (isAdmin || isHead || UserData.userid === response.data.createby) {
+          if (isAdmin || UserData.userid === response.data.createby) {
             setFormData({
               ...response.data,
               userreport: response.data.createby,

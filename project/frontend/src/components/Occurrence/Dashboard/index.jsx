@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 
-import { chkAdmins, chkAdmin, chkHead } from "../../Function";
+import { chkAdmins, chkAdmin } from "../../Function";
 import SearchBox from "./SearchBox";
 import DataTable from "./DataTable";
 import TranferDialog from "./TranferDialog";
@@ -29,7 +29,6 @@ const Dashboard = () => {
   const userData = storedAuth ? JSON.parse(localStorage.getItem("userData")) : null;
   const isAdmin = chkAdmins(userData?.role);
   const isEXEC = chkAdmin(userData?.level);
-  const isHead = chkHead(userData?.level);
   const config = { headers: { Authorization: `Bearer ${storedAuth.accessToken}` } };
   const [dashboard, setDashboard] = useState([]);
   const [eventData, setEventData] = useState([]);
@@ -256,7 +255,6 @@ const Dashboard = () => {
           data={dashboard}
           isAdmin={isAdmin}
           isEXEC={isEXEC}
-          isHead={isHead}
           userData={userData}
           handleAddItem={handleAddItem}
           handleViewClick={handleViewClick}
