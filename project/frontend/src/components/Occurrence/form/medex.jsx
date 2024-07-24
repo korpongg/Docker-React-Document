@@ -25,7 +25,7 @@ import DataDict_Med from "../../../data/form/DataDict_Med";
 import { MedicationStyle } from "../../../styles/MedicationStyle.style";
 import departmentRaw from "../../../data/rawData.json";
 import AlertBar from "../../form/AlertBar";
-import { chkAdmins, chkAdmin,TimeConverter } from "../../Function";
+import { chkAdmins, chkAdmin, chkHead, TimeConverter } from "../../Function";
 
 const Medication = ({ Mode }) => {
   let { id } = useParams();
@@ -49,6 +49,7 @@ const Medication = ({ Mode }) => {
   const [Access, setAccess] = useState(false);
   const isAdmin = chkAdmins(UserData?.role);
   const isEXEC = chkAdmin(UserData?.level);
+  const isHead = chkHead(UserData?.level);
 
   const handleDataChange = (event, name) => {
     const Text = event.target.value;
@@ -94,7 +95,7 @@ const Medication = ({ Mode }) => {
 
       if (response.status === 200 || response.status === 201) {
         if (Mode === "Edit") {
-          if (isAdmin || UserData.userid === response.data.createby) {
+          if (isAdmin || isHead || UserData.userid === response.data.createby) {
             // console.log(TimeConverter(response.data.occurrencedate,0))
             // console.log(TimeConverter(response.data.occurrencedate,-7))
             // console.log(response.data.occurrencedate)
