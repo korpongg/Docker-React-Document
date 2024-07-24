@@ -731,7 +731,7 @@ const Medication = ({ Mode }) => {
         <NavForm
           Mode={Mode}
           Data={FormData}
-          Access={FormData.createby === UserData.userid || isAdmin}
+          Access={FormData.createby === UserData.userid || isAdmin || isHead}
           submitfunction={handleSubmit}
           handleSubmitEdit={handleSubmitEdit}
           Stage={Stage}
