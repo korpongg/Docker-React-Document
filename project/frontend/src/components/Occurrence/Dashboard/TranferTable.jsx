@@ -27,9 +27,11 @@ const EditToolbar = ({ reportData, tranType, handleAddEvent }) => (
     )}
     {/* <GridToolbar /> */}
     {/* <GridToolbarQuickFilter /> */}
-    <GridToolbarExportContainer sx={{ background: 'green !important', color: 'white', padding: '3px 12px', textTransform: 'none' }} >
-      <GridCsvExportMenuItem options={csvOptions}/>
-    </GridToolbarExportContainer>
+    {!tranType && (
+      <GridToolbarExportContainer sx={{ background: 'green !important', color: 'white', padding: '3px 12px', textTransform: 'none' }} >
+        <GridCsvExportMenuItem options={csvOptions}/>
+      </GridToolbarExportContainer>
+    )}
   </GridToolbarContainer>
 );
 
