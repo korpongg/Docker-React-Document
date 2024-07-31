@@ -55,14 +55,14 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
 
   const shouldShowButton = (row) => {
     const isGeneralRisk = row.reporttypename === 'General Risk';
-    const levelCheck = isGeneralRisk ? parseInt(row.level, 10) > 2 : ["A", "B"].includes(row.level);
+    const levelCheck = isGeneralRisk ? parseInt(row.level, 10) > 2 : ["D", "E", "F", "G", "H", "I"].includes(row.level);
     
     return isAdmin && row.renew && levelCheck && (row.formstatus === '1' || row.formstatus === '2' || row.formstatus === '4');
   };
 
   const shouldShowLowlvButton = (row) => {
     const isGeneralRisk = row.reporttypename === 'General Risk';
-    const levelCheck = isGeneralRisk ? parseInt(row.level, 10) > 2 : ["A", "B"].includes(row.level);
+    const levelCheck = isGeneralRisk ? parseInt(row.level, 10) > 2 : ["D", "E", "F", "G", "H", "I"].includes(row.level);
   
     return isAdmin && row.renew && !levelCheck && (row.formstatus === '1' || row.formstatus === '2' || row.formstatus === '4');
   };
