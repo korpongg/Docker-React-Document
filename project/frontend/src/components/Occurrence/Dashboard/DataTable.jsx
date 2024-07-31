@@ -115,7 +115,13 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
       renderCell: renderDeptrelateCell,
     },
     { field: "reporttypename", headerName: "ประเภท", minWidth: 140, flex: 1, align: "center", headerAlign: "center" },
-    { field: "level", headerName: "ความรุนแรง", minWidth: 100, flex: 1, align: "center", headerAlign: "center" },
+    {
+      field: "level", headerName: "ความรุนแรง", minWidth: 100, flex: 1, align: "center", headerAlign: "center",
+      renderCell: (params) => {
+        const highLV = ["3", "4", "5", "D", "E", "F", "G", "H", "I"].includes(params.row.level);
+        return <div className={`${highLV ? 'HighLV' : ''}`}>{params.row.level}</div>;
+      },
+    },
     {
       field: "description",
       headerName: "รายละเอียดเหตุการณ์",

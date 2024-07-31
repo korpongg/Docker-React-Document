@@ -107,6 +107,13 @@ export const DashboardBox = styled(Box)`
     transform: scaleX(-1);
   }
 
+  .HighLV {
+    background: red;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 10px;
+  }
+
   @media screen and (max-width: 1600px) {
     margin-top: 40px;
     width: 86vw;
