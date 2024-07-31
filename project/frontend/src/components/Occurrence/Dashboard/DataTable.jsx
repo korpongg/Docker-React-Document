@@ -86,6 +86,15 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
     { field: "reportid", headerName: "ReportId", minWidth: 120, flex: 1, align: "center", headerAlign: "center", },
     { field: "hn", headerName: "HN", minWidth: 180, flex: 1, align: "center", headerAlign: "center" },
     {
+      field: "createAt",
+      headerName: "วันที่รายงาน",
+      minWidth: 140,
+      flex: 1,
+      align: "center",
+      headerAlign: "center",
+      valueGetter: (params) => params ? formatDateTimeN7(params.value, "dmy") : '',
+    },
+    {
       field: "occurrencedate",
       headerName: "วันที่เกิดเหตุ",
       minWidth: 140,
