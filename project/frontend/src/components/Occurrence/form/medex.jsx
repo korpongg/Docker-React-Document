@@ -485,15 +485,16 @@ const Medication = ({ Mode }) => {
           {Mode === "Edit" && <span>รายการความคลาดเคลื่อนทางยา(แก้ไข)</span>}
           {Mode === "Show" && <span>รายการความคลาดเคลื่อนทางยา</span>}
           {Mode === "Approve" && <span>วิเคราะห์รายการความคลาดเคลื่อนทางยา</span>}
-
+          
           <span>
-            {Mode !== "Show" && (
+            {Mode === "Add" && (
               <Tooltip title="ล้างข้อมูลทั้งหมด">
                 <IconButton aria-label="clear" onClick={ClearData}>
                   <CleaningServicesIcon />
                 </IconButton>
               </Tooltip>
             )}
+            {FormData && (Mode !== "Add") && <span style={{fontSize:"20px"}}>&nbsp;&nbsp;&nbsp;หมายเลขเอกสาร : {FormData.reportid}&nbsp;&nbsp;</span>}
           </span>
         </Box>
 

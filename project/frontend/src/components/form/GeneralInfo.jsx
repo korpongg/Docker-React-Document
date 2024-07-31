@@ -37,12 +37,12 @@ const GeneralInfo = ({ Mode, data, setDataFunction,setSingleDataFunction, missin
 
   return (
     <>
-    {console.log("Test : ",value)}
+    {/* {console.log("Test : ",value)}
     {console.log("Test : ",inputValue)}
     {console.log("Test : ",tosentvalue)}
     {console.log("------------------")}
     {console.log("Result",data.pct)}
-    {console.log("------------------")}
+    {console.log("------------------")} */}
     
       <Box className="TopicHeader">ข้อมูลทั่วไป</Box>
       <div className="GeneralBox" style={{ marginTop: "15px" }}>

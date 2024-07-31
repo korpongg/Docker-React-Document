@@ -473,19 +473,21 @@ const Occurrence = ({ Mode }) => {
         AlertText={AlertText}
       />
       <OccurrenceStyle>
+      {/* {console.log(FormData)} */}
         <Box className="FormHeader">
           {Mode === "Add" && <span>รายงานเหตุการณ์(ใหม่)</span>}
           {Mode === "Edit" && <span>รายงานเหตุการณ์(แก้ไข)</span>}
           {Mode === "Show" && <span>รายงานเหตุการณ์</span>}
-
+          
           <span>
-            {Mode !== "Show" && (
+            {Mode === "Add" && (
               <Tooltip title="ล้างข้อมูลทั้งหมด">
                 <IconButton aria-label="clear" onClick={ClearData}>
                   <CleaningServicesIcon />
                 </IconButton>
               </Tooltip>
             )}
+            {FormData && (Mode !== "Add") && <span style={{fontSize:"20px"}}>หมายเลขเอกสาร : {FormData.reportid}&nbsp;&nbsp;</span>}
           </span>
         </Box>
 
