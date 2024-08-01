@@ -220,6 +220,32 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
 
   const filteredColumns = columns.filter(column => column !== null);
 
+  const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
+  const [sortModel, setSortModel] = useState([]);
+
+  // Load pagination and sort settings from localStorage on mount
+  useEffect(() => {
+    const savedPagination = localStorage.getItem('pagination');
+    if (savedPagination) {
+      setPaginationModel(JSON.parse(savedPagination));
+    }
+
+    const savedSort = localStorage.getItem('sortModel');
+    if (savedSort) {
+      setSortModel(JSON.parse(savedSort));
+    }
+  }, []);
+
+  const handlePaginationChange = (model) => {
+    setPaginationModel(model);
+    localStorage.setItem('pagination', JSON.stringify(model));
+  };
+
+  const handleSortModelChange = (model) => {
+    setSortModel(model);
+    localStorage.setItem('sortModel', JSON.stringify(model));
+  };
+
   return (
     <DataGrid
       autoHeight
@@ -229,36 +255,23 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
       columns={filteredColumns}
       disableRowSelectionOnClick
       hideFooterSelectedRowCount={true}
-      initialState={{
-        pagination: { paginationModel: { page: 0, pageSize: 10 } },
-      }}
+      // initialState={{
+      //   pagination: { paginationModel: { page: 0, pageSize: 10 } },
+      // }}
       pageSizeOptions={[10, 25, 50, 100]}
+      paginationModel={paginationModel}
+      onPaginationModelChange={handlePaginationChange}
+      sortModel={sortModel}
+      onSortModelChange={handleSortModelChange}
       getRowClassName={(params) => params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"}
-      slots={{
-        toolbar: () => (
-          <EditToolbar handleAddItem={handleAddItem} loading={loading} />
-        ),
-      }}
-      localeText={{
-        toolbarColumns: "คอลัมน์",
-        toolbarFilters: "ตัวกรอง",
-        toolbarDensity: "ระยะห่าง",
-        toolbarExport: "ส่งออก",
-      }}
+      slots={{ toolbar: () => ( <EditToolbar handleAddItem={handleAddItem} loading={loading} /> ) }}
+      localeText={{ toolbarColumns: "คอลัมน์", toolbarFilters: "ตัวกรอง", toolbarDensity: "ระยะห่าง", toolbarExport: "ส่งออก" }}
       loading={loading}
       sx={{
-        '&.MuiDataGrid-root--densityCompact .MuiDataGrid-cell': {
-          py: 1,
-        },
-        '&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell': {
-          py: '15px',
-        },
-        '&.MuiDataGrid-root--densityComfortable .MuiDataGrid-cell': {
-          py: '22px',
-        },
-        '& .MuiDataGrid-cell': {
-          alignItems: 'flex-start',
-        },
+        '&.MuiDataGrid-root--densityCompact .MuiDataGrid-cell': { py: 1 },
+        '&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell': { py: '15px' },
+        '&.MuiDataGrid-root--densityComfortable .MuiDataGrid-cell': { py: '22px' },
+        '& .MuiDataGrid-cell': { alignItems: 'flex-start' },
       }}
     />
   );
