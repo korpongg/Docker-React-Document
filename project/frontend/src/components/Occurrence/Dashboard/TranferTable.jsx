@@ -7,12 +7,13 @@ import Swal from 'sweetalert2';
 import { formatDateTimeN7 } from "../../Function";
 import requestStatusData from "../../label.json";
 import EventDialog from "../Event/EventDialog";
+import ExportButton from "../../Report/ExportButton";
 
 const csvOptions = { utf8WithBom: true };
 
 const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
-const EditToolbar = ({ reportData, tranType, handleAddEvent }) => (
+const EditToolbar = ({ reportData, data, tranType, handleAddEvent }) => (
   <GridToolbarContainer style={{ justifyContent: "space-between", padding: "10px 10px 0" }}>
     {reportData && (
       <Button
@@ -27,11 +28,12 @@ const EditToolbar = ({ reportData, tranType, handleAddEvent }) => (
     )}
     {/* <GridToolbar /> */}
     {/* <GridToolbarQuickFilter /> */}
-    {!tranType && (
+    {/* {!tranType && (
       <GridToolbarExportContainer sx={{ background: 'green !important', color: 'white', padding: '3px 12px', textTransform: 'none' }} >
         <GridCsvExportMenuItem options={csvOptions}/>
       </GridToolbarExportContainer>
-    )}
+    )} */}
+    {!tranType && <ExportButton data={data} fileName="รายงานอุบัติการณ์ที่เกี่ยวข้องกับแผนก.xlsx" />}
   </GridToolbarContainer>
 );
 
@@ -290,7 +292,7 @@ const TranferTable = ({ reportData, tranType, dataEvent, isAdmin, userData, conf
         initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
         pageSizeOptions={[10, 25, 50, 100]}
         getRowClassName={getRowClassName}
-        slots={{ toolbar: () => <EditToolbar reportData={reportData} tranType={tranType} handleAddEvent={handleAddEvent} /> }}
+        slots={{ toolbar: () => <EditToolbar reportData={reportData} data={dataEvent} tranType={tranType} handleAddEvent={handleAddEvent} /> }}
         localeText={{ toolbarColumns: "คอลัมน์", toolbarFilters: "ตัวกรอง", toolbarDensity: "ระยะห่าง", toolbarExport: "Export" }}
         loading={loading}
         sx={{
