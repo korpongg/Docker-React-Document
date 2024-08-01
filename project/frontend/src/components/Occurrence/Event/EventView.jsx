@@ -54,14 +54,14 @@ const EventView = ({ isHA, eventData }) => {
               </div>
             </div>
 
-            {isHA && (
+            {/* {isHA && ( */}
               <div className="EventBox">
                 <div className="EventRow"><div className="EventCell AreaTopic">บันทึกรายละเอียด</div></div>
                 <div className="EventRow">
                   <pre className="EventCell AreaContent">{eventData.description}</pre>
                 </div>
               </div>
-            )}
+            {/* )} */}
 
             <div className="EventBox">
               <div className="EventRow">
