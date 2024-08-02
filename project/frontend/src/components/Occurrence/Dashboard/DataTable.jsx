@@ -255,14 +255,14 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
       columns={filteredColumns}
       disableRowSelectionOnClick
       hideFooterSelectedRowCount={true}
-      initialState={{
-        pagination: { paginationModel: { page: 0, pageSize: 10 } },
-      }}
+      // initialState={{
+      //   pagination: { paginationModel: { page: 0, pageSize: 10 } },
+      // }}
       pageSizeOptions={[10, 25, 50, 100]}
-      // paginationModel={paginationModel}
-      // onPaginationModelChange={handlePaginationChange}
-      // sortModel={sortModel}
-      // onSortModelChange={handleSortModelChange}
+      paginationModel={paginationModel}
+      onPaginationModelChange={handlePaginationChange}
+      sortModel={sortModel}
+      onSortModelChange={handleSortModelChange}
       getRowClassName={(params) => params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"}
       slots={{ toolbar: () => ( <EditToolbar handleAddItem={handleAddItem} loading={loading} /> ) }}
       localeText={{ toolbarColumns: "คอลัมน์", toolbarFilters: "ตัวกรอง", toolbarDensity: "ระยะห่าง", toolbarExport: "ส่งออก" }}
