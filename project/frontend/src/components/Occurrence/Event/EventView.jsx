@@ -3,6 +3,7 @@ import { DialogTitle, DialogContent } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 
 const EventView = ({ isHA, eventData }) => {
+  console.log(eventData)
   return (
     <>
       {eventData ? (
@@ -56,30 +57,30 @@ const EventView = ({ isHA, eventData }) => {
 
             {/* {isHA && ( */}
               <div className="EventBox">
-                <div className="EventRow"><div className="EventCell AreaTopic">บันทึกรายละเอียด</div></div>
+                <div className="EventRow"><div className="EventCell AreaTopic">สรุปรายละเอียดเหตุการณ์</div></div>
                 <div className="EventRow">
-                  <pre className="EventCell AreaContent">{eventData.description}</pre>
+                  <pre className="EventCell AreaContent">{eventData.renew}</pre>
                 </div>
               </div>
             {/* )} */}
 
             <div className="EventBox">
               <div className="EventRow">
-                <div className="EventCell AreaTopic">สรุปรายละเอียดเหตุการณ์</div>
+                <div className="EventCell AreaTopic">สรุปเหตุการณ์ไม่พึงประสงค์</div>
               </div>
               <div className="EventRow">
                 <pre className="EventCell AreaContent">{eventData.summarydetail}</pre>
               </div>
             </div>
 
-            <div className="EventBox">
+            {/* <div className="EventBox">
               <div className="EventRow">
                 <div className="EventCell AreaTopic">ความคลาดเคลื่อน / การละเมิดที่เกิดขึ้น</div>
               </div>
               <div className="EventRow">
                 <pre className="EventCell AreaContent">{eventData.activefailure ? eventData.activefailure : "-"}</pre>
               </div>
-            </div>
+            </div> */}
 
             {eventData.risk && (
                 <div className="EventBox">
