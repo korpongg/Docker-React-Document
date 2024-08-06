@@ -205,6 +205,10 @@ export const TranferDialogBox = styled(Dialog)`
     background: orange;
     box-shadow: 1px 1px 2px 0px #ffa5008c;
   }
+  .post-status.report {
+    background: blueviolet;
+    box-shadow: 1px 1px 2px 0px #8000808c;
+  }
   .post-status.repeat {
     background: black;
     box-shadow: 1px 1px 2px 0px #0000008c;
