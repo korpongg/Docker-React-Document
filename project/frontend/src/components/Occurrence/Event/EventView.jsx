@@ -3,7 +3,6 @@ import { DialogTitle, DialogContent } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 
 const EventView = ({ isHA, eventData }) => {
-  console.log(eventData)
   return (
     <>
       {eventData ? (
