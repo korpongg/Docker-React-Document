@@ -83,8 +83,6 @@ function parseMedicationResults(results) {
       errorTypes.push(getTopicByKeyMed('administration'));
     }
 
-    console.log(reportid)
-
     const mappedTitles = mapRCAtoTitles(parseField('rca'), medication.rcaremark, DataDict_Med);
 
     return {
