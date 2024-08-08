@@ -70,11 +70,10 @@ const OccurrenceReport = () => {
     try {
       const storedAuth = JSON.parse(localStorage.getItem("auth"));
       const config = { headers: { Authorization: `Bearer ${storedAuth.accessToken}` } };
-      const url = reportType === 'occurrence'
-        ? `${apiUrl}/events/reports/${startDate}/${endDate}`
-        : `${apiUrl}/medication/reports/${startDate}/${endDate}`;
-      const response = await axios.get(url, { ...config });
-      if (response.status === 200 || response.status === 201 ) {
+      const baseUrl = reportType === 'occurrence' ? `${apiUrl}/events/reports` : `${apiUrl}/medication/reports`;
+      const url = `${baseUrl}/${startDate}/${endDate}`;
+      const response = await axios.get(url, config);
+      if (response.status === 200 || response.status === 201) {
         setData(response.data);
       }
     } catch (error) {
@@ -194,27 +193,17 @@ const OccurrenceReport = () => {
         getEstimatedRowHeight={() => 200}
         disableRowSelectionOnClick
         hideFooterSelectedRowCount={true}
-        initialState={{
-          pagination: { paginationModel: { page: 0, pageSize: 10 } },
-        }}
+        initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
         pageSizeOptions={[10, 25, 50, 100]}
         getRowClassName={(params) => params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row" }
         slots={{ toolbar: () => <EditToolbar /> }}
         localeText={{ toolbarColumns: "คอลัมน์", toolbarFilters: "ตัวกรอง", toolbarDensity: "ระยะห่าง", toolbarExport: "Excel" }}
         loading={loading}
         sx={{
-          '&.MuiDataGrid-root--densityCompact .MuiDataGrid-cell': {
-            py: 1,
-          },
-          '&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell': {
-            py: '15px',
-          },
-          '&.MuiDataGrid-root--densityComfortable .MuiDataGrid-cell': {
-            py: '22px',
-          },
-          '& .MuiDataGrid-cell': {
-            alignItems: 'flex-start',
-          },
+          '&.MuiDataGrid-root--densityCompact .MuiDataGrid-cell': { py: 1 },
+          '&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell': { py: '15px' },
+          '&.MuiDataGrid-root--densityComfortable .MuiDataGrid-cell': { py: '22px' },
+          '& .MuiDataGrid-cell': { alignItems: 'flex-start' },
         }}
       />
     </ReportBox>
