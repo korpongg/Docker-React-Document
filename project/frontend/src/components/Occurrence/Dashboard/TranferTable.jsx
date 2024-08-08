@@ -187,11 +187,11 @@ const TranferTable = ({ reportData, tranType, dataEvent, isAdmin, userData, conf
     { field: "reporttypename", headerName: "ประเภท", minWidth: 110, flex: 1, align: "center", headerAlign: "center" },
     { field: "level", headerName: "ความรุนแรง", minWidth: 90, flex: 1, align: "center", headerAlign: "center" },
     {
-      field: "summarydetail", headerName: "สรุปเหตุการณ์ไม่พึงประสงค์", minWidth: 300, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false,
+      field: "renew", headerName: "สรุปรายละเอียดเหตุการณ์", minWidth: 300, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false,
       renderCell: (params) => <ExpandableCell {...params} />,
     },
     {
-      field: "renew", headerName: "รายละเอียดเหตุการณ์", minWidth: 300, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false,
+      field: "summarydetail", headerName: "สรุปเหตุการณ์ไม่พึงประสงค์", minWidth: 300, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false,
       renderCell: (params) => <ExpandableCell {...params} />,
     },
     {

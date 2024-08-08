@@ -61,6 +61,31 @@ function getTitleByCode(code, occurrences) {
   return ``;
 }
 
+// Function to get title code
+function getCodeTitle(code, occurrences) {
+  const codeString = code.toString();
+  const remarks = {
+    "199": occurrences.patientcareremark,
+    "299": occurrences.patientsupportremark,
+    "399": occurrences.utilityremark,
+    "499": occurrences.equipmentremark,
+    "599": occurrences.safetyremark,
+    "699": occurrences.serviceremark,
+    "799": occurrences.managementremark,
+  };
+  if (remarks[codeString]) {
+    return `อื่นๆ : ${remarks[codeString]}`;
+  }
+  
+  for (const section of Object.values(DataDict_Occurrence)) {
+    const option = section.options.find(option => option.code === parseInt(code));
+    if (option) {
+      return option.code;
+    }
+  }
+  return '';
+}
+
 function getTopicByKey(key) {
   const section = DataDict_Occurrence[key];
   if (!section) {
@@ -70,19 +95,127 @@ function getTopicByKey(key) {
   return section.topic;
 }
 
+async function fetchResults(query, replacements) {
+  return await sequelize.query(query, {
+    replacements,
+    type: sequelize.QueryTypes.SELECT
+  });
+}
+
+function parseReportResults(results) {
+  return results.map(report => {
+    const { patientcare, patientsupport, utility, equipment, safety, service, management, ...rest } = report;
+
+    const parseField = field => JSON.parse(report[field] || '[]');
+    const patientcareP = parseField('patientcare');
+    const patientsupportP = parseField('patientsupport');
+    const utilityP = parseField('utility');
+    const equipmentP = parseField('equipment');
+    const safetyP = parseField('safety');
+    const serviceP = parseField('service');
+    const managementP = parseField('management');
+
+    const reportCode = [];
+
+    if (patientcareP.length) {
+      reportCode.push(patientcareP.map(code => getCodeTitle(code, report)).join(", "));
+    }
+    if (patientsupportP.length) {
+      if (reportCode.length) reportCode.push(", \n");
+      reportCode.push(patientsupportP.map(code => getCodeTitle(code, report)).join(", "));
+    }
+    if (utilityP.length) {
+      if (reportCode.length) reportCode.push(", \n");
+      reportCode.push(utilityP.map(code => getCodeTitle(code, report)).join(", "));
+    }
+    if (equipmentP.length) {
+      if (reportCode.length) reportCode.push(", \n");
+      reportCode.push(equipmentP.map(code => getCodeTitle(code, report)).join(", "));
+    }
+    if (safetyP.length) {
+      if (reportCode.length) reportCode.push(", \n");
+      reportCode.push(safetyP.map(code => getCodeTitle(code, report)).join(", "));
+    }
+    if (serviceP.length) {
+      if (reportCode.length) reportCode.push(", \n");
+      reportCode.push(serviceP.map(code => getCodeTitle(code, report)).join(", "));
+    }
+    if (managementP.length) {
+      if (reportCode.length) reportCode.push(", \n");
+      reportCode.push(managementP.map(code => getCodeTitle(code, report)).join(", "));
+    }
+
+    return {
+      ...rest,
+      reportcode: reportCode.join(""),
+    };
+  });
+}
+
 // Get Report
 exports.rePort = async (req, res) => {
-  const startDate = req?.params?.startdate;
-  const endDate = req?.params?.enddate;
+  // const startDate = req?.params?.startdate;
+  // const endDate = req?.params?.enddate;
+  const { startdate, enddate } = req.params;
 
-  try {
-    // Query
-    let eventQuery = `
-      DECLARE @StartDate DATE, @EndDate DATE;
-      SET @StartDate = :startdate;
-      SET @EndDate = :enddate;
+  // try {
+  //   // Query
+  //   let eventQuery = `
+  //     DECLARE @StartDate DATE, @EndDate DATE;
+  //     SET @StartDate = :startdate;
+  //     SET @EndDate = :enddate;
       
-      SELECT e.id,
+  //     SELECT e.id,
+  //     e.reportid,
+  //     e.code,
+  //     CASE WHEN o.hn IS NULL THEN o.an ELSE o.hn END AS hn,
+  //     o.occurrencedate,
+  //     d.name as depname,
+  //     CASE WHEN o.reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END AS reporttypename,
+  //     o.level,
+  //     e.summarydetail,
+  //     o.renew,
+  //     --o.activefailure,
+  //     e.factors,
+  //     e.comment,
+  //     e.suggestion,
+  //     e.forwardtxt,
+  //     u.dep AS requestdep,
+  //     u.affiliation AS requestaff,
+  //     CASE WHEN o.type = 'ipd' THEN 'IPD' ELSE 'OPD' END AS occtype
+  //     FROM ${DB_NAME}.[dbo].[event_logs] e
+  //     LEFT JOIN ${DB_NAME}.[dbo].[occurrences] o ON o.reportid = e.reportid
+  //     LEFT JOIN ${DB_NAME}.[dbo].[user] u ON u.userid = o.createby
+  //     LEFT JOIN ${DB_NAME}.[dbo].[department] d ON d.id = e.deptrelate
+  //   `;
+    
+  //   // Add the WHERE clause based on the provided dates
+  //   if (startDate && endDate) {
+  //     eventQuery += ` WHERE CAST(o.[occurrencedate] AS date) BETWEEN CAST(@StartDate AS date) AND CAST(@EndDate AS date)`;
+  //   } else if (startDate) {
+  //     eventQuery += ` WHERE CAST(o.[occurrencedate] AS date) = CAST(@StartDate AS date)`;
+  //   }
+    
+  //   // Execute the query with replacements for the dates
+  //   const results = await sequelize.query(eventQuery, {
+  //     replacements: {
+  //       startdate: startDate ? startDate : null,
+  //       enddate: endDate ? endDate : null
+  //     },
+  //     type: sequelize.QueryTypes.SELECT
+  //   });
+    
+  //   return res.status(200).json(results);
+  // } catch (error) {
+  //   res.status(500).json({ error: error.message });
+  // }
+
+  const baseQuery = `
+    DECLARE @StartDate DATE, @EndDate DATE;
+    SET @StartDate = :startdate;
+    SET @EndDate = :enddate;
+    
+    SELECT e.id,
       e.reportid,
       e.code,
       CASE WHEN o.hn IS NULL THEN o.an ELSE o.hn END AS hn,
@@ -92,32 +225,43 @@ exports.rePort = async (req, res) => {
       o.level,
       e.summarydetail,
       o.renew,
-      o.activefailure,
+      --o.activefailure,
+      e.factors,
       e.comment,
       e.suggestion,
-      e.forwardtxt
-      FROM ${DB_NAME}.[dbo].[event_logs] e
-      LEFT JOIN ${DB_NAME}.[dbo].[occurrences] o ON o.reportid = e.reportid
-      LEFT JOIN ${DB_NAME}.[dbo].[department] d ON d.id = e.deptrelate
-    `;
-    
-    // Add the WHERE clause based on the provided dates
-    if (startDate && endDate) {
-      eventQuery += ` WHERE CAST(o.[occurrencedate] AS date) BETWEEN CAST(@StartDate AS date) AND CAST(@EndDate AS date)`;
-    } else if (startDate) {
-      eventQuery += ` WHERE CAST(o.[occurrencedate] AS date) = CAST(@StartDate AS date)`;
+      e.forwardtxt,
+      u.dep AS requestdep,
+      u.affiliation AS requestaff,
+      CASE WHEN o.type = 'ipd' THEN 'IPD' ELSE 'OPD' END AS occtype,
+      o.patientcare,
+      o.patientsupport,
+      o.utility,
+      o.equipment,
+      o.safety,
+      o.service,
+      o.management,
+      CASE WHEN d.name = u.dep THEN 'SR' ELSE 'NR' END AS selfreport,
+      CASE WHEN DATEDIFF(hour, o.occurrencedate, o.createAt) < 24 THEN 1  ELSE 0 END AS timelyreport
+    FROM ${DB_NAME}.[dbo].[event_logs] e
+    LEFT JOIN ${DB_NAME}.[dbo].[occurrences] o ON o.reportid = e.reportid
+    LEFT JOIN ${DB_NAME}.[dbo].[user] u ON u.userid = o.createby
+    LEFT JOIN ${DB_NAME}.[dbo].[department] d ON d.id = e.deptrelate
+  `;
+  
+  const whereClause = startdate && enddate
+    ? ` WHERE CAST(o.[occurrencedate] AS date) BETWEEN CAST(@StartDate AS date) AND CAST(@EndDate AS date)`
+    : startdate ? ` WHERE CAST(o.[occurrencedate] AS date) = CAST(@StartDate AS date)` : '';
+
+  const query = baseQuery + whereClause;
+
+  try {
+    const results = await fetchResults(query, { startdate, enddate });
+    if (results.length) {
+      const parsedResults = parseReportResults(results);
+      res.status(200).json(parsedResults);
+    } else {
+      res.status(204).json({ error: "Report not found" });
     }
-    
-    // Execute the query with replacements for the dates
-    const results = await sequelize.query(eventQuery, {
-      replacements: {
-        startdate: startDate ? startDate : null,
-        enddate: endDate ? endDate : null
-      },
-      type: sequelize.QueryTypes.SELECT
-    });
-    
-    return res.status(200).json(results);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

@@ -24,8 +24,11 @@ const ExportButton = ({ data, fileName, label = 'Export' }) => {
         "แผนก",
         "ประเภท",
         "ความรุนแรง",
+        "สรุปรายละเอียดเหตุการณ์",
         "สรุปเหตุการณ์ไม่พึงประสงค์",
-        "รายละเอียดเหตุการณ์",
+        "ปัจจัยกระตุ้นให้เกิดความคลาดเคลื่อน",
+        "ผลการวิเคราะห์สาเหตุที่แท้จริง",
+        "มาตราการป้องกัน",
       ]
     ];
 
@@ -39,8 +42,11 @@ const ExportButton = ({ data, fileName, label = 'Export' }) => {
         rowData.depname,
         rowData.reporttypename,
         rowData.level,
-        rowData.summarydetail,
         rowData.renew,
+        rowData.summarydetail,
+        rowData.factors,
+        rowData.comment,
+        rowData.suggestion,
       ];
 
       sheetData.push(row);
