@@ -209,6 +209,8 @@ const AddUser = () => {
                                 <option value="นาย">นาย</option>
                                 <option value="นางสาว">นางสาว</option>
                                 <option value="นาง">นาง</option>
+                                <option value="นพ.">นพ.</option>
+                                <option value="พญ.">พญ.</option>
                             </select>
                         </Grid>
 
