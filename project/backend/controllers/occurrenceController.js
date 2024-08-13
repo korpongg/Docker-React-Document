@@ -1,10 +1,33 @@
 const sequelize = require("../config/dbConn").sequelize;
 const Occurrences = require("../models/Occurrences");
+const Department = require("../models/Department");
 // const User = require("../models/User");
 const { executeAndStoreQueryResult } = require('../services/broadcastService');
-const { sendEmail } = require("./emailController");
+const { sendEmail, sendExecEmail } = require("./emailController");
 const DB_NAME = process.env.DB_NAME;
 const HA_EMAIL = process.env.HA_EMAIL;
+
+// Utility function to format date to dd/mm/yyyy hh:mm:ss
+const formatDateTime_N7 = (date) => {
+  if (!date) return null;
+    const d = new Date(date);
+
+    const day = d.getUTCDate();
+    const month = d.getUTCMonth() + 1;
+    const year = d.getUTCFullYear();
+    const hours = d.getUTCHours();
+    const minutes = d.getUTCMinutes();
+    const seconds = d.getUTCSeconds();
+
+    // Pad single-digit day, month, hours, minutes, and seconds with leading zeros
+    const formattedDay = day < 10 ? `0${day}` : `${day}`;
+    const formattedMonth = month < 10 ? `0${month}` : `${month}`;
+    const formattedHours = hours < 10 ? `0${hours}` : `${hours}`;
+    const formattedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
+    const formattedSeconds = seconds < 10 ? `0${seconds}` : `${seconds}`;
+    
+    return `${formattedDay}/${formattedMonth}/${year} ${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+}
 
 // Create a new occurrence
 exports.createOccurrence = async (req, res) => {
@@ -56,14 +79,14 @@ exports.createOccurrence = async (req, res) => {
     });
 
     // Send email
-    if (!req.body.formstatus) {
-      // Get the ID of the newly created occurrence
-      const newOccurrenceId = result.id;
-      const emailSubject = "รายงานอุบัติการณ์ เลขที่เอกสาร: " + reportId;
-      const emailMessage = "เลขที่เอกสาร: " + reportId + `<br/><br/>` + "สร้างรายงานสำเร็จ รอตรวจสอบ";
-      const recipientEmail = HA_EMAIL;
-      sendEmail(recipientEmail, newOccurrenceId, emailSubject, emailMessage);
-    }
+    // if (!req.body.formstatus) {
+    //   // Get the ID of the newly created occurrence
+    //   const newOccurrenceId = result.id;
+    //   const emailSubject = "รายงานอุบัติการณ์ เลขที่เอกสาร: " + reportId;
+    //   const emailMessage = "เลขที่เอกสาร: " + reportId + `<br/><br/>` + "สร้างรายงานสำเร็จ รอตรวจสอบ";
+    //   const recipientEmail = HA_EMAIL;
+    //   sendEmail(recipientEmail, newOccurrenceId, emailSubject, emailMessage);
+    // }
 
     executeAndStoreQueryResult();
     res.status(201).json(result);
@@ -321,6 +344,10 @@ exports.updateOccurrence = async (req, res) => {
 
     const result = await occurrence.save();
 
+    // Determine if email should be sent based on level and reporttype
+    const isGeneralRisk = result.reporttype === '0';
+    const levelCheck = isGeneralRisk ? parseInt(result.level, 10) > 3 : ["E", "F", "G", "H", "I"].includes(result.level);
+
     // Send email
     if (req.body.formstatus === '1') {
       // Get the ID of the newly created occurrence
@@ -329,6 +356,85 @@ exports.updateOccurrence = async (req, res) => {
       const emailMessage = "เลขที่เอกสาร: " + reportId + `<br/><br/>` + "สร้างรายงานสำเร็จ รอตรวจสอบ";
       const recipientEmail = HA_EMAIL;
       sendEmail(recipientEmail, id, emailSubject, emailMessage);
+    }
+
+    if (occurrence.acceptby === null && req.body.renew) {
+      occurrence.acceptby = '1';
+      const resAccept = await occurrence.save();
+
+      if (resAccept) {
+        let depArr = resAccept.deptrelate;
+        if (typeof depArr === 'string') {
+          depArr = JSON.parse(depArr);
+        }
+
+        // Fetch relateid from the department table based on depArr values
+        const departments = await Department.findAll({
+          where: { id: depArr },
+          attributes: ['relateid', 'name']
+        });
+
+        // Group departments by relateid
+        const departmentGroups = {};
+        departments.forEach((item) => {
+          const { relateid, name } = item.dataValues;
+          if (!departmentGroups[relateid]) {
+            departmentGroups[relateid] = [];
+          }
+          departmentGroups[relateid].push(name);
+        });
+
+        // Map relateids to corresponding email recipients
+        const emailCC = [];
+        const departmentList = [];
+
+        Object.keys(departmentGroups).forEach((relateid) => {
+          const names = departmentGroups[relateid].join(', ');
+          departmentList.push(`${names}`);
+          if (levelCheck) {
+            switch (parseInt(relateid)) {
+              case 1:
+                emailCC.push('paitoon.k@thainakarin.co.th');
+                break;
+              case 2:
+                emailCC.push('watson.a@thainakarin.co.th');
+                break;
+              case 3:
+                emailCC.push('rungarun.g@thainakarin.co.th');
+                break;
+              case 5:
+                emailCC.push('thipachart.p@thainakarin.co.th');
+                break;
+              case 6:
+                emailCC.push('malee.b@thainakarin.co.th');
+                break;
+              default:
+                break;
+            }
+          }
+        });
+        
+        const reportId = resAccept.reportid;
+        // Join department list with a line break or comma, as preferred
+        const formatDepList = departmentList.join(', ');
+        const renewDesc = resAccept.renew.replace(/\n/g, '<br/>');
+        const impromptDesc = resAccept.impromptusolution.replace(/\n/g, '<br/>');
+
+        const emailSubject = "รายงานอุบัติการณ์ เลขที่เอกสาร: " + reportId;
+        const emailMessage = `<div style="font-size: 18px;">
+          <p style="font-size: 20px;">เรียนผู้บริหารรับทราบ รายงานอุบัติการณ์ระดับความเสี่ยงสูง</p><br/>
+          <strong>รายละเอียดอุบัติการณ์</strong><br/>
+          1. วันที่เกิดเหตุ: ${formatDateTime_N7(resAccept.occurrencedate)}<br/><br/>
+          2. ประเภท: ${resAccept.reporttype === '0' ? 'General Risk' : 'Clinical Risk'}<br/><br/>
+          3. ระดับความรุนแรง: ${resAccept.level}<br/><br/>
+          4. หน่วยงานที่เกี่ยวข้อง: ${formatDepList} <br/><br/>
+          5. สรุปเหตุการณ์:<br/> ${renewDesc}<br/><br/>
+          6. การแก้ไขปัญหาเฉพาะหน้า:<br/> ${impromptDesc ? impromptDesc : '-'}</div>
+        `;
+        const recipientEmail = 'pattarapon.k@thainakarin.co.th';
+        // const recipientEmail = HA_EMAIL;
+        sendExecEmail(recipientEmail, emailCC, id, emailSubject, emailMessage);
+      }
     }
 
     executeAndStoreQueryResult();

@@ -68,6 +68,25 @@ const sendEmail = async (to, reportId, subject, text) => {
   }
 };
 
+const sendExecEmail = async (to, cc, reportId, subject, html) => {
+  try {
+    const mailOptions = {
+      from: "mis@thainakarin.co.th",
+      to,
+      cc,
+      subject,
+      html,
+    };
+
+    console.log("Sending email with options:", mailOptions);
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Email sent:", info.response);
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
+};
+
 const sendGenericEmail = async (to, subject, text, link) => {
   try {
     const htmlContent = `${text}<br/><br/><br/>
@@ -103,6 +122,7 @@ const sendEmailEventHA = (to, subject, text) => {
 
 module.exports = {
   sendEmail,
+  sendExecEmail,
   sendEmailEvent,
   sendEmailEventHA,
   findDepartmentEmail,

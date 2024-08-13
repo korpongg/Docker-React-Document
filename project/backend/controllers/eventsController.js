@@ -218,7 +218,7 @@ exports.rePort = async (req, res) => {
     SELECT e.id,
       e.reportid,
       e.code,
-      CASE WHEN o.hn IS NULL THEN o.an ELSE o.hn END AS hn,
+      COALESCE(o.hn, o.an) AS hn,
       o.occurrencedate,
       d.name as depname,
       CASE WHEN o.reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END AS reporttypename,
