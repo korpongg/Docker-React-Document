@@ -199,6 +199,10 @@ const TranferTable = ({ reportData, tranType, dataEvent, isAdmin, userData, conf
       valueGetter: (params) => params.value ? formatDateTimeN7(params.value, "dmy") : ''
     },
     {
+      field: "repeatAt", headerName: "วันที่ส่งทบทวนซ้ำ", minWidth: 125, flex: 1, align: "center", headerAlign: "center",
+      valueGetter: (params) => params.value ? formatDateTimeN7(params.value, "dmy") : ''
+    },
+    {
       field: "actions", type: "actions", headerName: "จัดการ", minWidth: 140, cellClassName: "actions", align: "center", headerAlign: "center",
       renderCell: (params) => (
         <ActionButtons
