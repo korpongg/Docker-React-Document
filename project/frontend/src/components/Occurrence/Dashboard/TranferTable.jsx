@@ -180,7 +180,7 @@ const TranferTable = ({ reportData, tranType, dataEvent, isAdmin, userData, conf
       },
     },
     {
-      field: "occurrencedate", headerName: "วันที่เกิดเหตุ", minWidth: 115, flex: 1, align: "center", headerAlign: "center",
+      field: "occurrencedate", headerName: "วันที่เกิดเหตุ", minWidth: 125, flex: 1, align: "center", headerAlign: "center",
       valueGetter: (params) => params.value ? formatDateTimeN7(params.value, "dmy") : ''
     },
     { field: "depname", headerName: "แผนก", minWidth: 160, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false },
@@ -193,6 +193,10 @@ const TranferTable = ({ reportData, tranType, dataEvent, isAdmin, userData, conf
     {
       field: "summarydetail", headerName: "สรุปเหตุการณ์ไม่พึงประสงค์", minWidth: 300, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false,
       renderCell: (params) => <ExpandableCell {...params} />,
+    },
+    {
+      field: "createAt", headerName: "วันที่ส่งทบทวน", minWidth: 125, flex: 1, align: "center", headerAlign: "center",
+      valueGetter: (params) => params.value ? formatDateTimeN7(params.value, "dmy") : ''
     },
     {
       field: "actions", type: "actions", headerName: "จัดการ", minWidth: 140, cellClassName: "actions", align: "center", headerAlign: "center",
