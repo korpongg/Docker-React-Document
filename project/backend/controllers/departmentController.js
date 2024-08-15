@@ -2,13 +2,18 @@ const sequelize = require("../config/dbConn").sequelize;
 const Department = require('../models/Department');
 const DB_NAME = process.env.DB_NAME;
 
+// Helper function to handle errors
+const handleError = (res, error) => {
+  res.status(500).json({ error: error.message });
+};
+
 // Create a new department
 exports.createDepartment = async (req, res) => {
   try {
     const department = await Department.create(req.body);
     res.status(201).json(department);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    handleError(res, error);
   }
 };
 
@@ -24,18 +29,17 @@ exports.createDepartment = async (req, res) => {
 
 // Get all departments with custom SQL
 exports.getAllDepartments = async (req, res) => {
+  const sql = `
+    SELECT d.id, d.name AS DepName, a.id AS AffID, a.name AS AffName
+    FROM ${DB_NAME}.[dbo].[department] d
+    LEFT JOIN ${DB_NAME}.[dbo].[affiliation] a ON a.id = d.[relateid]
+  `;
+  
   try {
-    const [results, metadata] = await sequelize.query(`
-      SELECT d.id,
-        d.name AS DepName,
-        a.id AS AffID,
-        a.name AS AffName
-      FROM ${DB_NAME}.[dbo].[department] d
-      LEFT JOIN ${DB_NAME}.[dbo].[affiliation] a ON a.id = d.[relateid]
-    `);
+    const [results] = await sequelize.query(sql);
     res.status(200).json(results);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    handleError(res, error);
   }
 };
 
@@ -55,44 +59,42 @@ exports.getAllDepartments = async (req, res) => {
 
 // Get a single department by ID with custom SQL
 exports.getDepartmentById = async (req, res) => {
+  const sql = `
+    SELECT d.id, d.name AS DepName, a.id AS AffID, a.name AS AffName
+    FROM ${DB_NAME}.[dbo].[department] d
+    LEFT JOIN ${DB_NAME}.[dbo].[affiliation] a ON a.id = d.[relateid]
+    WHERE d.id = :id
+  `;
+  
   try {
-    const id = req.params.id;
-    const [results, metadata] = await sequelize.query(`
-      SELECT d.id,
-        d.name AS DepName,
-        a.id AS AffID,
-        a.name AS AffName
-      FROM ${DB_NAME}.[dbo].[department] d
-      LEFT JOIN ${DB_NAME}.[dbo].[affiliation] a ON a.id = d.[relateid]
-      WHERE d.id = :id
-    `, {
-      replacements: { id },
+    const [results] = await sequelize.query(sql, {
+      replacements: { id: req.params.id },
       type: sequelize.QueryTypes.SELECT
     });
 
-    if (results) {
+    if (results.length) {
       res.status(200).json(results);
     } else {
       res.status(404).json({ message: 'Department not found' });
     }
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    handleError(res, error);
   }
 };
 exports.getAllDepartmentMed = async (req, res) => {
+  const sql = `
+    SELECT d.id, d.name AS DepName, a.id AS AffID, a.name AS AffName
+    FROM ${DB_NAME}.[dbo].[department] d
+    LEFT JOIN ${DB_NAME}.[dbo].[affiliation] a ON a.id = d.[relateid]
+    WHERE (d.relateid IN ('3', '5') OR d.id IN ('13', '146'))
+    AND d.id NOT IN ('69', '84', '140')
+  `;
+  
   try {
-    const [results, metadata] = await sequelize.query(`
-      SELECT d.id,
-        d.name AS DepName,
-        a.id AS AffID,
-        a.name AS AffName
-      FROM ${DB_NAME}.[dbo].[department] d
-      LEFT JOIN ${DB_NAME}.[dbo].[affiliation] a ON a.id = d.[relateid]
-      WHERE d.relateid IN ('3','5') OR d.id = '13'
-    `);
+    const [results] = await sequelize.query(sql);
     res.status(200).json(results);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    handleError(res, error);
   }
 };
 
@@ -102,6 +104,7 @@ exports.updateDepartment = async (req, res) => {
     const [updated] = await Department.update(req.body, {
       where: { id: req.params.id }
     });
+
     if (updated) {
       const updatedDepartment = await Department.findByPk(req.params.id);
       res.status(200).json(updatedDepartment);
@@ -109,7 +112,7 @@ exports.updateDepartment = async (req, res) => {
       res.status(404).json({ message: 'Department not found' });
     }
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    handleError(res, error);
   }
 };
 
@@ -119,12 +122,13 @@ exports.deleteDepartment = async (req, res) => {
     const deleted = await Department.destroy({
       where: { id: req.params.id }
     });
+
     if (deleted) {
       res.status(204).json({ message: 'Department deleted' });
     } else {
       res.status(404).json({ message: 'Department not found' });
     }
   } catch (error) {
-    res.status500.json({ error: error.message });
+    handleError(res, error);
   }
 };

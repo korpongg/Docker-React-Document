@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { TextField, Autocomplete } from '@mui/material';
 import axios from "axios";
 
-function AutoCompleteTextSingle({ Mode,data, datacolumn,setDataFunction,setSingleDataFunction, handleDataChangeCheckbox }) {
+function AutoCompleteTextSingle({ Mode, data, datacolumn, setDataFunction, setSingleDataFunction, handleDataChangeCheckbox }) {
   const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
   const [departmentData, setDepartmentData] = useState([]);
@@ -46,21 +46,37 @@ function AutoCompleteTextSingle({ Mode,data, datacolumn,setDataFunction,setSingl
 
   return (
     <>
-    {/* {console.log("Ori",departmentData)} */}
+      {/* {console.log("Ori",departmentData)} */}
 
-    {/* <Autocomplete
-      disablePortal
-      id="deptrelate"
-      disabled={Mode === "Show"}
-      sx={{ width: "860px", padding: "unset" }}
-      options={departmentData}
-      onChange={handleDepartmentChange}
-      isOptionEqualToValue={(option, value) => option.id === value.id} // Customize equality check
-      value={selectedDepartment || null}
-      getOptionLabel={(option) => option.DepName}
-      renderInput={(params) => <TextField {...params} variant="outlined" />}
-    /> */}
-      <select
+      {/* <Autocomplete
+        disablePortal
+        id="deptrelate"
+        disabled={Mode === "Show"}
+        sx={{ width: "860px", padding: "unset" }}
+        options={departmentData}
+        onChange={handleDepartmentChange}
+        isOptionEqualToValue={(option, value) => option.id === value.id} // Customize equality check
+        value={selectedDepartment || null}
+        getOptionLabel={(option) => option.DepName}
+        renderInput={(params) => <TextField {...params} variant="outlined" />}
+      /> */}
+      <Autocomplete
+        id={datacolumn}
+        name={datacolumn}
+        form={datacolumn}
+        disabled={Mode==="Show"}
+        sx={{ width: 800 }}
+        options={departmentData}
+        getOptionLabel={(option) => `${option.DepName} - ${option.AffName}`}
+        renderInput={(params) => <TextField {...params} label="กรุณาเลือก" />}
+        value={departmentData.find(department => department.id === parseInt(data[datacolumn])) || null}
+        onChange={(event, newValue) => {
+          setDataFunction(newValue ? newValue : null, [datacolumn]);
+        }}
+        isOptionEqualToValue={(option, value) => option.id === value.id}
+      />
+      
+      {/* <select
         className="SelectInput"
         id={datacolumn}
         disabled={Mode==="Show"}
@@ -75,8 +91,7 @@ function AutoCompleteTextSingle({ Mode,data, datacolumn,setDataFunction,setSingl
 
         ))}
         <option value="0">-กรุณาเลือก-</option>
-      </select>
-
+      </select> */}
     </>
   );
 }

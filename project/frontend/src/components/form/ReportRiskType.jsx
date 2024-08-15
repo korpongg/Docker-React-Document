@@ -62,13 +62,15 @@ const ReportRiskType = ({
           onChange={(e) => setDataFunction(e, "reporttype")}
           value={data?.reporttype || "0"}
         >
-          <FormControlLabel
-            sx={{ p: 1 }}
-            disabled={Mode === "Show"}
-            value="0"
-            control={<Radio />}
-            label="General Risk"
-          />
+          {datacolumn[0] !== "" && (
+            <FormControlLabel
+              sx={{ p: 1 }}
+              disabled={Mode === "Show"}
+              value="0"
+              control={<Radio />}
+              label="General Risk"
+            />
+          )}
           <FormControlLabel
             sx={{ p: 1 }}
             disabled={Mode === "Show"}

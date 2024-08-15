@@ -50,11 +50,28 @@ const Medication = ({ Mode }) => {
   const isAdmin = chkAdmins(UserData?.role);
   const isEXEC = chkAdmin(UserData?.level);
 
+  // const handleDataChange = (event, name) => {
+  //   const Text = event.target.value;
+  //   setFormData({ ...FormData, [name]: Text });
+  //   if (Mode === "Edit") {
+  //     setEditFormData({ ...EditFormData, [name]: Text });
+  //   }
+  // };
   const handleDataChange = (event, name) => {
-    const Text = event.target.value;
-    setFormData({ ...FormData, [name]: Text });
+    let value;
+
+    if (event && event.target) {
+        value = event.target.value;
+    } else if (event && event.id !== undefined) {
+        value = event.id;
+    } else {
+        value = '';
+    }
+
+    setFormData({ ...FormData, [name]: value });
+
     if (Mode === "Edit") {
-      setEditFormData({ ...EditFormData, [name]: Text });
+      setEditFormData({ ...EditFormData, [name]: value });
     }
   };
 
@@ -242,7 +259,7 @@ const Medication = ({ Mode }) => {
           reportdate: new Date(),
           occurrencedate: new Date(),
           type: "opd",
-          reporttype: "0",
+          reporttype: "1",
           aff: UserData.affiliation,
           faction: UserData.faction,
           dep: UserData.dep,
@@ -529,7 +546,7 @@ const Medication = ({ Mode }) => {
                   data={FormData}
                   setDataFunction={handleDataChange}
                   optionsdata={DataDict_Risk}
-                  datacolumn={["ClinicalRisk", "ClinicalRisk"]}
+                  datacolumn={["", "ClinicalRisk"]}
                   tocolumn="level"
                   handleDataChangeCheckbox={handleDataChangeCheckbox}
                   handleDataChange={handleDataChange}
