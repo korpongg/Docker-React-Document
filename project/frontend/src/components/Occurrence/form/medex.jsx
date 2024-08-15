@@ -281,7 +281,7 @@ const Medication = ({ Mode }) => {
       reportdate: new Date(),
       occurrencedate: new Date(),
       type: "opd",
-      reporttype: "0",
+      reporttype: "1",
       aff: UserData.affiliation,
       faction: UserData.faction,
       dep: UserData.dep,
