@@ -2,6 +2,7 @@ const nodemailer = require("nodemailer");
 const sequelize = require("../config/dbConn").sequelize;
 const User = require("../models/User"); // Assuming you have a User model
 const { Op } = require("sequelize"); // Import the Op object for Sequelize operators
+const HA_EMAIL = process.env.HA_EMAIL;
 
 let transporter = nodemailer.createTransport({
   host: "smtp.csloxinfo.com",
@@ -71,7 +72,7 @@ const sendEmail = async (to, reportId, subject, text) => {
 const sendExecEmail = async (to, cc, reportId, subject, html) => {
   try {
     const mailOptions = {
-      from: "mis@thainakarin.co.th",
+      from: HA_EMAIL,
       to,
       cc,
       subject,
