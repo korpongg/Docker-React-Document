@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { Button, Box, Tooltip, Link } from "@mui/material";
 import { DataGrid, GridToolbarContainer, GridToolbar, GridToolbarQuickFilter, GridActionsCellItem } from "@mui/x-data-grid";
 import { Add as AddIcon, DescriptionRounded as FileIcon, SwapHorizRounded as RotateIcon, FindInPageRounded as ViewIcon, Edit as EditIcon, RefreshRounded as CloseIcon, DeleteForeverRounded as DeleteIcon } from "@mui/icons-material";
@@ -6,21 +6,17 @@ import { formatDateTimeN7 } from "../Function";
 import requestStatusData from "../label.json";
 import TroubleshootIcon from '@mui/icons-material/Troubleshoot';
 
-function EditToolbar({ handleAddItem, loading }) {
-  return (
-    <GridToolbarContainer style={{ justifyContent: "space-between", padding: "10px 10px 0" }}>
-      <div>
-        <Button variant="contained" onClick={handleAddItem} startIcon={<AddIcon />} style={{ marginRight: 10 }}>บันทึกรายงาน</Button>
-      </div>
-      {/* <GridToolbar /> */}
-      <GridToolbarQuickFilter />
-    </GridToolbarContainer>
-  );
-}
+const EditToolbar = React.memo(({ handleAddItem }) => (
+  <GridToolbarContainer style={{ justifyContent: "space-between", padding: "10px 10px 0" }}>
+    <Button variant="contained" onClick={handleAddItem} startIcon={<AddIcon />} style={{ marginRight: 10 }}>บันทึกรายงาน</Button>
+    {/* <GridToolbar /> */}
+    <GridToolbarQuickFilter />
+  </GridToolbarContainer>
+));
 
-function ExpandableCell({ value }) {
-  const [expanded, setExpanded] = React.useState(false);
-  if (!value) { return null; }
+const ExpandableCell = React.memo(({ value }) => {
+  const [expanded, setExpanded] = useState(false);
+  if (!value) return null;
 
   return (
     <div style={{ wordBreak: 'break-all' }}>
@@ -37,36 +33,37 @@ function ExpandableCell({ value }) {
       )}
     </div>
   );
-}
+});
 
-const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewClick, handleCloseClick, handleEditClick, handleDeleteClick,handleApproveClick, loading }) => {
+const DataTable = ({ data, isHead, isAdmin, isEXEC, userData, handleAddItem, handleViewClick, handleApproveClick, handleCloseClick, handleEditClick, handleDeleteClick, loading }) => {
   // console.log(data);
-  const statusMap = {};
-  requestStatusData.medicStatus.forEach(status => {
-    statusMap[status.id] = { text: status.statusText, color: status.statusColor };
-  });
+  const statusMap = useMemo(() => {
+    const map = {};
+    requestStatusData.medicStatus.forEach((status) => {
+      map[status.id] = { text: status.statusText, color: status.statusColor };
+    });
+    return map;
+  }, []);
 
-  const renderDeptrelateCell = (params) => {
-    const deptAffInfo = params.row.deptAffInfo || '';
-    const deptNames = deptAffInfo?.DepName;
+  const renderDeptrelateCell = useCallback((params) => {
+    const deptNames = params.row.deptAffInfo?.DepName || '';
     return (
       <Tooltip title={deptNames}><div className="MuiDataGrid-cellContent" role="presentation">{deptNames}</div></Tooltip>
     );
-  };
+  }, []);
 
   const columns = [
     {
       field: "formstatus",
       headerName: "สถานะ",
-      minWidth: 180,
+      minWidth: 210,
       flex: 1,
       align: "center",
       headerAlign: "center",
       // sortable: false,
       filterable: false,
       renderCell: (params) => {
-        const statusId = params.row.formstatus;
-        const statusInfo = statusMap[statusId];
+        const statusInfo = statusMap[params.row.formstatus];
         return <div className={`post-status ${statusInfo.color}`}>{statusInfo.text}</div>;
       },
     },
@@ -124,20 +121,8 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
               color="primary"
             />
           </Tooltip>
-
-          {/* {isAdmin && (row.formstatus === '1' || row.formstatus === '4') && (
-            <Tooltip title="Update">
-              <GridActionsCellItem
-                icon={<CloseIcon />}
-                label="Update"
-                className="rotate-icon"
-                onClick={() => handleCloseClick(id, row)}
-                color="success"
-              />
-            </Tooltip>
-          )} */}
-
-          {(isAdmin || isEXEC) && (row.formstatus === '1' || row.formstatus === '4') && (
+          
+          {(isHead || isAdmin || isEXEC) && row.formstatus === '4' && (
             <>
               <Tooltip title="วิเคราะห์ความคลาดเคลื่อน">
                 <GridActionsCellItem
@@ -150,7 +135,19 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
             </>
           )}
 
-          {(userData.userid === row.createby || isAdmin) && row.deleteAt === null && (row.formstatus === '0' || row.formstatus === '1' || row.formstatus === '4') && (
+          {isAdmin && ['1', '4', '5'].includes(row.formstatus) && (
+            <Tooltip title="Update">
+              <GridActionsCellItem
+                icon={<CloseIcon />}
+                label="Update"
+                className="rotate-icon"
+                onClick={() => handleCloseClick(id, row)}
+                color="success"
+              />
+            </Tooltip>
+          )}
+
+          {(userData.userid === row.createby || isAdmin) && row.deleteAt === null && ['0', '1', '4'].includes(row.formstatus) && (
             <>
               <Tooltip title="แก้ไขข้อมูลรายงาน">
                 <GridActionsCellItem
@@ -192,31 +189,14 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
       }}
       pageSizeOptions={[10, 25, 50, 100]}
       getRowClassName={(params) => params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"}
-      slots={{
-        toolbar: () => (
-          <EditToolbar handleAddItem={handleAddItem} loading={loading} />
-        ),
-      }}
-      localeText={{
-        toolbarColumns: "คอลัมน์",
-        toolbarFilters: "ตัวกรอง",
-        toolbarDensity: "ระยะห่าง",
-        toolbarExport: "ส่งออก",
-      }}
+      slots={{ toolbar: () => ( <EditToolbar handleAddItem={handleAddItem} loading={loading} /> ) }}
+      localeText={{ toolbarColumns: "คอลัมน์", toolbarFilters: "ตัวกรอง", toolbarDensity: "ระยะห่าง", toolbarExport: "ส่งออก" }}
       loading={loading}
       sx={{
-        '&.MuiDataGrid-root--densityCompact .MuiDataGrid-cell': {
-          py: 1,
-        },
-        '&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell': {
-          py: '15px',
-        },
-        '&.MuiDataGrid-root--densityComfortable .MuiDataGrid-cell': {
-          py: '22px',
-        },
-        '& .MuiDataGrid-cell': {
-          alignItems: 'flex-start',
-        },
+        '&.MuiDataGrid-root--densityCompact .MuiDataGrid-cell': { py: 1 },
+        '&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell': { py: '15px' },
+        '&.MuiDataGrid-root--densityComfortable .MuiDataGrid-cell': { py: '22px' },
+        '& .MuiDataGrid-cell': { alignItems: 'flex-start' },
       }}
     />
   );

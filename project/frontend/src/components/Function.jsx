@@ -54,7 +54,7 @@ export function chkAdmins(param) {
 }
 
 export function chkMedic(aff, dep) {
-  return [3, 5].includes(aff) || dep === 13 || dep === 146;
+  return [3, 5].includes(aff) || [13, 146].includes(dep);
 }
 
 export function isMobileChk() {

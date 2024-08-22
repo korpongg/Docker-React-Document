@@ -123,7 +123,7 @@ const SelectBoxListRCA = ({
             {remark && (
               <>
                 <FormControlLabel
-                disabled={Mode==="Show"}
+                  disabled={Mode==="Show"}
                   value={remarkno}
                   control={
                     <Checkbox
@@ -136,7 +136,7 @@ const SelectBoxListRCA = ({
                 {pickdata.includes(remarkno.toString()) && (
                   <TextField
                     // fullWidth
-                    sx={{width:"900px"}}
+                    sx={{ width: "98%" }}
                     disabled={Mode==="Show"}
                     id={remarkcolumn}
                     label="ระบุรายละเอียด"

@@ -163,6 +163,12 @@ export const TranferDialogBox = styled(Dialog)`
   .EventRow:last-child{
     border:unset;
   }
+  .EventRow #ListSelect .ListSelectTable_Row {
+    background: #f3f2fa;
+  }
+  .EventRow #ListSelect hr {
+    border-color: #a6a6a6;
+  }
   .EventCol{
     display:flex;
     width:50%;
@@ -179,6 +185,9 @@ export const TranferDialogBox = styled(Dialog)`
   }
   .EventCell:last-child{
     border:unset;
+  }
+  .EventCell.view {
+    background: #f3f2fa;
   }
   .Topic{
     width:40%;

@@ -3,7 +3,7 @@ import Divider from "@mui/material/Divider";
 import DataDict_OccurrenceForm from "../../data/form/DataDict_OccurrenceForm";
 import DataDict_MedicationForm from "../../data/form/DataDict_MedicationForm";
 
-const ListSelectData = ({ OccType,data, Mode, setOccStage }) => {
+const ListSelectData = ({ OccType, data, Mode, setOccStage }) => {
   
   function getTopicByKey(key) {
     const section = DataDict_OccurrenceForm[key];
@@ -113,36 +113,30 @@ const ListSelectData = ({ OccType,data, Mode, setOccStage }) => {
     <>
       <div id="ListSelect" className="ListSelectTable">
         <div className="ListSelectTable_Row">
-          <div
-            className="ListSelectTable_Cell"
-            style={{ width: 300, color: Mode === "Show" && "#00000050" }}
-          >
-            Code
-          </div>
+          <div className={`${Mode === "Show" ? "show " : ""} ListSelectTable_Cell`} style={{ width: 300 }}>Code</div>
           <Divider
             orientation="vertical"
             variant="middle"
             flexItem
             sx={{ m: 0.5 }}
           />
-          <div
-            className="ListSelectTable_Cell"
-            style={{ color: Mode === "Show" && "#00000050" }}
-          >
-            รายละเอียด
-          </div>
-          <Divider
-            orientation="vertical"
-            variant="middle"
-            flexItem
-            sx={{ m: 0.5 }}
-          />
-          <div
-            className="ListSelectTable_Cell"
-            style={{ width: 600, color: Mode === "Show" && "#00000050" }}
-          >
-            หัวข้อ
-          </div>
+          <div className={`${Mode === "Show" ? "show " : ""} ListSelectTable_Cell`}>รายละเอียด</div>
+          {OccType === "Occurrence" && (
+            <>
+              <Divider
+                orientation="vertical"
+                variant="middle"
+                flexItem
+                sx={{ m: 0.5 }}
+              />
+              <div
+                className="ListSelectTable_Cell"
+                style={{ width: 600, color: Mode === "Show" && "#00000050" }}
+              >
+                หัวข้อ
+              </div>
+            </>
+          )}
         </div>
         {OccType==="Occurrence" && KeyMapping.map((KeyM, KeyMindex) => (
           <React.Fragment key={KeyMindex}>
@@ -213,31 +207,15 @@ const ListSelectData = ({ OccType,data, Mode, setOccStage }) => {
                       onClick={() => setOccStage(parseFloat(row[2], 10))}
                     >
                       {/* {console.log(row)} */}
-                      <div
-                        className="ListSelectTable_Cell"
-                        style={{
-                          width: 300,
-                          color: Mode === "Show" && "#00000050",
-                        }}
-                      >
-                        {row}
-                      </div>
+                      <div className={`${Mode === "Show" ? "show " : ""} ListSelectTable_Cell`} style={{ width: 300 }}>{row}</div>
                       <Divider
                         orientation="vertical"
                         variant="middle"
                         flexItem
                         sx={{ m: 0.5 }}
                       />
-                      <div
-                        className="ListSelectTable_Cell"
-                        style={{
-                          textAlign: "left",
-                          color: Mode === "Show" && "#00000050",
-                        }}
-                      >
-                        {getTitleByCodeMed(row)}
-                      </div>
-                      <Divider
+                      <div className={`${Mode === "Show" ? "show " : ""} ListSelectTable_Cell`} style={{ textAlign: "left" }}>{getTitleByCodeMed(row)}</div>
+                      {/* <Divider
                         orientation="vertical"
                         variant="middle"
                         flexItem
@@ -251,7 +229,7 @@ const ListSelectData = ({ OccType,data, Mode, setOccStage }) => {
                         }}
                       >
                         {getTopicByKeyMed(KeyM)}
-                      </div>
+                      </div> */}
                     </div>
                   </React.Fragment>
                 ))}

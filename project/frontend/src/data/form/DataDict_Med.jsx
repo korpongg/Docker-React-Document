@@ -147,12 +147,12 @@ const DataDict_Med = {
           status: false,
           suboption: [
             {
-              code: "6.1",
+              code: "7.1",
               title: "ไม่มีการทำ Med. Reconciliation",
               status: false,
             },
             {
-              code: "6.2",
+              code: "7.2",
               title: "ขาดการส่งต่อข้อมูลระหว่างหน่วยงาน / รพ.",
               status: false,
             }

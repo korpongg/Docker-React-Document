@@ -8,7 +8,7 @@ import { chkAdmins, chkAdmin } from "../../Function";
 import SearchBox from "./SearchBox";
 import DataTable from "./DataTable";
 import TranferDialog from "./TranferDialog";
-import CloseIncidentDialog from "./CloseIncidentDialog";
+import CloseIncidentDialog from "../../CloseIncidentDialog";
 
 import { DashboardBox } from "../../../styles/Dashboard.style";
 
@@ -156,7 +156,6 @@ const Dashboard = () => {
       const response = await axios.put(`${apiUrl}/occurrences`, payload, {
         ...config,
       });
-      console.log(response.data);
       Swal.fire("สำเร็จ", "แก้ไขสถานะอุบัติการณ์เรียบร้อยแล้ว", "success");
 
       setCloseIncidentDialogOpen(false);
@@ -279,6 +278,7 @@ const Dashboard = () => {
 
         <CloseIncidentDialog
           isOpen={isCloseIncidentDialogOpen}
+          type="Occurrence"
           closeReason={closeReason}
           setCloseReason={setCloseReason}
           closeComment={closeComment}

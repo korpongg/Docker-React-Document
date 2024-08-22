@@ -176,12 +176,24 @@ const Medication = sequelize.define('Medication', {
     type: DataTypes.DATE,
     allowNull: true
   },
+  renewby: {
+    type: DataTypes.STRING(20),
+    allowNull: true
+  },
+  renewAt: {
+    type: DataTypes.DATE,
+    allowNull: true
+  },
   approveby: {
     type: DataTypes.STRING(20),
     allowNull: true
   },
   approveAt: {
     type: DataTypes.DATE,
+    allowNull: true
+  },
+  deleteby: {
+    type: DataTypes.STRING(20),
     allowNull: true
   },
   deleteAt: {

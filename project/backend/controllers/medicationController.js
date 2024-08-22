@@ -4,7 +4,9 @@ const Medication = require('../models/Medication');
 const { executeAndStoreQueryResult } = require('../services/broadcastService');
 const DataDict_Medication = require("./dataDictMedication");
 const DataDict_Med = require("./dataDictMedicationRCA");
+const { sendEmailMed, sendExecEmail } = require("./emailController");
 const DB_NAME = process.env.DB_NAME;
+const HA_EMAIL = process.env.HA_EMAIL;
 
 // Function to get title by code
 function getTitleByCodeMed(code, medication) {
@@ -383,6 +385,20 @@ exports.getMedicationById = async (req, res) => {
   }
 };
 
+// Update a medication record by ID
+// exports.updateMedication = async (req, res) => {
+//   try {
+//     const medication = await Medication.findByPk(req.params.id);
+//     if (medication) {
+//       await medication.update(req.body);
+//       res.status(200).json(medication);
+//     } else {
+//       res.status(404).json({ message: 'Medication not found' });
+//     }
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
 exports.updateMedication = async (req, res) => {
   if (!req?.body?.id) {
     return res.status(400).json({ message: "id is required." });
@@ -415,10 +431,22 @@ exports.updateMedication = async (req, res) => {
 
     if (req.body.updateby) {
       req.body.updateAt = sequelize.literal("CURRENT_TIMESTAMP");
+
+      if (med.renew === null && req.body.renew) {
+        req.body.formstatus = '4';
+        req.body.renewby = req.body.updateby;
+        req.body.renewAt = sequelize.literal("CURRENT_TIMESTAMP");
+      }
+
+      if ((med.renew !== null && req.body.renew) && med.renew !== req.body.renew) {
+        req.body.formstatus = '4';
+        req.body.renewby = req.body.updateby;
+        req.body.renewAt = sequelize.literal("CURRENT_TIMESTAMP");
+      }
     }
 
     if (req.body.approveby) {
-      req.body.formstatus = '4';
+      req.body.formstatus = '5';
       req.body.approveAt = sequelize.literal("CURRENT_TIMESTAMP");
     }
 
@@ -430,24 +458,32 @@ exports.updateMedication = async (req, res) => {
       if (validColumns[column] === undefined || validColumns[column] === null || validColumns[column] === "Invalid date") {
         // Delete the property (column) from Medication
         delete med[column];
-        console.log("Removed column:", column);
+        // console.log("Removed column:", column);
       } else {
         // Update the property (column) in Medication
         med[column] = validColumns[column];
-        console.log("Updated column:", column);
-        console.log("Updated value:", validColumns[column]);
+        // console.log("Updated column:", column);
+        // console.log("Updated value:", validColumns[column]);
       }
     }
 
-    med.updatedAt = sequelize.literal("CURRENT_TIMESTAMP");
-
     // Additional logging to trace the flow
-    console.log("Before saving Medication:");
-    console.log(med.toJSON());
+    // console.log("Before saving Medication:");
+    // console.log(med.toJSON());
 
     const result = await med.save();
 
     executeAndStoreQueryResult();
+
+    // Send email
+    if (med.formstatus === '0') {
+      // Get the ID of the newly created occurrence
+      const reportId = result.reportid;
+      const emailSubject = "รายงานความคลาดเคลื่อนยา เลขที่เอกสาร: " + reportId;
+      const emailMessage = "เลขที่เอกสาร: " + reportId + `<br/><br/>` + "สร้างรายงานสำเร็จ รอตรวจสอบ";
+      const recipientEmail = HA_EMAIL;
+      sendEmailMed(recipientEmail, id, emailSubject, emailMessage);
+    }
 
     // Additional logging after saving
     console.log("After saving Medication:");
@@ -458,31 +494,19 @@ exports.updateMedication = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
-// Update a medication record by ID
-// exports.updateMedication = async (req, res) => {
-//   try {
-//     const medication = await Medication.findByPk(req.params.id);
-//     if (medication) {
-//       await medication.update(req.body);
-//       res.status(200).json(medication);
-//     } else {
-//       res.status(404).json({ message: 'Medication not found' });
-//     }
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
 
 // Delete a medication record by ID
 exports.deleteMedication = async (req, res) => {
   const Id = req?.params?.id;
-  if (!Id) return res.status(400).json({ message: "Medication ID required" });
+  const UserID = req?.params?.userid;
+  if (!Id && !UserID) return res.status(400).json({ message: "Medication ID report and UserID is required" });
 
   try {
     const med = await Medication.findOne({ where: { id: Id, deleteAt: null } });
     if (!med) {
       return res.status(204).json({ message: `Medication ID ${Id} not found` });
     }
+    med.deleteby = UserID;
     med.deleteAt = sequelize.fn('GETDATE');
     med.formstatus = "3";
     await med.save();

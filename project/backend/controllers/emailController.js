@@ -121,10 +121,33 @@ const sendEmailEventHA = (to, subject, text) => {
   return sendGenericEmail(to, subject, text, link);
 };
 
+const sendEmailMed = async (to, reportId, subject, text) => {
+  try {
+    const htmlContent = `${text}<br/><br/><br/>
+      เข้าสู่ระบบรายงานความคลาดเคลื่อนยา: <a href="https://occurences.thainakarin.co.th/login">Login</a><br/><br/>
+      หากเข้าสู่ระบบแล้ว ดูรายงานความคลาดเคลื่อนยา: <a href="https://occurences.thainakarin.co.th/medication/form/${reportId}">ดูรายงาน</a>`;
+
+    const mailOptions = {
+      from: "mis@thainakarin.co.th",
+      to,
+      subject,
+      html: htmlContent,
+    };
+
+    console.log("Sending email with options:", mailOptions);
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Email sent:", info.response);
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
+};
+
 module.exports = {
   sendEmail,
   sendExecEmail,
   sendEmailEvent,
   sendEmailEventHA,
+  sendEmailMed,
   findDepartmentEmail,
 };

@@ -4,10 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
-import { chkAdmins, chkAdmin, chkMedic } from "../Function";
-import DataTable from "./DataTable";
-
+import { chkHead, chkAdmins, chkAdmin, chkMedic } from "../Function";
 import { DashboardBox } from "../../styles/Dashboard.style";
+import DataTable from "./DataTable";
+import CloseIncidentDialog from "../CloseIncidentDialog";
+import ApproveDialog from "./ApproveDialog";
 
 const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -16,11 +17,17 @@ const Medication = () => {
   const navigate = useNavigate();
   const storedAuth = JSON.parse(localStorage.getItem("auth"));
   const userData = storedAuth ? JSON.parse(localStorage.getItem("userData")) : null;
+  const isHead = chkHead(userData?.level);
   const isAdmin = chkAdmins(userData?.role);
   const isEXEC = chkAdmin(userData?.level);
   const config = { headers: { Authorization: `Bearer ${storedAuth.accessToken}` } };
   const [dashboard, setDashboard] = useState([]);
   const [loading, setLoading] = useState(load);
+  const [rowData, setRowData] = useState(null);
+  const [isDialogOpen, setDialogOpen] = useState(false);
+  const [isCloseIncidentDialogOpen, setCloseIncidentDialogOpen] = useState(false);
+  const [closeReason, setCloseReason] = useState("");
+  const [closeComment, setCloseComment] = useState("");
 
   const showMedicationMenu = isAdmin || chkMedic(userData?.AffID, userData?.DepID) || (isEXEC && userData?.affiliation === "งานคุณภาพ");
 
@@ -28,32 +35,34 @@ const Medication = () => {
     if (!showMedicationMenu) {
       disconnectWebSocket();
       window.location.href = '/unauthorized';
-      return;
     }
   }, [showMedicationMenu]);
 
   useEffect(() => {
     connectWebSocket();
-
-    return () => {
-      disconnectWebSocket();
-    };
+    return () => disconnectWebSocket();
   }, []);
 
   useEffect(() => {
     if (!dataMedic) return;
 
-    let filteredData = [];
-    if (isAdmin) {
-      filteredData = dataMedic;
-    } else if (isEXEC) {
-      filteredData = userData.affiliation === "งานคุณภาพ" ? dataMedic : dataMedic.filter(item => item.deptAffInfo.AffName === userData.affiliation);
-    } else {
-      filteredData = dataMedic.filter(item => item.requestaff === userData.affiliation && item.requestdep === userData.dep);
+    let filteredData = dataMedic;
+    if (!isAdmin) {
+      if (isEXEC) {
+        filteredData = userData.affiliation === "งานคุณภาพ"
+          ? dataMedic
+          : dataMedic.filter(item => item.deptAffInfo.AffName === userData.affiliation);
+      } else {
+        filteredData = dataMedic.filter(item => item.requestaff === userData.affiliation && item.requestdep === userData.dep);
+      }
     }
-    setDashboard(filteredData);
+
+    if (JSON.stringify(dashboard) !== JSON.stringify(filteredData)) {
+      setDashboard(filteredData);
+    }
+
     setLoading(false);
-  }, [dataMedic, isAdmin, isEXEC, userData]);
+  }, [dataMedic, isAdmin, isEXEC, userData, dashboard]);
 
   const handleAddItem = () => {
     disconnectWebSocket();
@@ -65,14 +74,51 @@ const Medication = () => {
     navigate(`/medication/${id}`);
   };
 
+  const handleApproveClick = (id, data, type) => {
+    setRowData(data);
+    setDialogOpen(true);
+  };
+
+  const handleCloseClick = async (id, data) => {
+    setCloseIncidentDialogOpen(true);
+    setRowData({ id, data });
+  };
+
+  const handleConfirmClose = async () => {
+    if (!closeReason || (closeReason === "6" && !closeComment)) {
+      const errorMessage = closeReason === "6" ? "กรุณาใส่ความคิดเห็นเมื่อเลือก 'ไม่ใช่อุบัติการณ์'" : "กรุณาเลือกสถานะความคลาดเคลื่อนยา";
+      Swal.fire("ผิดพลาด", errorMessage, "error");
+      return;
+    }
+
+    try {
+      const payload = { id: rowData.id, formstatus: closeReason, updateby: userData.userid };
+      if (closeReason === "5") {
+        payload.comment = closeComment;
+      }
+
+      const response = await axios.put(`${apiUrl}/medication`, payload, { ...config });
+      if (response.status === 200 || response.status === 201) {
+        Swal.fire("สำเร็จ", "แก้ไขสถานะความคลาดเคลื่อนยาเรียบร้อยแล้ว", "success");
+  
+        setCloseIncidentDialogOpen(false);
+        setCloseComment("");
+        setCloseReason("");
+      }
+    } catch (error) {
+      console.error(error);
+      Swal.fire("ผิดพลาด", "เกิดข้อผิดพลาดในการแก้ไขสถานะความคลาดเคลื่อนยา", "error");
+    }
+  };
+
+  const handleCloseDialog = () => {
+    setRowData(null);
+    setCloseIncidentDialogOpen(false);
+  };
+
   const handleEditClick = (id, data) => {
     disconnectWebSocket();
     navigate(`/medication/form/${id}`);
-  };
-
-  const handleApproveClick = (id, data) => {
-    disconnectWebSocket();
-    navigate(`/medication/form/approve/${id}`);
   };
 
   const handleDeleteClick = async (id) => {
@@ -89,7 +135,7 @@ const Medication = () => {
 
     if (result.isConfirmed) {
       try {
-        const response = await axios.delete(`${apiUrl}/medication/${id}`, config);
+        const response = await axios.delete(`${apiUrl}/medication/${id}/${userData.userid}`, config);
         if (response.status === 200 || response.status === 201) {
           Swal.fire('สำเร็จ!', 'ยกเลิกรายการเรียบร้อย.', 'success');
         }
@@ -106,15 +152,38 @@ const Medication = () => {
         <h1>รายงานความคลาดเคลื่อนยา</h1>
         <DataTable
           data={dashboard}
+          isHead={isHead}
           isAdmin={isAdmin}
           isEXEC={isEXEC}
           userData={userData}
           handleAddItem={handleAddItem}
           handleViewClick={handleViewClick}
+          handleApproveClick={handleApproveClick}
+          handleCloseClick={handleCloseClick}
           handleEditClick={handleEditClick}
           handleDeleteClick={handleDeleteClick}
-          handleApproveClick={handleApproveClick}
           loading={loading}
+        />
+
+        <ApproveDialog
+          apiUrl={apiUrl}
+          config={config}
+          isOpen={isDialogOpen}
+          setDialogOpen={setDialogOpen}
+          reportData={rowData}
+          setReportData={setRowData}
+          userData={userData}
+        />
+
+        <CloseIncidentDialog
+          isOpen={isCloseIncidentDialogOpen}
+          type="Medication"
+          closeReason={closeReason}
+          setCloseReason={setCloseReason}
+          closeComment={closeComment}
+          setCloseComment={setCloseComment}
+          handleConfirmClose={handleConfirmClose}
+          handleCloseDialog={handleCloseDialog}
         />
       </DashboardBox>
     ) : null

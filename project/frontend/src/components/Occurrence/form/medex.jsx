@@ -25,7 +25,7 @@ import DataDict_Med from "../../../data/form/DataDict_Med";
 import { MedicationStyle } from "../../../styles/MedicationStyle.style";
 import departmentRaw from "../../../data/rawData.json";
 import AlertBar from "../../form/AlertBar";
-import { chkAdmins, chkAdmin, TimeConverter } from "../../Function";
+import { chkHead, chkAdmins, chkAdmin, TimeConverter } from "../../Function";
 
 const Medication = ({ Mode }) => {
   let { id } = useParams();
@@ -47,6 +47,7 @@ const Medication = ({ Mode }) => {
   const [AlertText, setAlertText] = useState("");
   const [AlertBorder, setAlertBorder] = useState([]);
   const [Access, setAccess] = useState(false);
+  const isHead = chkHead(UserData?.level);
   const isAdmin = chkAdmins(UserData?.role);
   const isEXEC = chkAdmin(UserData?.level);
 
@@ -391,7 +392,8 @@ const Medication = ({ Mode }) => {
     console.log("handleSubmitEdit",FormData);
     const missingKeys = keydata.filter(({ key }) => {
       if (key === "deptrelate") {
-        return !(FormData[key] && FormData[key].length);
+        // return !(FormData[key] && FormData[key].length);
+        return !(FormData[key]);
       } else {
         return !(key in FormData);
       }
@@ -706,7 +708,7 @@ const Medication = ({ Mode }) => {
               />
             )}
 
-            {Mode!=="Add" && isAdmin && Stage === 1 && (
+            {Mode === "Show" && (isAdmin || isHead || isEXEC) && Stage === 1 && (
               <ReportSugestionsMed
                 OccType={OccType}
                 Mode={Mode}
@@ -716,7 +718,7 @@ const Medication = ({ Mode }) => {
               />
             )}
 
-            {Mode!=="Add" && isAdmin && Stage === 1 && (
+            {Mode === "Show" && (isAdmin || isHead || isEXEC) && Stage === 1 && (
               <>
                 <Divider variant="middle" flexItem sx={{ m: 1 }} />
                 <Box className="TopicHeader">

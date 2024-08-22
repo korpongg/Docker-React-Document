@@ -5,9 +5,12 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
-import { IncidentDialog } from "../../../styles/Dashboard.style";
+import { IncidentDialog } from "../styles/Dashboard.style";
+import IncidentText from "./label.json";
 
-const CloseIncidentDialog = ({ isOpen, closeReason, setCloseReason, closeComment, setCloseComment, handleConfirmClose, handleCloseDialog }) => {
+const CloseIncidentDialog = ({ isOpen, type, closeReason, setCloseReason, closeComment, setCloseComment, handleConfirmClose, handleCloseDialog }) => {
+  const labels = type === "Occurrence" ? IncidentText.CloseIncident.Occurrence : IncidentText.CloseIncident.Medication;
+
   const handleDialogClose = () => {
     setCloseComment("");
     setCloseReason("");
@@ -16,9 +19,7 @@ const CloseIncidentDialog = ({ isOpen, closeReason, setCloseReason, closeComment
 
   return (
     <IncidentDialog open={isOpen} onClose={handleDialogClose}>
-      <DialogTitle id="incident-dialog-title">
-        แก้ไขสถานะอุบัติการณ์
-      </DialogTitle>
+      <DialogTitle id="incident-dialog-title">{labels.title}</DialogTitle>
       <DialogContent>
         <TextField
           select
@@ -28,10 +29,10 @@ const CloseIncidentDialog = ({ isOpen, closeReason, setCloseReason, closeComment
           fullWidth
           margin="normal"
         >
-          <MenuItem value="2" sx={{ fontFamily: "Prompt, sans-serif !important" }}>ปิดอุบัติการณ์</MenuItem>
-          <MenuItem value="5" sx={{ fontFamily: "Prompt, sans-serif !important" }}>ไม่ใช่อุบัติการณ์</MenuItem>
+          <MenuItem value="2" sx={{ fontFamily: "Prompt, sans-serif !important" }}>{labels.closeReport}</MenuItem>
+          <MenuItem value={type === "Occurrence" ? "5" : "6"} sx={{ fontFamily: "Prompt, sans-serif !important" }}>ไม่ใช่อุบัติการณ์</MenuItem>
         </TextField>
-        {closeReason === "5" && (
+        {(type === "Occurrence" && closeReason === "5") || (type !== "Occurrence" && closeReason === "6") && (
           <TextField
             label="ความคิดเห็น"
             value={closeComment}

@@ -46,7 +46,7 @@
     },
     {
       "id": 1,
-      "statusText": "รายงานใหม่",
+      "statusText": "ความคลาดเคลื่อนใหม่",
       "statusColor": "new",
       "color": "cadetblue"
     },
@@ -64,9 +64,21 @@
     },
     {
       "id": 4,
-      "statusText": "Approve",
+      "statusText": "อยู่ระหว่างทบทวน",
       "statusColor": "in-progress",
       "color": "orange"
+    },
+    {
+      "id": 5,
+      "statusText": "ทบทวนแล้ว",
+      "statusColor": "in-progress",
+      "color": "orange"
+    },
+    {
+      "id": 6,
+      "statusText": "ไม่ใช่อุบัติการณ์",
+      "statusColor": "cancel",
+      "color": "red"
     }
   ],
   "subStatus": [
@@ -94,5 +106,15 @@
       "statusColor": "report",
       "color": "purple"
     }
-  ]
+  ],
+  "CloseIncident": {
+    "Occurrence": {
+      "title": "แก้ไขสถานะอุบัติการณ์",
+      "closeReport": "ปิดอุบัติการณ์"
+    },
+    "Medication": {
+      "title": "แก้ไขสถานะความคลาดเคลื่อนยา",
+      "closeReport": "ปิดรายงาน"
+    }
+  }
 }

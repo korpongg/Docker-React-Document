@@ -2,6 +2,7 @@ import styled from "styled-components";
 import Box from "@mui/material/Box";
 import Modal from '@mui/material/Modal';
 import { Dialog } from "@mui/material";
+import { TranferDialogBox } from "./Event.style";
 
 export const MedicationStyle = styled(Box)`
   background:#ffffff;
@@ -443,6 +444,11 @@ export const MedicationStyle = styled(Box)`
     width:100%;
     // border:1px solid #fe0;
     padding:4px;
+    color: #000;
+  }
+    
+  .ListSelectTable_Cell.show {
+    color: #00000050;
   }
 
   .MuiAutocomplete-root .Mui-disabled{
@@ -463,5 +469,77 @@ export const MedicationStyle = styled(Box)`
 
   .AccessBox{
     margin:200px;
+  }
+`;
+
+export const ApproveDialogBox = styled(TranferDialogBox)`
+  #approve-dialog-title {
+    font-family: inherit;
+  }
+
+  #approve-dialog-title, label, .MuiButton-root, button, textarea, .MuiTypography-root, .MuiSelect-select {
+    font-family: 'Prompt', sans-serif !important;
+  }
+  
+  .ListSelectTable {
+    cursor: context-menu;
+    margin: 5px;
+    border: 1px solid #a6a6a6;
+    height: 220px;
+    overflow: scroll;
+    width: 100%;
+  }
+
+  .ListSelectTable_Row {
+    display: flex;
+    width: 100%;
+  }
+
+  .ListSelectTable_Row:first-child {
+    background: #f3f3f3;
+    border-bottom: 1px solid #a6a6a6;
+    position: sticky;
+    top: 0;
+    text-align: center;
+  }
+
+  .ListSelectTable_Row div:first-child {
+    text-align: center;
+  }
+
+  .ListSelectTable_Cell {
+    width: 100%;
+    padding: 4px;
+    color: #000;
+  }
+  
+  .FormTable {
+    margin: 5px;
+    border: 1px solid #a6a6a6;
+    height: 220px;
+    width: 100%;
+  }
+
+  .FormTable_Row{
+    display: flex;
+    width: 100%;
+  }
+
+  .FormTable_Row:first-child {
+    background: #f3f3f3;
+    border-bottom: 1px solid #a6a6a6;
+    position: sticky;
+    top: 0;
+    text-align: center;
+  }
+
+  .FormTable_Cell {
+    width: 50%;
+    padding: 4px;
+    color: #000;
+  }
+
+  .SelectRCA {
+    padding: 0 10px;
   }
 `;
