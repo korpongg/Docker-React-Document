@@ -35,6 +35,14 @@ const ExpandableCell = React.memo(({ value }) => {
   );
 });
 
+const isWithinDays = (dateString, days) => {
+  const date = new Date(dateString);
+  const today = new Date();
+  const diffTime = Math.abs(today - date);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays <= days;
+};
+
 const DataTable = ({ data, isHead, isAdmin, isEXEC, userData, handleAddItem, handleViewClick, handleApproveClick, handleCloseClick, handleEditClick, handleDeleteClick, loading }) => {
   // console.log(data);
   const statusMap = useMemo(() => {
