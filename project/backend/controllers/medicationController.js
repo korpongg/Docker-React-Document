@@ -4,9 +4,31 @@ const Medication = require('../models/Medication');
 const { executeAndStoreQueryResult } = require('../services/broadcastService');
 const DataDict_Medication = require("./dataDictMedication");
 const DataDict_Med = require("./dataDictMedicationRCA");
-const { sendEmailMed, sendExecEmail } = require("./emailController");
+const { findMedDepartmentEmail, sendEmailMed, sendEmailMedEvent, sendEmailMedEventHA } = require("./emailController");
 const DB_NAME = process.env.DB_NAME;
 const HA_EMAIL = process.env.HA_EMAIL;
+
+// Utility function to format date to dd/mm/yyyy hh:mm:ss
+const formatDateTime_N7 = (date) => {
+  if (!date) return null;
+    const d = new Date(date);
+
+    const day = d.getUTCDate();
+    const month = d.getUTCMonth() + 1;
+    const year = d.getUTCFullYear();
+    const hours = d.getUTCHours();
+    const minutes = d.getUTCMinutes();
+    const seconds = d.getUTCSeconds();
+
+    // Pad single-digit day, month, hours, minutes, and seconds with leading zeros
+    const formattedDay = day < 10 ? `0${day}` : `${day}`;
+    const formattedMonth = month < 10 ? `0${month}` : `${month}`;
+    const formattedHours = hours < 10 ? `0${hours}` : `${hours}`;
+    const formattedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
+    const formattedSeconds = seconds < 10 ? `0${seconds}` : `${seconds}`;
+    
+    return `${formattedDay}/${formattedMonth}/${year} ${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+}
 
 // Function to get title by code
 function getTitleByCodeMed(code, medication) {
@@ -28,8 +50,10 @@ function getTitleByCodeMed(code, medication) {
   return '';
 }
 
-function getTopicByKeyMed(key) {
-  return DataDict_Medication[key]?.topic || '';
+function getTopicByKeyMed(key, lang) {
+  return lang === 'th' 
+    ? DataDict_Medication[key]?.topicTH || '' 
+    : DataDict_Medication[key]?.topic || '';
 }
 
 function getTitleByCode(code, remark, dataDict) {
@@ -411,6 +435,8 @@ exports.updateMedication = async (req, res) => {
     if (!med) {
       return res.status(204).json({ message: `No Medication matches ID ${req.body.id}.` });
     }
+    const prevStatus = med.formstatus;
+    const prevRenew = med.renew;
 
     // Check if req.body.occurrencedate is provided and parse it
     if (req.body.occurrencedate) {
@@ -475,14 +501,56 @@ exports.updateMedication = async (req, res) => {
 
     executeAndStoreQueryResult();
 
-    // Send email
-    if (med.formstatus === '0') {
-      // Get the ID of the newly created occurrence
+    // Send Email to HA
+    if (prevStatus === '0') {
       const reportId = result.reportid;
-      const emailSubject = "รายงานความคลาดเคลื่อนยา เลขที่เอกสาร: " + reportId;
+      const emailSubject = "รายงานความคลาดเคลื่อนทางยา เลขที่เอกสาร: " + reportId;
       const emailMessage = "เลขที่เอกสาร: " + reportId + `<br/><br/>` + "สร้างรายงานสำเร็จ รอตรวจสอบ";
       const recipientEmail = HA_EMAIL;
       sendEmailMed(recipientEmail, id, emailSubject, emailMessage);
+    }
+
+    // Send Email HA to Dep
+    if (prevRenew === null && req.body.renew) {
+      const reportId = result.reportid;
+  
+      // Map prescribing
+      const prescribing = JSON.parse(med.prescribing || '[]');
+      const prescribingDetails = prescribing.map(code => `(${code}) ` + getTitleByCodeMed(code, med)).join(", \n");
+  
+      // Map dispensing
+      const dispensing = JSON.parse(med.dispensing || '[]');
+      const dispensingDetails = dispensing.map(code => `(${code}) ` + getTitleByCodeMed(code, med)).join(", \n");
+  
+      // Map administration
+      const administration = JSON.parse(med.administration || '[]');
+      const administrationDetails = administration.map(code => `(${code}) ` + getTitleByCodeMed(code, med)).join(", \n");
+
+      const emailSubject = "รายงานความคลาดเคลื่อนทางยา เลขที่เอกสาร: " + reportId;
+      const emailMessage = `
+        เลขที่เอกสาร: ${reportId}<br/><br/>
+        มีรายงานความคลาดเคลื่อนทางยาถึงหน่วยงาน<br/><br/>
+        <strong>รายละเอียดรายงานความคลาดเคลื่อนทางยา:</strong><br/>
+        เกิดเมื่อ: ${formatDateTime_N7(result.occurrencedate)}<br/>
+        ประเภท: ${result.reporttype === '0' ? 'General Risk' : 'Clinical Risk'}<br/>
+        ระดับความรุนแรง: ${result.level ? result.level : `ไม่ระบุ`}<br/><br/>
+        ${prescribingDetails ? `<u>${getTopicByKeyMed('prescribing', 'th')}:</u><br/> ${prescribingDetails}<br/><br/>` : ""}
+        ${dispensingDetails ? `<u>${getTopicByKeyMed('dispensing', 'th')}:</u><br/> ${dispensingDetails}<br/><br/>` : ""}
+        ${administrationDetails ? `<u>${getTopicByKeyMed('administration', 'th')}:</u><br/> ${administrationDetails}<br/><br/>` : ""}
+        <br/><b>***รบกวนหน่วยงานตอบกลับภายใน 7 วัน***</b><br/>
+      `;
+      // const recipientEmail = await findMedDepartmentEmail(reportId);
+      const recipientEmail = HA_EMAIL;
+      sendEmailMedEvent(recipientEmail, id, emailSubject, emailMessage);
+    }
+
+    // Send Email Dep to HA
+    if (req.body.approveby) {
+      const reportId = result.reportid;
+      const emailSubject = `รายงานความคลาดเคลื่อนทางยา เลขที่เอกสาร: ${reportId}`;
+      const emailMessage = `เลขที่เอกสาร: ${reportId}<br/><br/>หน่วยงานทำการบันทึกผลการทบทวนรายงานความคลาดเคลื่อนทางยาแล้ว`;
+      const recipientEmail = HA_EMAIL;
+      sendEmailMedEventHA(recipientEmail, id, emailSubject, emailMessage);
     }
 
     // Additional logging after saving

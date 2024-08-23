@@ -1,6 +1,7 @@
 const DataDict_Medication = {
   prescribing: {
     topic: "Prescribing Errors - Transcribing Errors",
+    topicTH: "ความคลาดเคลื่อนในการสั่งใช้ยา – คัดลอกยา",
     options: [
       {
         code: "4.1.1",
@@ -87,6 +88,7 @@ const DataDict_Medication = {
   },
   dispensing: {
     topic: "Dispensing Errors",
+    topicTH: "ความคลาดเคลื่อนในการจัด – จ่ายยา",
     options: [
       {
         code: "4.2.1",
@@ -187,6 +189,7 @@ const DataDict_Medication = {
   },
   administration: {
     topic: "Administration Errors",
+    topicTH: "ความคลาดเคลื่อนในการบริหารยา",
     options: [
       {
         code: "4.3.1",

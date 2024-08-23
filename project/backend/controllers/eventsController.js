@@ -369,7 +369,7 @@ exports.createEventtLog = async (req, res) => {
         <u>สรุปเหตุการณ์ไม่พึงประสงค์:</u><br/> ${renewDesc}
       `;
       const recipientEmail = await findDepartmentEmail(newCode);
-      // const recipientEmail = "nateeton.l@thainakarin.co.th";
+      // const recipientEmail = HA_EMAIL;
       sendEmailEvent(recipientEmail, emailSubject, emailMessage);
     }
 
@@ -629,7 +629,7 @@ exports.updateEventLog = async (req, res) => {
       emailSubject = `รายงานอุบัติการณ์ เลขที่เอกสาร: ${code}`;
       emailMessage = `เลขที่เอกสาร: ${code}<br/><br/>มีรายงานส่งทบทวนอุบัติการณ์ถึงหน่วยงาน`;
       recipientEmail = await findDepartmentEmail(code);
-      // recipientEmail = "nateeton.l@thainakarin.co.th";
+      // recipientEmail = HA_EMAIL;
       sendEmailEvent(recipientEmail, emailSubject, emailMessage);
     }
 
