@@ -39,7 +39,7 @@ export const EventBox = styled(Box)`
     background: #f3f2fa;
   }
   .alert-row {
-    background: #ff0000 !important;
+    background: #ff0000a6!important;
   }
 
   .MuiDataGrid-root {
@@ -133,7 +133,7 @@ export const TranferDialogBox = styled(Dialog)`
     background: #fff;
   }
   .alert-row {
-    background: #ff0000 !important;
+    background: #ff0000a6!important;
   }
 
   .validate {
