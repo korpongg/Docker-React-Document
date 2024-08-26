@@ -12,8 +12,6 @@ import ApproveForm from "./ApproveForm";
 const ApproveDialog = ({ apiUrl, config, isOpen, setDialogOpen, setReportData, reportData, userData }) => {
   const [FormData, setFormData] = useState({});
 
-  console.log(FormData)
-
   const handleDataChange = (event, name) => {
     let value;
 
