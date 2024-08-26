@@ -5,10 +5,20 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 
 import { chkHead, chkAdmins, chkAdmin, chkMedic } from "../Function";
-import { DashboardBox } from "../../styles/Dashboard.style";
+import SearchBox from "../Occurrence/Dashboard/SearchBox";
 import DataTable from "./DataTable";
 import CloseIncidentDialog from "../CloseIncidentDialog";
 import ApproveDialog from "./ApproveDialog";
+
+import { DashboardBox } from "../../styles/Dashboard.style";
+
+import { createGlobalStyle } from "styled-components";
+
+export const GlobalStyle = createGlobalStyle`
+  * {
+    font-family: 'Prompt', sans-serif !important;
+  }
+`;
 
 const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -29,6 +39,12 @@ const Medication = () => {
   const [closeReason, setCloseReason] = useState("");
   const [closeComment, setCloseComment] = useState("");
 
+  const [reportNo, setReportNo] = useState("");
+  const [hn, setHn] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [depSelect, setDepSelect] = useState([]);
+
   const showMedicationMenu = isAdmin || chkMedic(userData?.AffID, userData?.DepID) || (isEXEC && userData?.affiliation === "งานคุณภาพ");
 
   useEffect(() => {
@@ -42,6 +58,38 @@ const Medication = () => {
     connectWebSocket();
     return () => disconnectWebSocket();
   }, []);
+
+  const filterDataSearch = (rowData) => {
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      const day = date.getUTCDate();
+      const month = date.getUTCMonth() + 1;
+      const year = date.getUTCFullYear();
+      const formattedDay = day < 10 ? `0${day}` : `${day}`;
+      const formattedMonth = month < 10 ? `0${month}` : `${month}`;
+      return `${year}-${formattedMonth}-${formattedDay}`;
+    };
+
+    const startDateObj = startDate ? formatDate(startDate) : null;
+    const endDateObj = endDate ? formatDate(endDate, true) : null;
+    const OccurrenceDate = formatDate(rowData.occurrencedate);
+
+    const isSameDate = (date1, date2) => formatDate(date1) === formatDate(date2);
+
+    const isStartDateValid = startDateObj ? isSameDate(OccurrenceDate, startDateObj) : true;
+    const isBetweenDates = startDateObj && endDateObj ? OccurrenceDate >= startDateObj && OccurrenceDate <= endDateObj : true;
+
+    const reportNoMatch = reportNo === "" || (rowData.reportid && rowData.reportid.includes(reportNo));
+    const hnMatch = hn === "" || (rowData.hn && rowData.hn.includes(hn));
+    const isDepSelectValid = depSelect.length === 0 || depSelect.includes(rowData.deptrelate);
+
+    return (
+      reportNoMatch &&
+      hnMatch &&
+      (startDateObj && endDateObj ? isBetweenDates : isStartDateValid) &&
+      isDepSelectValid
+    );
+  };
 
   useEffect(() => {
     if (!dataMedic) return;
@@ -57,6 +105,7 @@ const Medication = () => {
         || (item.deptrelate === userData.DepID && ['4', '5'].includes(item.formstatus)));
       }
     }
+    filteredData = filteredData.filter(filterDataSearch);
 
     if (JSON.stringify(dashboard) !== JSON.stringify(filteredData)) {
       setDashboard(filteredData);
@@ -149,44 +198,61 @@ const Medication = () => {
 
   return (
     showMedicationMenu ? (
-      <DashboardBox>
-        <h1>รายงานความคลาดเคลื่อนยา</h1>
-        <DataTable
-          data={dashboard}
-          isHead={isHead}
-          isAdmin={isAdmin}
-          isEXEC={isEXEC}
-          userData={userData}
-          handleAddItem={handleAddItem}
-          handleViewClick={handleViewClick}
-          handleApproveClick={handleApproveClick}
-          handleCloseClick={handleCloseClick}
-          handleEditClick={handleEditClick}
-          handleDeleteClick={handleDeleteClick}
-          loading={loading}
-        />
+      <>
+        <GlobalStyle />
+        <DashboardBox>
+          <h1>รายงานความคลาดเคลื่อนทางยา</h1>
 
-        <ApproveDialog
-          apiUrl={apiUrl}
-          config={config}
-          isOpen={isDialogOpen}
-          setDialogOpen={setDialogOpen}
-          reportData={rowData}
-          setReportData={setRowData}
-          userData={userData}
-        />
+          <SearchBox
+            reportNo={reportNo}
+            setReportNo={setReportNo}
+            hn={hn}
+            setHn={setHn}
+            startDate={startDate}
+            setStartDate={setStartDate}
+            endDate={endDate}
+            setEndDate={setEndDate}
+            setDepSelect={setDepSelect}
+            reportType="Medication"
+          />
 
-        <CloseIncidentDialog
-          isOpen={isCloseIncidentDialogOpen}
-          type="Medication"
-          closeReason={closeReason}
-          setCloseReason={setCloseReason}
-          closeComment={closeComment}
-          setCloseComment={setCloseComment}
-          handleConfirmClose={handleConfirmClose}
-          handleCloseDialog={handleCloseDialog}
-        />
-      </DashboardBox>
+          <DataTable
+            data={dashboard}
+            isHead={isHead}
+            isAdmin={isAdmin}
+            isEXEC={isEXEC}
+            userData={userData}
+            handleAddItem={handleAddItem}
+            handleViewClick={handleViewClick}
+            handleApproveClick={handleApproveClick}
+            handleCloseClick={handleCloseClick}
+            handleEditClick={handleEditClick}
+            handleDeleteClick={handleDeleteClick}
+            loading={loading}
+          />
+
+          <ApproveDialog
+            apiUrl={apiUrl}
+            config={config}
+            isOpen={isDialogOpen}
+            setDialogOpen={setDialogOpen}
+            reportData={rowData}
+            setReportData={setRowData}
+            userData={userData}
+          />
+
+          <CloseIncidentDialog
+            isOpen={isCloseIncidentDialogOpen}
+            type="Medication"
+            closeReason={closeReason}
+            setCloseReason={setCloseReason}
+            closeComment={closeComment}
+            setCloseComment={setCloseComment}
+            handleConfirmClose={handleConfirmClose}
+            handleCloseDialog={handleCloseDialog}
+          />
+        </DashboardBox>
+      </>
     ) : null
   );
 };

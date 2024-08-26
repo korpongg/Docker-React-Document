@@ -18,7 +18,7 @@ const Logout = () => {
   useEffect(() => {
     const logout = async () => {
       try {
-        const storageKeys = ["auth", "userData", "pagination", "pagination"];
+        const storageKeys = ["auth", "userData", "pagination", "sortModel", "paginationMed", "sortModelMed"];
         storageKeys.forEach((key) => localStorage.removeItem(key));
         setAuth({});
         await new Promise((resolve) => setTimeout(resolve, 2000));

@@ -183,6 +183,32 @@ const DataTable = ({ data, isHead, isAdmin, isEXEC, userData, handleAddItem, han
 
   const filteredColumns = columns.filter(column => column !== null);
 
+  const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
+  const [sortModel, setSortModel] = useState([]);
+
+  // Load pagination and sort settings from localStorage on mount
+  useEffect(() => {
+    const savedPagination = localStorage.getItem('paginationMed');
+    if (savedPagination) {
+      setPaginationModel(JSON.parse(savedPagination));
+    }
+
+    const savedSort = localStorage.getItem('sortModelMed');
+    if (savedSort) {
+      setSortModel(JSON.parse(savedSort));
+    }
+  }, []);
+
+  const handlePaginationChange = (model) => {
+    setPaginationModel(model);
+    localStorage.setItem('paginationMed', JSON.stringify(model));
+  };
+
+  const handleSortModelChange = (model) => {
+    setSortModel(model);
+    localStorage.setItem('sortModelMed', JSON.stringify(model));
+  };
+
   return (
     <DataGrid
       autoHeight
@@ -192,10 +218,14 @@ const DataTable = ({ data, isHead, isAdmin, isEXEC, userData, handleAddItem, han
       columns={filteredColumns}
       disableRowSelectionOnClick
       hideFooterSelectedRowCount={true}
-      initialState={{
-        pagination: { paginationModel: { page: 0, pageSize: 10 } },
-      }}
+      // initialState={{
+      //   pagination: { paginationModel: { page: 0, pageSize: 10 } },
+      // }}
       pageSizeOptions={[10, 25, 50, 100]}
+      paginationModel={paginationModel}
+      onPaginationModelChange={handlePaginationChange}
+      sortModel={sortModel}
+      onSortModelChange={handleSortModelChange}
       getRowClassName={(params) => params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"}
       slots={{ toolbar: () => ( <EditToolbar handleAddItem={handleAddItem} loading={loading} /> ) }}
       localeText={{ toolbarColumns: "คอลัมน์", toolbarFilters: "ตัวกรอง", toolbarDensity: "ระยะห่าง", toolbarExport: "ส่งออก" }}

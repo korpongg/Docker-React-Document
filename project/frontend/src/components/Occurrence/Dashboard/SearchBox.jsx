@@ -11,13 +11,14 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
-const SearchBox = ({ reportNo, setReportNo, hn, setHn, startDate, setStartDate, endDate, setEndDate, setDepSelect, incidentType, setIncidentType }) => {
+const SearchBox = ({ reportNo, setReportNo, hn, setHn, startDate, setStartDate, endDate, setEndDate, setDepSelect, incidentType, setIncidentType, reportType }) => {
   const [departmentData, setDepartmentData] = useState([]);
 
   const fetchDeptData = useCallback(async () => {
     let response;
     try {
-      response = await axios.get(apiUrl + "/departments");
+      const baseUrl = reportType !== 'Medication' ? `${apiUrl}/departments` : `${apiUrl}/departmentsMed`;
+      response = await axios.get(baseUrl);
       setDepartmentData(response.data);
     } catch (error) {
       console.error("Error fetching departments:", error);
@@ -157,23 +158,25 @@ const SearchBox = ({ reportNo, setReportNo, hn, setHn, startDate, setStartDate, 
               </FormControl>
             </Grid2>
           </Grid2>
-          <Grid2 container spacing={1} xs={12} md={6} align="center" justify="center" alignItems="center">
-            <Grid2 xs={12} md={4} align="right">ประเภทอุบัติการณ์</Grid2>
-            <Grid2 xs={12} md={8}>
-              <FormControl fullWidth variant="outlined">
-                <InputLabel>ประเภทอุบัติการณ์</InputLabel>
-                <Select
-                  value={incidentType}
-                  onChange={(e) => setIncidentType(e.target.value)}
-                  label="ประเภทอุบัติการณ์"
-                >
-                  <MenuItem value="0">แสดงผลทั้งหมด</MenuItem>
-                  <MenuItem value="Clinical Risk">Clinical Risk</MenuItem>
-                  <MenuItem value="General Risk">General Risk</MenuItem>
-                </Select>
-              </FormControl>
+          {reportType !== 'Medication' && (
+            <Grid2 container spacing={1} xs={12} md={6} align="center" justify="center" alignItems="center">
+              <Grid2 xs={12} md={4} align="right">ประเภทอุบัติการณ์</Grid2>
+              <Grid2 xs={12} md={8}>
+                <FormControl fullWidth variant="outlined">
+                  <InputLabel>ประเภทอุบัติการณ์</InputLabel>
+                  <Select
+                    value={incidentType}
+                    onChange={(e) => setIncidentType(e.target.value)}
+                    label="ประเภทอุบัติการณ์"
+                  >
+                    <MenuItem value="0">แสดงผลทั้งหมด</MenuItem>
+                    <MenuItem value="Clinical Risk">Clinical Risk</MenuItem>
+                    <MenuItem value="General Risk">General Risk</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid2>
             </Grid2>
-          </Grid2>
+          )}
         </Grid2>
       </SearchContainer>
     </>
