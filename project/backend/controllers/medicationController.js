@@ -31,7 +31,7 @@ const formatDateTime_N7 = (date) => {
 }
 
 // Function to get title by code
-function getTitleByCodeMed(code, medication) {
+function getTitleByCodeMed(code, medication, type) {
   const remarks = {
     "4.1.99": medication.prescribingremark,
     "4.2.99": medication.dispensingremark,
@@ -44,7 +44,7 @@ function getTitleByCodeMed(code, medication) {
   for (const section of Object.values(DataDict_Medication)) {
     const option = section.options.find(option => option.code === code);
     if (option) {
-      return option.title;
+      return type === 'title' ? option.title : option.code;
     }
   }
   return '';
@@ -92,21 +92,25 @@ function parseMedicationResults(results) {
     const administrationM = parseField('administration');
 
     const reportDetails = [];
-    const errorTypes = [];
+    // const errorTypes = [];
+    const reportCode = [];
 
     if (prescribingM.length) {
-      reportDetails.push(prescribingM.map(code => getTitleByCodeMed(code, medication)).join(", \n"));
-      errorTypes.push(getTopicByKeyMed('prescribing'));
+      reportDetails.push(prescribingM.map(code => getTitleByCodeMed(code, medication, 'title')).join(", \n"));
+      // errorTypes.push(getTopicByKeyMed('prescribing'));
+      reportCode.push(prescribingM.map(code => getTitleByCodeMed(code, medication, 'code')).join(", "));
     }
     if (dispensingM.length) {
       if (reportDetails.length) reportDetails.push(", \n");
-      reportDetails.push(dispensingM.map(code => getTitleByCodeMed(code, medication)).join(", \n"));
-      errorTypes.push(getTopicByKeyMed('dispensing'));
+      reportDetails.push(dispensingM.map(code => getTitleByCodeMed(code, medication, 'title')).join(", \n"));
+      // errorTypes.push(getTopicByKeyMed('dispensing'));
+      reportCode.push(dispensingM.map(code => getTitleByCodeMed(code, medication, 'code')).join(", "));
     }
     if (administrationM.length) {
       if (reportDetails.length) reportDetails.push(", \n");
-      reportDetails.push(administrationM.map(code => getTitleByCodeMed(code, medication)).join(", \n"));
-      errorTypes.push(getTopicByKeyMed('administration'));
+      reportDetails.push(administrationM.map(code => getTitleByCodeMed(code, medication, 'title')).join(", \n"));
+      // errorTypes.push(getTopicByKeyMed('administration'));
+      reportCode.push(administrationM.map(code => getTitleByCodeMed(code, medication, 'code')).join(", "));
     }
 
     const mappedTitles = mapRCAtoTitles(parseField('rca'), medication.rcaremark, DataDict_Med);
@@ -115,9 +119,10 @@ function parseMedicationResults(results) {
       ...rest,
       reportid: "\t" + reportid,
       error: reportDetails.join(""),
-      errortype: errorTypes.join(", \n"),
-      effect: parseField('effect'),
-      drugrelate: parseField('drugrelate'),
+      // errortype: errorTypes.join(", \n"),
+      reportcode: reportCode.join(""),
+      // effect: parseField('effect'),
+      // drugrelate: parseField('drugrelate'),
       rca: mappedTitles
     };
   });
@@ -132,31 +137,45 @@ exports.rePort = async (req, res) => {
     SET @StartDate = :startdate;
     SET @EndDate = :enddate;
 
-    SELECT med.*,
+    SELECT med.id,
+      med.reportid,
+      med.hn,
+      med.occurrencedate,
       dep.name AS depname,
-      CONCAT(u_request.title, ' ', u_request.name, ' ', u_request.lastname) AS requestby,
+      CASE WHEN med.reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END AS reporttypename,
+      med.level,
+      med.prescribing,
+      med.dispensing,
+      med.administration,
+      med.rca,
+      med.renew,
+      med.analysis,
+      med.solution,
+      -- CONCAT(u_request.title, ' ', u_request.name, ' ', u_request.lastname) AS requestby,
       u_request.dep AS requestdep,
-      u_request.faction AS requestfac,
+      -- u_request.faction AS requestfac,
       u_request.affiliation AS requestaff,
-      CASE
-        WHEN u_update.userid IS NULL THEN NULL
-        ELSE CONCAT(u_update.title, ' ', u_update.name, ' ', u_update.lastname)
-      END AS updateby,
-      u_update.dep AS updatedep,
-      u_update.faction AS updatefac,
-      u_update.affiliation AS updateaff,
-      CASE 
-        WHEN u_approve.userid IS NULL THEN NULL
-        ELSE CONCAT(u_approve.title, ' ', u_approve.name, ' ', u_approve.lastname)
-      END AS approveby,
-      u_approve.dep AS approvedep,
-      u_approve.faction AS approvefac,
-      u_approve.affiliation AS approveaff,
-      CASE WHEN med.reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END AS reporttypename
+      CASE WHEN med.type = 'ipd' THEN 'IPD' ELSE 'OPD' END AS medtype,
+      CASE WHEN dep.name = u_request.dep THEN 'SR' ELSE 'NR' END AS selfreport,
+      CASE WHEN DATEDIFF(hour, med.occurrencedate, med.createAt) < 24 THEN 1  ELSE 0 END AS timelyreport
+      -- CASE
+      --  WHEN u_update.userid IS NULL THEN NULL
+      --  ELSE CONCAT(u_update.title, ' ', u_update.name, ' ', u_update.lastname)
+      -- END AS updateby,
+      -- u_update.dep AS updatedep,
+      -- u_update.faction AS updatefac,
+      -- u_update.affiliation AS updateaff,
+      -- CASE 
+      --  WHEN u_approve.userid IS NULL THEN NULL
+      --  ELSE CONCAT(u_approve.title, ' ', u_approve.name, ' ', u_approve.lastname)
+      -- END AS approveby,
+      -- u_approve.dep AS approvedep,
+      -- u_approve.faction AS approvefac,
+      -- u_approve.affiliation AS approveaff,
     FROM ${DB_NAME}.[dbo].[medication] med
     LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_request ON u_request.userid = med.createby
-    LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_update ON u_update.userid = med.updateby
-    LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_approve ON u_approve.userid = med.approveby
+    -- LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_update ON u_update.userid = med.updateby
+    -- LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_approve ON u_approve.userid = med.approveby
     LEFT JOIN ${DB_NAME}.[dbo].[department] as dep ON dep.id = med.deptrelate
   `;
 
@@ -516,15 +535,15 @@ exports.updateMedication = async (req, res) => {
   
       // Map prescribing
       const prescribing = JSON.parse(med.prescribing || '[]');
-      const prescribingDetails = prescribing.map(code => `(${code}) ` + getTitleByCodeMed(code, med)).join(", \n");
+      const prescribingDetails = prescribing.map(code => `(${code}) ` + getTitleByCodeMed(code, med, 'title')).join(", \n");
   
       // Map dispensing
       const dispensing = JSON.parse(med.dispensing || '[]');
-      const dispensingDetails = dispensing.map(code => `(${code}) ` + getTitleByCodeMed(code, med)).join(", \n");
+      const dispensingDetails = dispensing.map(code => `(${code}) ` + getTitleByCodeMed(code, med, 'title')).join(", \n");
   
       // Map administration
       const administration = JSON.parse(med.administration || '[]');
-      const administrationDetails = administration.map(code => `(${code}) ` + getTitleByCodeMed(code, med)).join(", \n");
+      const administrationDetails = administration.map(code => `(${code}) ` + getTitleByCodeMed(code, med, 'title')).join(", \n");
 
       const emailSubject = "รายงานความคลาดเคลื่อนทางยา เลขที่เอกสาร: " + reportId;
       const emailMessage = `

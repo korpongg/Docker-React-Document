@@ -23,6 +23,7 @@ function EditToolbar() {
 
 function ExpandableCell({ value }) {
   const [expanded, setExpanded] = React.useState(false);
+  if (!value) return null;
 
   // Function to split value into lines
   const renderLines = (text) => {
@@ -37,7 +38,7 @@ function ExpandableCell({ value }) {
   return (
     <>
       {value && (
-        <div>
+        <div style={{ wordBreak: 'break-all' }}>
           {expanded ? renderLines(value) : renderLines(value.slice(0, 100))}
           {value.length > 100 && (
             <Link
@@ -143,33 +144,53 @@ const OccurrenceReport = () => {
 
   const medicationColumns = [
     { field: "reportid", headerName: "ใบที่", minWidth: 150, flex: 1, align: "center", headerAlign: "center" },
+    { field: "hn", headerName: "HN", minWidth: 180, flex: 1, align: "center", headerAlign: "center" },
     {
       field: "occurrencedate", headerName: "วันที่เกิดเหตุ", minWidth: 150, flex: 1, align: "center", headerAlign: "center",
       valueGetter: (params) => params.value ? formatDateTimeN7(params.value, "dmy") : ''
     },
-    { field: "hn", headerName: "HN", minWidth: 180, flex: 1, align: "center", headerAlign: "center" },
-    { field: "an", headerName: "AN/VN", minWidth: 150, flex: 1, align: "center", headerAlign: "center" },
-    { field: "age", headerName: "อายุ", minWidth: 80, flex: 1, align: "center", headerAlign: "center" },
-    { field: "type", headerName: "O/I", minWidth: 80, flex: 1, align: "center", headerAlign: "center" },
+    { field: "depname", headerName: "แผนกที่เกี่ยวข้อง", minWidth: 180, flex: 1, align: "center", headerAlign: "center" },
+    { field: "reporttypename", headerName: "ประเภท", minWidth: 150, flex: 1, align: "center", headerAlign: "center" },
+    // { field: "an", headerName: "AN/VN", minWidth: 150, flex: 1, align: "center", headerAlign: "center" },
+    { field: "level", headerName: "ความรุนแรง", minWidth: 120, flex: 1, align: "center", headerAlign: "center" },
+    // { field: "age", headerName: "อายุ", minWidth: 80, flex: 1, align: "center", headerAlign: "center" },
     {
-      field: "description", headerName: "Events", minWidth: 300, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false,
-      renderCell: (params) => <ExpandableCell {...params} />,
-    },
-    { field: "level", headerName: "Harm", minWidth: 120, flex: 1, align: "center", headerAlign: "center" },
-    {
-      field: "error", headerName: "ประเภท", minWidth: 300, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false,
+      field: "error", headerName: "ความคลาดเคลื่อนที่เกิดขึ้น", minWidth: 300, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false,
       renderCell: (params) => <ExpandableCell {...params} />,
     },
     {
-      field: "errortype", headerName: "ประเภท 2", minWidth: 250, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false,
+      field: "renew", headerName: "สรุปรายละเอียดเหตุการณ์", minWidth: 300, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false,
       renderCell: (params) => <ExpandableCell {...params} />,
     },
-    { field: "depname", headerName: "แผนก", minWidth: 180, flex: 1, align: "center", headerAlign: "center" },
     {
       field: "rca", headerName: "RCA", minWidth: 300, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false,
       renderCell: (params) => <ExpandableCell {...params} />,
     },
+    {
+      field: "analysis", headerName: "ผลการวิเคราะห์สาเหตุ", minWidth: 300, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false,
+      renderCell: (params) => <ExpandableCell {...params} />,
+    },
+    {
+      field: "solution", headerName: "มาตรการป้องกัน", minWidth: 300, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false,
+      renderCell: (params) => <ExpandableCell {...params} />,
+    },
     { field: "requestdep", headerName: "หน่วยงานที่รายงาน", minWidth: 180, flex: 1, align: "center", headerAlign: "center" },
+    { field: "requestaff", headerName: "ฝ่าย", minWidth: 180, flex: 1, align: "center", headerAlign: "center" },
+    { field: "medtype", headerName: "OPD / IPD", minWidth: 150, flex: 1, align: "center", headerAlign: "center" },
+    {
+      field: "reportcode", headerName: "Code", minWidth: 200, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false,
+      renderCell: (params) => <ExpandableCell {...params} />,
+    },
+    // {
+    //   field: "description", headerName: "Events", minWidth: 300, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false,
+    //   renderCell: (params) => <ExpandableCell {...params} />,
+    // },
+    // {
+    //   field: "errortype", headerName: "ประเภท 2", minWidth: 250, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false,
+    //   renderCell: (params) => <ExpandableCell {...params} />,
+    // },
+    { field: "selfreport", headerName: "Self Report", minWidth: 130, flex: 1, align: "center", headerAlign: "center" },
+    { field: "timelyreport", headerName: "Timely Report", minWidth: 150, flex: 1, align: "center", headerAlign: "center" },
   ];
 
   return (
