@@ -158,7 +158,7 @@ const Medication = ({ Mode }) => {
               }),
                 setAccess(true);
             }
-          } else if (isHead) {
+          } else if (isHead && UserData.DepID === response.data.deptrelate && ['4', '5'].includes(response.data.formstatus)) {
             setFormData({
               ...response.data,
               userreport: response.data.createby,

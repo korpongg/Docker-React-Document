@@ -53,7 +53,8 @@ const Medication = () => {
           ? dataMedic
           : dataMedic.filter(item => item.deptAffInfo.AffName === userData.affiliation);
       } else {
-        filteredData = dataMedic.filter(item => (item.requestaff === userData.affiliation && item.requestdep === userData.dep) || userData.DepID === item.deptrelate);
+        filteredData = dataMedic.filter(item => (item.requestaff === userData.affiliation && item.requestdep === userData.dep) 
+        || (item.deptrelate === userData.DepID && ['4', '5'].includes(item.formstatus)));
       }
     }
 
