@@ -191,7 +191,7 @@ exports.rePort = async (req, res) => {
       const parsedResults = parseMedicationResults(results);
       res.status(200).json(parsedResults);
     } else {
-      res.status(404).json({ error: "Medication not found" });
+      res.status(204).json({ error: "Medication not found" });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });

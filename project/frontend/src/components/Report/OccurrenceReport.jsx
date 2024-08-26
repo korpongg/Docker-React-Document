@@ -36,32 +36,30 @@ function ExpandableCell({ value }) {
   };
 
   return (
-    <>
-      {value && (
-        <div style={{ wordBreak: 'break-all' }}>
-          {expanded ? renderLines(value) : renderLines(value.slice(0, 100))}
-          {value.length > 100 && (
-            <Link
-              type="button"
-              component="button"
-              sx={{ fontSize: "inherit" }}
-              onClick={() => setExpanded(!expanded)}
-            >
-              {expanded ? "ดูน้อยลง" : "ดูเพิ่มเติม"}
-            </Link>
-          )}
-        </div>
+    <div style={{ wordBreak: 'break-all' }}>
+      {expanded ? renderLines(value) : renderLines(value.slice(0, 100))}
+      {value.length > 100 && (
+        <Link
+          type="button"
+          component="button"
+          sx={{ fontSize: "inherit" }}
+          onClick={() => setExpanded(!expanded)}
+        >
+          {expanded ? "ดูน้อยลง" : "ดูเพิ่มเติม"}
+        </Link>
       )}
-    </>
+    </div>
   );
 }
+
+const getDefaultDate = () => new Date().toISOString().split('T')[0];
 
 const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
 const OccurrenceReport = () => {
   const [data, setData] = useState([]);
-  const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]); // Default to today
-  const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]); // Default to today
+  const [startDate, setStartDate] = useState(getDefaultDate());
+  const [endDate, setEndDate] = useState(getDefaultDate());
   const [loading, setLoading] = useState(true);
   const [reportType, setReportType] = useState('occurrence');
 
@@ -76,6 +74,8 @@ const OccurrenceReport = () => {
       const response = await axios.get(url, config);
       if (response.status === 200 || response.status === 201) {
         setData(response.data);
+      } else {
+        setData([]);
       }
     } catch (error) {
       console.error("Failed to fetch data:", error);
@@ -193,9 +193,11 @@ const OccurrenceReport = () => {
     { field: "timelyreport", headerName: "Timely Report", minWidth: 150, flex: 1, align: "center", headerAlign: "center" },
   ];
 
+  const columns = reportType === 'occurrence' ? occurrenceColumns : medicationColumns;
+
   return (
     <ReportBox>
-      <h1>รายงานอุบัติการณ์</h1>
+      <h1>{reportType === 'occurrence' ? 'รายงานอุบัติการณ์' : 'รายงานความคลาดเคลื่อนทางยา'}</h1>
       <SearchBox
         reportType={reportType}
         setReportType={setReportType}
@@ -209,7 +211,7 @@ const OccurrenceReport = () => {
       <DataGrid
         autoHeight
         rows={data}
-        columns={reportType === 'occurrence' ? occurrenceColumns : medicationColumns}
+        columns={columns}
         getRowHeight={() => 'auto'}
         getEstimatedRowHeight={() => 200}
         disableRowSelectionOnClick
