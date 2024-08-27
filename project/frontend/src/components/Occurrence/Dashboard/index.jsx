@@ -245,6 +245,7 @@ const Dashboard = () => {
           setStartDate={setStartDate}
           endDate={endDate}
           setEndDate={setEndDate}
+          depSelect={depSelect}
           setDepSelect={setDepSelect}
           incidentType={incidentType}
           setIncidentType={setIncidentType}

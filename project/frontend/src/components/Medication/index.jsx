@@ -212,6 +212,7 @@ const Medication = () => {
             setStartDate={setStartDate}
             endDate={endDate}
             setEndDate={setEndDate}
+            depSelect={depSelect}
             setDepSelect={setDepSelect}
             reportType="Medication"
           />

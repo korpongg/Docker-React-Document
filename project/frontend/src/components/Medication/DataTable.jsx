@@ -137,7 +137,7 @@ const DataTable = ({ data, isHead, isAdmin, isEXEC, userData, handleAddItem, han
                   icon={<TroubleshootIcon />}
                   label="วิเคราะห์ความคลาดเคลื่อน"
                   onClick={() => handleApproveClick(id, row)}
-                  color="warning"
+                  color="black"
                 />
               </Tooltip>
             </>
@@ -162,7 +162,7 @@ const DataTable = ({ data, isHead, isAdmin, isEXEC, userData, handleAddItem, han
                   icon={<EditIcon />}
                   label="แก้ไขข้อมูลรายงาน"
                   onClick={() => handleEditClick(id, row)}
-                  color="warning"
+                  color="secondary"
                 />
               </Tooltip>
 
@@ -182,7 +182,6 @@ const DataTable = ({ data, isHead, isAdmin, isEXEC, userData, handleAddItem, han
   ];
 
   const getRowClassName = (params) => {
-    console.log(params)
     const { formstatus, renewAt } = params.row;
     if (formstatus === '4' && !isWithinDays(renewAt, 7)) {
       return 'alert-row';

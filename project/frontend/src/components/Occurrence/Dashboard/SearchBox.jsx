@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
-import { Autocomplete, Checkbox, TextField, MenuItem, FormControl, InputLabel, Select } from "@mui/material";
+import { Autocomplete, Checkbox, Chip, TextField, MenuItem, FormControl, InputLabel, Select, Button } from "@mui/material";
 import CheckBoxOutlineIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import ClearIcon from '@mui/icons-material/SearchOffRounded';
 import { SearchContainer } from "../../../styles/Dashboard.style";
 
 const icon = <CheckBoxOutlineIcon fontSize="small" />;
@@ -11,19 +12,20 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
-const SearchBox = ({ reportNo, setReportNo, hn, setHn, startDate, setStartDate, endDate, setEndDate, setDepSelect, incidentType, setIncidentType, reportType }) => {
+const SearchBox = ({ reportNo, setReportNo, hn, setHn, startDate, setStartDate, endDate, setEndDate, depSelect, setDepSelect, incidentType, setIncidentType, reportType }) => {
+  const [value, setValue] = useState("");
+  const [value2, setValue2] = useState("");
   const [departmentData, setDepartmentData] = useState([]);
 
   const fetchDeptData = useCallback(async () => {
-    let response;
     try {
       const baseUrl = reportType !== 'Medication' ? `${apiUrl}/departments` : `${apiUrl}/departmentsMed`;
-      response = await axios.get(baseUrl);
+      const response = await axios.get(baseUrl);
       setDepartmentData(response.data);
     } catch (error) {
       console.error("Error fetching departments:", error);
     }
-  }, [apiUrl]);
+  }, [reportType]);
 
   useEffect(() => {
     fetchDeptData();
@@ -38,19 +40,24 @@ const SearchBox = ({ reportNo, setReportNo, hn, setHn, startDate, setStartDate, 
     return `${day}/${month}/${year}`;
   };
 
-  const handleStartDateChange = (e) => {
-    setStartDate(e.target.value);
+  const handleClear = () => {
+    setReportNo("");
+    setValue("");
+    setHn("");
+    setValue2("");
+    setStartDate("");
+    setEndDate("");
+    setDepSelect([]);
+    if (reportType !== "Medication") setIncidentType("0");
   };
 
-  const handleEndDateChange = (e) => {
-    setEndDate(e.target.value);
+  const handleDeptChange = (event, newValue) => {
+    const selectedIds = newValue.map((option) => option.id);
+    setDepSelect(selectedIds);
   };
 
-  const getMinEndDate = () => {
-    if (!startDate) return "";
-    const date = new Date(startDate);
-    date.setDate(date.getDate() + 1);
-    return date.toISOString().split("T")[0];
+  const handleSelectChange = (e) => {
+    setIncidentType(e.target.value);
   };
 
   return (
@@ -63,8 +70,10 @@ const SearchBox = ({ reportNo, setReportNo, hn, setHn, startDate, setStartDate, 
               <TextField
                 id="reportNo"
                 fullWidth
-                onBlur={(e) => setReportNo(e.target.value)}
                 variant="outlined"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                onBlur={(e) => setReportNo(e.target.value)}
               />
             </Grid2>
           </Grid2>
@@ -74,8 +83,10 @@ const SearchBox = ({ reportNo, setReportNo, hn, setHn, startDate, setStartDate, 
               <TextField
                 id="hn"
                 fullWidth
-                onBlur={(e) => setHn(e.target.value)}
                 variant="outlined"
+                value={value2}
+                onChange={(e) => setValue2(e.target.value)}
+                onBlur={(e) => setHn(e.target.value)}
               />
             </Grid2>
           </Grid2>
@@ -87,16 +98,9 @@ const SearchBox = ({ reportNo, setReportNo, hn, setHn, startDate, setStartDate, 
                 fullWidth
                 type="date"
                 value={startDate}
-                onChange={handleStartDateChange}
+                onChange={(e) => setStartDate(e.target.value)}
                 variant="outlined"
-                InputLabelProps={{
-                  shrink: true
-                }}
-                // InputProps={{
-                //   inputProps: {
-                //     max: formatDate(new Date().toISOString()),
-                //   },
-                // }}
+                InputLabelProps={{ shrink: true }}
               />
             </Grid2>
           </Grid2>
@@ -108,19 +112,10 @@ const SearchBox = ({ reportNo, setReportNo, hn, setHn, startDate, setStartDate, 
                 fullWidth
                 type="date"
                 value={endDate}
-                onChange={handleEndDateChange}
+                onChange={(e) => setEndDate(e.target.value)}
                 variant="outlined"
-                InputLabelProps={{
-                  shrink: true
-                }}
-                inputProps={{
-                  min: getMinEndDate(), // Set min date to startDate + 1
-                }}
-                // InputProps={{
-                //   inputProps: {
-                //     max: formatDate(new Date().toISOString()),
-                //   },
-                // }}
+                InputLabelProps={{ shrink: true }}
+                inputProps={{ min: startDate }}
               />
             </Grid2>
           </Grid2>
@@ -133,50 +128,70 @@ const SearchBox = ({ reportNo, setReportNo, hn, setHn, startDate, setStartDate, 
                   limitTags={1}
                   id="checkboxes-deps"
                   options={departmentData}
-                  onChange={(event, newValue) => {
-                    const selectedIds = newValue.map((option) => option.id);
-                    setDepSelect(selectedIds);
-                  }}
+                  value={departmentData.filter((dep) => depSelect.includes(dep.id))}
+                  onChange={handleDeptChange}
                   disableCloseOnSelect
                   // getOptionLabel={(option) => option.DepName}
                   getOptionLabel={(option) => `${option.DepName} (${option.AffName})`}
-                  renderOption={(props, option, { selected }) => (
-                    <li {...props}>
-                      <Checkbox
-                        icon={icon}
-                        checkedIcon={checkedIcon}
-                        style={{ marginRight: 8 }}
-                        checked={selected}
-                      />
-                      {/* {option.DepName} */}
-                      {`${option.DepName} (${option.AffName})`}
-                    </li>
-                  )}
+                  renderOption={(props, option, { selected }) => {
+                    const { key, ...restProps } = props;
+                    return (
+                      <li key={key} {...restProps}>
+                        <Checkbox
+                          icon={icon}
+                          checkedIcon={checkedIcon}
+                          style={{ marginRight: 8 }}
+                          checked={selected}
+                        />
+                        {`${option.DepName} (${option.AffName})`}
+                      </li>
+                    );
+                  }}
+                  renderTags={(value, getTagProps) => 
+                    value.map((option, index) => {
+                      const { key, ...restProps } = getTagProps({ index });
+                      return (
+                        <Chip
+                          key={key}
+                          label={option.DepName} // or however you want to display the label
+                          {...restProps}
+                        />
+                      );
+                    })
+                  }
+                  
                   style={{ paddingRight: "10px", width: "100%" }}
                   renderInput={(params) => (<TextField {...params} label="แผนก" placeholder="แผนก" />)}
                 />
               </FormControl>
             </Grid2>
           </Grid2>
-          {reportType !== 'Medication' && (
-            <Grid2 container spacing={1} xs={12} md={6} align="center" justify="center" alignItems="center">
-              <Grid2 xs={12} md={4} align="right">ประเภทอุบัติการณ์</Grid2>
-              <Grid2 xs={12} md={8}>
-                <FormControl fullWidth variant="outlined">
-                  <InputLabel>ประเภทอุบัติการณ์</InputLabel>
-                  <Select
-                    value={incidentType}
-                    onChange={(e) => setIncidentType(e.target.value)}
-                    label="ประเภทอุบัติการณ์"
-                  >
-                    <MenuItem value="0">แสดงผลทั้งหมด</MenuItem>
-                    <MenuItem value="Clinical Risk">Clinical Risk</MenuItem>
-                    <MenuItem value="General Risk">General Risk</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid2>
+          <Grid2 container spacing={1} xs={12} md={6} align="center" justify="center" alignItems="center">
+            {reportType !== 'Medication' && (
+              <>
+                <Grid2 xs={12} md={4} align="right">ประเภทอุบัติการณ์</Grid2>
+                <Grid2 xs={12} md={8}>
+                  <FormControl fullWidth variant="outlined">
+                    <InputLabel>ประเภทอุบัติการณ์</InputLabel>
+                    <Select
+                      value={incidentType}
+                      onChange={handleSelectChange}
+                      label="ประเภทอุบัติการณ์"
+                    >
+                      <MenuItem value="0">แสดงผลทั้งหมด</MenuItem>
+                      <MenuItem value="Clinical Risk">Clinical Risk</MenuItem>
+                      <MenuItem value="General Risk">General Risk</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid2>
+              </>
+           )}
+          </Grid2>
+          <Grid2 container spacing={1} xs={12} align="center" justify="center" alignItems="center">
+            <Grid2 xs={12} align="right">
+              <Button color="error" variant="contained" startIcon={<ClearIcon />} onClick={handleClear}>Clear</Button>
             </Grid2>
-          )}
+          </Grid2>
         </Grid2>
       </SearchContainer>
     </>
