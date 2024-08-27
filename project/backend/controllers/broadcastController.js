@@ -30,6 +30,7 @@ const executeSQLQuery = async () => {
       LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_request ON u_request.userid = occ.createby
       LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_update ON u_update.userid = occ.updateby
       LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_accept ON u_accept.userid = occ.acceptby
+      WHERE occ.createAt BETWEEN DATEADD(MONTH, -1, GETDATE()) AND GETDATE()
       ORDER BY 
         CASE 
           WHEN occ.formstatus = '1' THEN 1
@@ -128,6 +129,7 @@ const executeSQLQueryMedication = async () => {
       LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_approve ON u_approve.userid = med.approveby
       LEFT JOIN ${DB_NAME}.[dbo].[department] as dep ON dep.id = med.deptrelate
       LEFT JOIN ${DB_NAME}.[dbo].[affiliation] as aff ON aff.id = dep.relateid
+      WHERE med.createAt BETWEEN DATEADD(MONTH, -1, GETDATE()) AND GETDATE()
       ORDER BY 
         CASE 
           WHEN med.formstatus = '1' THEN 1
@@ -228,7 +230,7 @@ const executeSQLQueryEvent = async (dep) => {
       LEFT JOIN ${DB_NAME}.[dbo].[department] d ON d.id = e.deptrelate
       LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_request ON u_request.userid = e.createby
       LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_accept ON u_accept.userid = e.acceptby
-      ${dep ? `WHERE d.name = :dep` : ''}
+      ${dep ? `WHERE d.name = :dep AND e.createAt BETWEEN DATEADD(MONTH, -1, GETDATE()) AND GETDATE()` : `WHERE e.createAt BETWEEN DATEADD(MONTH, -1, GETDATE()) AND GETDATE()`}
       ORDER BY e.createAt DESC;
     `;
     const results = await sequelize.query(eventQuery, {
