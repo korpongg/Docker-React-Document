@@ -181,6 +181,15 @@ const DataTable = ({ data, isHead, isAdmin, isEXEC, userData, handleAddItem, han
     },
   ];
 
+  const getRowClassName = (params) => {
+    console.log(params)
+    const { formstatus, renewAt } = params.row;
+    if (formstatus === '4' && !isWithinDays(renewAt, 7)) {
+      return 'alert-row';
+    }
+    return params.indexRelativeToCurrentPage % 2 === 0 ? 'even-row' : 'odd-row';
+  };
+
   const filteredColumns = columns.filter(column => column !== null);
 
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
@@ -226,7 +235,7 @@ const DataTable = ({ data, isHead, isAdmin, isEXEC, userData, handleAddItem, han
       onPaginationModelChange={handlePaginationChange}
       sortModel={sortModel}
       onSortModelChange={handleSortModelChange}
-      getRowClassName={(params) => params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"}
+      getRowClassName={getRowClassName}
       slots={{ toolbar: () => ( <EditToolbar handleAddItem={handleAddItem} loading={loading} /> ) }}
       localeText={{ toolbarColumns: "คอลัมน์", toolbarFilters: "ตัวกรอง", toolbarDensity: "ระยะห่าง", toolbarExport: "ส่งออก" }}
       loading={loading}

@@ -113,6 +113,10 @@ export const DashboardBox = styled(Box)`
     padding: 5px 15px;
     border-radius: 10px;
   }
+    
+  .alert-row {
+    background: #ff0000a6 !important;
+  }
 
   @media screen and (max-width: 1600px) {
     margin-top: 40px;
