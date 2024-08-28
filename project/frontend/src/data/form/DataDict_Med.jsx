@@ -185,7 +185,7 @@ const DataDict_Med = {
         },
         {
           code: "13",
-          title: "การจัดการและบำรุงรักษาด้านอุปกรณ์ เคร่องมือ หรืออุปกรณ์ทางการแพทย์ (Equipment maintainance / Nanagement)",
+          title: "การจัดการและบำรุงรักษาด้านอุปกรณ์ เครื่องมือ หรืออุปกรณ์ทางการแพทย์ (Equipment maintainance / Management)",
           status: false,
           suboption: [
             {
