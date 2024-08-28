@@ -71,8 +71,8 @@
     {
       "id": 5,
       "statusText": "ทบทวนแล้ว",
-      "statusColor": "in-progress",
-      "color": "orange"
+      "statusColor": "in-progress2",
+      "color": "blue"
     },
     {
       "id": 6,

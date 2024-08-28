@@ -83,6 +83,10 @@ export const DashboardBox = styled(Box)`
     background: orange;
     box-shadow: 1px 1px 2px 0px #ffa5008c;
   }
+  .post-status.in-progress2 {
+    background: blue;
+    box-shadow: 1px 1px 2px 0px #0000ff8c;
+  }
   .post-status.success {
     background: green;
     box-shadow: 1px 1px 2px 0px #0080008c;
