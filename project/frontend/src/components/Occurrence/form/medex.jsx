@@ -403,7 +403,7 @@ const Medication = ({ Mode }) => {
   const handleSubmitEdit = async (Mode) => {
     console.log("handleSubmitEdit",FormData);
     const missingKeys = keydata.filter(({ key }) => {
-      if (key === "deptrelate") {
+      if (key === "deptrelate" || key === "level") {
         // return !(FormData[key] && FormData[key].length);
         return !(FormData[key]);
       } else {

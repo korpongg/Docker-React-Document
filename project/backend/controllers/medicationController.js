@@ -1,10 +1,11 @@
 const sequelize = require("../config/dbConn").sequelize;
 const Medication = require('../models/Medication');
+const Department = require("../models/Department");
 // const User = require("../models/User");
 const { executeAndStoreQueryResult } = require('../services/broadcastService');
 const DataDict_Medication = require("./dataDictMedication");
 const DataDict_Med = require("./dataDictMedicationRCA");
-const { findMedDepartmentEmail, sendEmailMed, sendEmailMedEvent, sendEmailMedEventHA } = require("./emailController");
+const { findMedDepartmentEmail, sendEmailMed, sendEmailMedEvent, sendExecEmail, sendEmailMedEventHA } = require("./emailController");
 const DB_NAME = process.env.DB_NAME;
 const HA_EMAIL = process.env.HA_EMAIL;
 
@@ -520,8 +521,8 @@ exports.updateMedication = async (req, res) => {
 
     executeAndStoreQueryResult();
 
-    // Send Email to HA
-    if (prevStatus === '0') {
+    // Send Email to Exec and HA
+    if (prevStatus === '0' && req.body.formstatus === '1') {
       const reportId = result.reportid;
       const emailSubject = "รายงานความคลาดเคลื่อนทางยา เลขที่เอกสาร: " + reportId;
       const emailMessage = "เลขที่เอกสาร: " + reportId + `<br/><br/>` + "สร้างรายงานสำเร็จ รอตรวจสอบ";
@@ -529,8 +530,9 @@ exports.updateMedication = async (req, res) => {
       sendEmailMed(recipientEmail, id, emailSubject, emailMessage);
     }
 
-    // Send Email HA to Dep
+    // Send Email HA to Dep and Exec
     if (prevRenew === null && req.body.renew) {
+      const levelCheck = ["E", "F", "G", "H", "I"].includes(result.level);
       const reportId = result.reportid;
   
       // Map prescribing
@@ -561,6 +563,44 @@ exports.updateMedication = async (req, res) => {
       // const recipientEmail = await findMedDepartmentEmail(reportId);
       const recipientEmail = HA_EMAIL;
       sendEmailMedEvent(recipientEmail, id, emailSubject, emailMessage);
+
+      // Send to Exec
+      if (levelCheck) {
+        const departments = await Department.findOne({
+          where: { id: result.deptrelate },
+          attributes: ['relateid', 'name']
+        });
+        
+        const emailCC = [];
+        switch (parseInt(departments.relateid)) {
+          case 1:
+            emailCC.push('paitoon.k11@thainakarin.co.th');
+            break;
+          case 3:
+            emailCC.push('rungarun.g11@thainakarin.co.th');
+            break;
+          case 5:
+            emailCC.push('thipachart.p11@thainakarin.co.th');
+            break;
+          default:
+            break;
+        }
+
+        const renewDesc = result.renew.replace(/\n/g, '<br/>');
+        const emailSubject = "รายงานความคลาดเคลื่อนทางยา เลขที่เอกสาร: " + reportId;
+        const emailMessage = `<div style="font-size: 18px;">
+          <p style="font-size: 20px;">เรียนผู้บริหารรับทราบ รายงานความคลาดเคลื่อนทางยาระดับสูง</p><br/>
+          <strong>รายละเอียดความคลาดเคลื่อนทางยา</strong><br/>
+          1. วันที่เกิดเหตุ: ${formatDateTime_N7(result.occurrencedate)}<br/><br/>
+          2. ประเภท: ${result.reporttype === '0' ? 'General Risk' : 'Clinical Risk'}<br/><br/>
+          3. ระดับความรุนแรง: ${result.level}<br/><br/>
+          4. หน่วยงานที่เกี่ยวข้อง: ${departments.name} <br/><br/>
+          5. สรุปเหตุการณ์:<br/> ${renewDesc}</div>
+        `;
+        // const recipientEmail = 'pattarapon.k@thainakarin.co.th';
+        const recipientEmail = HA_EMAIL;
+        sendExecEmail(recipientEmail, emailCC, id, emailSubject, emailMessage);
+      }
     }
 
     // Send Email Dep to HA
