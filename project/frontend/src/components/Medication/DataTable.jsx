@@ -5,10 +5,14 @@ import { Add as AddIcon, DescriptionRounded as FileIcon, SwapHorizRounded as Rot
 import { formatDateTimeN7 } from "../Function";
 import requestStatusData from "../label.json";
 import TroubleshootIcon from '@mui/icons-material/Troubleshoot';
+import ExportButton from "./ExportButton";
 
-const EditToolbar = React.memo(({ handleAddItem }) => (
+const EditToolbar = React.memo(({ handleAddItem, data }) => (
   <GridToolbarContainer style={{ justifyContent: "space-between", padding: "10px 10px 0" }}>
-    <Button variant="contained" onClick={handleAddItem} startIcon={<AddIcon />} style={{ marginRight: 10 }}>บันทึกรายงาน</Button>
+    {/* <div> */}
+      <Button variant="contained" onClick={handleAddItem} startIcon={<AddIcon />} style={{ marginRight: 10 }}>บันทึกรายงาน</Button>
+      {/* <ExportButton data={data} fileName="รายงานความคลาดเคลื่อนทางยา.xlsx" />
+    </div> */}
     {/* <GridToolbar /> */}
     <GridToolbarQuickFilter />
   </GridToolbarContainer>
@@ -235,7 +239,7 @@ const DataTable = ({ data, isHead, isAdmin, isEXEC, userData, handleAddItem, han
       sortModel={sortModel}
       onSortModelChange={handleSortModelChange}
       getRowClassName={getRowClassName}
-      slots={{ toolbar: () => ( <EditToolbar handleAddItem={handleAddItem} loading={loading} /> ) }}
+      slots={{ toolbar: () => ( <EditToolbar handleAddItem={handleAddItem} data={data} loading={loading} /> ) }}
       localeText={{ toolbarColumns: "คอลัมน์", toolbarFilters: "ตัวกรอง", toolbarDensity: "ระยะห่าง", toolbarExport: "ส่งออก" }}
       loading={loading}
       sx={{
