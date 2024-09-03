@@ -23,6 +23,7 @@ import { OccurrenceStyle } from "../../../styles/OccurrenceStyle.style";
 import departmentRaw from "../../../data/rawData.json";
 import AlertBar from "../../form/AlertBar";
 import { chkAdmins, chkAdmin, TimeConverter } from "../../Function";
+import ReportComment from "../../form/ReportComment";
 
 const Occurrence = ({ Mode }) => {
   let { id } = useParams();
@@ -696,13 +697,18 @@ const Occurrence = ({ Mode }) => {
                 />
               </>
             )}
+
+            {Mode === "Show" && (isAdmin || isEXEC) && Stage === 1 && ['2', '5'].includes(FormData.formstatus) && (
+              <>
+                <Divider variant="middle" flexItem sx={{ m: 1 }} />
+                <ReportComment data={FormData} />
+              </>
+            )}
           </Box>
         ) : (
           <Box className="MainContainer">
             <div className="AccessBox">
-              {Mode === "Edit"
-                ? "คุณไม่มีสิทธิในการแก้ไขนี้ ขออภัยในความไม่สะดวก"
-                : "คุณไม่มีสิทธิในการเข้าถึงข้อมูลนี้ ขออภัยในความไม่สะดวก"}
+              {Mode === "Edit" ? "คุณไม่มีสิทธิในการแก้ไขนี้ ขออภัยในความไม่สะดวก" : "คุณไม่มีสิทธิในการเข้าถึงข้อมูลนี้ ขออภัยในความไม่สะดวก"}
             </div>
           </Box>
         )}

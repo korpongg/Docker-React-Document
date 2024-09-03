@@ -55,18 +55,16 @@ const Dashboard = () => {
     };
   }, []);
 
-  const filterDataSearch = (rowData) => {
-    // Helper function to format date as "YYYY-MM-DD"
-    const formatDate = (dateString) => {
-      const date = new Date(dateString);
-      const day = date.getUTCDate();
-      const month = date.getUTCMonth() + 1;
-      const year = date.getUTCFullYear();
-      const formattedDay = day < 10 ? `0${day}` : `${day}`;
-      const formattedMonth = month < 10 ? `0${month}` : `${month}`;
-      return `${year}-${formattedMonth}-${formattedDay}`;
-    };
+    // function format date "YYYY-MM-DD"
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getUTCDate();
+    const month = date.getUTCMonth() + 1;
+    const year = date.getUTCFullYear();
+    return `${year}-${month < 10 ? `0${month}` : month}-${day < 10 ? `0${day}` : day}`;
+  };
 
+  const filterDataSearch = (rowData) => {
     const startDateObj = startDate ? formatDate(startDate) : null;
     const endDateObj = endDate ? formatDate(endDate, true) : null;
     const OccurrenceDate = formatDate(rowData.occurrencedate);
@@ -138,29 +136,25 @@ const Dashboard = () => {
       Swal.fire("ผิดพลาด", "กรุณาเลือกสถานะอุบัติการณ์", "error");
       return;
     }
-    if (closeReason === "5" && !closeComment) {
+    if (!closeComment) {
       Swal.fire(
         "ผิดพลาด",
-        'กรุณาใส่ความคิดเห็นเมื่อเลือก "ไม่ใช่อุบัติการณ์"',
+        'กรุณาใส่ความคิดเห็น',
         "error"
       );
       return;
     }
 
     try {
-      const payload = { id: rowData.id, formstatus: closeReason };
-      if (closeReason === "5") {
-        payload.comment = closeComment;
+      const payload = { id: rowData.id, formstatus: closeReason, comment: closeComment, updateby: userData.userid };
+      const response = await axios.put(`${apiUrl}/occurrences`, payload, { ...config });
+      if (response.status === 200 || response.status === 201) {
+        Swal.fire("สำเร็จ", "แก้ไขสถานะอุบัติการณ์เรียบร้อยแล้ว", "success");
+  
+        setCloseIncidentDialogOpen(false);
+        setCloseComment("");
+        setCloseReason("");
       }
-
-      const response = await axios.put(`${apiUrl}/occurrences`, payload, {
-        ...config,
-      });
-      Swal.fire("สำเร็จ", "แก้ไขสถานะอุบัติการณ์เรียบร้อยแล้ว", "success");
-
-      setCloseIncidentDialogOpen(false);
-      setCloseComment("");
-      setCloseReason("");
     } catch (error) {
       console.error(error);
       Swal.fire("ผิดพลาด", "เกิดข้อผิดพลาดในการแก้ไขสถานะอุบัติการณ์", "error");

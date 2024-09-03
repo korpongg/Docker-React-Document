@@ -15,6 +15,7 @@ import SelectBoxListRCA from "../../form/SelectBoxListRCA";
 import ReportDescription from "../../form/ReportDescription";
 import ReportStaff from "../../form/ReportStaff";
 import ReportSugestionsMed from "../../form/ReportSugestionsMed";
+import ReportComment from "../../form/ReportComment";
 import NavForm from "../../form/NavForm";
 import ListSelectData from "../../form/ListSelectData";
 
@@ -749,13 +750,18 @@ const Medication = ({ Mode }) => {
                 />
               </>
             )}
+
+            {Mode === "Show" && (isAdmin || isHead || isEXEC) && Stage === 1 && ['2', '3', '6'].includes(FormData.formstatus) && (
+              <>
+                <Divider variant="middle" flexItem sx={{ m: 1 }} />
+                <ReportComment data={FormData} />
+              </>
+            )}
           </Box>
         ) : (
           <Box className="MainContainer">
             <div className="AccessBox">
-              {Mode === "Edit"
-                ? "คุณไม่มีสิทธิในการแก้ไขนี้ ขออภัยในความไม่สะดวก"
-                : "คุณไม่มีสิทธิในการเข้าถึงข้อมูลนี้ ขออภัยในความไม่สะดวก"}
+              {Mode === "Edit" ? "คุณไม่มีสิทธิในการแก้ไขนี้ ขออภัยในความไม่สะดวก" : "คุณไม่มีสิทธิในการเข้าถึงข้อมูลนี้ ขออภัยในความไม่สะดวก"}
             </div>
           </Box>
         )}

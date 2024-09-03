@@ -32,7 +32,7 @@ const CloseIncidentDialog = ({ isOpen, type, closeReason, setCloseReason, closeC
           <MenuItem value="2" sx={{ fontFamily: "Prompt, sans-serif !important" }}>{labels.closeReport}</MenuItem>
           <MenuItem value={type === "Occurrence" ? "5" : "6"} sx={{ fontFamily: "Prompt, sans-serif !important" }}>ไม่ใช่อุบัติการณ์</MenuItem>
         </TextField>
-        {(type === "Occurrence" && closeReason === "5") || (type !== "Occurrence" && closeReason === "6") && (
+        {closeReason && (
           <TextField
             label="ความคิดเห็น"
             value={closeComment}

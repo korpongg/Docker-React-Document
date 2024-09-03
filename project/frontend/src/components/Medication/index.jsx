@@ -59,17 +59,15 @@ const Medication = () => {
     return () => disconnectWebSocket();
   }, []);
 
-  const filterDataSearch = (rowData) => {
-    const formatDate = (dateString) => {
-      const date = new Date(dateString);
-      const day = date.getUTCDate();
-      const month = date.getUTCMonth() + 1;
-      const year = date.getUTCFullYear();
-      const formattedDay = day < 10 ? `0${day}` : `${day}`;
-      const formattedMonth = month < 10 ? `0${month}` : `${month}`;
-      return `${year}-${formattedMonth}-${formattedDay}`;
-    };
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getUTCDate();
+    const month = date.getUTCMonth() + 1;
+    const year = date.getUTCFullYear();
+    return `${year}-${month < 10 ? `0${month}` : month}-${day < 10 ? `0${day}` : day}`;
+  };
 
+  const filterDataSearch = (rowData) => {
     const startDateObj = startDate ? formatDate(startDate) : null;
     const endDateObj = endDate ? formatDate(endDate, true) : null;
     const OccurrenceDate = formatDate(rowData.occurrencedate);
@@ -135,18 +133,21 @@ const Medication = () => {
   };
 
   const handleConfirmClose = async () => {
-    if (!closeReason || (closeReason === "6" && !closeComment)) {
-      const errorMessage = closeReason === "6" ? "กรุณาใส่ความคิดเห็นเมื่อเลือก 'ไม่ใช่อุบัติการณ์'" : "กรุณาเลือกสถานะความคลาดเคลื่อนยา";
-      Swal.fire("ผิดพลาด", errorMessage, "error");
+    if (!closeReason) {
+      Swal.fire("ผิดพลาด", "กรุณาเลือกสถานะความคลาดเคลื่อนยา", "error");
+      return;
+    }
+    if (!closeComment) {
+      Swal.fire(
+        "ผิดพลาด",
+        'กรุณาใส่ความคิดเห็น',
+        "error"
+      );
       return;
     }
 
     try {
-      const payload = { id: rowData.id, formstatus: closeReason, updateby: userData.userid };
-      if (closeReason === "5") {
-        payload.comment = closeComment;
-      }
-
+      const payload = { id: rowData.id, formstatus: closeReason, comment: closeComment, updateby: userData.userid };
       const response = await axios.put(`${apiUrl}/medication`, payload, { ...config });
       if (response.status === 200 || response.status === 201) {
         Swal.fire("สำเร็จ", "แก้ไขสถานะความคลาดเคลื่อนยาเรียบร้อยแล้ว", "success");
