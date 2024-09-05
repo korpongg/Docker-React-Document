@@ -23,6 +23,8 @@ import Usermanager from "./view/admin/Usermanager";
 
 import OccurrenceReport from "./components/Report/OccurrenceReport";
 
+import DeptManage from "./view/admin/DeptManage";
+
 import Missing from "./components/Missing";
 import Unauthorized from "./components/Unauthorized";
 
@@ -76,6 +78,7 @@ function App() {
             <Route path="adduser" element={<AddUser />} />
             <Route path="usermanager" element={<Usermanager />} />
             <Route path="occurrence/report" element={<OccurrenceReport />} />
+            <Route path="/deptmanager" element={<DeptManage />} />
           </Route>
 
           {/* catch all */}

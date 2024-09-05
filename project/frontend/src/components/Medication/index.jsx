@@ -45,7 +45,7 @@ const Medication = () => {
   const [endDate, setEndDate] = useState("");
   const [depSelect, setDepSelect] = useState([]);
 
-  const showMedicationMenu = isAdmin || chkMedic(userData?.AffID, userData?.DepID) || (isEXEC && userData?.affiliation === "งานคุณภาพ");
+  const showMedicationMenu = isAdmin || chkMedic(userData?.AffID, userData?.dep) || (isEXEC && userData?.affiliation === "งานคุณภาพ");
 
   useEffect(() => {
     if (!showMedicationMenu) {

@@ -53,8 +53,11 @@ export function chkAdmins(param) {
   return new Set(["2", "3"]).has(param);
 }
 
+// export function chkMedic(aff, dep) {
+//   return [3, 5].includes(aff) || [13, 146, 152, 153].includes(dep);
+// }
 export function chkMedic(aff, dep) {
-  return [3, 5].includes(aff) || [13, 146, 152, 153].includes(dep);
+  return [3, 5].includes(aff) || (dep && dep.startsWith('เภสัชกรรม'));
 }
 
 export function isMobileChk() {

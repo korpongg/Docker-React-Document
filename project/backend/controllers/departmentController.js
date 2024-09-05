@@ -30,7 +30,7 @@ exports.createDepartment = async (req, res) => {
 // Get all departments with custom SQL
 exports.getAllDepartments = async (req, res) => {
   const sql = `
-    SELECT d.id, d.name AS DepName, a.id AS AffID, a.name AS AffName
+    SELECT d.id, d.name AS DepName, a.id AS AffID, a.name AS AffName, d.email
     FROM ${DB_NAME}.[dbo].[department] d
     LEFT JOIN ${DB_NAME}.[dbo].[affiliation] a ON a.id = d.[relateid]
   `;
@@ -60,7 +60,7 @@ exports.getAllDepartments = async (req, res) => {
 // Get a single department by ID with custom SQL
 exports.getDepartmentById = async (req, res) => {
   const sql = `
-    SELECT d.id, d.name AS DepName, a.id AS AffID, a.name AS AffName
+    SELECT d.id, d.name AS DepName, a.id AS AffID, a.name AS AffName, d.email
     FROM ${DB_NAME}.[dbo].[department] d
     LEFT JOIN ${DB_NAME}.[dbo].[affiliation] a ON a.id = d.[relateid]
     WHERE d.id = :id
@@ -72,7 +72,7 @@ exports.getDepartmentById = async (req, res) => {
       type: sequelize.QueryTypes.SELECT
     });
 
-    if (results.length) {
+    if (results) {
       res.status(200).json(results);
     } else {
       res.status(404).json({ message: 'Department not found' });
@@ -86,7 +86,8 @@ exports.getAllDepartmentMed = async (req, res) => {
     SELECT d.id, d.name AS DepName, a.id AS AffID, a.name AS AffName
     FROM ${DB_NAME}.[dbo].[department] d
     LEFT JOIN ${DB_NAME}.[dbo].[affiliation] a ON a.id = d.[relateid]
-    WHERE (d.relateid IN ('3', '5') OR d.id IN ('13', '146', '152', '153'))
+    -- WHERE (d.relateid IN ('3', '5') OR d.id IN ('13', '146', '152', '153'))
+    WHERE (d.relateid IN ('3', '5') OR d.name LIKE 'เภสัชกรรม%')
     AND d.id NOT IN ('69', '84', '140')
   `;
   

@@ -20,6 +20,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import FileDownloadIcon from '@mui/icons-material/FileDownloadRounded';
 import LogoutIcon from "@mui/icons-material/Logout";
+import SettingIcon from '@mui/icons-material/SettingsRounded';
 import LogoWhite from "../assets/logo-white.svg";
 
 import AvatarPic from "../assets/avatar2.png";
@@ -38,7 +39,7 @@ const Header = () => {
   const isHa = chkAdmins(userData?.role);
   const isEXEC = chkAdmin(userData?.level);
 
-  const showMedicationMenu = isAdmin || chkMedic(userData?.AffID, userData?.DepID) || isHa || (isEXEC && userData?.affiliation === "งานคุณภาพ");
+  const showMedicationMenu = isAdmin || chkMedic(userData?.AffID, userData?.dep) || isHa || (isEXEC && userData?.affiliation === "งานคุณภาพ");
 
   // Check Authen
   const fetchData = async () => {
@@ -113,6 +114,12 @@ const Header = () => {
             <ManageAccountsIcon fontSize="small" style={{ color: "green" }} />
           </ListItemIcon>
           จัดการสิทธิ์
+        </MenuItem>
+        <MenuItem key="deptmanager" onClick={() => handleNavigate("/deptmanager")}>
+          <ListItemIcon>
+            <SettingIcon fontSize="small" style={{ color: "darkblue" }} />
+          </ListItemIcon>
+          จัดการแผนก/หน่วยงาน
         </MenuItem>
         <MenuItem key="exportdata" onClick={() => navigate("/occurrence/report")}>
           <ListItemIcon>
