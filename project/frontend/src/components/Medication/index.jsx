@@ -44,6 +44,7 @@ const Medication = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [depSelect, setDepSelect] = useState([]);
+  const [formStatus, setFormStatus] = useState("-");
 
   const showMedicationMenu = isAdmin || chkMedic(userData?.AffID, userData?.dep) || (isEXEC && userData?.affiliation === "งานคุณภาพ");
 
@@ -85,11 +86,10 @@ const Medication = () => {
       reportNoMatch &&
       hnMatch &&
       (startDateObj && endDateObj ? isBetweenDates : isStartDateValid) &&
-      isDepSelectValid
+      isDepSelectValid &&
+      (formStatus === "-" || rowData.formstatus === formStatus)
     );
   };
-
-  console.log(dataMedic)
 
   useEffect(() => {
     if (!dataMedic) return;
@@ -222,6 +222,8 @@ const Medication = () => {
             setEndDate={setEndDate}
             depSelect={depSelect}
             setDepSelect={setDepSelect}
+            formStatus={formStatus}
+            setFormStatus={setFormStatus}
             reportType="Medication"
           />
 

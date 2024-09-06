@@ -12,7 +12,7 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
-const SearchBox = ({ reportNo, setReportNo, hn, setHn, startDate, setStartDate, endDate, setEndDate, depSelect, setDepSelect, incidentType, setIncidentType, reportType }) => {
+const SearchBox = ({ reportNo, setReportNo, hn, setHn, startDate, setStartDate, endDate, setEndDate, depSelect, setDepSelect, incidentType, setIncidentType, reportType, formStatus, setFormStatus }) => {
   const [value, setValue] = useState("");
   const [value2, setValue2] = useState("");
   const [departmentData, setDepartmentData] = useState([]);
@@ -58,6 +58,10 @@ const SearchBox = ({ reportNo, setReportNo, hn, setHn, startDate, setStartDate, 
 
   const handleSelectChange = (e) => {
     setIncidentType(e.target.value);
+  };
+
+  const handleFormStatusChange = (e) => {
+    setFormStatus(e.target.value);
   };
 
   return (
@@ -167,7 +171,7 @@ const SearchBox = ({ reportNo, setReportNo, hn, setHn, startDate, setStartDate, 
             </Grid2>
           </Grid2>
           <Grid2 container spacing={1} xs={12} md={6} align="center" justify="center" alignItems="center">
-            {reportType !== 'Medication' && (
+            {reportType !== 'Medication' ? (
               <>
                 <Grid2 xs={12} md={4} align="right">ประเภทอุบัติการณ์</Grid2>
                 <Grid2 xs={12} md={8}>
@@ -185,8 +189,54 @@ const SearchBox = ({ reportNo, setReportNo, hn, setHn, startDate, setStartDate, 
                   </FormControl>
                 </Grid2>
               </>
+           ) : (
+            <>
+                <Grid2 xs={12} md={4} align="right">สถานะ</Grid2>
+                <Grid2 xs={12} md={8}>
+                  <FormControl fullWidth variant="outlined">
+                    <InputLabel>สถานะ</InputLabel>
+                    <Select
+                      value={formStatus}
+                      onChange={handleFormStatusChange}
+                      label="สถานะ"
+                    >
+                      <MenuItem value="-">แสดงผลทั้งหมด</MenuItem>
+                      <MenuItem value="0">แบบร่าง</MenuItem>
+                      <MenuItem value="1">ความคลาดเคลื่อนใหม่</MenuItem>
+                      <MenuItem value="2">ปิดรายงาน</MenuItem>
+                      <MenuItem value="3">ยกเลิก</MenuItem>
+                      <MenuItem value="4">อยู่ระหว่างทบทวน</MenuItem>
+                      <MenuItem value="5">ทบทวนแล้ว</MenuItem>
+                      <MenuItem value="6">ไม่ใช่อุบัติการณ์</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid2>
+              </>
            )}
           </Grid2>
+          {reportType !== 'Medication' && (
+            <Grid2 container spacing={1} xs={12} md={6} align="center" justify="center" alignItems="center">
+              <Grid2 xs={12} md={4} align="right">สถานะ</Grid2>
+              <Grid2 xs={12} md={8}>
+                <FormControl fullWidth variant="outlined">
+                  <InputLabel>สถานะ</InputLabel>
+                  <Select
+                    value={formStatus}
+                    onChange={handleFormStatusChange}
+                    label="สถานะ"
+                  >
+                    <MenuItem value="-">แสดงผลทั้งหมด</MenuItem>
+                    <MenuItem value="0">แบบร่าง</MenuItem>
+                    <MenuItem value="1">อุบัติการณ์ใหม่</MenuItem>
+                    <MenuItem value="2">ปิดอุบัติการณ์</MenuItem>
+                    <MenuItem value="3">ยกเลิก</MenuItem>
+                    <MenuItem value="4">อยู่ระหว่างทบทวน</MenuItem>
+                    <MenuItem value="5">ไม่ใช่อุบัติการณ์</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid2>
+            </Grid2>
+          )}
           <Grid2 container spacing={1} xs={12} align="center" justify="center" alignItems="center">
             <Grid2 xs={12} align="right">
               <Button color="error" variant="contained" startIcon={<ClearIcon />} onClick={handleClear}>Clear</Button>

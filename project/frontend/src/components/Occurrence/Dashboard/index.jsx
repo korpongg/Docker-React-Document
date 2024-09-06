@@ -46,6 +46,7 @@ const Dashboard = () => {
   const [endDate, setEndDate] = useState("");
   const [depSelect, setDepSelect] = useState([]);
   const [incidentType, setIncidentType] = useState("0");
+  const [formStatus, setFormStatus] = useState("-");
 
   useEffect(() => {
     connectWebSocket();
@@ -83,7 +84,8 @@ const Dashboard = () => {
       hnMatch &&
       (startDateObj && endDateObj ? isBetweenDates : isStartDateValid) &&
       isDepSelectValid &&
-      (incidentType === "0" || rowData.reporttypename === incidentType)
+      (incidentType === "0" || rowData.reporttypename === incidentType) &&
+      (formStatus === "-" || rowData.formstatus === formStatus)
     );
   };
 
@@ -108,7 +110,7 @@ const Dashboard = () => {
     };
 
     filterData();
-  }, [dataCenter, dataEvent, reportNo, hn, startDate, endDate, depSelect, incidentType]);
+  }, [dataCenter, dataEvent, reportNo, hn, startDate, endDate, depSelect, incidentType, formStatus]);
 
   const handleAddItem = () => {
     disconnectWebSocket();
@@ -243,6 +245,8 @@ const Dashboard = () => {
           setDepSelect={setDepSelect}
           incidentType={incidentType}
           setIncidentType={setIncidentType}
+          formStatus={formStatus}
+          setFormStatus={setFormStatus}
         />
 
         <DataTable
