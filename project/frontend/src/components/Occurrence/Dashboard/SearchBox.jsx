@@ -49,6 +49,7 @@ const SearchBox = ({ reportNo, setReportNo, hn, setHn, startDate, setStartDate, 
     setEndDate("");
     setDepSelect([]);
     if (reportType !== "Medication") setIncidentType("0");
+    setFormStatus("-");
   };
 
   const handleDeptChange = (event, newValue) => {
