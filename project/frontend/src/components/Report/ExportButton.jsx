@@ -29,6 +29,7 @@ const ExportButton = ({ data, fileName, label = 'Export' }) => {
         "ปัจจัยกระตุ้นให้เกิดความคลาดเคลื่อน",
         "ผลการวิเคราะห์สาเหตุที่แท้จริง",
         "มาตราการป้องกัน",
+        "วันที่ส่งทบทวน",
       ]
     ];
 
@@ -47,6 +48,7 @@ const ExportButton = ({ data, fileName, label = 'Export' }) => {
         rowData.factors,
         rowData.comment,
         rowData.suggestion,
+        rowData.createAt ? formatDateTimeN7(rowData.createAt) : '',
       ];
 
       sheetData.push(row);
