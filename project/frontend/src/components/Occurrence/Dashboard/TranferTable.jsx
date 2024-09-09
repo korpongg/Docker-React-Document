@@ -76,7 +76,8 @@ const ActionButtons = ({ id, row, isAdmin, userData, handleViewEvent, handleRepe
 
     {row.formstatus === '1' || row.formstatus === '4' && (
       <>
-        {row.status === '1' && isWithinDays(row.createAt, 7) && (
+        {/* {row.status === '1' && isWithinDays(row.createAt, 7) && ( */}
+        {row.status === '1' && (
           <>
             {isAdmin && (
               <Tooltip title="แก้ไขรายงาน">
@@ -84,7 +85,7 @@ const ActionButtons = ({ id, row, isAdmin, userData, handleViewEvent, handleRepe
                   icon={<EditIcon />}
                   label="แก้ไขรายงาน"
                   onClick={() => handleEditEvent(id, row, isAdmin)}
-                  color="warning"
+                  color="secondary"
                 />
               </Tooltip>
             )}
