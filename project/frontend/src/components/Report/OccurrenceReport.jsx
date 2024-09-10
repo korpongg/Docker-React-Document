@@ -6,16 +6,19 @@ import { formatDateTimeN7 } from "../Function";
 import { ReportBox } from '../../styles/Report.style';
 import SearchBox from './SearchBox';
 
-const csvOptions = { utf8WithBom: true };
+const csvOptions = (type) => ({
+  fileName: type === 'occurrence' ? 'รายงานอุบัติการณ์' : 'รายงานความคลาดเคลื่อนทางยา',
+  utf8WithBom: true
+});
 
-function EditToolbar() {
+function EditToolbar({ type }) {
   return (
     <GridToolbarContainer style={{ padding: "10px 10px 0" }}>
       <GridToolbarColumnsButton />
       <GridToolbarFilterButton />
       <GridToolbarDensitySelector />
       <GridToolbarExportContainer sx={{ background: 'green !important', color: 'white', padding: '3px 12px', textTransform: 'none' }} >
-        <GridCsvExportMenuItem options={csvOptions} />
+        <GridCsvExportMenuItem options={csvOptions(type)} />
       </GridToolbarExportContainer>
     </GridToolbarContainer>
   );
@@ -219,7 +222,7 @@ const OccurrenceReport = () => {
         initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
         pageSizeOptions={[10, 25, 50, 100]}
         getRowClassName={(params) => params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row" }
-        slots={{ toolbar: () => <EditToolbar /> }}
+        slots={{ toolbar: () => <EditToolbar type={reportType} /> }}
         localeText={{ toolbarColumns: "คอลัมน์", toolbarFilters: "ตัวกรอง", toolbarDensity: "ระยะห่าง", toolbarExport: "Excel" }}
         loading={loading}
         sx={{
