@@ -326,7 +326,7 @@ const Medication = ({ Mode }) => {
     // { key: "description", name: "บรรยายสรุปเหตุการณ์ที่เกิดขึ้น", location: 1 },
   ];
 
-  const keysToCheck = ["prescribing", "dispensing", "administration"];
+  const keysToCheck = ["prescribing", "dispensing", "administration", "transcribing"];
   // const keysToCheck = [];
 
   const handleSubmit = async (Mode) => {
@@ -355,6 +355,7 @@ const Medication = ({ Mode }) => {
           prescribing: JSON.stringify(FormData.prescribing),
           dispensing: JSON.stringify(FormData.dispensing),
           administration: JSON.stringify(FormData.administration),
+          transcribing: JSON.stringify(FormData.transcribing),
           rca: JSON.stringify(FormData.rca),
           effect: JSON.stringify(FormData.effect),
           drugrelate: JSON.stringify(FormData.drugrelate),
@@ -428,6 +429,7 @@ const Medication = ({ Mode }) => {
       prescribing: JSON.stringify(FormData.prescribing),
       dispensing: JSON.stringify(FormData.dispensing),
       administration: JSON.stringify(FormData.administration),
+      transcribing: JSON.stringify(FormData.transcribing),
       rca: JSON.stringify(FormData.rca),
       effect: JSON.stringify(FormData.effect),
       drugrelate: JSON.stringify(FormData.drugrelate),
@@ -572,9 +574,7 @@ const Medication = ({ Mode }) => {
             {Stage === 1 && (
               <>
                 <Divider variant="middle" flexItem sx={{ m: 1 }} />
-                <Box className="TopicHeader">
-                  หัวข้อระบบงานที่เกี่ยวข้องกับเหตุการณ์ที่เกิดขึ้น
-                </Box>
+                <Box className="TopicHeader">หัวข้อระบบงานที่เกี่ยวข้องกับเหตุการณ์ที่เกิดขึ้น</Box>
                 <ListSelectData
                   OccType={OccType}
                   data={FormData}
@@ -592,13 +592,10 @@ const Medication = ({ Mode }) => {
                       value={OccStage}
                       onChange={handleDataOccStageChange}
                     >
-                      <option value={1}>
-                        ความคลาดเคลื่อนในการสั่งใช้ยา – คัดลอกยา
-                      </option>
-                      <option value={2}>
-                        ความคลาดเคลื่อนในการจัด – จ่ายยา
-                      </option>
+                      <option value={1}>ความคลาดเคลื่อนในการสั่งใช้ยา</option>
+                      <option value={2}>ความคลาดเคลื่อนในการจัด – จ่ายยา</option>
                       <option value={3}>ความคลาดเคลื่อนในการบริหารยา</option>
+                      <option value={4}>ความคลาดเคลื่อนในการคัดลอกยา</option>
                       <option value={0}>-กรุณาเลือกหัวข้อ-</option>
                     </select>
 
@@ -649,6 +646,19 @@ const Medication = ({ Mode }) => {
                         remark={true}
                         remarkno="4.3.99"
                         remarkcolumn="administrationremark"
+                        handleDataChangeCheckbox={handleDataChangeCheckbox}
+                        handleDataChange={handleDataChange}
+                      />
+                    )}
+                    {OccStage === 4 && (
+                      <SelectBoxList
+                        Mode={Mode}
+                        data={FormData}
+                        optionsdata={DataDict_MedicationForm}
+                        datacolumn="transcribing"
+                        remark={true}
+                        remarkno="4.4.99"
+                        remarkcolumn="transcribingremark"
                         handleDataChangeCheckbox={handleDataChangeCheckbox}
                         handleDataChange={handleDataChange}
                       />

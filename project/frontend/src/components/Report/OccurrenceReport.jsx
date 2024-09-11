@@ -147,22 +147,27 @@ const OccurrenceReport = () => {
 
   const medicationColumns = [
     { field: "reportid", headerName: "ใบที่", minWidth: 150, flex: 1, align: "center", headerAlign: "center" },
-    { field: "hn", headerName: "HN", minWidth: 180, flex: 1, align: "center", headerAlign: "center" },
     {
       field: "occurrencedate", headerName: "วันที่เกิดเหตุ", minWidth: 150, flex: 1, align: "center", headerAlign: "center",
       valueGetter: (params) => params.value ? formatDateTimeN7(params.value, "dmy") : ''
     },
-    { field: "depname", headerName: "แผนกที่เกี่ยวข้อง", minWidth: 180, flex: 1, align: "center", headerAlign: "center" },
-    { field: "reporttypename", headerName: "ประเภท", minWidth: 150, flex: 1, align: "center", headerAlign: "center" },
-    // { field: "an", headerName: "AN/VN", minWidth: 150, flex: 1, align: "center", headerAlign: "center" },
-    { field: "level", headerName: "ความรุนแรง", minWidth: 120, flex: 1, align: "center", headerAlign: "center" },
-    // { field: "age", headerName: "อายุ", minWidth: 80, flex: 1, align: "center", headerAlign: "center" },
+    { field: "hn", headerName: "HN", minWidth: 180, flex: 1, align: "center", headerAlign: "center" },
+    { field: "an", headerName: "AN/VN", minWidth: 150, flex: 1, align: "center", headerAlign: "center" },
+    { field: "age", headerName: "อายุ", minWidth: 80, flex: 1, align: "center", headerAlign: "center" },
+    { field: "medtype", headerName: "OPD / IPD", minWidth: 150, flex: 1, align: "center", headerAlign: "center" },
     {
-      field: "error", headerName: "ความคลาดเคลื่อนที่เกิดขึ้น", minWidth: 300, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false,
+      field: "renew", headerName: "สรุปรายละเอียดเหตุการณ์", minWidth: 300, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false,
+      renderCell: (params) => <ExpandableCell {...params} />,
+    },
+    { field: "level", headerName: "ความรุนแรง", minWidth: 120, flex: 1, align: "center", headerAlign: "center" },
+    { field: "reporttypename", headerName: "ประเภท", minWidth: 150, flex: 1, align: "center", headerAlign: "center" },
+    { field: "depname", headerName: "แผนกที่เกี่ยวข้อง", minWidth: 180, flex: 1, align: "center", headerAlign: "center" },
+    {
+      field: "errortype", headerName: "ประเภทความคลาดเคลื่อน", minWidth: 250, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false,
       renderCell: (params) => <ExpandableCell {...params} />,
     },
     {
-      field: "renew", headerName: "สรุปรายละเอียดเหตุการณ์", minWidth: 300, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false,
+      field: "error", headerName: "ความคลาดเคลื่อนที่เกิดขึ้น", minWidth: 300, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false,
       renderCell: (params) => <ExpandableCell {...params} />,
     },
     {
@@ -179,7 +184,6 @@ const OccurrenceReport = () => {
     },
     { field: "requestdep", headerName: "หน่วยงานที่รายงาน", minWidth: 180, flex: 1, align: "center", headerAlign: "center" },
     { field: "requestaff", headerName: "ฝ่าย", minWidth: 180, flex: 1, align: "center", headerAlign: "center" },
-    { field: "medtype", headerName: "OPD / IPD", minWidth: 150, flex: 1, align: "center", headerAlign: "center" },
     {
       field: "reportcode", headerName: "Code", minWidth: 200, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false,
       renderCell: (params) => <ExpandableCell {...params} />,
@@ -188,10 +192,10 @@ const OccurrenceReport = () => {
     //   field: "description", headerName: "Events", minWidth: 300, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false,
     //   renderCell: (params) => <ExpandableCell {...params} />,
     // },
-    // {
-    //   field: "errortype", headerName: "ประเภท 2", minWidth: 250, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false,
-    //   renderCell: (params) => <ExpandableCell {...params} />,
-    // },
+    {
+      field: "approveAt", headerName: "วันที่ตอบกลับ", minWidth: 150, flex: 1, align: "center", headerAlign: "center",
+      valueGetter: (params) => params.value ? formatDateTimeN7(params.value, "dmy") : ''
+    },
     { field: "selfreport", headerName: "Self Report", minWidth: 130, flex: 1, align: "center", headerAlign: "center" },
     { field: "timelyreport", headerName: "Timely Report", minWidth: 150, flex: 1, align: "center", headerAlign: "center" },
   ];

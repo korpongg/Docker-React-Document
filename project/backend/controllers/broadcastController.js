@@ -160,6 +160,7 @@ const executeSQLQueryMedication = async () => {
           prescribing: JSON.parse(medication.prescribing || '[]'),
           dispensing: JSON.parse(medication.dispensing || '[]'),
           administration: JSON.parse(medication.administration || '[]'),
+          transcribing: JSON.parse(medication.transcribing || '[]'),
           effect: JSON.parse(medication.effect || '[]'),
           drugrelate: JSON.parse(medication.drugrelate || '[]'),
           rca: JSON.parse(medication.rca || '[]'),

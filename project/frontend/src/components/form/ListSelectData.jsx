@@ -69,6 +69,9 @@ const ListSelectData = ({ OccType, data, Mode, setOccStage }) => {
     }
     else if (code === "4.3.99") {
       return data.administrationremark;
+    }
+    else if (code === "4.4.99") {
+      return data.transcribingremark;
     } else {
       for (const key in DataDict_MedicationForm) {
         const section = DataDict_MedicationForm[key];
@@ -103,11 +106,7 @@ const ListSelectData = ({ OccType, data, Mode, setOccStage }) => {
     "management",
   ];
 
-  const KeyMappingMed = [
-    "prescribing",
-    "dispensing",
-    "administration",
-  ];
+  const KeyMappingMed = [ "prescribing", "dispensing", "administration", "transcribing" ];
 
   return (
     <>

@@ -84,6 +84,14 @@ const Medication = sequelize.define('Medication', {
     type: DataTypes.TEXT,
     allowNull: true
   },
+  transcribing: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  transcribingremark: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
   description: {
     type: DataTypes.TEXT,
     allowNull: true

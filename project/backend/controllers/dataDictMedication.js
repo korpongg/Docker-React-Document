@@ -1,7 +1,7 @@
 const DataDict_Medication = {
   prescribing: {
-    topic: "Prescribing Errors - Transcribing Errors",
-    topicTH: "ความคลาดเคลื่อนในการสั่งใช้ยา – คัดลอกยา",
+    topic: "Prescribing Errors",
+    topicTH: "ความคลาดเคลื่อนในการสั่งใช้ยา",
     options: [
       {
         code: "4.1.1",
@@ -71,16 +71,11 @@ const DataDict_Medication = {
       },
       {
         code: "4.1.14",
-        title: "รับคำสั่งไม่ชัดเจน / ผิดพลาด (RN)",
-        status: false,
-      },
-      {
-        code: "4.1.15",
         title: "แพทย์สั่งยาซ้ำซ้อน",
         status: false,
       },
       {
-        code: "4.1.16",
+        code: "4.1.15",
         title: "สั่งจ่ายยาที่ไม่มีจำหน่ายใน รพ.",
         status: false,
       },
@@ -287,6 +282,17 @@ const DataDict_Medication = {
         code: "4.3.19",
         title:
           "บันทึกการให้ยาผู้ป่วยผิดพลาด / ไม่ได้บันทึก / บันทึกไม่ชัดเจน",
+        status: false,
+      },
+    ],
+  },
+  transcribing: {
+    topic: "Transcribing Errors",
+    topicTH: "ความคลาดเคลื่อนในการคัดลอกยา",
+    options: [
+      {
+        code: "4.4.1",
+        title: "รับคำสั่งไม่ชัดเจน / ผิดพลาด (RN)",
         status: false,
       },
     ],

@@ -240,12 +240,14 @@ CREATE TABLE [medication](
 	[acceptdate] [datetime] NULL,									-- วันที่รับเรื่อง (ยังไม่ได้ใช้งาน)
 	[responsedate] [datetime] NULL,								-- วันที่รับคืน (ยังไม่ได้ใช้งาน)
 
-	[prescribing] NVARCHAR(MAX) NULL,							-- 1. ความคลาดเคลื่อนในการสั่งใช้ยา - คัดลอกยา
+	[prescribing] NVARCHAR(MAX) NULL,							-- 1. ความคลาดเคลื่อนในการสั่งใช้ยา
 	[prescribingremark] NVARCHAR(MAX) NULL,				-- 1- อื่นๆ
 	[dispensing] NVARCHAR(MAX) NULL,							-- 2. ความคลาดเคลื่อนในการจัดยา - จ่ายยา
 	[dispensingremark] NVARCHAR(MAX) NULL,				-- 2- อื่นๆ
 	[administration] NVARCHAR(MAX) NULL,					-- 3. ความคลาดเคลื่อนในการบริหารยา
 	[administrationremark] NVARCHAR(MAX) NULL,		-- 3- อื่นๆ
+	[transcribing] NVARCHAR(MAX) NULL,						-- 4. ความคลาดเคลื่อนในการคัดลอกยา
+	[transcribingremark] NVARCHAR(MAX) NULL,			-- 4- อื่นๆ
 
 	[description] NVARCHAR(MAX) NULL,							-- บรรยายสรุปเหตุการณ์ที่เกิดชึ้น
 	[level] NVARCHAR(1) NULL,											-- ระดับความรุนแรงของเหตุการณ์
