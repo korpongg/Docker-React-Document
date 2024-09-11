@@ -32,8 +32,8 @@ exports.getAllDepartments = async (req, res) => {
   const sql = `
     SELECT d.id, d.name AS DepName, a.id AS AffID, a.name AS AffName, d.email
     FROM ${DB_NAME}.[dbo].[department] d
-    WHERE d.id NOT IN ('89', '90')
     LEFT JOIN ${DB_NAME}.[dbo].[affiliation] a ON a.id = d.[relateid]
+    WHERE d.id NOT IN ('89', '90')
   `;
   
   try {
