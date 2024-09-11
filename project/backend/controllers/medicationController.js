@@ -135,7 +135,7 @@ function parseMedicationResults(results) {
       ...rest,
       reportid: "\t" + reportid,
       error: reportDetails.join(""),
-      errortype: errorTypes.join("\n"),
+      errortype: "\t" + errorTypes.join("\n"),
       reportcode: reportCode.join(""),
       // effect: parseField('effect'),
       // drugrelate: parseField('drugrelate'),
