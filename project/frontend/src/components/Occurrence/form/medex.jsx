@@ -197,11 +197,28 @@ const Medication = ({ Mode }) => {
   };
 
   const handleDataChangeCheckbox = (dataarray, columnname) => {
-    setFormData({ ...FormData, [columnname]: dataarray });
+    // Sort dataarray with custom logic for version-like strings
+    const sortedData = [...dataarray].sort((a, b) => {
+        const aParts = a.split('.').map(Number); // Convert to array of numbers
+        const bParts = b.split('.').map(Number);
+
+        // Compare each part of the version numbers
+        for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+            const aPart = aParts[i] || 0; // Default to 0 if no part exists
+            const bPart = bParts[i] || 0;
+            if (aPart < bPart) return -1;
+            if (aPart > bPart) return 1;
+        }
+        return 0;
+    });
+
+    // Update the state with the sorted data
+    setFormData({ ...FormData, [columnname]: sortedData });
+
     if (Mode === "Edit") {
-      setEditFormData({ ...EditFormData, [columnname]: dataarray });
+        setEditFormData({ ...EditFormData, [columnname]: sortedData });
     }
-  };
+};
 
   const removeDataFromCheckboxList = (key, value) => {
     setFormData((prevData) => {
