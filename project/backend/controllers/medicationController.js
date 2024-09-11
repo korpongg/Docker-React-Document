@@ -589,8 +589,8 @@ exports.updateMedication = async (req, res) => {
         ${transcribingDetails ? `<u>${getTopicByKeyMed('transcribing', 'th')}:</u><br/> ${transcribingDetails}<br/><br/>` : ""}
         <br/><b>***รบกวนหน่วยงานตอบกลับภายใน 7 วัน***</b><br/>
       `;
-      // const recipientEmail = await findMedDepartmentEmail(reportId);
-      const recipientEmail = HA_EMAIL;
+      const recipientEmail = await findMedDepartmentEmail(reportId);
+      // const recipientEmail = HA_EMAIL;
       sendEmailMedEvent(recipientEmail, id, emailSubject, emailMessage);
 
       // Send to Exec
@@ -603,13 +603,13 @@ exports.updateMedication = async (req, res) => {
         const emailCC = [];
         switch (parseInt(departments.relateid)) {
           case 1:
-            emailCC.push('paitoon.k11@thainakarin.co.th');
+            emailCC.push('paitoon.k@thainakarin.co.th');
             break;
           case 3:
-            emailCC.push('rungarun.g11@thainakarin.co.th');
+            emailCC.push('rungarun.g@thainakarin.co.th');
             break;
           case 5:
-            emailCC.push('thipachart.p11@thainakarin.co.th');
+            emailCC.push('thipachart.p@thainakarin.co.th');
             break;
           default:
             break;
@@ -626,8 +626,8 @@ exports.updateMedication = async (req, res) => {
           4. หน่วยงานที่เกี่ยวข้อง: ${departments.name} <br/><br/>
           5. สรุปเหตุการณ์:<br/> ${renewDesc}</div>
         `;
-        // const recipientEmail = 'pattarapon.k@thainakarin.co.th';
-        const recipientEmail = HA_EMAIL;
+        const recipientEmail = 'pattarapon.k@thainakarin.co.th';
+        // const recipientEmail = HA_EMAIL;
         sendExecEmail(recipientEmail, emailCC, id, emailSubject, emailMessage);
       }
     }
