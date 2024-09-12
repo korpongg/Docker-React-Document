@@ -180,8 +180,8 @@ export default function UserManager() {
 
   const columns = [
     { field: "userid", headerName: "รหัส", width: 160, editable: false },
-    { field: "name", headerName: "Name", width: 200, editable: false },
-    { field: "lastname", headerName: "LastName", width: 220, editable: false },
+    { field: "name", headerName: "Name", width: 200, editable: true },
+    { field: "lastname", headerName: "LastName", width: 220, editable: true },
     {
       field: "role",
       headerName: "สิทธิ์",
