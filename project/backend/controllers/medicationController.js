@@ -156,6 +156,8 @@ exports.rePort = async (req, res) => {
     SELECT med.id,
       med.reportid,
       med.hn,
+      med.an,
+      med.age,
       med.occurrencedate,
       dep.name AS depname,
       CASE WHEN med.reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END AS reporttypename,
