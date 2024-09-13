@@ -132,6 +132,18 @@ const Occurrence = ({ Mode }) => {
                 // renew: response.data.description || null,
               }),
                 setAccess(true);
+            } else if (UserData.affiliation === response.data.requestaff) {
+              setFormData({
+                ...response.data,
+                userreport: response.data.createby,
+                reportdate: TimeConverter(response.data.createAt,-7),
+                occurrencedate: TimeConverter(response.data.occurrencedate,-7),
+                aff: response.data.requestaff,
+                faction: response.data.requestfac,
+                dep: response.data.requestdep,
+                description: "...",
+              }),
+                setAccess(true);
             }
           } else {
             if (UserData.affiliation === response.data.requestaff) {
