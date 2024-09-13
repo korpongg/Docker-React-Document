@@ -55,8 +55,10 @@ const EventForm = ({ mode, isHA, reportData, eventData, departments, formData, s
                 disabled={!isHA || mode === "Accept"}
               >
                 <MenuItem value="0" sx={{ fontFamily: "Prompt, sans-serif !important" }}>เลือกหน่วยงานที่เกี่ยวข้อง</MenuItem>
-                {(reportData?.deptAffInfo && reportData.deptAffInfo.length > 0 ? reportData.deptAffInfo : departments).map((dept) => (
-                  <MenuItem key={dept.id} value={dept.id} sx={{ fontFamily: "Prompt, sans-serif !important" }}>{dept.DepName}</MenuItem>
+                {(reportData?.deptAffInfo && reportData.deptAffInfo.length > 0 ? reportData.deptAffInfo : departments.filter(dept => dept.id === eventData?.deptrelate || dept.id === formData.deptrelate)).map((dept) => (
+                    <MenuItem key={dept.id} value={dept.id} sx={{ fontFamily: "Prompt, sans-serif !important" }}>
+                        {dept.DepName}
+                    </MenuItem>
                 ))}
               </Select>
               {mode !== "Accept" && (<span className="validate">*เลือกหน่วยงานที่ต้องการมอบหมาย</span>)}
