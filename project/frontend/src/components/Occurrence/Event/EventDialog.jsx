@@ -25,7 +25,7 @@ const EventDialog = ({ tranType, mode, isHA, userData, config, isDialogOpen, han
         if (reportData == null || (reportData?.deptAffInfo && reportData.deptAffInfo.length === 0)) {
             fetchDepartments();
         }
-    }, [reportData]);
+    }, []);
 
     const fetchDepartments = useCallback(async () => {
         try {
