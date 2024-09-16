@@ -608,7 +608,7 @@ exports.updateMedication = async (req, res) => {
             emailCC.push('paitoon.k@thainakarin.co.th');
             break;
           case 3:
-            emailCC.push('rungarun.g@thainakarin.co.th');
+            emailCC.push('surussavadee.s@thainakarin.co.th');
             break;
           case 5:
             emailCC.push('thipachart.p@thainakarin.co.th');
