@@ -96,12 +96,9 @@ const Medication = () => {
 
     let filteredData = dataMedic;
     if (userData.userid === '500203') {
-      // Filter based on specific departments using deptAffInfo.DepID
-      filteredData = dataMedic.filter(item =>
-        // ['เภสัชกรรมผู้ป่วยนอก', 'เภสัชกรรมผู้ป่วยใน', 'เภสัชกรรม', 'เภสัชกรรมคลินิก', 'ศูนย์สารสนเทศทางยา', 'คลังยา'].includes(item.deptAffInfo.DepName)
-        [152, 153, 146, 13, 21, 1].includes(item.deptAffInfo.DepID)
-      );
-    } else if (!isAdmin) {
+      filteredData = dataMedic.filter(item => [152, 153, 146, 13, 21, 1].includes(item.deptAffInfo.DepID));
+    }
+    else if (!isAdmin) {
       if (isEXEC) {
         filteredData = userData.affiliation === "งานคุณภาพ"
           ? dataMedic

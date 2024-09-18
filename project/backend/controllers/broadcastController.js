@@ -9,6 +9,7 @@ const executeSQLQuery = async () => {
       SELECT occ.*,
         CONCAT(u_request.title, ' ', u_request.name, ' ', u_request.lastname) AS requestby,
         u_request.dep AS requestdep,
+        dep.id AS requestdepID,
         u_request.faction AS requestfac,
         u_request.affiliation AS requestaff,
         CASE
@@ -28,6 +29,7 @@ const executeSQLQuery = async () => {
         CASE WHEN occ.reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END AS reporttypename
       FROM ${DB_NAME}.[dbo].[occurrences] occ
       LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_request ON u_request.userid = occ.createby
+      LEFT JOIN ${DB_NAME}.[dbo].[department] AS dep ON dep.name = u_request.dep
       LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_update ON u_update.userid = occ.updateby
       LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_accept ON u_accept.userid = occ.acceptby
       WHERE occ.createAt BETWEEN DATEADD(MONTH, -2, GETDATE()) AND GETDATE()

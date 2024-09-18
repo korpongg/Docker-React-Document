@@ -89,28 +89,82 @@ const Dashboard = () => {
     );
   };
 
-  useEffect(() => {
-    const filterData = () => {
-      if (isAdmin) {
-        setDashboard(dataCenter.filter(filterDataSearch));
-        setEventData(dataEvent);
-      } else if (isEXEC) {
-        if (userData.affiliation === "งานคุณภาพ") {
-          setDashboard(dataCenter.filter(filterDataSearch));
-          setEventData(dataEvent);
-        } else {
-          const filteredData = dataCenter.filter((item) => item.requestaff === userData.affiliation);
-          setDashboard(filteredData.filter(filterDataSearch));
-        }
-      } else {
-        const filteredData = dataCenter.filter((item) =>item.requestaff === userData.affiliation &&item.requestdep === userData.dep);
-        setDashboard(filteredData.filter(filterDataSearch));
-      }
-      setLoading(false);
-    };
+  // useEffect(() => {
+  //   const filterData = () => {
+  //     if (isAdmin) {
+  //       setDashboard(dataCenter.filter(filterDataSearch));
+  //       setEventData(dataEvent);
+  //     } else if (isEXEC) {
+  //       if (userData.affiliation === "งานคุณภาพ") {
+  //         setDashboard(dataCenter.filter(filterDataSearch));
+  //         setEventData(dataEvent);
+  //       } else {
+  //         const filteredData = dataCenter.filter((item) => item.requestaff === userData.affiliation);
+  //         setDashboard(filteredData.filter(filterDataSearch));
+  //       }
+  //     } else {
+  //       const filteredData = dataCenter.filter((item) =>item.requestaff === userData.affiliation &&item.requestdep === userData.dep);
+  //       setDashboard(filteredData.filter(filterDataSearch));
+  //     }
+  //     setLoading(false);
+  //   };
 
-    filterData();
-  }, [dataCenter, dataEvent, reportNo, hn, startDate, endDate, depSelect, incidentType, formStatus]);
+  //   filterData();
+  // }, [dataCenter, dataEvent, reportNo, hn, startDate, endDate, depSelect, incidentType, formStatus]);
+  
+
+  useEffect(() => {
+    if (!dataCenter) return;
+
+    let filteredData = dataCenter;
+    if (userData.userid === '500217') {
+      filteredData = dataCenter.filter(item => [113].includes(item.requestdepID) || item.requestdep === userData.dep);
+    }
+    else if (userData.userid === '631201') {
+      filteredData = dataCenter.filter(item => [92].includes(item.requestdepID) || item.requestdep === userData.dep);
+    }
+    else if (userData.userid === '600109') {
+      filteredData = dataCenter.filter(item => [98].includes(item.requestdepID) || item.requestdep === userData.dep);
+    }
+    else if (userData.userid === '450043') {
+      filteredData = dataCenter.filter(item => [156].includes(item.requestdepID) || item.requestdep === userData.dep);
+    }
+    else if (userData.userid === '590068') {
+      filteredData = dataCenter.filter(item => [112].includes(item.requestdepID) || item.requestdep === userData.dep);
+    }
+    else if (userData.userid === '570058') {
+      filteredData = dataCenter.filter(item => [122].includes(item.requestdepID) || item.requestdep === userData.dep);
+    }
+    else if (userData.userid === '670423') {
+      filteredData = dataCenter.filter(item => [114].includes(item.requestdepID) || item.requestdep === userData.dep);
+    }
+    else if (userData.userid === '620511') {
+      filteredData = dataCenter.filter(item => [117].includes(item.requestdepID) || item.requestdep === userData.dep);
+    }
+    else if (userData.userid === '650930') {
+      filteredData = dataCenter.filter(item => [115].includes(item.requestdepID) || item.requestdep === userData.dep);
+    }
+    else if (userData.userid === '470029') {
+      filteredData = dataCenter.filter(item => [120].includes(item.requestdepID) || item.requestdep === userData.dep);
+    }
+    else if (userData.userid === '600113') {
+      filteredData = dataCenter.filter(item => [121].includes(item.requestdepID) || item.requestdep === userData.dep);
+    }
+    else if (!isAdmin) {
+      if (isEXEC) {
+        filteredData = userData.affiliation === "งานคุณภาพ" ? dataCenter : dataCenter.filter(item => item.requestaff === userData.affiliation);
+      } else {
+        filteredData = dataCenter.filter(item => (item.requestaff === userData.affiliation && item.requestdep === userData.dep));
+      }
+    }
+    filteredData = filteredData.filter(filterDataSearch);
+
+    if (JSON.stringify(dashboard) !== JSON.stringify(filteredData)) {
+      setDashboard(filteredData);
+    }
+
+    setLoading(false);
+  }, [dataCenter, isAdmin, isEXEC, userData, dashboard]);
 
   const handleAddItem = () => {
     disconnectWebSocket();
