@@ -142,6 +142,10 @@ const OccurrenceReport = () => {
       field: "reportcode", headerName: "Code", minWidth: 200, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false,
       renderCell: (params) => <ExpandableCell {...params} />,
     },
+    {
+      field: "acceptAt", headerName: "วันที่ตอบกลับ", minWidth: 150, flex: 1, align: "center", headerAlign: "center",
+      valueGetter: (params) => params.value ? formatDateTimeN7(params.value, "dmy") : ''
+    },
     { field: "selfreport", headerName: "Self Report", minWidth: 130, flex: 1, align: "center", headerAlign: "center" },
     { field: "timelyreport", headerName: "Timely Report", minWidth: 150, flex: 1, align: "center", headerAlign: "center" },
   ];
