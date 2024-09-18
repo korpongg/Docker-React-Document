@@ -30,6 +30,7 @@ const ExportButton = ({ data, fileName, label = 'Export' }) => {
         "ผลการวิเคราะห์สาเหตุที่แท้จริง",
         "มาตราการป้องกัน",
         "วันที่ส่งทบทวน",
+        "วันที่ส่งทบทวนซ้ำ",
       ]
     ];
 
@@ -49,6 +50,7 @@ const ExportButton = ({ data, fileName, label = 'Export' }) => {
         rowData.comment,
         rowData.suggestion,
         rowData.createAt ? formatDateTimeN7(rowData.createAt) : '',
+        rowData.repeatAt ? formatDateTimeN7(rowData.repeatAt) : '',
       ];
 
       sheetData.push(row);
