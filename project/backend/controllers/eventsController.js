@@ -241,6 +241,7 @@ exports.rePort = async (req, res) => {
       o.safety,
       o.service,
       o.management,
+      e.acceptAt,
       CASE WHEN d.name = u.dep THEN 'SR' ELSE 'NR' END AS selfreport,
       CASE WHEN DATEDIFF(hour, o.occurrencedate, o.createAt) < 24 THEN 1  ELSE 0 END AS timelyreport
     FROM ${DB_NAME}.[dbo].[event_logs] e
