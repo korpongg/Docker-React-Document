@@ -90,7 +90,18 @@ const ActionButtons = ({ id, row, isAdmin, userData, handleViewEvent, handleRepe
               </Tooltip>
             )}
 
-            {row?.depname === userData?.dep && (
+            {(row?.depname === userData?.dep || 
+              (userData?.userid === '500217' && row?.deptrelate === 113) || 
+              (userData?.userid === '631201' && row?.deptrelate === 92) || 
+              (userData?.userid === '600109' && row?.deptrelate === 98) || 
+              (userData?.userid === '450043' && row?.deptrelate === 156) || 
+              (userData?.userid === '590068' && row?.deptrelate === 112) || 
+              (userData?.userid === '570058' && row?.deptrelate === 122) || 
+              (userData?.userid === '670423' && row?.deptrelate === 114) || 
+              (userData?.userid === '620511' && row?.deptrelate === 117) || 
+              (userData?.userid === '650930' && row?.deptrelate === 115) || 
+              (userData?.userid === '470029' && row?.deptrelate === 120) || 
+              (userData?.userid === '600113' && row?.deptrelate === 121)) && (
               <Tooltip title="บันทึกผลการทบทวนอุบัติการณ์">
                 <GridActionsCellItem
                   icon={<AcceptIcon />}
@@ -116,7 +127,18 @@ const ActionButtons = ({ id, row, isAdmin, userData, handleViewEvent, handleRepe
               </Tooltip>
             )}
 
-            {row?.depname === userData?.dep && (
+            {(row?.depname === userData?.dep || 
+              (userData?.userid === '500217' && row?.deptrelate === 113) || 
+              (userData?.userid === '631201' && row?.deptrelate === 92) || 
+              (userData?.userid === '600109' && row?.deptrelate === 98) || 
+              (userData?.userid === '450043' && row?.deptrelate === 156) || 
+              (userData?.userid === '590068' && row?.deptrelate === 112) || 
+              (userData?.userid === '570058' && row?.deptrelate === 122) || 
+              (userData?.userid === '670423' && row?.deptrelate === 114) || 
+              (userData?.userid === '620511' && row?.deptrelate === 117) || 
+              (userData?.userid === '650930' && row?.deptrelate === 115) || 
+              (userData?.userid === '470029' && row?.deptrelate === 120) || 
+              (userData?.userid === '600113' && row?.deptrelate === 121)) && (
               <Tooltip title="บันทึกผลการทบทวนอุบัติการณ์">
                 <GridActionsCellItem
                   icon={<AcceptIcon />}
@@ -160,24 +182,49 @@ const TranferTable = ({ reportData, tranType, dataEvent, isAdmin, userData, conf
     useEffect(() => {
         let filteredData = dataEvent;
         if (userData.userid === '380176') {
-          filteredData = dataEvent.filter(item =>
-            ['ศูนย์สูติ-นรีเวช', 'กุมารเวช', 'ศัลยกรรม', 'ศูนย์ทางเดินอาหาร', 'ศูนย์กระดูกและข้อ', 'ศูนย์ตา', 'หู คอ จมูก', 'ทันตกรรม', 'ศูนย์ปลูกถ่ายไต'].includes(item.depname)
-          );
+          filteredData = dataEvent.filter(item => [64, 71, 72, 74, 75, 76, 80, 97, 105].includes(item.deptrelate));
         }
         else if (userData.userid === '370074') {
-          filteredData = dataEvent.filter(item =>
-            ['ศูนย์ตรวจสุขภาพ', 'ศูนย์หัวใจคนไข้นอก', 'อายุรกรรม', 'wellness center', 'ผิวหนัง', 'คลินิกแพทย์แผนจีน', 'สราญรมย์', 'ศูนย์สมองและระบบประสาท', 'ศูนย์มะเร็งและรังสีรักษา', 'ศูนย์โรคเต้านม', 'รังสีรักษา'].includes(item.depname)
-          );
+          filteredData = dataEvent.filter(item => [60, 66, 73, 77, 79, 81, 82, 98, 142, 156].includes(item.deptrelate));
         }
         else if (userData.userid === '480080') {
-          filteredData = dataEvent.filter(item =>
-            ['หอผู้ป่วยในชั้น 5', 'หอผู้ป่วยในชั้น 6', 'หอผู้ป่วยในชั้น 7', 'หอผู้ป่วยในชั้น 8', 'หอผู้ป่วยในชั้น 9', 'หอผู้ป่วยในชั้น 10', 'ทารกแรกเกิด', 'ฉุกเฉิน', 'หน่วยจ่ายกลาง'].includes(item.depname)
-          );
+          filteredData = dataEvent.filter(item => [61, 65, 85, 91, 92, 93, 94, 95, 96].includes(item.deptrelate));
         }
         else if (userData.userid === '400130') {
-          filteredData = dataEvent.filter(item =>
-            ['ห้องผ่าตัด', 'วิสัญญี', 'ไอซียู', 'สวนหัวใจ', 'ห้องคลอด', 'ไตเทียม'].includes(item.depname)
-          );
+          filteredData = dataEvent.filter(item => [63, 70, 83, 86, 87, 99, 157].includes(item.deptrelate));
+        }
+        else if (userData.userid === '500217') {
+          filteredData = dataEvent.filter(item => [113].includes(item.deptrelate));
+        }
+        else if (userData.userid === '631201') {
+          filteredData = dataEvent.filter(item => [92].includes(item.deptrelate));
+        }
+        else if (userData.userid === '600109') {
+          filteredData = dataEvent.filter(item => [98].includes(item.deptrelate));
+        }
+        else if (userData.userid === '450043') {
+          filteredData = dataEvent.filter(item => [156].includes(item.deptrelate));
+        }
+        else if (userData.userid === '590068') {
+          filteredData = dataEvent.filter(item => [112].includes(item.deptrelate));
+        }
+        else if (userData.userid === '570058') {
+          filteredData = dataEvent.filter(item => [122].includes(item.deptrelate));
+        }
+        else if (userData.userid === '670423') {
+          filteredData = dataEvent.filter(item => [114].includes(item.deptrelate));
+        }
+        else if (userData.userid === '620511') {
+          filteredData = dataEvent.filter(item => [117].includes(item.deptrelate));
+        }
+        else if (userData.userid === '650930') {
+          filteredData = dataEvent.filter(item => [115].includes(item.deptrelate));
+        }
+        else if (userData.userid === '470029') {
+          filteredData = dataEvent.filter(item => [120].includes(item.deptrelate));
+        }
+        else if (userData.userid === '600113') {
+          filteredData = dataEvent.filter(item => [121].includes(item.deptrelate));
         }
         else if (!isAdmin) {
             filteredData = dataEvent.filter(item => item.depname === userData.dep);

@@ -34,6 +34,7 @@ exports.getAllDepartments = async (req, res) => {
     FROM ${DB_NAME}.[dbo].[department] d
     LEFT JOIN ${DB_NAME}.[dbo].[affiliation] a ON a.id = d.[relateid]
     WHERE d.id NOT IN ('89', '90', '142')
+    ORDER BY d.id ASC
   `;
   
   try {
