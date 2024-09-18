@@ -221,6 +221,7 @@ exports.rePort = async (req, res) => {
       COALESCE(o.hn, o.an) AS hn,
       o.occurrencedate,
       d.name as depname,
+      aff.name as affname,
       CASE WHEN o.reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END AS reporttypename,
       o.level,
       e.summarydetail,
@@ -246,6 +247,7 @@ exports.rePort = async (req, res) => {
     LEFT JOIN ${DB_NAME}.[dbo].[occurrences] o ON o.reportid = e.reportid
     LEFT JOIN ${DB_NAME}.[dbo].[user] u ON u.userid = o.createby
     LEFT JOIN ${DB_NAME}.[dbo].[department] d ON d.id = e.deptrelate
+    LEFT JOIN ${DB_NAME}.[dbo].[affiliation] aff ON aff.id = d.relateid
   `;
   
   const whereClause = startdate && enddate

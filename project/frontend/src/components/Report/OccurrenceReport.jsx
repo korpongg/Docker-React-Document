@@ -104,6 +104,7 @@ const OccurrenceReport = () => {
       valueGetter: (params) => params.value ? formatDateTimeN7(params.value, "dmy") : ''
     },
     { field: "depname", headerName: "แผนกที่เกี่ยวข้อง", minWidth: 180, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false },
+    { field: "affname", headerName: "ฝ่าย", minWidth: 180, flex: 1, align: "center", headerAlign: "center", sortable: false, filterable: false },
     { field: "reporttypename", headerName: "ประเภท", minWidth: 150, flex: 1, align: "center", headerAlign: "center" },
     { field: "level", headerName: "ความรุนแรง", minWidth: 120, flex: 1, align: "center", headerAlign: "center" },
     {
