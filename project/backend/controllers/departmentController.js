@@ -33,7 +33,7 @@ exports.getAllDepartments = async (req, res) => {
     SELECT d.id, d.name AS DepName, a.id AS AffID, a.name AS AffName, d.email
     FROM ${DB_NAME}.[dbo].[department] d
     LEFT JOIN ${DB_NAME}.[dbo].[affiliation] a ON a.id = d.[relateid]
-    WHERE d.id NOT IN ('89', '90')
+    WHERE d.id NOT IN ('89', '90', '142')
   `;
   
   try {
@@ -89,7 +89,7 @@ exports.getAllDepartmentMed = async (req, res) => {
     LEFT JOIN ${DB_NAME}.[dbo].[affiliation] a ON a.id = d.[relateid]
     -- WHERE (d.relateid IN ('3', '5') OR d.id IN ('13', '146', '152', '153'))
     WHERE (d.relateid IN ('3', '5') OR d.name LIKE 'เภสัชกรรม%')
-    AND d.id NOT IN ('69', '84', '89', '90', '140')
+    AND d.id NOT IN ('69', '84', '89', '90', '140', '142')
   `;
   
   try {
