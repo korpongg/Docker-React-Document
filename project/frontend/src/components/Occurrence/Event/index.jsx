@@ -23,12 +23,26 @@ const EventOcc = () => {
         };
     }, []);
 
+    // useEffect(() => {
+    //     let filteredData = dataEvent;
+    //     if (userData.userid === '380176') {
+    //       filteredData = dataEvent.filter(item =>
+    //         ['ศูนย์สูติ-นรีเวช', 'กุมารเวช', 'ศัลยกรรม', 'ศูนย์ทางเดินอาหาร', 'ศูนย์กระดูกและข้อ', 'ศูนย์ตา', 'หู คอ จมูก', 'ทันตกรรม', 'ศูนย์ปลูกถ่ายไต'].includes(item.depname)
+    //       );
+    //     }
+    //     else if (!isAdmin) {
+    //         filteredData = dataEvent.filter(item => item.depname === userData.dep);
+    //     }
+    //     setEventData(filteredData);
+    //     setLoading(false);
+    // }, [dataEvent]);
     useEffect(() => {
-        let filteredData = dataEvent;
-        if (!isAdmin) {
-            filteredData = dataEvent.filter(item => item.depname === userData.dep);
-        }
-        setEventData(filteredData);
+        // let filteredData = dataEvent;
+        // if (!isAdmin) {
+        //     filteredData = dataEvent.filter(item => item.depname === userData.dep);
+        // }
+        // setEventData(filteredData);
+        setEventData(dataEvent);
         setLoading(false);
     }, [dataEvent]);
 

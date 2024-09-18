@@ -157,11 +157,34 @@ const TranferTable = ({ reportData, tranType, dataEvent, isAdmin, userData, conf
     summarydetail: ""
   });
 
-  useEffect(() => {
-    const filteredData = isAdmin ? dataEvent : dataEvent.filter(item => item.depname === userData.dep);
-    setEventData(filteredData);
-    setLoading(false);
-  }, [dataEvent]);
+    useEffect(() => {
+        let filteredData = dataEvent;
+        if (userData.userid === '380176') {
+          filteredData = dataEvent.filter(item =>
+            ['ศูนย์สูติ-นรีเวช', 'กุมารเวช', 'ศัลยกรรม', 'ศูนย์ทางเดินอาหาร', 'ศูนย์กระดูกและข้อ', 'ศูนย์ตา', 'หู คอ จมูก', 'ทันตกรรม', 'ศูนย์ปลูกถ่ายไต'].includes(item.depname)
+          );
+        }
+        else if (userData.userid === '370074') {
+          filteredData = dataEvent.filter(item =>
+            ['ศูนย์ตรวจสุขภาพ', 'ศูนย์หัวใจคนไข้นอก', 'อายุรกรรม', 'wellness center', 'ผิวหนัง', 'คลินิกแพทย์แผนจีน', 'สราญรมย์', 'ศูนย์สมองและระบบประสาท', 'ศูนย์มะเร็งและรังสีรักษา', 'ศูนย์โรคเต้านม', 'รังสีรักษา'].includes(item.depname)
+          );
+        }
+        else if (userData.userid === '480080') {
+          filteredData = dataEvent.filter(item =>
+            ['หอผู้ป่วยในชั้น 5', 'หอผู้ป่วยในชั้น 6', 'หอผู้ป่วยในชั้น 7', 'หอผู้ป่วยในชั้น 8', 'หอผู้ป่วยในชั้น 9', 'หอผู้ป่วยในชั้น 10', 'ทารกแรกเกิด', 'ฉุกเฉิน', 'หน่วยจ่ายกลาง'].includes(item.depname)
+          );
+        }
+        else if (userData.userid === '400130') {
+          filteredData = dataEvent.filter(item =>
+            ['ห้องผ่าตัด', 'วิสัญญี', 'ไอซียู', 'สวนหัวใจ', 'ห้องคลอด', 'ไตเทียม'].includes(item.depname)
+          );
+        }
+        else if (!isAdmin) {
+            filteredData = dataEvent.filter(item => item.depname === userData.dep);
+        }
+        setEventData(filteredData);
+        setLoading(false);
+    }, [dataEvent]);
 
   const statusMap = requestStatusData.subStatus.reduce((map, status) => {
     map[status.id] = { text: status.statusText, color: status.statusColor };
