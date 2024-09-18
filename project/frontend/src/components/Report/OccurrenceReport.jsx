@@ -143,6 +143,14 @@ const OccurrenceReport = () => {
       renderCell: (params) => <ExpandableCell {...params} />,
     },
     {
+      field: "createAt", headerName: "วันที่ส่งทบทวน", minWidth: 150, flex: 1, align: "center", headerAlign: "center",
+      valueGetter: (params) => params.value ? formatDateTimeN7(params.value, "dmy") : ''
+    },
+    {
+      field: "repeatAt", headerName: "วันที่ส่งทบทวนซ้ำ", minWidth: 155, flex: 1, align: "center", headerAlign: "center",
+      valueGetter: (params) => params.value ? formatDateTimeN7(params.value, "dmy") : ''
+    },
+    {
       field: "acceptAt", headerName: "วันที่ตอบกลับ", minWidth: 150, flex: 1, align: "center", headerAlign: "center",
       valueGetter: (params) => params.value ? formatDateTimeN7(params.value, "dmy") : ''
     },
