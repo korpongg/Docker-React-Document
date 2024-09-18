@@ -195,6 +195,7 @@ exports.rePort = async (req, res) => {
       -- u_approve.dep AS approvedep,
       -- u_approve.faction AS approvefac,
       -- u_approve.affiliation AS approveaff,
+      med.renewAt,
       med.approveAt
     FROM ${DB_NAME}.[dbo].[medication] med
     LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_request ON u_request.userid = med.createby

@@ -206,6 +206,10 @@ const OccurrenceReport = () => {
     //   renderCell: (params) => <ExpandableCell {...params} />,
     // },
     {
+      field: "renewAt", headerName: "วันที่ส่งทบทวน", minWidth: 150, flex: 1, align: "center", headerAlign: "center",
+      valueGetter: (params) => params.value ? formatDateTimeN7(params.value, "dmy") : ''
+    },
+    {
       field: "approveAt", headerName: "วันที่ตอบกลับ", minWidth: 150, flex: 1, align: "center", headerAlign: "center",
       valueGetter: (params) => params.value ? formatDateTimeN7(params.value, "dmy") : ''
     },
