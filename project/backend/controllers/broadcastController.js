@@ -231,7 +231,7 @@ const executeSQLQueryEvent = async (dep) => {
       LEFT JOIN ${DB_NAME}.[dbo].[department] d ON d.id = e.deptrelate
       LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_request ON u_request.userid = e.createby
       LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_accept ON u_accept.userid = e.acceptby
-      ${dep ? `WHERE d.name = :dep AND e.createAt BETWEEN DATEADD(MONTH, -2, GETDATE()) AND GETDATE()` : `WHERE e.createAt BETWEEN DATEADD(MONTH, -2, GETDATE()) AND GETDATE()`}
+      ${dep ? `WHERE d.name = :dep AND o.createAt BETWEEN DATEADD(MONTH, -2, GETDATE()) AND GETDATE()` : `WHERE o.createAt BETWEEN DATEADD(MONTH, -2, GETDATE()) AND GETDATE()`}
       ORDER BY e.createAt DESC;
     `;
     const results = await sequelize.query(eventQuery, {
