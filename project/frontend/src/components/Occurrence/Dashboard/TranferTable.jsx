@@ -371,7 +371,7 @@ const TranferTable = ({ reportData, tranType, dataEvent, isAdmin, userData, conf
         initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
         pageSizeOptions={[10, 25, 50, 100]}
         getRowClassName={getRowClassName}
-        slots={{ toolbar: () => <EditToolbar reportData={reportData} data={dataEvent} tranType={tranType} handleAddEvent={handleAddEvent} /> }}
+        slots={{ toolbar: () => <EditToolbar reportData={reportData} data={eventData} tranType={tranType} handleAddEvent={handleAddEvent} /> }}
         localeText={{ toolbarColumns: "คอลัมน์", toolbarFilters: "ตัวกรอง", toolbarDensity: "ระยะห่าง", toolbarExport: "Export" }}
         loading={loading}
         sx={{
