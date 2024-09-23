@@ -209,7 +209,6 @@ const TranferTable = ({ reportData, tranType, dataEvent, isAdmin, userData, conf
       filteredData = dataEvent.filter(item => item.deptrelate === 112 || item.depname === userData.dep);
     }
     else if (userData.userid === '570058') {
-      console.log(dataEvent)
       filteredData = dataEvent.filter(item => item.deptrelate === 122 || item.depname === userData.dep);
     }
     else if (userData.userid === '670423') {
