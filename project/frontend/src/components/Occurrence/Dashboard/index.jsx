@@ -118,37 +118,37 @@ const Dashboard = () => {
 
     let filteredData = dataCenter;
     if (userData.userid === '500217') {
-      filteredData = dataCenter.filter(item => [113].includes(item.requestdepID) || item.requestdep === userData.dep);
+      filteredData = dataCenter.filter(item => item.requestdepID === 113 || item.requestdep === userData.dep);
     }
     else if (userData.userid === '631201') {
-      filteredData = dataCenter.filter(item => [92].includes(item.requestdepID) || item.requestdep === userData.dep);
+      filteredData = dataCenter.filter(item => item.requestdepID === 92 || item.requestdep === userData.dep);
     }
     else if (userData.userid === '600109') {
-      filteredData = dataCenter.filter(item => [98].includes(item.requestdepID) || item.requestdep === userData.dep);
+      filteredData = dataCenter.filter(item => item.requestdepID === 98 || item.requestdep === userData.dep);
     }
     else if (userData.userid === '450043') {
-      filteredData = dataCenter.filter(item => [156].includes(item.requestdepID) || item.requestdep === userData.dep);
+      filteredData = dataCenter.filter(item => item.requestdepID === 156 || item.requestdep === userData.dep);
     }
     else if (userData.userid === '590068') {
-      filteredData = dataCenter.filter(item => [112].includes(item.requestdepID) || item.requestdep === userData.dep);
+      filteredData = dataCenter.filter(item => item.requestdepID === 112 || item.requestdep === userData.dep);
     }
     else if (userData.userid === '570058') {
-      filteredData = dataCenter.filter(item => [122].includes(item.requestdepID) || item.requestdep === userData.dep);
+      filteredData = dataCenter.filter(item => item.requestdepID === 122 || item.requestdep === userData.dep);
     }
     else if (userData.userid === '670423') {
-      filteredData = dataCenter.filter(item => [114].includes(item.requestdepID) || item.requestdep === userData.dep);
+      filteredData = dataCenter.filter(item => item.requestdepID === 114 || item.requestdep === userData.dep);
     }
     else if (userData.userid === '620511') {
-      filteredData = dataCenter.filter(item => [117].includes(item.requestdepID) || item.requestdep === userData.dep);
+      filteredData = dataCenter.filter(item => item.requestdepID === 117 || item.requestdep === userData.dep);
     }
     else if (userData.userid === '650930') {
-      filteredData = dataCenter.filter(item => [115].includes(item.requestdepID) || item.requestdep === userData.dep);
+      filteredData = dataCenter.filter(item => item.requestdepID === 115 || item.requestdep === userData.dep);
     }
     else if (userData.userid === '470029') {
-      filteredData = dataCenter.filter(item => [120].includes(item.requestdepID) || item.requestdep === userData.dep);
+      filteredData = dataCenter.filter(item => item.requestdepID === 120 || item.requestdep === userData.dep);
     }
     else if (userData.userid === '600113') {
-      filteredData = dataCenter.filter(item => [121].includes(item.requestdepID) || item.requestdep === userData.dep);
+      filteredData = dataCenter.filter(item => item.requestdepID === 121 || item.requestdep === userData.dep);
     }
     else if (!isAdmin) {
       if (isEXEC) {

@@ -179,59 +179,60 @@ const TranferTable = ({ reportData, tranType, dataEvent, isAdmin, userData, conf
     summarydetail: ""
   });
 
-    useEffect(() => {
-        let filteredData = dataEvent;
-        if (userData.userid === '380176') {
-          filteredData = dataEvent.filter(item => [64, 71, 72, 74, 75, 76, 80, 97, 105].includes(item.deptrelate));
-        }
-        else if (userData.userid === '370074') {
-          filteredData = dataEvent.filter(item => [60, 66, 73, 77, 79, 81, 82, 98, 142, 156].includes(item.deptrelate));
-        }
-        else if (userData.userid === '480080') {
-          filteredData = dataEvent.filter(item => [61, 65, 85, 91, 92, 93, 94, 95, 96].includes(item.deptrelate));
-        }
-        else if (userData.userid === '400130') {
-          filteredData = dataEvent.filter(item => [63, 70, 83, 86, 87, 99, 157].includes(item.deptrelate));
-        }
-        else if (userData.userid === '500217') {
-          filteredData = dataEvent.filter(item => [113].includes(item.deptrelate));
-        }
-        else if (userData.userid === '631201') {
-          filteredData = dataEvent.filter(item => [92].includes(item.deptrelate));
-        }
-        else if (userData.userid === '600109') {
-          filteredData = dataEvent.filter(item => [98].includes(item.deptrelate));
-        }
-        else if (userData.userid === '450043') {
-          filteredData = dataEvent.filter(item => [156].includes(item.deptrelate));
-        }
-        else if (userData.userid === '590068') {
-          filteredData = dataEvent.filter(item => [112].includes(item.deptrelate));
-        }
-        else if (userData.userid === '570058') {
-          filteredData = dataEvent.filter(item => [122].includes(item.deptrelate));
-        }
-        else if (userData.userid === '670423') {
-          filteredData = dataEvent.filter(item => [114].includes(item.deptrelate));
-        }
-        else if (userData.userid === '620511') {
-          filteredData = dataEvent.filter(item => [117].includes(item.deptrelate));
-        }
-        else if (userData.userid === '650930') {
-          filteredData = dataEvent.filter(item => [115].includes(item.deptrelate));
-        }
-        else if (userData.userid === '470029') {
-          filteredData = dataEvent.filter(item => [120].includes(item.deptrelate));
-        }
-        else if (userData.userid === '600113') {
-          filteredData = dataEvent.filter(item => [121].includes(item.deptrelate));
-        }
-        else if (!isAdmin) {
-            filteredData = dataEvent.filter(item => item.depname === userData.dep);
-        }
-        setEventData(filteredData);
-        setLoading(false);
-    }, [dataEvent]);
+  useEffect(() => {
+    let filteredData = dataEvent;
+    if (userData.userid === '380176') {
+      filteredData = dataEvent.filter(item => [64, 71, 72, 74, 75, 76, 80, 97, 105].includes(item.deptrelate));
+    }
+    else if (userData.userid === '370074') {
+      filteredData = dataEvent.filter(item => [60, 66, 73, 77, 79, 81, 82, 98, 142, 156].includes(item.deptrelate));
+    }
+    else if (userData.userid === '480080') {
+      filteredData = dataEvent.filter(item => [61, 65, 85, 91, 92, 93, 94, 95, 96].includes(item.deptrelate));
+    }
+    else if (userData.userid === '400130') {
+      filteredData = dataEvent.filter(item => [63, 70, 83, 86, 87, 99, 157].includes(item.deptrelate));
+    }
+    else if (userData.userid === '500217') {
+      filteredData = dataEvent.filter(item => item.deptrelate === 113 || item.depname === userData.dep);
+    }
+    else if (userData.userid === '631201') {
+      filteredData = dataEvent.filter(item => item.deptrelate === 92 || item.depname === userData.dep);
+    }
+    else if (userData.userid === '600109') {
+      filteredData = dataEvent.filter(item => item.deptrelate === 98 || item.depname === userData.dep);
+    }
+    else if (userData.userid === '450043') {
+      filteredData = dataEvent.filter(item => item.deptrelate === 156 || item.depname === userData.dep);
+    }
+    else if (userData.userid === '590068') {
+      filteredData = dataEvent.filter(item => item.deptrelate === 112 || item.depname === userData.dep);
+    }
+    else if (userData.userid === '570058') {
+      console.log(dataEvent)
+      filteredData = dataEvent.filter(item => item.deptrelate === 122 || item.depname === userData.dep);
+    }
+    else if (userData.userid === '670423') {
+      filteredData = dataEvent.filter(item => item.deptrelate === 114 || item.depname === userData.dep);
+    }
+    else if (userData.userid === '620511') {
+      filteredData = dataEvent.filter(item => item.deptrelate === 117 || item.depname === userData.dep);
+    }
+    else if (userData.userid === '650930') {
+      filteredData = dataEvent.filter(item => item.deptrelate === 115 || item.depname === userData.dep);
+    }
+    else if (userData.userid === '470029') {
+      filteredData = dataEvent.filter(item => item.deptrelate === 120 || item.depname === userData.dep);
+    }
+    else if (userData.userid === '600113') {
+      filteredData = dataEvent.filter(item => item.deptrelate === 121 || item.depname === userData.dep);
+    }
+    else if (!isAdmin) {
+      filteredData = dataEvent.filter(item => item.depname === userData.dep);
+    }
+    setEventData(filteredData);
+    setLoading(false);
+}, [dataEvent]);
 
   const statusMap = requestStatusData.subStatus.reduce((map, status) => {
     map[status.id] = { text: status.statusText, color: status.statusColor };
