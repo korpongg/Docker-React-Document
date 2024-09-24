@@ -162,6 +162,8 @@ const Dashboard = () => {
     if (JSON.stringify(dashboard) !== JSON.stringify(filteredData)) {
       setDashboard(filteredData);
     }
+    
+    setEventData(dataEvent);
 
     setLoading(false);
   }, [dataCenter, isAdmin, isEXEC, userData, dashboard]);
