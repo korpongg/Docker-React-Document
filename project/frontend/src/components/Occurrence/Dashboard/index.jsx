@@ -150,6 +150,9 @@ const Dashboard = () => {
     else if (userData.userid === '600113') {
       filteredData = dataCenter.filter(item => item.requestdepID === 121 || item.requestdep === userData.dep);
     }
+    else if (userData.userid === '440062') {
+      filteredData = dataCenter.filter(item => item.requestdepID === 5 || item.requestdep === userData.dep);
+    }
     else if (!isAdmin) {
       if (isEXEC) {
         filteredData = userData.affiliation === "งานคุณภาพ" ? dataCenter : dataCenter.filter(item => item.requestaff === userData.affiliation);
