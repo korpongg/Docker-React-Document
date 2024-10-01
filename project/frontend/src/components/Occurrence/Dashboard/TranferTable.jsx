@@ -102,7 +102,7 @@ const ActionButtons = ({ id, row, isAdmin, userData, handleViewEvent, handleRepe
               (userData?.userid === '650930' && row?.deptrelate === 115) || 
               (userData?.userid === '470029' && row?.deptrelate === 120) || 
               (userData?.userid === '600113' && row?.deptrelate === 121) || 
-              (userData?.userid === '440062' && row?.deptrelate === 5)) && (
+              (userData?.userid === '440062' && [5, 7].includes(row?.deptrelate))) && (
               <Tooltip title="บันทึกผลการทบทวนอุบัติการณ์">
                 <GridActionsCellItem
                   icon={<AcceptIcon />}
@@ -140,7 +140,7 @@ const ActionButtons = ({ id, row, isAdmin, userData, handleViewEvent, handleRepe
               (userData?.userid === '650930' && row?.deptrelate === 115) || 
               (userData?.userid === '470029' && row?.deptrelate === 120) || 
               (userData?.userid === '600113' && row?.deptrelate === 121) || 
-              (userData?.userid === '440062' && row?.deptrelate === 5)) && (
+              (userData?.userid === '440062' && [5, 7].includes(row?.deptrelate))) && (
               <Tooltip title="บันทึกผลการทบทวนอุบัติการณ์">
                 <GridActionsCellItem
                   icon={<AcceptIcon />}
@@ -229,7 +229,7 @@ const TranferTable = ({ reportData, tranType, dataEvent, isAdmin, userData, conf
       filteredData = dataEvent.filter(item => item.deptrelate === 121 || item.depname === userData.dep);
     }
     else if (userData.userid === '440062') {
-      filteredData = dataEvent.filter(item => item.deptrelate === 5 || item.depname === userData.dep);
+      filteredData = dataEvent.filter(item => [5, 7].includes(item.deptrelate) || item.depname === userData.dep);
     }
     else if (!isAdmin) {
       filteredData = dataEvent.filter(item => item.depname === userData.dep);

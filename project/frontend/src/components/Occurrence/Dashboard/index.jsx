@@ -151,7 +151,7 @@ const Dashboard = () => {
       filteredData = dataCenter.filter(item => item.requestdepID === 121 || item.requestdep === userData.dep);
     }
     else if (userData.userid === '440062') {
-      filteredData = dataCenter.filter(item => item.requestdepID === 5 || item.requestdep === userData.dep);
+      filteredData = dataCenter.filter(item => [5, 7].includes(item.requestdepID) || item.requestdep === userData.dep);
     }
     else if (!isAdmin) {
       if (isEXEC) {
