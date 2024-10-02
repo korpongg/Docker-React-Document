@@ -5,15 +5,25 @@ const bcrypt = require('bcrypt');
 // Create a new medication record
 const createUser = async (req, res) => {
   try {
-    // Generate hashed password
-    const hashedPwd = await bcrypt.hash(req?.body?.userid, 10);
+    const { userid } = req.body;
 
+    // Check if the userid already exists
+    const existingUser = await User.findOne({ where: { userid } });
+
+    if (existingUser) {
+      return res.status(409).json({ message: "User with this userid already exists." }); // 409 for conflict
+    }
+
+    // Generate hashed password
+    const hashedPwd = await bcrypt.hash(userid, 10);
+
+    // Create a new user
     const user = await User.create({
       ...req.body,
       password: hashedPwd,
       createAt: sequelize.literal("CURRENT_TIMESTAMP")
     });
-    
+
     res.status(201).json(user);
   } catch (error) {
     res.status(500).json({ message: error.message });
