@@ -10,6 +10,13 @@ const handleError = (res, error) => {
 // Create a new department
 exports.createDepartment = async (req, res) => {
   try {
+    const existingDepartment = await Department.findOne({ where: { name: req.body.name } });
+    
+    if (existingDepartment) {
+      return res.status(409).json({ error: 'Department with this name already exists' });
+    }
+
+    // Create new department if the name is unique
     const department = await Department.create(req.body);
     res.status(201).json(department);
   } catch (error) {

@@ -154,6 +154,7 @@ export default function AddDept({ affs, fetch }) {
     relateid: false
   });
   const [successOpen, setSuccessOpen] = useState(false);
+  const [errorOpen, setErrorOpen] = useState(false);
 
   const handleClickOpen = () => {
     setNewData({
@@ -178,6 +179,10 @@ export default function AddDept({ affs, fetch }) {
 
   const handleSuccessClose = () => {
     setSuccessOpen(false);
+  };
+
+  const handleErrorClose = () => {
+    setErrorOpen(false);
   };
 
   const handleChange = (event) => {
@@ -225,7 +230,11 @@ export default function AddDept({ affs, fetch }) {
         setSuccessOpen(true);
       }
     } catch (error) {
-      console.error("Error:", error);
+      if (error.response && error.response.status === 409) {
+        setErrorOpen(true);
+      } else {
+        console.error("Error:", error);
+      }
     }
   };
 
@@ -309,6 +318,14 @@ export default function AddDept({ affs, fetch }) {
         onClose={handleSuccessClose}
       >
         <Alert onClose={handleSuccessClose} severity="success">เพิ่ม แผนก/หน่วยงาน เรียบร้อย!</Alert>
+      </Snackbar>
+      
+      <Snackbar
+        open={errorOpen}
+        autoHideDuration={6000}
+        onClose={handleErrorClose}
+      >
+        <Alert onClose={handleErrorClose} severity="error">มีข้อมูลแผนก/หน่วยงานนี้แล้ว!</Alert>
       </Snackbar>
 
     </>
