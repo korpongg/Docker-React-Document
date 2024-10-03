@@ -111,10 +111,6 @@ const AddUser = () => {
         try {
             // Assuming depItem is fetched from depData based on selected dep
             const depItem = depData.find(item => item.DepName === dep);
-            if (depItem) {
-                setAff(depItem.AffName);
-                setDep(depItem.DepName);
-            }
 
             const response = await axios.post(`${apiUrl}/users`, {
                 userid: userId,
@@ -122,7 +118,7 @@ const AddUser = () => {
                 name,
                 lastname,
                 title,
-                affiliation,
+                affiliation: depItem.AffName,
                 faction,
                 dep,
             }, { ...config });
@@ -133,7 +129,7 @@ const AddUser = () => {
 
             setResponse({ success: true, message: result.data.message });
         } catch (error) {
-            setResponse({ success: false, message: error.response.data.message });
+            setResponse({ success: false, message: error });
         } finally {
             setLoading(false);
         }
