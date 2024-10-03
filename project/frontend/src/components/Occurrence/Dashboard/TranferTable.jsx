@@ -187,7 +187,7 @@ const TranferTable = ({ reportData, tranType, dataEvent, isAdmin, userData, conf
       filteredData = dataEvent.filter(item => [64, 71, 72, 74, 75, 76, 80, 97, 105].includes(item.deptrelate));
     }
     else if (userData.userid === '370074') {
-      filteredData = dataEvent.filter(item => [60, 66, 73, 77, 79, 81, 82, 98, 142, 156].includes(item.deptrelate));
+      filteredData = dataEvent.filter(item => [60, 66, 73, 77, 79, 81, 82, 98, 128, 156].includes(item.deptrelate));
     }
     else if (userData.userid === '480080') {
       filteredData = dataEvent.filter(item => [61, 65, 85, 91, 92, 93, 94, 95, 96].includes(item.deptrelate));
