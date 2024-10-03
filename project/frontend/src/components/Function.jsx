@@ -59,6 +59,14 @@ export function chkAdmins(param) {
 export function chkMedic(aff, dep) {
   return [3, 5].includes(aff) || (dep && dep.startsWith('เภสัชกรรม'));
 }
+// export function chkMedic(aff, dep, depID) {
+//   const excludedDepIDs = ['69', '84', '89', '90', '140', '142'];
+  
+//   return (
+//     ([3, 5].includes(aff) || (dep && dep.startsWith('เภสัชกรรม'))) &&
+//     (!depID || !excludedDepIDs.includes(depID))
+//   );
+// }
 
 export function isMobileChk() {
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
