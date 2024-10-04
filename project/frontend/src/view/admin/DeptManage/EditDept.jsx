@@ -128,8 +128,6 @@ export default function EditDept({ affs, id, fetch }) {
     }
   };
 
-  console.log(newData)
-
   return (
     <>
       <Button className="btnEdit" variant="outlined" onClick={() => handleClickOpen(id)} >แก้ไข</Button>

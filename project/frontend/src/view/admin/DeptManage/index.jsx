@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Box from "@mui/material/Box";
+import { Box, TextField, InputAdornment, IconButton } from "@mui/material";
+import ClearIcon from "@mui/icons-material/Clear";
 import AddDept from "./AddDept";
 import DeptTable from "./DeptTable";
 import { DepartBox } from "../../../styles/DeptManage.style";
-
 import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle`
@@ -23,6 +23,7 @@ const DeptManagement = () => {
     const [deptData, setDeptData] = useState([]);
     const [affData, setAffData] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [filter, setFilter] = useState("");
 
     const fetchData = async () => {
         setLoading(true);
@@ -62,6 +63,18 @@ const DeptManagement = () => {
         fetchAff();
     }, []);
 
+    const handleFilterChange = (e) => {
+        setFilter(e.target.value); // Update the filter state as user types
+    };
+
+    const handleClearFilter = () => {
+        setFilter(""); // Clear the filter input
+    };
+
+    const filteredData = deptData.filter((dept) =>
+        dept.DepName.toLowerCase().includes(filter.toLowerCase()) // Filter by department name
+    );
+
     return (
         <DepartBox>
             <GlobalStyle />
@@ -69,13 +82,33 @@ const DeptManagement = () => {
                 <Box className="QuestionsHeader">Department Manager</Box>
 
                 <Box className="QMToolbox">
-                    <Box sx={{ width: "250px", marginLeft: "20px" }}></Box>
+                    <Box sx={{ width: "250px", marginLeft: "20px" }}>
+                        <TextField
+                          label="ค้นหาแผนก/หน่วยงาน"
+                          variant="outlined"
+                          size="small"
+                          placeholder="ชื่อแผนก"
+                          value={filter}
+                          onChange={handleFilterChange}
+                          InputProps={{
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                {filter && (
+                                  <IconButton onClick={handleClearFilter}>
+                                    <ClearIcon />
+                                  </IconButton>
+                                )}
+                              </InputAdornment>
+                            ),
+                          }}
+                        />
+                    </Box>
                     <Box sx={{ marginRight: "20px" }}>
                         <AddDept affs={affData} fetch={fetchData} />
                     </Box>
                 </Box>
 
-                <DeptTable data={deptData} affs={affData} fetch={fetchData} loading={loading} />
+                <DeptTable data={filteredData} affs={affData} fetch={fetchData} loading={loading} />
             </Box>
         </DepartBox>
     )
