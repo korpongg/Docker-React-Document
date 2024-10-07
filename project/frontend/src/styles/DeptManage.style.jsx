@@ -9,14 +9,14 @@ export const DepartBox = styled(Box)`
   @media screen and (max-width: 680px){
     width: 95vw;
   }
-  .QuestionManagementFrame {
+  .DepManageFrame {
     width: 100%;
     background:#fff;
     border: 2px solid #c8d5d5;
     border-radius: 8px;
     max-height: 90vh;
   }
-  .QuestionsHeader{
+  .DepHeader{
     display:flex;
     padding-top:20px;
     padding-bottom:15px;
@@ -25,7 +25,7 @@ export const DepartBox = styled(Box)`
     border-top-right-radius: 5px;
     font-size:24px;
   }
-  .QMToolbox {
+  .DepToolbox {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -57,10 +57,6 @@ export const DepartBox = styled(Box)`
 
   .InputBox {
     margin-top: 5px;
-  }
-  .QDataTable {
-    background:#ffffff;
-    margin-bottom: 20px;
   }
   .MuiGrid2-root .GridCell {
     border: 1px solid blue;

@@ -34,7 +34,7 @@ const DeptManagement = () => {
                 setDeptData(response.data);
             }
             else {
-                console.error("Error compute", response.status)
+                console.error("Error", response.status)
             }
         } catch (error) {
             console.error("Error Get Department", error);
@@ -51,10 +51,10 @@ const DeptManagement = () => {
                 setAffData(response.data);
             }
             else {
-                console.error("Error group", response.status)
+                console.error("Error", response.status)
             }
         } catch (error) {
-            console.error("Error Get Method with 'group' Function", error);
+            console.error("Error", error);
         }
     };
 
@@ -78,10 +78,10 @@ const DeptManagement = () => {
     return (
         <DepartBox>
             <GlobalStyle />
-            <Box className="QuestionManagementFrame">
-                <Box className="QuestionsHeader">Department Manager</Box>
+            <Box className="DepManageFrame">
+                <Box className="DepHeader">Department Manager</Box>
 
-                <Box className="QMToolbox">
+                <Box className="DepToolbox">
                     <Box sx={{ width: "250px", marginLeft: "20px" }}>
                         <TextField
                           label="ค้นหาแผนก/หน่วยงาน"
