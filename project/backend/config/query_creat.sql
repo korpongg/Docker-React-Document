@@ -295,7 +295,8 @@ CREATE TABLE [supervisor](
 	[id] INT IDENTITY(1,1),
 	[userid] NVARCHAR(20) NOT NULL,						-- รหัสพนักงาน
 	[deptrelate] NVARCHAR(100) NOT NULL,			-- หน่วยงานที่เกี่ยวข้อง
-	[type] NVARCHAR(1) NOT NULL,							-- ประเภทระบบ OCC, MED
+	[type] NVARCHAR(1) NOT NULL,							-- ประเภทระบบ OCC, MED, OCC & MED
+	[accept] NVARCHAR(1) NULL,								-- สามารถตอบกลับรายงาน
 );
 
 

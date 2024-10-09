@@ -60,7 +60,8 @@ exports.getAllSupervisor = async (req, res) => {
           WHEN s.type = '2' THEN 'Occurrence & Medication'
           ELSE 'Unknown'
         END AS typename,
-        s.deptrelate
+        s.deptrelate,
+        s.accept
       FROM ${DB_NAME}.[dbo].[supervisor] s
       LEFT JOIN ${DB_NAME}.[dbo].[user] u ON u.userid = s.userid
       ORDER BY s.id ASC

@@ -142,7 +142,7 @@ const Alert = React.forwardRef((props, ref) => (
 export default function AddSup({ depData, fetch }) {
   const config = { headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem("auth")).accessToken}` } };
   const [open, setOpen] = useState(false);
-  const [newData, setNewData] = useState({ userid: "", type: 0, deptrelate: "" });
+  const [newData, setNewData] = useState({ userid: "", type: 0, deptrelate: "", accept: "" });
   const [depSelect, setDepSelect] = useState([]);
   const [errors, setErrors] = useState({});
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
@@ -150,7 +150,7 @@ export default function AddSup({ depData, fetch }) {
   const toggleDialog = (isOpen) => {
     setOpen(isOpen);
     if (!isOpen) {
-      setNewData({ userid: "", type: 0, deptrelate: "" });
+      setNewData({ userid: "", type: 0, deptrelate: "", accept: "" });
       setErrors({});
       setDepSelect([]);
     }
@@ -161,6 +161,11 @@ export default function AddSup({ depData, fetch }) {
   const handleChange = (event) => {
     const { name, value } = event.target;
     setNewData((prev) => ({ ...prev, [name]: name === "type" ? +value : value }));
+  };
+
+  const handleCheckChange = (event) => {
+    const { name, value, type, checked } = event.target;
+    setNewData((prev) => ({ ...prev, [name]: type === "checkbox" ? (checked ? "y" : "") : value }));
   };
 
   const handleDeptChange = (_, newValue) => {
@@ -254,6 +259,7 @@ export default function AddSup({ depData, fetch }) {
             />
             {errors.deptrelate && <p id="deptrelate-helper-text" style={{ color: "red" }}>โปรดเลือก แผนก</p>}
           </FormControl>
+          
           <FormControl sx={{ pt: 2 }}>
             <FormLabel id="radio-buttons-group">Type</FormLabel>
             <RadioGroup row name="type" value={newData.type} onChange={handleChange}>
@@ -262,6 +268,18 @@ export default function AddSup({ depData, fetch }) {
               <FormControlLabel value="2" control={<Radio />} label="Occurrence & Medication" />
             </RadioGroup>
           </FormControl>
+          
+          <FormControlLabel
+            control={
+              <Checkbox
+                id="accept"
+                name="accept"
+                checked={newData.accept === "y"}
+                onChange={handleCheckChange}
+              />
+            }
+            label="สามารถตอบกลับรายงาน"
+          />
         </DialogContent>
         <DialogActions>
           <Button variant="contained" color="error" onClick={() => toggleDialog(false)}>ยกเลิก</Button>

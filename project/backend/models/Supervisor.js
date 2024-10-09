@@ -14,9 +14,13 @@ const Supervisor = sequelize.define('Supervisor', {
   },
   deptrelate: {
     type: DataTypes.STRING(100),
-    allowNull: true
+    allowNull: false
   },
   type: {
+    type: DataTypes.STRING(1),
+    allowNull: false
+  },
+  accept: {
     type: DataTypes.STRING(1),
     allowNull: true
   },

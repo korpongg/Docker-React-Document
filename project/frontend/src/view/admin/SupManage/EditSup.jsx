@@ -17,7 +17,7 @@ const Alert = React.forwardRef((props, ref) => (
 export default function EditSup({ depData, id, fetch }) {
   const config = { headers: { Authorization: `Bearer ${JSON.parse(localStorage.getItem("auth")).accessToken}` } };
   const [open, setOpen] = useState(false);
-  const [newData, setNewData] = useState({ userid: "", type: 0, deptrelate: [] });
+  const [newData, setNewData] = useState({ userid: "", type: 0, deptrelate: "", accept: "" });
   const [depSelect, setDepSelect] = useState([]);
   const [errors, setErrors] = useState({});
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
@@ -28,8 +28,8 @@ export default function EditSup({ depData, id, fetch }) {
     try {
       const response = await axios.get(`${apiUrl}/supervisor/${id}`, config);
       if (response.status === 200) {
-        const { userid, type, deptrelate } = response.data;
-        setNewData({ userid, type, deptrelate });
+        const { userid, type, deptrelate, accept } = response.data;
+        setNewData({ userid, type, deptrelate, accept });
         setDepSelect(deptrelate);
       }
     } catch (error) {
@@ -42,7 +42,7 @@ export default function EditSup({ depData, id, fetch }) {
   const toggleDialog = (isOpen) => {
     setOpen(isOpen);
     if (!isOpen) {
-      setNewData({ userid: "", type: 0, deptrelate: [] });
+      setNewData({ userid: "", type: 0, deptrelate: "", accept: "" });
       setErrors({});
       setDepSelect([]);
     } else {
@@ -55,6 +55,11 @@ export default function EditSup({ depData, id, fetch }) {
   const handleChange = (event) => {
     const { name, value } = event.target;
     setNewData((prev) => ({ ...prev, [name]: name === "type" ? +value : value }));
+  };
+
+  const handleCheckChange = (event) => {
+    const { name, value, type, checked } = event.target;
+    setNewData((prev) => ({ ...prev, [name]: type === "checkbox" ? (checked ? "y" : "") : value }));
   };
 
   const handleDeptChange = (_, newValue) => {
@@ -110,6 +115,7 @@ export default function EditSup({ depData, id, fetch }) {
               error={errors.userid}
               helperText={errors.userid ? "โปรดระบุ รหัสพนักงาน" : ""}
             />
+
             <FormControl fullWidth variant="outlined" error={errors.deptrelate} sx={{ pt: 2 }}>
               <Autocomplete
                 multiple
@@ -144,8 +150,9 @@ export default function EditSup({ depData, id, fetch }) {
                 renderInput={(params) => <TextField {...params} label="แผนกที่ดูแล" placeholder="เลือกแผนกที่ดูแล" />}
                 style={{ paddingRight: "10px", width: "100%" }}
               />
-              {errors.deptrelate && <p style={{ color: "red" }}>โปรดเลือก แผนก</p>}
+              {errors.deptrelate && <p id="deptrelate-helper-text" style={{ color: "red" }}>โปรดเลือก แผนก</p>}
             </FormControl>
+
             <FormControl sx={{ pt: 2 }}>
               <FormLabel>Type</FormLabel>
               <RadioGroup row name="type" value={newData.type} onChange={handleChange}>
@@ -154,6 +161,18 @@ export default function EditSup({ depData, id, fetch }) {
                 <FormControlLabel value="2" control={<Radio />} label="Occurrence & Medication" />
               </RadioGroup>
             </FormControl>
+
+            <FormControlLabel
+              control={
+                <Checkbox
+                  id="accept"
+                  name="accept"
+                  checked={newData.accept === "y"}
+                  onChange={handleCheckChange}
+                />
+              }
+              label="สามารถตอบกลับรายงาน"
+            />
           </DialogContent>
         }
         <DialogActions>
