@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import styled from "styled-components";
 
-export const DepartBox = styled(Box)`
+export const SupBox = styled(Box)`
   width: 75vw;
   color:#000;
   margin-top: 10px;
@@ -9,14 +9,14 @@ export const DepartBox = styled(Box)`
   @media screen and (max-width: 680px){
     width: 95vw;
   }
-  .DepManageFrame {
+  .SupManageFrame {
     width: 100%;
     background:#fff;
     border: 2px solid #c8d5d5;
     border-radius: 8px;
     max-height: 90vh;
   }
-  .DepHeader{
+  .SupHeader{
     display:flex;
     padding-top:20px;
     padding-bottom:15px;
@@ -25,7 +25,7 @@ export const DepartBox = styled(Box)`
     border-top-right-radius: 5px;
     font-size:24px;
   }
-  .DepToolbox {
+  .SupToolbox {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -76,7 +76,7 @@ export const DepartBox = styled(Box)`
     }
   }
 
-  .DeptTable {
+  .SupTable {
     max-height: 64vh;
     overflow: auto;
   }

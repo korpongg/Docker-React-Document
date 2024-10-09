@@ -52,6 +52,8 @@ app.use("/api/departmentsMed", require("./routes/api/departmentsMed"));
 app.use("/api/occurrences", require("./routes/api/occurrences"));
 app.use("/api/events", require("./routes/api/events"));
 app.use("/api/medication", require("./routes/api/medication"));
+app.use("/api/supervisor", require("./routes/api/supervisor"));
+app.use("/api/checksupervisor", require("./routes/api/checksupervisor"));
 
 const { WebSocketServer } = require("ws");
 const WebSocket = require("ws");

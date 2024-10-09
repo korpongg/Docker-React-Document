@@ -289,6 +289,14 @@ CREATE TABLE [medication](
 	[deleteAt] [datetime] NULL,										-- วันที่ลบ (ยกเลิก formstatus 3)
 );
 
+--DELETE supervisor
+--Drop table if exists [supervisor]
+CREATE TABLE [supervisor](
+	[id] INT IDENTITY(1,1),
+	[userid] NVARCHAR(20) NOT NULL,						-- รหัสพนักงาน
+	[deptrelate] NVARCHAR(100) NOT NULL,			-- หน่วยงานที่เกี่ยวข้อง
+	[type] NVARCHAR(1) NOT NULL,							-- ประเภทระบบ OCC, MED
+);
 
 
 
