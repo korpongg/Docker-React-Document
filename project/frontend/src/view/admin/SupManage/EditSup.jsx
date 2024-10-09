@@ -91,8 +91,6 @@ export default function EditSup({ depData, id, fetch }) {
     }
   };
 
-  console.log(newData)
-
   return (
     <>
       <Button className="btnEdit" variant="outlined" onClick={() => toggleDialog(true)}>แก้ไข</Button>
