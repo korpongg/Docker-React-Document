@@ -54,7 +54,12 @@ exports.getAllSupervisor = async (req, res) => {
     const sql = `
       SELECT s.id,
         CONCAT(u.title, ' ', u.name, ' ', u.lastname) AS supName,
-        CASE WHEN s.type = '0' THEN 'Occurrence' ELSE 'Medication' END AS typename,
+        CASE 
+          WHEN s.type = '0' THEN 'Occurrence' 
+          WHEN s.type = '1' THEN 'Medication'
+          WHEN s.type = '2' THEN 'Occurrence & Medication'
+          ELSE 'Unknown'
+        END AS typename,
         s.deptrelate
       FROM ${DB_NAME}.[dbo].[supervisor] s
       LEFT JOIN ${DB_NAME}.[dbo].[user] u ON u.userid = s.userid

@@ -259,6 +259,7 @@ export default function AddSup({ depData, fetch }) {
             <RadioGroup row name="type" value={newData.type} onChange={handleChange}>
               <FormControlLabel value="0" control={<Radio />} label="Occurrence" />
               <FormControlLabel value="1" control={<Radio />} label="Medication" />
+              <FormControlLabel value="2" control={<Radio />} label="Occurrence & Medication" />
             </RadioGroup>
           </FormControl>
         </DialogContent>
