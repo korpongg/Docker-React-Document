@@ -27,6 +27,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const storedAuth = JSON.parse(localStorage.getItem("auth"));
   const userData = storedAuth ? JSON.parse(localStorage.getItem("userData")) : null;
+  const supData = JSON.parse(localStorage.getItem("supervisorData")) || null;
   const isAdmin = chkAdmins(userData?.role);
   const isEXEC = chkAdmin(userData?.level);
   const config = { headers: { Authorization: `Bearer ${storedAuth.accessToken}` } };
@@ -117,41 +118,13 @@ const Dashboard = () => {
     if (!dataCenter) return;
 
     let filteredData = dataCenter;
-    if (userData.userid === '500217') {
-      filteredData = dataCenter.filter(item => item.requestdepID === 113 || item.requestdep === userData.dep);
-    }
-    else if (userData.userid === '631201') {
-      filteredData = dataCenter.filter(item => item.requestdepID === 92 || item.requestdep === userData.dep);
-    }
-    else if (userData.userid === '600109') {
-      filteredData = dataCenter.filter(item => item.requestdepID === 98 || item.requestdep === userData.dep);
-    }
-    else if (userData.userid === '450043') {
-      filteredData = dataCenter.filter(item => item.requestdepID === 156 || item.requestdep === userData.dep);
-    }
-    else if (userData.userid === '590068') {
-      filteredData = dataCenter.filter(item => item.requestdepID === 112 || item.requestdep === userData.dep);
-    }
-    else if (userData.userid === '570058') {
-      filteredData = dataCenter.filter(item => item.requestdepID === 122 || item.requestdep === userData.dep);
-    }
-    else if (userData.userid === '670423') {
-      filteredData = dataCenter.filter(item => item.requestdepID === 114 || item.requestdep === userData.dep);
-    }
-    else if (userData.userid === '620511') {
-      filteredData = dataCenter.filter(item => item.requestdepID === 117 || item.requestdep === userData.dep);
-    }
-    else if (userData.userid === '650930') {
-      filteredData = dataCenter.filter(item => item.requestdepID === 115 || item.requestdep === userData.dep);
-    }
-    else if (userData.userid === '470029') {
-      filteredData = dataCenter.filter(item => item.requestdepID === 120 || item.requestdep === userData.dep);
-    }
-    else if (userData.userid === '600113') {
-      filteredData = dataCenter.filter(item => item.requestdepID === 121 || item.requestdep === userData.dep);
-    }
-    else if (userData.userid === '440062') {
-      filteredData = dataCenter.filter(item => [5, 7].includes(item.requestdepID) || item.requestdep === userData.dep);
+
+    if (supData && (supData.type === "0" || supData.type === "2")) {
+      if (supData.deptrelate.length > 1) {
+        filteredData = dataCenter.filter(item => supData.deptrelate.includes(item.requestdepID) || item.requestdep === userData.dep);
+      } else {
+        filteredData = dataCenter.filter(item => item.requestdepID === supData.deptrelate[0] || item.requestdep === userData.dep);
+      }
     }
     else if (!isAdmin) {
       if (isEXEC) {

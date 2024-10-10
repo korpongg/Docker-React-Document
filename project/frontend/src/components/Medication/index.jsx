@@ -27,6 +27,7 @@ const Medication = () => {
   const navigate = useNavigate();
   const storedAuth = JSON.parse(localStorage.getItem("auth"));
   const userData = storedAuth ? JSON.parse(localStorage.getItem("userData")) : null;
+  const supData = JSON.parse(localStorage.getItem("supervisorData")) || null;
   const isHead = chkHead(userData?.level);
   const isAdmin = chkAdmins(userData?.role);
   const isEXEC = chkAdmin(userData?.level);
@@ -46,7 +47,7 @@ const Medication = () => {
   const [depSelect, setDepSelect] = useState([]);
   const [formStatus, setFormStatus] = useState("-");
 
-  const showMedicationMenu = isAdmin || chkMedic(userData?.AffID, userData?.dep) || (isEXEC && userData?.affiliation === "งานคุณภาพ");
+  const showMedicationMenu = isAdmin || chkMedic(userData?.AffID, userData?.faction) || (isEXEC && userData?.affiliation === "งานคุณภาพ");
 
   useEffect(() => {
     if (!showMedicationMenu) {
@@ -95,8 +96,12 @@ const Medication = () => {
     if (!dataMedic) return;
 
     let filteredData = dataMedic;
-    if (userData.userid === '500203') {
-      filteredData = dataMedic.filter(item => [152, 153, 146, 13, 21, 1].includes(item.deptAffInfo.DepID));
+    if (supData && (supData.type === "1" || supData.type === "2")) {
+      if (supData.deptrelate.length > 1) {
+        filteredData = dataMedic.filter(item => supData.deptrelate.includes(item.deptAffInfo.DepID));
+      } else {
+        filteredData = dataMedic.filter(item => item.deptAffInfo.DepID === supData.deptrelate[0]);
+      }
     }
     else if (!isAdmin) {
       if (isEXEC) {

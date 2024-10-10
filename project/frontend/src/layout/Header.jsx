@@ -39,7 +39,29 @@ const Header = () => {
   const isHa = chkAdmins(userData?.role);
   const isEXEC = chkAdmin(userData?.level);
 
-  const showMedicationMenu = isAdmin || chkMedic(userData?.AffID, userData?.dep) || isHa || (isEXEC && userData?.affiliation === "งานคุณภาพ");
+  const showMedicationMenu = isAdmin || chkMedic(userData?.AffID, userData?.faction) || isHa || (isEXEC && userData?.affiliation === "งานคุณภาพ");
+
+  // Check Check Supervisor
+  const fetchSupervisorData = async () => {
+    const config = { headers: { Authorization: `Bearer ${storedAuth?.accessToken}` } };
+    try {
+      const response = await axios.get(`${apiUrl}/checksupervisor/${userData.userid}`, config);
+      if (response.status === 200 || response.status === 201) {
+        localStorage.setItem("supervisorData", JSON.stringify(response.data));
+      } else {
+        console.log("Get Supervisor", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error Get Supervisor", error);
+    }
+  };
+
+  // Call fetchSupervisorData when component mounts or userData.userid changes
+  useEffect(() => {
+    if (userData?.userid) {
+      fetchSupervisorData();
+    }
+  }, [userData?.userid]);
 
   // Check Authen
   const fetchData = async () => {

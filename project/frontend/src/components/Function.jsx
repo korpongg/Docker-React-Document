@@ -56,8 +56,8 @@ export function chkAdmins(param) {
 // export function chkMedic(aff, dep) {
 //   return [3, 5].includes(aff) || [13, 146, 152, 153].includes(dep);
 // }
-export function chkMedic(aff, dep) {
-  return [3, 5].includes(aff) || (dep && dep.startsWith('เภสัชกรรม'));
+export function chkMedic(aff, fact) {
+  return [3, 5].includes(aff) || (fact && fact.startsWith('เภสัชกรรม'));
 }
 // export function chkMedic(aff, dep, depID) {
 //   const excludedDepIDs = ['69', '84', '89', '90', '128', '140'];

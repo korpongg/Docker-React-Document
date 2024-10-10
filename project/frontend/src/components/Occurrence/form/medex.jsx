@@ -26,7 +26,7 @@ import DataDict_Med from "../../../data/form/DataDict_Med";
 import { MedicationStyle } from "../../../styles/MedicationStyle.style";
 import departmentRaw from "../../../data/rawData.json";
 import AlertBar from "../../form/AlertBar";
-import { chkHead, chkAdmins, chkAdmin, TimeConverter } from "../../Function";
+import { chkMedic, chkHead, chkAdmins, chkAdmin, TimeConverter } from "../../Function";
 
 const Medication = ({ Mode }) => {
   let { id } = useParams();
@@ -51,6 +51,14 @@ const Medication = ({ Mode }) => {
   const isHead = chkHead(UserData?.level);
   const isAdmin = chkAdmins(UserData?.role);
   const isEXEC = chkAdmin(UserData?.level);
+
+  const showMedicationMenu = isAdmin || chkMedic(UserData?.AffID, UserData?.faction) || (isEXEC && UserData?.affiliation === "งานคุณภาพ");
+
+  useEffect(() => {
+    if (!showMedicationMenu) {
+      window.location.href = '/unauthorized';
+    }
+  }, [showMedicationMenu]);
 
   // const handleDataChange = (event, name) => {
   //   const Text = event.target.value;

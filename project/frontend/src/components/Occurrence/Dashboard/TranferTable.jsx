@@ -63,7 +63,7 @@ const isWithinDays = (dateString, days) => {
   return diffDays <= days;
 };
 
-const ActionButtons = ({ id, row, isAdmin, userData, handleViewEvent, handleRepeatEvent, handleEditEvent, handleAcceptEvent }) => (
+const ActionButtons = ({ id, row, isAdmin, userData, supData, handleViewEvent, handleRepeatEvent, handleEditEvent, handleAcceptEvent }) => (
   <>
     <Tooltip title="ดูรายงาน">
       <GridActionsCellItem
@@ -90,7 +90,22 @@ const ActionButtons = ({ id, row, isAdmin, userData, handleViewEvent, handleRepe
               </Tooltip>
             )}
 
-            {(row?.depname === userData?.dep || 
+            {(supData && (supData.type === "0" || supData.type === "2") && supData.accept === "y") && (
+              (supData.deptrelate.length > 1
+                ? supData.deptrelate.includes(row?.deptrelate) || row?.depname === userData?.dep
+                : row?.deptrelate === supData.deptrelate[0] || row?.depname === userData?.dep) && (
+                  <Tooltip title="บันทึกผลการทบทวนอุบัติการณ์">
+                    <GridActionsCellItem
+                      icon={<AcceptIcon />}
+                      label="บันทึกผลการทบทวนอุบัติการณ์"
+                      onClick={() => handleAcceptEvent(id, row, isAdmin)}
+                      color="success"
+                    />
+                  </Tooltip>
+              )
+            )}
+
+            {/* {(row?.depname === userData?.dep || 
               (userData?.userid === '500217' && row?.deptrelate === 113) || 
               (userData?.userid === '631201' && row?.deptrelate === 92) || 
               (userData?.userid === '600109' && row?.deptrelate === 98) || 
@@ -111,7 +126,7 @@ const ActionButtons = ({ id, row, isAdmin, userData, handleViewEvent, handleRepe
                   color="success"
                 />
               </Tooltip>
-            )}
+            )} */}
           </>
         )}
 
@@ -128,7 +143,22 @@ const ActionButtons = ({ id, row, isAdmin, userData, handleViewEvent, handleRepe
               </Tooltip>
             )}
 
-            {(row?.depname === userData?.dep || 
+            {(supData && (supData.type === "0" || supData.type === "2") && supData.accept === "y") && (
+              (supData.deptrelate.length > 1
+                ? supData.deptrelate.includes(row?.deptrelate) || row?.depname === userData?.dep
+                : row?.deptrelate === supData.deptrelate[0] || row?.depname === userData?.dep) && (
+                  <Tooltip title="บันทึกผลการทบทวนอุบัติการณ์">
+                    <GridActionsCellItem
+                      icon={<AcceptIcon />}
+                      label="บันทึกผลการทบทวนอุบัติการณ์"
+                      onClick={() => handleAcceptEvent(id, row, isAdmin)}
+                      color="success"
+                    />
+                  </Tooltip>
+              )
+            )}
+
+            {/* {(row?.depname === userData?.dep || 
               (userData?.userid === '500217' && row?.deptrelate === 113) || 
               (userData?.userid === '631201' && row?.deptrelate === 92) || 
               (userData?.userid === '600109' && row?.deptrelate === 98) || 
@@ -149,7 +179,7 @@ const ActionButtons = ({ id, row, isAdmin, userData, handleViewEvent, handleRepe
                   color="success"
                 />
               </Tooltip>
-            )}
+            )} */}
           </>
         )}
 
@@ -169,6 +199,7 @@ const ActionButtons = ({ id, row, isAdmin, userData, handleViewEvent, handleRepe
 );
 
 const TranferTable = ({ reportData, tranType, dataEvent, isAdmin, userData, config, loading, setLoading }) => {
+  const supData = JSON.parse(localStorage.getItem("supervisorData")) || null;
   const [mode, setMode] = useState(null);
   const [isHA, setIsHA] = useState(false);
   const [eventData, setEventData] = useState([]);
@@ -183,53 +214,12 @@ const TranferTable = ({ reportData, tranType, dataEvent, isAdmin, userData, conf
 
   useEffect(() => {
     let filteredData = dataEvent;
-    if (userData.userid === '380176') {
-      filteredData = dataEvent.filter(item => [64, 71, 72, 74, 75, 76, 80, 97, 105].includes(item.deptrelate));
-    }
-    else if (userData.userid === '370074') {
-      filteredData = dataEvent.filter(item => [60, 66, 73, 77, 79, 81, 82, 98, 128, 156].includes(item.deptrelate));
-    }
-    else if (userData.userid === '480080') {
-      filteredData = dataEvent.filter(item => [61, 65, 85, 91, 92, 93, 94, 95, 96].includes(item.deptrelate));
-    }
-    else if (userData.userid === '400130') {
-      filteredData = dataEvent.filter(item => [63, 70, 83, 86, 87, 99, 157].includes(item.deptrelate));
-    }
-    else if (userData.userid === '500217') {
-      filteredData = dataEvent.filter(item => item.deptrelate === 113 || item.depname === userData.dep);
-    }
-    else if (userData.userid === '631201') {
-      filteredData = dataEvent.filter(item => item.deptrelate === 92 || item.depname === userData.dep);
-    }
-    else if (userData.userid === '600109') {
-      filteredData = dataEvent.filter(item => item.deptrelate === 98 || item.depname === userData.dep);
-    }
-    else if (userData.userid === '450043') {
-      filteredData = dataEvent.filter(item => item.deptrelate === 156 || item.depname === userData.dep);
-    }
-    else if (userData.userid === '590068') {
-      filteredData = dataEvent.filter(item => item.deptrelate === 112 || item.depname === userData.dep);
-    }
-    else if (userData.userid === '570058') {
-      filteredData = dataEvent.filter(item => item.deptrelate === 122 || item.depname === userData.dep);
-    }
-    else if (userData.userid === '670423') {
-      filteredData = dataEvent.filter(item => item.deptrelate === 114 || item.depname === userData.dep);
-    }
-    else if (userData.userid === '620511') {
-      filteredData = dataEvent.filter(item => item.deptrelate === 117 || item.depname === userData.dep);
-    }
-    else if (userData.userid === '650930') {
-      filteredData = dataEvent.filter(item => item.deptrelate === 115 || item.depname === userData.dep);
-    }
-    else if (userData.userid === '470029') {
-      filteredData = dataEvent.filter(item => item.deptrelate === 120 || item.depname === userData.dep);
-    }
-    else if (userData.userid === '600113') {
-      filteredData = dataEvent.filter(item => item.deptrelate === 121 || item.depname === userData.dep);
-    }
-    else if (userData.userid === '440062') {
-      filteredData = dataEvent.filter(item => [5, 7].includes(item.deptrelate) || item.depname === userData.dep);
+    if (supData && (supData.type === "0" || supData.type === "2")) {
+      if (supData.deptrelate.length > 1) {
+        filteredData = dataEvent.filter(item => supData.deptrelate.includes(item.deptrelate) || item.depname === userData.dep);
+      } else {
+        filteredData = dataEvent.filter(item => item.deptrelate === supData.deptrelate[0] || item.depname === userData.dep);
+      }
     }
     else if (!isAdmin) {
       filteredData = dataEvent.filter(item => item.depname === userData.dep);
@@ -286,6 +276,7 @@ const TranferTable = ({ reportData, tranType, dataEvent, isAdmin, userData, conf
           row={params.row}
           isAdmin={isAdmin}
           userData={userData}
+          supData={supData}
           handleViewEvent={handleViewEvent}
           handleRepeatEvent={handleRepeatEvent}
           handleEditEvent={handleEditEvent}

@@ -96,7 +96,7 @@ exports.getAllDepartmentMed = async (req, res) => {
     FROM ${DB_NAME}.[dbo].[department] d
     LEFT JOIN ${DB_NAME}.[dbo].[affiliation] a ON a.id = d.[relateid]
     -- WHERE (d.relateid IN ('3', '5') OR d.id IN ('13', '146', '152', '153'))
-    WHERE (d.relateid IN ('3', '5') OR d.name LIKE 'เภสัชกรรม%')
+    WHERE (d.relateid IN ('3', '5') OR d.name LIKE 'เภสัชกรรม%' OR d.id IN ('1', '21'))
     AND d.id NOT IN ('69', '84', '89', '90', '140')
   `;
   
