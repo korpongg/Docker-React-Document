@@ -38,7 +38,7 @@ export default function SupTable({ data, depData, fetch, loading }) {
           <TableRow>
             <TableCell>#</TableCell>
             <TableCell>ชื่อ</TableCell>
-            <TableCell width="35%">หน่วยงาน</TableCell>
+            <TableCell width="35%">แผนก/หน่วยงาน</TableCell>
             <TableCell>Type</TableCell>
             <TableCell>Action</TableCell>
           </TableRow>

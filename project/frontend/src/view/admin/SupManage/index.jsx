@@ -67,9 +67,17 @@ const SupManagement = () => {
     setFilter(""); // Clear the filter input
   };
 
-  const filteredData = supData.filter((sup) =>
-    sup.supName.toLowerCase().includes(filter.toLowerCase())
-  );
+  const filteredData = supData.filter((sup) => {
+    const lowerCaseFilter = filter.toLowerCase();
+  
+    const matchesSupName = sup.supName.toLowerCase().includes(lowerCaseFilter);
+    const matchesUserId = sup.userid.toLowerCase().includes(lowerCaseFilter);
+    const matchesDepName = sup.deptAffInfo.some(dep =>
+      dep.DepName.toLowerCase().includes(lowerCaseFilter)
+    );
+  
+    return matchesSupName || matchesUserId || matchesDepName;
+  });
 
   return (
     <SupBox>
@@ -79,11 +87,11 @@ const SupManagement = () => {
 
         <Box className="SupToolbox">
           <Box sx={{ width: "250px", marginLeft: "20px" }}>
-            {/* <TextField
-              label="ค้นหาแผนก/หน่วยงาน"
+            <TextField
+              label="ค้นหารหัส, ชื่อ, แผนก"
               variant="outlined"
               size="small"
-              placeholder="ชื่อแผนก"
+              placeholder="รหัสพนักงาน, ชื่อ, แผนก"
               value={filter}
               onChange={handleFilterChange}
               InputProps={{
@@ -97,7 +105,7 @@ const SupManagement = () => {
                   </InputAdornment>
                 ),
               }}
-            /> */}
+            />
           </Box>
           <Box sx={{ marginRight: "20px" }}>
             <AddSup depData={depData} fetch={fetchData} />

@@ -21,6 +21,7 @@ import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import FileDownloadIcon from '@mui/icons-material/FileDownloadRounded';
 import LogoutIcon from "@mui/icons-material/Logout";
 import SettingIcon from '@mui/icons-material/SettingsRounded';
+import SupervisorIcon from '@mui/icons-material/SupervisorAccountRounded';
 import LogoWhite from "../assets/logo-white.svg";
 
 import AvatarPic from "../assets/avatar2.png";
@@ -136,6 +137,12 @@ const Header = () => {
             <ManageAccountsIcon fontSize="small" style={{ color: "green" }} />
           </ListItemIcon>
           จัดการสิทธิ์
+        </MenuItem>
+        <MenuItem key="supmanager" onClick={() => handleNavigate("/supmanager")}>
+          <ListItemIcon>
+            <SupervisorIcon fontSize="small" style={{ color: "olivedrab" }} />
+          </ListItemIcon>
+          Supervisor
         </MenuItem>
         <MenuItem key="deptmanager" onClick={() => handleNavigate("/deptmanager")}>
           <ListItemIcon>

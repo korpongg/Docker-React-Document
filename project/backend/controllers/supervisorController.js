@@ -53,6 +53,7 @@ exports.getAllSupervisor = async (req, res) => {
   try {
     const sql = `
       SELECT s.id,
+        s.userid,
         CONCAT(u.title, ' ', u.name, ' ', u.lastname) AS supName,
         CASE 
           WHEN s.type = '0' THEN 'Occurrence' 
