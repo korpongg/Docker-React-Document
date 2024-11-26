@@ -98,9 +98,9 @@ const Medication = () => {
     let filteredData = dataMedic;
     if (supData && (supData.type === "1" || supData.type === "2")) {
       if (supData.deptrelate.length > 1) {
-        filteredData = dataMedic.filter(item => supData.deptrelate.includes(item.deptAffInfo.DepID));
+        filteredData = dataMedic.filter(item => supData.deptrelate.includes(item.deptAffInfo.DepID) && ['4', '5'].includes(item.formstatus));
       } else {
-        filteredData = dataMedic.filter(item => item.deptAffInfo.DepID === supData.deptrelate[0]);
+        filteredData = dataMedic.filter(item => item.deptAffInfo.DepID === supData.deptrelate[0] && ['4', '5'].includes(item.formstatus));
       }
     }
     else if (!isAdmin) {
