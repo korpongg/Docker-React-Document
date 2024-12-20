@@ -168,7 +168,7 @@ CREATE TABLE [occurrences](
 	[effectremark] NVARCHAR(MAX) NULL,				-- ระบุความเสียหายที่เกิดขึ้น
 
 	[reportdoc] NVARCHAR(1) NULL,							-- รายงานแพทย์
-	[docname] NVARCHAR(100) NULL,							-- ชื่อแพทย์
+	[docname] NVARCHAR(MAX) NULL,							-- ชื่อแพทย์
 
 	[medicalrecorded] NVARCHAR(1) NULL,				-- การบันทึก เวชระเบียน
 

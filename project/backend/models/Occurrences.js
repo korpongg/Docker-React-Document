@@ -157,7 +157,7 @@ const Occurrences = sequelize.define('Occurrences', {
     allowNull: true
   },
   docname: {
-    type: DataTypes.STRING(100),
+    type: DataTypes.TEXT,
     allowNull: true
   },
   medicalrecorded: {
