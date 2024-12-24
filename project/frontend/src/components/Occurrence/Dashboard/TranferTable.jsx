@@ -90,7 +90,24 @@ const ActionButtons = ({ id, row, isAdmin, userData, supData, handleViewEvent, h
               </Tooltip>
             )}
 
-            {(supData && (supData.type === "0" || supData.type === "2") && supData.accept === "y") && (
+            {(row?.depname === userData?.dep ||
+              (supData &&
+                (supData.type === "0" || supData.type === "2") &&
+                supData.accept === "y" &&
+                (supData.deptrelate.length > 1
+                  ? supData.deptrelate.includes(row?.deptrelate)
+                  : row?.deptrelate === supData.deptrelate[0]))) && (
+              <Tooltip title="บันทึกผลการทบทวนอุบัติการณ์">
+                <GridActionsCellItem
+                  icon={<AcceptIcon />}
+                  label="บันทึกผลการทบทวนอุบัติการณ์"
+                  onClick={() => handleAcceptEvent(id, row, isAdmin)}
+                  color="success"
+                />
+              </Tooltip>
+            )}
+
+            {/* {(supData && (supData.type === "0" || supData.type === "2") && supData.accept === "y") && (
               (supData.deptrelate.length > 1
                 ? supData.deptrelate.includes(row?.deptrelate) || row?.depname === userData?.dep
                 : row?.deptrelate === supData.deptrelate[0] || row?.depname === userData?.dep) && (
@@ -103,7 +120,7 @@ const ActionButtons = ({ id, row, isAdmin, userData, supData, handleViewEvent, h
                     />
                   </Tooltip>
               )
-            )}
+            )} */}
 
             {/* {(row?.depname === userData?.dep || 
               (userData?.userid === '500217' && row?.deptrelate === 113) || 
@@ -142,8 +159,25 @@ const ActionButtons = ({ id, row, isAdmin, userData, supData, handleViewEvent, h
                 />
               </Tooltip>
             )}
+            
+            {(row?.depname === userData?.dep ||
+              (supData &&
+                (supData.type === "0" || supData.type === "2") &&
+                supData.accept === "y" &&
+                (supData.deptrelate.length > 1
+                  ? supData.deptrelate.includes(row?.deptrelate)
+                  : row?.deptrelate === supData.deptrelate[0]))) && (
+              <Tooltip title="บันทึกผลการทบทวนอุบัติการณ์">
+                <GridActionsCellItem
+                  icon={<AcceptIcon />}
+                  label="บันทึกผลการทบทวนอุบัติการณ์"
+                  onClick={() => handleAcceptEvent(id, row, isAdmin)}
+                  color="success"
+                />
+              </Tooltip>
+            )}
 
-            {(supData && (supData.type === "0" || supData.type === "2") && supData.accept === "y") && (
+            {/* {(supData && (supData.type === "0" || supData.type === "2") && supData.accept === "y") && (
               (supData.deptrelate.length > 1
                 ? supData.deptrelate.includes(row?.deptrelate) || row?.depname === userData?.dep
                 : row?.deptrelate === supData.deptrelate[0] || row?.depname === userData?.dep) && (
@@ -156,7 +190,7 @@ const ActionButtons = ({ id, row, isAdmin, userData, supData, handleViewEvent, h
                     />
                   </Tooltip>
               )
-            )}
+            )} */}
 
             {/* {(row?.depname === userData?.dep || 
               (userData?.userid === '500217' && row?.deptrelate === 113) || 
