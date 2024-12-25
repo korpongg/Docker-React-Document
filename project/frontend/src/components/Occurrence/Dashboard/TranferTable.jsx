@@ -91,6 +91,7 @@ const ActionButtons = ({ id, row, isAdmin, userData, supData, handleViewEvent, h
             )}
 
             {(row?.depname === userData?.dep ||
+              (userData.faction === 'สารสนเทศ' && row.depname === 'ศูนย์สารสนเทศ') ||
               (supData &&
                 (supData.type === "0" || supData.type === "2") &&
                 supData.accept === "y" &&
@@ -161,6 +162,7 @@ const ActionButtons = ({ id, row, isAdmin, userData, supData, handleViewEvent, h
             )}
             
             {(row?.depname === userData?.dep ||
+              (userData.faction === 'สารสนเทศ' && row.depname === 'ศูนย์สารสนเทศ') ||
               (supData &&
                 (supData.type === "0" || supData.type === "2") &&
                 supData.accept === "y" &&
@@ -256,11 +258,15 @@ const TranferTable = ({ reportData, tranType, dataEvent, isAdmin, userData, conf
       }
     }
     else if (!isAdmin) {
-      filteredData = dataEvent.filter(item => item.depname === userData.dep);
+      if (userData.faction === 'สารสนเทศ') {
+        filteredData = dataEvent.filter(item => item.depname === userData.dep || item.depname === 'ศูนย์สารสนเทศ');
+      } else {
+        filteredData = dataEvent.filter(item => item.depname === userData.dep);
+      }
     }
     setEventData(filteredData);
     setLoading(false);
-}, [dataEvent]);
+  }, [dataEvent]);
 
   const statusMap = requestStatusData.subStatus.reduce((map, status) => {
     map[status.id] = { text: status.statusText, color: status.statusColor };
