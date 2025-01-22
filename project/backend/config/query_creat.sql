@@ -292,7 +292,7 @@ CREATE TABLE [medication](
 --DELETE supervisor
 --Drop table if exists [supervisor]
 CREATE TABLE [supervisor](
-	[id] INT IDENTITY(1,1),
+	[id] INT IDENTITY(1,1) PRIMARY KEY,
 	[userid] NVARCHAR(20) NOT NULL,						-- รหัสพนักงาน
 	[deptrelate] NVARCHAR(100) NOT NULL,			-- หน่วยงานที่เกี่ยวข้อง
 	[type] NVARCHAR(1) NOT NULL,							-- ประเภทระบบ OCC, MED, OCC & MED
