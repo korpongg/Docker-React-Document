@@ -39,7 +39,7 @@ const RadioList = ({
             {optionsdata[datacolumn].options.map((datarow, radiodatakey) => (
               <FormControlLabel
               key={radiodatakey}
-              sx={{ p: 1 }}
+              sx={{ p: 1, textAlign: "left" }}
               disabled={Mode==="Show"}
               value={datarow.code}
               control={<Radio />}
