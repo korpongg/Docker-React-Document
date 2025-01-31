@@ -574,6 +574,8 @@ const Occurrence = ({ Mode }) => {
     }
   };
 
+  console.log(pdfData)
+
   return (
     <>
       <AlertBar
