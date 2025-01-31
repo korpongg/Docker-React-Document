@@ -233,8 +233,8 @@ export const MedicationStyle = styled(Box)`
   }
   .SETERROR{
     background: #ffe5e580;
-    border: 1px solid #ff000080;
-    border-radius:5px;
+    border: 1px solid #ff000080 !important;
+    border-radius:5px !important;
   }
   .AreaBOX{
     background: unset;
@@ -245,7 +245,7 @@ export const MedicationStyle = styled(Box)`
   }
   .SETERRORBOX{
     background: #ffe5e580;
-    border: 1px solid #ff000080;
+    border: 1px solid #ff000080 !important;
   }
   .RadioBoxED{
     width:100%;

@@ -24,6 +24,7 @@ import departmentRaw from "../../../data/rawData.json";
 import AlertBar from "../../form/AlertBar";
 import { chkAdmins, chkAdmin, TimeConverter } from "../../Function";
 import ReportComment from "../../form/ReportComment";
+import showAlert from "../../../utils/alertService";
 
 const Occurrence = ({ Mode }) => {
   let { id } = useParams();
@@ -77,7 +78,7 @@ const Occurrence = ({ Mode }) => {
 
   const handleDateChange = (event, name) => {
     const AddDate = new Date(event.target.value);
-    const EditDate = TimeConverter(event.target.value,7);
+    const EditDate = TimeConverter(event.target.value, 7);
     setFormData({ ...FormData, [name]: AddDate });
     if (Mode === "Edit") {
       setEditFormData({ ...EditFormData, [name]: EditDate });
@@ -95,8 +96,8 @@ const Occurrence = ({ Mode }) => {
             setFormData({
               ...response.data,
               userreport: response.data.createby,
-              reportdate: TimeConverter(response.data.createAt,-7),
-              occurrencedate: TimeConverter(response.data.occurrencedate,-7),
+              reportdate: TimeConverter(response.data.createAt, -7),
+              occurrencedate: TimeConverter(response.data.occurrencedate, -7),
               aff: response.data.requestaff,
               faction: response.data.requestfac,
               dep: response.data.requestdep,
@@ -111,8 +112,8 @@ const Occurrence = ({ Mode }) => {
             setFormData({
               ...response.data,
               userreport: response.data.createby,
-              reportdate: TimeConverter(response.data.createAt,-7),
-              occurrencedate: TimeConverter(response.data.occurrencedate,-7),
+              reportdate: TimeConverter(response.data.createAt, -7),
+              occurrencedate: TimeConverter(response.data.occurrencedate, -7),
               aff: response.data.requestaff,
               faction: response.data.requestfac,
               dep: response.data.requestdep,
@@ -124,8 +125,8 @@ const Occurrence = ({ Mode }) => {
               setFormData({
                 ...response.data,
                 userreport: response.data.createby,
-                reportdate: TimeConverter(response.data.createAt,-7),
-                occurrencedate: TimeConverter(response.data.occurrencedate,-7),
+                reportdate: TimeConverter(response.data.createAt, -7),
+                occurrencedate: TimeConverter(response.data.occurrencedate, -7),
                 aff: response.data.requestaff,
                 faction: response.data.requestfac,
                 dep: response.data.requestdep,
@@ -136,8 +137,8 @@ const Occurrence = ({ Mode }) => {
               setFormData({
                 ...response.data,
                 userreport: response.data.createby,
-                reportdate: TimeConverter(response.data.createAt,-7),
-                occurrencedate: TimeConverter(response.data.occurrencedate,-7),
+                reportdate: TimeConverter(response.data.createAt, -7),
+                occurrencedate: TimeConverter(response.data.occurrencedate, -7),
                 aff: response.data.requestaff,
                 faction: response.data.requestfac,
                 dep: response.data.requestdep,
@@ -150,8 +151,8 @@ const Occurrence = ({ Mode }) => {
               setFormData({
                 ...response.data,
                 userreport: response.data.createby,
-                reportdate: TimeConverter(response.data.createAt,-7),
-                occurrencedate: TimeConverter(response.data.occurrencedate,-7),
+                reportdate: TimeConverter(response.data.createAt, -7),
+                occurrencedate: TimeConverter(response.data.occurrencedate, -7),
                 aff: response.data.requestaff,
                 faction: response.data.requestfac,
                 dep: response.data.requestdep,
@@ -240,8 +241,7 @@ const Occurrence = ({ Mode }) => {
         setFormData({
           ...TempFormData,
           userreport: UserData.userid,
-          requestby:
-            UserData?.title + " " + UserData?.name + " " + UserData?.lastname,
+          requestby: UserData?.title + " " + UserData?.name + " " + UserData?.lastname,
           pct: "ไม่ระบุ",
           gender: "M",
           reportdate: new Date(),
@@ -263,8 +263,7 @@ const Occurrence = ({ Mode }) => {
     localStorage.removeItem("FormData");
     setFormData({
       userreport: UserData.userid,
-      requestby:
-        UserData?.title + " " + UserData?.name + " " + UserData?.lastname,
+      requestby: UserData?.title + " " + UserData?.name + " " + UserData?.lastname,
       reportdate: new Date(),
       occurrencedate: new Date(),
       type: "opd",
@@ -305,11 +304,12 @@ const Occurrence = ({ Mode }) => {
   ];
 
   const handleSubmit = async (Mode) => {
+    console.log(1);
     const missingKeys = keydata.filter(({ key }) => {
       if (key === "deptrelate") {
         return !(FormData[key] && FormData[key].length);
       } else {
-        return !(key in FormData);
+        return !FormData[key] || FormData[key] === ""; // Ensure it's not empty
       }
     });
     const totalLength = keysToCheck.reduce((sum, key) => {
@@ -318,13 +318,13 @@ const Occurrence = ({ Mode }) => {
       }
       return sum;
     }, 0);
-    if(Mode!=="Draft"){
+    if (Mode !== "Draft") {
       setAlertBorder(missingKeys);
-    };
+    }
 
-    if (missingKeys.length === 0 || Mode==="Draft") {
+    if (missingKeys.length === 0 || Mode === "Draft") {
       let submitFormData;
-      if (totalLength > 0 || Mode==="Draft") {
+      if (totalLength > 0 || Mode === "Draft") {
         submitFormData = {
           ...FormData,
           deptrelate: JSON.stringify(FormData.deptrelate),
@@ -335,17 +335,13 @@ const Occurrence = ({ Mode }) => {
           safety: JSON.stringify(FormData.safety),
           service: JSON.stringify(FormData.service),
           utility: JSON.stringify(FormData.utility),
-          occurrencedate:TimeConverter(FormData.occurrencedate,7),
-          reportdate:TimeConverter(FormData.reportdate,7),
-          formstatus:"0"
+          occurrencedate: TimeConverter(FormData.occurrencedate, 7),
+          reportdate: TimeConverter(FormData.reportdate, 7),
+          formstatus: "0",
         };
-        
+
         try {
-          const response = await axios.post(
-            `${apiUrl}/occurrences`,
-            submitFormData,
-            { ...config }
-          );
+          const response = await axios.post(`${apiUrl}/occurrences`, submitFormData, { ...config });
           const responseStatus = response.status;
 
           if (responseStatus === 200 || responseStatus === 201) {
@@ -354,36 +350,32 @@ const Occurrence = ({ Mode }) => {
         } catch (err) {
           console.error(err);
         }
-
       } else {
         setStage(1);
         setOccStage(0);
-        setAlertText("ไม่สามารถบันทึกข้อมูลได้ กรุณาเลือกอย่างน้อย 1 หัวข้อ");
+        // setAlertText("ไม่สามารถบันทึกข้อมูลได้ กรุณาเลือกอย่างน้อย 1 หัวข้อ");
+        showAlert("กรุณาเลือกหัวข้อระบบงานที่เกี่ยวข้องกับเหตุการณ์ที่เกิดขึ้น อย่างน้อย 1 หัวข้อ", "ไม่สามารถบันทึกข้อมูลได้", "error");
         console.log("ไม่สามารถบันทึกข้อมูลได้ กรุณาเลือกอย่างน้อย 1 หัวข้อ");
-        setAlert(true);
+        // setAlert(true);
         scrollToSection("ListSelect");
       }
     } else {
       setStage(missingKeys[0].location);
-      setAlertText(
-        "ไม่สามารถบันทึกข้อมูลได้ โปรดระบุ '" + missingKeys[0].name + "'"
-      );
-      console.log(
-        "Some keys are missing.Cannot submit form data.",
-        missingKeys[0].key
-      );
+      // setAlertText("ไม่สามารถบันทึกข้อมูลได้ โปรดระบุ '" + missingKeys[0].name + "'");
+      showAlert("โปรดระบุ '" + missingKeys[0].name + "'", "ไม่สามารถบันทึกข้อมูลได้", "error");
+      console.log("Some keys are missing.Cannot submit form data.", missingKeys[0].key);
       setAlert(true);
       scrollToSection(missingKeys[0].key);
     }
   };
 
   const handleSubmitEdit = async (Mode) => {
-    // console.log("handleSubmitEdit");
+    console.log(2);
     const missingKeys = keydata.filter(({ key }) => {
       if (key === "deptrelate") {
         return !(FormData[key] && FormData[key].length);
       } else {
-        return !(key in FormData);
+        return !FormData[key] || FormData[key] === ""; // Ensure it's not empty
       }
     });
     const totalLength = keysToCheck.reduce((sum, key) => {
@@ -392,75 +384,67 @@ const Occurrence = ({ Mode }) => {
       }
       return sum;
     }, 0);
-    if(Mode!=="Draft"){
+    if (Mode !== "Draft") {
       setAlertBorder(missingKeys);
-    };
-    if (missingKeys.length === 0 || Mode==="Draft") {
-    let submitEditFormData;
-    if (totalLength > 0 || Mode==="Draft") {
-      submitEditFormData = {
-        ...EditFormData,
-        deptrelate: JSON.stringify(FormData.deptrelate),
-        equipment: JSON.stringify(FormData.equipment),
-        management: JSON.stringify(FormData.management),
-        patientcare: JSON.stringify(FormData.patientcare),
-        patientsupport: JSON.stringify(FormData.patientsupport),
-        safety: JSON.stringify(FormData.safety),
-        service: JSON.stringify(FormData.service),
-        utility: JSON.stringify(FormData.utility),
-        updateby: UserData.userid,
-      };
-      if(Mode==="Draft"){
+    }
+    if (missingKeys.length === 0 || Mode === "Draft") {
+      let submitEditFormData;
+      if (totalLength > 0 || Mode === "Draft") {
         submitEditFormData = {
-          ...submitEditFormData,
-          formstatus:"0"
+          ...EditFormData,
+          deptrelate: JSON.stringify(FormData.deptrelate),
+          equipment: JSON.stringify(FormData.equipment),
+          management: JSON.stringify(FormData.management),
+          patientcare: JSON.stringify(FormData.patientcare),
+          patientsupport: JSON.stringify(FormData.patientsupport),
+          safety: JSON.stringify(FormData.safety),
+          service: JSON.stringify(FormData.service),
+          utility: JSON.stringify(FormData.utility),
+          updateby: UserData.userid,
         };
-      }
-      if(Mode==="Submit"){
-        if(FormData.formstatus==="0"){
+        if (Mode === "Draft") {
           submitEditFormData = {
             ...submitEditFormData,
-            formstatus:"1"
+            formstatus: "0",
           };
         }
-      }
-      // console.log("submitEditFormData", submitEditFormData);
-
-      try {
-        const response = await axios.put(
-          `${apiUrl}/occurrences`,
-          submitEditFormData,
-          { ...config }
-        );
-        const responseStatus = response.status;
-
-        if (responseStatus === 200 || responseStatus === 201) {
-          navigate("/occurrence");
+        if (Mode === "Submit") {
+          if (FormData.formstatus === "0") {
+            submitEditFormData = {
+              ...submitEditFormData,
+              formstatus: "1",
+            };
+          }
         }
-      } catch (err) {
-        console.error(err);
-      }
+        // console.log("submitEditFormData", submitEditFormData);
 
+        try {
+          const response = await axios.put(`${apiUrl}/occurrences`, submitEditFormData, { ...config });
+          const responseStatus = response.status;
+
+          if (responseStatus === 200 || responseStatus === 201) {
+            navigate("/occurrence");
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      } else {
+        setStage(1);
+        setOccStage(0);
+        // setAlertText("ไม่สามารถบันทึกข้อมูลได้ กรุณาเลือกอย่างน้อย 1 หัวข้อ");
+        showAlert("กรุณาเลือกหัวข้อระบบงานที่เกี่ยวข้องกับเหตุการณ์ที่เกิดขึ้น อย่างน้อย 1 หัวข้อ", "ไม่สามารถบันทึกข้อมูลได้", "error");
+        console.log("ไม่สามารถบันทึกข้อมูลได้ กรุณาเลือกอย่างน้อย 1 หัวข้อ");
+        // setAlert(true);
+        scrollToSection("ListSelect");
+      }
     } else {
-      setStage(1);
-      setOccStage(0);
-      setAlertText("ไม่สามารถบันทึกข้อมูลได้ กรุณาเลือกอย่างน้อย 1 หัวข้อ");
-      console.log("ไม่สามารถบันทึกข้อมูลได้ กรุณาเลือกอย่างน้อย 1 หัวข้อ");
-      setAlert(true);
-      scrollToSection("ListSelect");
+      setStage(missingKeys[0].location);
+      // setAlertText("ไม่สามารถบันทึกข้อมูลได้ โปรดระบุ '" + missingKeys[0].name + "'");
+      showAlert("โปรดระบุ '" + missingKeys[0].name + "'", "ไม่สามารถบันทึกข้อมูลได้", "error");
+      console.log("Some keys are missing.Cannot submit form data.", missingKeys[0].key);
+      // setAlert(true);
+      scrollToSection(missingKeys[0].key);
     }
-  }else {
-    setStage(missingKeys[0].location);
-    setAlertText(
-      "ไม่สามารถบันทึกข้อมูลได้ โปรดระบุ '" + missingKeys[0].name + "'"
-    );
-    console.log(
-      "Some keys are missing.Cannot submit form data.",
-      missingKeys[0].key
-    );
-    setAlert(true);
-    scrollToSection(missingKeys[0].key);
-  }
   };
 
   const handleScrollToTop = () => {
@@ -486,12 +470,12 @@ const Occurrence = ({ Mode }) => {
         AlertText={AlertText}
       />
       <OccurrenceStyle>
-      {/* {console.log(FormData)} */}
+        {/* {console.log(FormData)} */}
         <Box className="FormHeader">
           {Mode === "Add" && <span>รายงานเหตุการณ์(ใหม่)</span>}
           {Mode === "Edit" && <span>รายงานเหตุการณ์(แก้ไข)</span>}
           {Mode === "Show" && <span>รายงานเหตุการณ์</span>}
-          
+
           <span>
             {Mode === "Add" && (
               <Tooltip title="ล้างข้อมูลทั้งหมด">
@@ -500,7 +484,7 @@ const Occurrence = ({ Mode }) => {
                 </IconButton>
               </Tooltip>
             )}
-            {FormData && (Mode !== "Add") && <span style={{fontSize:"20px"}}>หมายเลขเอกสาร : {FormData.reportid}&nbsp;&nbsp;</span>}
+            {FormData && Mode !== "Add" && (<span style={{ fontSize: "20px" }}>หมายเลขเอกสาร : {FormData.reportid}&nbsp;&nbsp;</span>)}
           </span>
         </Box>
 
@@ -710,7 +694,7 @@ const Occurrence = ({ Mode }) => {
               </>
             )}
 
-            {Mode === "Show" && (isAdmin || isEXEC) && Stage === 1 && ['2', '5'].includes(FormData.formstatus) && (
+            {Mode === "Show" && (isAdmin || isEXEC) && Stage === 1 && ["2", "5"].includes(FormData.formstatus) && (
               <>
                 <Divider variant="middle" flexItem sx={{ m: 1 }} />
                 <ReportComment data={FormData} />

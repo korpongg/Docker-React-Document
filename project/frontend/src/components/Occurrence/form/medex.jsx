@@ -27,6 +27,7 @@ import { MedicationStyle } from "../../../styles/MedicationStyle.style";
 import departmentRaw from "../../../data/rawData.json";
 import AlertBar from "../../form/AlertBar";
 import { chkMedic, chkHead, chkAdmins, chkAdmin, TimeConverter } from "../../Function";
+import showAlert from "../../../utils/alertService";
 
 const Medication = ({ Mode }) => {
   let { id } = useParams();
@@ -56,7 +57,7 @@ const Medication = ({ Mode }) => {
 
   useEffect(() => {
     if (!showMedicationMenu) {
-      window.location.href = '/unauthorized';
+      window.location.href = "/unauthorized";
     }
   }, [showMedicationMenu]);
 
@@ -71,11 +72,11 @@ const Medication = ({ Mode }) => {
     let value;
 
     if (event && event.target) {
-        value = event.target.value;
+      value = event.target.value;
     } else if (event && event.id !== undefined) {
-        value = event.id;
+      value = event.id;
     } else {
-        value = '';
+      value = "";
     }
 
     setFormData({ ...FormData, [name]: value });
@@ -107,7 +108,7 @@ const Medication = ({ Mode }) => {
 
   const handleDateChange = (event, name) => {
     const AddDate = new Date(event.target.value);
-    const EditDate = TimeConverter(event.target.value,7);
+    const EditDate = TimeConverter(event.target.value, 7);
     setFormData({ ...FormData, [name]: AddDate });
     if (Mode === "Edit") {
       setEditFormData({ ...EditFormData, [name]: EditDate });
@@ -128,8 +129,8 @@ const Medication = ({ Mode }) => {
             setFormData({
               ...response.data,
               userreport: response.data.createby,
-              reportdate: TimeConverter(response.data.createAt,-7),
-              occurrencedate: TimeConverter(response.data.occurrencedate,-7),
+              reportdate: TimeConverter(response.data.createAt, -7),
+              occurrencedate: TimeConverter(response.data.occurrencedate, -7),
               // occurrencedate: TimeConverter(response.data.occurrencedate,-7),
               aff: response.data.requestaff,
               faction: response.data.requestfac,
@@ -145,8 +146,8 @@ const Medication = ({ Mode }) => {
             setFormData({
               ...response.data,
               userreport: response.data.createby,
-              reportdate: TimeConverter(response.data.createAt,-7),
-              occurrencedate: TimeConverter(response.data.occurrencedate,-7),
+              reportdate: TimeConverter(response.data.createAt, -7),
+              occurrencedate: TimeConverter(response.data.occurrencedate, -7),
               aff: response.data.requestaff,
               faction: response.data.requestfac,
               dep: response.data.requestdep,
@@ -158,8 +159,8 @@ const Medication = ({ Mode }) => {
               setFormData({
                 ...response.data,
                 userreport: response.data.createby,
-                reportdate: TimeConverter(response.data.createAt,-7),
-                occurrencedate: TimeConverter(response.data.occurrencedate,-7),
+                reportdate: TimeConverter(response.data.createAt, -7),
+                occurrencedate: TimeConverter(response.data.occurrencedate, -7),
                 aff: response.data.requestaff,
                 faction: response.data.requestfac,
                 dep: response.data.requestdep,
@@ -167,12 +168,16 @@ const Medication = ({ Mode }) => {
               }),
                 setAccess(true);
             }
-          } else if (isHead && UserData.DepID === response.data.deptrelate && ['4', '5'].includes(response.data.formstatus)) {
+          } else if (
+            isHead &&
+            UserData.DepID === response.data.deptrelate &&
+            ["4", "5"].includes(response.data.formstatus)
+          ) {
             setFormData({
               ...response.data,
               userreport: response.data.createby,
-              reportdate: TimeConverter(response.data.createAt,-7),
-              occurrencedate: TimeConverter(response.data.occurrencedate,-7),
+              reportdate: TimeConverter(response.data.createAt, -7),
+              occurrencedate: TimeConverter(response.data.occurrencedate, -7),
               aff: response.data.requestaff,
               faction: response.data.requestfac,
               dep: response.data.requestdep,
@@ -184,8 +189,8 @@ const Medication = ({ Mode }) => {
               setFormData({
                 ...response.data,
                 userreport: response.data.createby,
-                reportdate: TimeConverter(response.data.createAt,-7),
-                occurrencedate: TimeConverter(response.data.occurrencedate,-7),
+                reportdate: TimeConverter(response.data.createAt, -7),
+                occurrencedate: TimeConverter(response.data.occurrencedate, -7),
                 aff: response.data.requestaff,
                 faction: response.data.requestfac,
                 dep: response.data.requestdep,
@@ -207,26 +212,26 @@ const Medication = ({ Mode }) => {
   const handleDataChangeCheckbox = (dataarray, columnname) => {
     // Sort dataarray with custom logic for version-like strings
     const sortedData = [...dataarray].sort((a, b) => {
-        const aParts = a.split('.').map(Number); // Convert to array of numbers
-        const bParts = b.split('.').map(Number);
+      const aParts = a.split(".").map(Number); // Convert to array of numbers
+      const bParts = b.split(".").map(Number);
 
-        // Compare each part of the version numbers
-        for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
-            const aPart = aParts[i] || 0; // Default to 0 if no part exists
-            const bPart = bParts[i] || 0;
-            if (aPart < bPart) return -1;
-            if (aPart > bPart) return 1;
-        }
-        return 0;
+      // Compare each part of the version numbers
+      for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+        const aPart = aParts[i] || 0; // Default to 0 if no part exists
+        const bPart = bParts[i] || 0;
+        if (aPart < bPart) return -1;
+        if (aPart > bPart) return 1;
+      }
+      return 0;
     });
 
     // Update the state with the sorted data
     setFormData({ ...FormData, [columnname]: sortedData });
 
     if (Mode === "Edit") {
-        setEditFormData({ ...EditFormData, [columnname]: sortedData });
+      setEditFormData({ ...EditFormData, [columnname]: sortedData });
     }
-};
+  };
 
   const removeDataFromCheckboxList = (key, value) => {
     setFormData((prevData) => {
@@ -336,12 +341,10 @@ const Medication = ({ Mode }) => {
     // { key: "dx", name: "Dx.", location: 1 },
     { key: "pct", name: "PCT ที่เกี่ยวข้าง", location: 1 },
     // { key: "reportlocation", name: "สถานที่เกิดเหตุ", location: 1 },
-    
     { key: "occurrencedate", name: "วัน-เวลาที่เกิดเหตุการณ์", location: 1 },
     { key: "deptrelate", name: "หน่วยงานที่เกี่ยวข้อง", location: 1 },
     { key: "level", name: "ระดับความเสี่ยง", location: 1 },
     { key: "description", name: "บรรยายสรุปเหตุการณ์ที่เกิดขึ้น", location: 1 },
-
     // { key: "effectremark", name: "ระบุความเสียหายที่เกิดขึ้น", location: 1 },
     // { key: "impromptusolution", name: "การแก้ปัญหาเฉพาะหน้า", location: 1 },
     // { key: "activefailure", name: "ความคลาดเคลื่อนที่เกิดขึ้น", location: 1 },
@@ -351,7 +354,12 @@ const Medication = ({ Mode }) => {
     // { key: "description", name: "บรรยายสรุปเหตุการณ์ที่เกิดขึ้น", location: 1 },
   ];
 
-  const keysToCheck = ["prescribing", "dispensing", "administration", "transcribing"];
+  const keysToCheck = [
+    "prescribing",
+    "dispensing",
+    "administration",
+    "transcribing",
+  ];
   // const keysToCheck = [];
 
   const handleSubmit = async (Mode) => {
@@ -359,7 +367,7 @@ const Medication = ({ Mode }) => {
       if (key === "deptrelate") {
         return !(FormData[key] && FormData[key].length);
       } else {
-        return !(key in FormData);
+        return !FormData[key] || FormData[key] === ""; // Ensure it's not empty
       }
     });
     const totalLength = keysToCheck.reduce((sum, key) => {
@@ -368,13 +376,13 @@ const Medication = ({ Mode }) => {
       }
       return sum;
     }, 0);
-    if(Mode!=="Draft"){
+    if (Mode !== "Draft") {
       setAlertBorder(missingKeys);
-    };
+    }
 
-    if (missingKeys.length === 0 || Mode==="Draft") {
+    if (missingKeys.length === 0 || Mode === "Draft") {
       let submitFormData;
-      if (totalLength > 0 || Mode==="Draft") {
+      if (totalLength > 0 || Mode === "Draft") {
         submitFormData = {
           ...FormData,
           prescribing: JSON.stringify(FormData.prescribing),
@@ -384,19 +392,15 @@ const Medication = ({ Mode }) => {
           rca: JSON.stringify(FormData.rca),
           effect: JSON.stringify(FormData.effect),
           drugrelate: JSON.stringify(FormData.drugrelate),
-          occurrencedate:TimeConverter(FormData.occurrencedate,7),
-          reportdate:TimeConverter(FormData.reportdate,7),
-          formstatus:"0"
+          occurrencedate: TimeConverter(FormData.occurrencedate, 7),
+          reportdate: TimeConverter(FormData.reportdate, 7),
+          formstatus: "0",
           // deptrelate: JSON.stringify(FormData.deptrelate),
         };
 
         // console.log("submitFormData", submitFormData);
         try {
-          const response = await axios.post(
-            `${apiUrl}/medication`,
-            submitFormData,
-            { ...config }
-          );
+          const response = await axios.post(`${apiUrl}/medication`, submitFormData, { ...config });
           const responseStatus = response.status;
 
           if (responseStatus === 200 || responseStatus === 201) {
@@ -408,33 +412,30 @@ const Medication = ({ Mode }) => {
       } else {
         setStage(1);
         setOccStage(0);
-        setAlertText("ไม่สามารถบันทึกข้อมูลได้ กรุณาเลือกอย่างน้อย 1 หัวข้อ");
+        // setAlertText("ไม่สามารถบันทึกข้อมูลได้ กรุณาเลือกอย่างน้อย 1 หัวข้อ");
+        showAlert("กรุณาเลือกหัวข้อระบบงานที่เกี่ยวข้องกับเหตุการณ์ที่เกิดขึ้น อย่างน้อย 1 หัวข้อ", "ไม่สามารถบันทึกข้อมูลได้", "error");
         console.log("ไม่สามารถบันทึกข้อมูลได้ กรุณาเลือกอย่างน้อย 1 หัวข้อ");
-        setAlert(true);
+        // setAlert(true);
         scrollToSection("ListSelect");
       }
     } else {
       setStage(missingKeys[0].location);
-      setAlertText(
-        "ไม่สามารถบันทึกข้อมูลได้ โปรดระบุ '" + missingKeys[0].name + "'"
-      );
-      console.log(
-        "Some keys are missing.Cannot submit form data.",
-        missingKeys[0].key
-      );
-      setAlert(true);
+      // setAlertText("ไม่สามารถบันทึกข้อมูลได้ โปรดระบุ '" + missingKeys[0].name + "'");
+      showAlert("โปรดระบุ '" + missingKeys[0].name + "'", "ไม่สามารถบันทึกข้อมูลได้", "error");
+      console.log("Some keys are missing.Cannot submit form data.", missingKeys[0].key);
+      // setAlert(true);
       scrollToSection(missingKeys[0].key);
     }
   };
 
   const handleSubmitEdit = async (Mode) => {
-    console.log("handleSubmitEdit",FormData);
+    console.log("handleSubmitEdit", FormData);
     const missingKeys = keydata.filter(({ key }) => {
       if (key === "deptrelate" || key === "level") {
         // return !(FormData[key] && FormData[key].length);
-        return !(FormData[key]);
+        return !FormData[key];
       } else {
-        return !(key in FormData);
+        return !FormData[key] || FormData[key] === ""; // Ensure it's not empty
       }
     });
     const totalLength = keysToCheck.reduce((sum, key) => {
@@ -443,76 +444,67 @@ const Medication = ({ Mode }) => {
       }
       return sum;
     }, 0);
-    if(Mode!=="Draft"){
+    if (Mode !== "Draft") {
       setAlertBorder(missingKeys);
-    };
-    if (missingKeys.length === 0 || Mode==="Draft") {
+    }
+    if (missingKeys.length === 0 || Mode === "Draft") {
       let submitEditFormData;
-      if (totalLength > 0 || Mode==="Draft") {
-    submitEditFormData = {
-      ...EditFormData,
-      prescribing: JSON.stringify(FormData.prescribing),
-      dispensing: JSON.stringify(FormData.dispensing),
-      administration: JSON.stringify(FormData.administration),
-      transcribing: JSON.stringify(FormData.transcribing),
-      rca: JSON.stringify(FormData.rca),
-      effect: JSON.stringify(FormData.effect),
-      drugrelate: JSON.stringify(FormData.drugrelate),
-      updateby: UserData.userid,
-      formstatus: FormData.formstatus,
-    };
-    if(Mode==="Draft"){
-      submitEditFormData = {
-        ...submitEditFormData,
-        formstatus:"0"
-      };
-    }
-    if(Mode==="Submit"){
-      if(FormData.formstatus==="0"){
+      if (totalLength > 0 || Mode === "Draft") {
         submitEditFormData = {
-          ...submitEditFormData,
-          formstatus:"1"
+          ...EditFormData,
+          prescribing: JSON.stringify(FormData.prescribing),
+          dispensing: JSON.stringify(FormData.dispensing),
+          administration: JSON.stringify(FormData.administration),
+          transcribing: JSON.stringify(FormData.transcribing),
+          rca: JSON.stringify(FormData.rca),
+          effect: JSON.stringify(FormData.effect),
+          drugrelate: JSON.stringify(FormData.drugrelate),
+          updateby: UserData.userid,
+          formstatus: FormData.formstatus,
         };
+        if (Mode === "Draft") {
+          submitEditFormData = {
+            ...submitEditFormData,
+            formstatus: "0",
+          };
+        }
+        if (Mode === "Submit") {
+          if (FormData.formstatus === "0") {
+            submitEditFormData = {
+              ...submitEditFormData,
+              formstatus: "1",
+            };
+          }
+        }
+        // console.log("submitEditFormData", submitEditFormData);
+
+        try {
+          const response = await axios.put(`${apiUrl}/medication`, submitEditFormData, { ...config });
+          const responseStatus = response.status;
+
+          if (responseStatus === 200 || responseStatus === 201) {
+            navigate("/medication");
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      } else {
+        setStage(1);
+        setOccStage(0);
+        // setAlertText("ไม่สามารถบันทึกข้อมูลได้ กรุณาเลือกอย่างน้อย 1 หัวข้อ");
+        showAlert("กรุณาเลือกหัวข้อระบบงานที่เกี่ยวข้องกับเหตุการณ์ที่เกิดขึ้น อย่างน้อย 1 หัวข้อ", "ไม่สามารถบันทึกข้อมูลได้", "error");
+        console.log("ไม่สามารถบันทึกข้อมูลได้ กรุณาเลือกอย่างน้อย 1 หัวข้อ");
+        // setAlert(true);
+        scrollToSection("ListSelect");
       }
+    } else {
+      setStage(missingKeys[0].location);
+      // setAlertText("ไม่สามารถบันทึกข้อมูลได้ โปรดระบุ '" + missingKeys[0].name + "'");
+      showAlert("โปรดระบุ '" + missingKeys[0].name + "'", "ไม่สามารถบันทึกข้อมูลได้", "error");
+      console.log("Some keys are missing.Cannot submit form data.", missingKeys[0].key);
+      // setAlert(true);
+      scrollToSection(missingKeys[0].key);
     }
-    // console.log("submitEditFormData", submitEditFormData);
-
-    try {
-      const response = await axios.put(
-        `${apiUrl}/medication`,
-        submitEditFormData,
-        { ...config }
-      );
-      const responseStatus = response.status;
-
-      if (responseStatus === 200 || responseStatus === 201) {
-        navigate("/medication");
-      }
-    } catch (err) {
-      console.error(err);
-    }
-
-  } else {
-    setStage(1);
-    setOccStage(0);
-    setAlertText("ไม่สามารถบันทึกข้อมูลได้ กรุณาเลือกอย่างน้อย 1 หัวข้อ");
-    console.log("ไม่สามารถบันทึกข้อมูลได้ กรุณาเลือกอย่างน้อย 1 หัวข้อ");
-    setAlert(true);
-    scrollToSection("ListSelect");
-  }
-}else {
-  setStage(missingKeys[0].location);
-  setAlertText(
-    "ไม่สามารถบันทึกข้อมูลได้ โปรดระบุ '" + missingKeys[0].name + "'"
-  );
-  console.log(
-    "Some keys are missing.Cannot submit form data.",
-    missingKeys[0].key
-  );
-  setAlert(true);
-  scrollToSection(missingKeys[0].key);
-}
-
   };
 
   const handleScrollToTop = () => {
@@ -543,8 +535,8 @@ const Medication = ({ Mode }) => {
           {Mode === "Add" && <span>รายการความคลาดเคลื่อนทางยา(ใหม่)</span>}
           {Mode === "Edit" && <span>รายการความคลาดเคลื่อนทางยา(แก้ไข)</span>}
           {Mode === "Show" && <span>รายการความคลาดเคลื่อนทางยา</span>}
-          {Mode === "Approve" && <span>วิเคราะห์รายการความคลาดเคลื่อนทางยา</span>}
-          
+          {Mode === "Approve" && (<span>วิเคราะห์รายการความคลาดเคลื่อนทางยา</span>)}
+
           <span>
             {Mode === "Add" && (
               <Tooltip title="ล้างข้อมูลทั้งหมด">
@@ -553,7 +545,7 @@ const Medication = ({ Mode }) => {
                 </IconButton>
               </Tooltip>
             )}
-            {FormData && (Mode !== "Add") && <span style={{fontSize:"20px"}}>&nbsp;&nbsp;&nbsp;หมายเลขเอกสาร : {FormData.reportid}&nbsp;&nbsp;</span>}
+            {FormData && Mode !== "Add" && (<span style={{ fontSize: "20px" }}>&nbsp;&nbsp;&nbsp;หมายเลขเอกสาร : {FormData.reportid}&nbsp;&nbsp;</span>)}
           </span>
         </Box>
 
@@ -786,7 +778,7 @@ const Medication = ({ Mode }) => {
               </>
             )}
 
-            {Mode === "Show" && (isAdmin || isHead || isEXEC) && Stage === 1 && ['2', '3', '6'].includes(FormData.formstatus) && (
+            {Mode === "Show" && (isAdmin || isHead || isEXEC) && Stage === 1 && ["2", "3", "6"].includes(FormData.formstatus) && (
               <>
                 <Divider variant="middle" flexItem sx={{ m: 1 }} />
                 <ReportComment data={FormData} />
