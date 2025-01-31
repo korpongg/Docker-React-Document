@@ -5,14 +5,17 @@ const { Op } = require("sequelize"); // Import the Op object for Sequelize opera
 const HA_EMAIL = process.env.HA_EMAIL;
 const MIS_EMAIL = process.env.MIS_EMAIL;
 
-let transporter = nodemailer.createTransport({
-  host: "smtp.csloxinfo.com",
-  port: 25,
+const transporter = nodemailer.createTransport({
+  host: process.env.MAIL_HOST,
+  port: process.env.MAIL_PORT,
   secure: false,
   auth: {
-    user: "mkt_design@thainakarin.co.th",
-    pass: "123456*z",
+    user: process.env.MAIL_USERNAME,
+    pass: process.env.MAIL_PASSWORD
   },
+  tls: {
+    rejectUnauthorized: false
+  }
 });
 
 const findDepartmentEmail = async ( reportCode ) => {
