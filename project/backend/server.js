@@ -55,6 +55,8 @@ app.use("/api/medication", require("./routes/api/medication"));
 app.use("/api/supervisor", require("./routes/api/supervisor"));
 app.use("/api/checksupervisor", require("./routes/api/checksupervisor"));
 
+app.use('/api/filemanage', require('./routes/filemanage'));
+
 const { WebSocketServer } = require("ws");
 const WebSocket = require("ws");
 

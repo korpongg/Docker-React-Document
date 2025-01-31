@@ -7,6 +7,9 @@ const { sendEmail, sendExecEmail } = require("./emailController");
 const DB_NAME = process.env.DB_NAME;
 const HA_EMAIL = process.env.HA_EMAIL;
 
+const fs = require('fs');
+const path = require('path');
+
 // Utility function to format date to dd/mm/yyyy hh:mm:ss
 const formatDateTime_N7 = (date) => {
   if (!date) return null;
@@ -32,6 +35,7 @@ const formatDateTime_N7 = (date) => {
 // Create a new occurrence
 exports.createOccurrence = async (req, res) => {
   try {
+    const pdfFile = req.files || "";
 
     // Get the current year and month
     const currentYear = new Date().getFullYear().toString().slice(-2); // Extract last two digits of the year
@@ -77,6 +81,40 @@ exports.createOccurrence = async (req, res) => {
       createAt: sequelize.literal("CURRENT_TIMESTAMP"),
       reportid: reportId, // Assign the generated reportId
     });
+  
+    if (pdfFile.length > 0) {
+      const announceId = reportId;
+      const renamePromises = pdfFile.map((image, i) => {
+          const fileExtension = path.extname(image.originalname); // Extract file extension
+          const newFilename = `${announceId}${fileExtension}`;
+          const oldPath = image.path;
+          const newPath = path.join(__dirname, process.env.DB_STORE2, newFilename);
+          
+          console.log("newPath1",newPath);
+          //const newPath = path.join(__dirname, '../storage/attachfiles', newFilename);
+          
+          return new Promise((resolve, reject) => {
+            fs.rename(oldPath, newPath, async (err) => {
+              if (err) {
+                reject(err);
+              } else {
+                // Copy the renamed file to DB_STORE2_BUILD
+                const newBuildPath = path.join(__dirname, process.env.DB_STORE2_BUILD, newFilename);
+                fs.copyFile(newPath, newBuildPath, (copyErr) => {
+                  if (copyErr) {
+                    reject(copyErr);
+                  } else {
+                    resolve(newFilename);
+                  }
+                });
+              }
+            });
+          });
+        });
+
+        result.image = await Promise.all(renamePromises);
+      await result.save();
+    }
 
     // Send email
     // if (!req.body.formstatus) {
@@ -91,6 +129,7 @@ exports.createOccurrence = async (req, res) => {
     executeAndStoreQueryResult();
     res.status(201).json(result);
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: error.message });
   }
 };
@@ -431,8 +470,8 @@ exports.updateOccurrence = async (req, res) => {
           5. สรุปเหตุการณ์:<br/> ${renewDesc}<br/><br/>
           6. การแก้ไขปัญหาเฉพาะหน้า:<br/> ${impromptDesc ? impromptDesc : '-'}</div>
         `;
-        const recipientEmail = 'pattarapon.k@thainakarin.co.th';
-        // const recipientEmail = HA_EMAIL;
+        // const recipientEmail = 'pattarapon.k@thainakarin.co.th';
+        const recipientEmail = HA_EMAIL;
         sendExecEmail(recipientEmail, emailCC, id, emailSubject, emailMessage);
       }
     }

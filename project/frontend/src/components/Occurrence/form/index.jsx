@@ -14,6 +14,7 @@ import SelectBoxList from "../../form/SelectBoxList";
 import ReportDescription from "../../form/ReportDescription";
 import ReportStaff from "../../form/ReportStaff";
 import ReportSugestions from "../../form/ReportSugestions";
+import ReportFile from "../../form/ReportFile";
 import NavForm from "../../form/NavForm";
 import ListSelectData from "../../form/ListSelectData";
 
@@ -22,7 +23,7 @@ import DataDict_Risk from "../../../data/form/DataDict_Risk";
 import { OccurrenceStyle } from "../../../styles/OccurrenceStyle.style";
 import departmentRaw from "../../../data/rawData.json";
 import AlertBar from "../../form/AlertBar";
-import { chkAdmins, chkAdmin, TimeConverter } from "../../Function";
+import { chkAdmins, chkAdmin, TimeConverter, checkFileExists } from "../../Function";
 import ReportComment from "../../form/ReportComment";
 import showAlert from "../../../utils/alertService";
 
@@ -39,7 +40,12 @@ const Occurrence = ({ Mode }) => {
   const TempFormData = JSON.parse(localStorage.getItem("FormData")) || {};
   const [Stage, setStage] = useState(1);
   const [OccStage, setOccStage] = useState(0);
-  const [FormData, setFormData] = useState({});
+  const [formData, setFormData] = useState({});
+  const [pdfData, setPDFData] = useState({
+    filePDF: null,
+    filePDFName: null,
+    previewPDF: null,
+  });
   const [EditFormData, setEditFormData] = useState({});
   const [Alert, setAlert] = useState(false);
   const [AlertType, setAlertType] = useState("error");
@@ -51,23 +57,23 @@ const Occurrence = ({ Mode }) => {
 
   const handleDataChange = (event, name) => {
     const Text = event.target.value;
-    setFormData({ ...FormData, [name]: Text });
+    setFormData({ ...formData, [name]: Text });
     if (Mode === "Edit") {
       setEditFormData({ ...EditFormData, [name]: Text });
     }
   };
   const handleDataChangeSingle = (datavalue, name) => {
     const Text = datavalue;
-    setFormData({ ...FormData, [name]: Text });
+    setFormData({ ...formData, [name]: Text });
     if (Mode === "Edit") {
       setEditFormData({ ...EditFormData, [name]: Text });
     }
   };
 
   const handleReplaceData = (source, destination) => {
-    const tempsource = FormData[source];
+    const tempsource = formData[source];
     // console.log("tempsource",tempsource);
-    setFormData({ ...FormData, [destination]: tempsource });
+    setFormData({ ...formData, [destination]: tempsource });
     setEditFormData({ ...EditFormData, [destination]: tempsource });
   };
 
@@ -79,9 +85,22 @@ const Occurrence = ({ Mode }) => {
   const handleDateChange = (event, name) => {
     const AddDate = new Date(event.target.value);
     const EditDate = TimeConverter(event.target.value, 7);
-    setFormData({ ...FormData, [name]: AddDate });
+    setFormData({ ...formData, [name]: AddDate });
     if (Mode === "Edit") {
       setEditFormData({ ...EditFormData, [name]: EditDate });
+    }
+  };
+      
+  const fetchDataPDF = async () => {
+    try {
+      const pdfPath = `${apiUrl}/filemanage/${formData.reportid}.pdf`;
+      const pdfPathLocal = `../../../storage/attachfiles/${formData.reportid}.pdf`;
+      const pdfExists = await checkFileExists(pdfPath);
+      if (pdfExists) {
+        setPDFData((prevPDFData) => ({ ...prevPDFData, filePDFName: `${formData.reportid}.pdf`, previewPDF: pdfPathLocal }));
+      }
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -172,7 +191,7 @@ const Occurrence = ({ Mode }) => {
   };
 
   const handleDataChangeCheckbox = (dataarray, columnname) => {
-    setFormData({ ...FormData, [columnname]: dataarray });
+    setFormData({ ...formData, [columnname]: dataarray });
     if (Mode === "Edit") {
       setEditFormData({ ...EditFormData, [columnname]: dataarray });
     }
@@ -199,37 +218,37 @@ const Occurrence = ({ Mode }) => {
   };
 
   const handleDataSingleChange = (data, name) => {
-    setFormData({ ...FormData, [name]: data });
+    setFormData({ ...formData, [name]: data });
     if (Mode === "Edit") {
       setEditFormData({ ...EditFormData, [name]: data });
     }
   };
 
   const NextStage = () => {
-    localStorage.setItem("FormData", JSON.stringify(FormData));
+    localStorage.setItem("FormData", JSON.stringify(formData));
     setStage(Stage + 1);
     handleScrollToTop();
   };
   const PrevStage = () => {
     if (Stage > 1) {
-      localStorage.setItem("FormData", JSON.stringify(FormData));
+      localStorage.setItem("FormData", JSON.stringify(formData));
       setStage(Stage - 1);
       handleScrollToTop();
     }
   };
   const FirstStage = () => {
-    localStorage.setItem("FormData", JSON.stringify(FormData));
+    localStorage.setItem("FormData", JSON.stringify(formData));
     setStage(1);
     handleScrollToTop();
   };
   const LastStage = (MaxStage) => {
-    localStorage.setItem("FormData", JSON.stringify(FormData));
+    localStorage.setItem("FormData", JSON.stringify(formData));
     setStage(MaxStage);
     handleScrollToTop();
   };
   const ToStage = (toval, MaxStage) => {
     if (toval <= MaxStage && toval > 0) {
-      localStorage.setItem("FormData", JSON.stringify(FormData));
+      localStorage.setItem("FormData", JSON.stringify(formData));
       setStage(toval);
       handleScrollToTop();
     }
@@ -259,6 +278,45 @@ const Occurrence = ({ Mode }) => {
     }
   }, []);
 
+  useEffect(() => {
+    if(formData.reportid) {
+      fetchDataPDF();
+    }
+  }, [formData]);
+
+  const handleFilePChange = (e) => {
+    const selectedFile = e.target.files[0];
+  
+    if (selectedFile) {
+      setPDFData((prevPDFData) => ({
+        ...prevPDFData,
+        filePDF: selectedFile,
+        filePDFName: selectedFile.name,
+      }));
+  
+      // Check if the selected file is a PDF
+      if (selectedFile.type.startsWith("application/pdf")) {
+        setPDFData((prevPDFData) => ({ ...prevPDFData, previewPDF: URL.createObjectURL(selectedFile) }));
+      } else {
+        setPDFData((prevPDFData) => ({
+          ...prevPDFData,
+          filePDF: null,
+          filePDFName: null,
+          previewPDF: null,
+        }));
+        // Handle the case where the selected file is not a PDF
+        // You may want to show an error message to the user
+      }
+  
+      const reader = new FileReader();
+      reader.onload = () => {
+        setPDFData((prevPDFData) => ({ ...prevPDFData, previewPDF: reader.result }));
+      };
+  
+      reader.readAsDataURL(selectedFile);
+    }
+  };
+
   const ClearData = () => {
     localStorage.removeItem("FormData");
     setFormData({
@@ -272,6 +330,11 @@ const Occurrence = ({ Mode }) => {
       faction: UserData.faction,
       dep: UserData.dep,
       createby: UserData.userid,
+    });
+    setPDFData({
+      filePDF: null,
+      filePDFName: null,
+      previewPDF: null,
     });
   };
 
@@ -302,43 +365,70 @@ const Occurrence = ({ Mode }) => {
     "service",
     "utility",
   ];
+  
+  const formatDateForSQL = (date) => {
+    if (!date) return "";
+    return new Date(date).toISOString().slice(0, 19).replace("T", " ");
+  };
 
   const handleSubmit = async (Mode) => {
     console.log(1);
     const missingKeys = keydata.filter(({ key }) => {
       if (key === "deptrelate") {
-        return !(FormData[key] && FormData[key].length);
+        return !(formData[key] && formData[key].length);
       } else {
-        return !FormData[key] || FormData[key] === ""; // Ensure it's not empty
+        return !formData[key] || formData[key] === ""; // Ensure it's not empty
       }
     });
     const totalLength = keysToCheck.reduce((sum, key) => {
-      if (Array.isArray(FormData[key])) {
-        return sum + FormData[key].length;
+      if (Array.isArray(formData[key])) {
+        return sum + formData[key].length;
       }
       return sum;
     }, 0);
     if (Mode !== "Draft") {
       setAlertBorder(missingKeys);
     }
-
     if (missingKeys.length === 0 || Mode === "Draft") {
       let submitFormData;
       if (totalLength > 0 || Mode === "Draft") {
-        submitFormData = {
-          ...FormData,
-          deptrelate: JSON.stringify(FormData.deptrelate),
-          equipment: JSON.stringify(FormData.equipment),
-          management: JSON.stringify(FormData.management),
-          patientcare: JSON.stringify(FormData.patientcare),
-          patientsupport: JSON.stringify(FormData.patientsupport),
-          safety: JSON.stringify(FormData.safety),
-          service: JSON.stringify(FormData.service),
-          utility: JSON.stringify(FormData.utility),
-          occurrencedate: TimeConverter(FormData.occurrencedate, 7),
-          reportdate: TimeConverter(FormData.reportdate, 7),
-          formstatus: "0",
-        };
+        // submitFormData = {
+        //   ...formData,
+        //   deptrelate: JSON.stringify(formData.deptrelate),
+        //   equipment: JSON.stringify(formData.equipment),
+        //   management: JSON.stringify(formData.management),
+        //   patientcare: JSON.stringify(formData.patientcare),
+        //   patientsupport: JSON.stringify(formData.patientsupport),
+        //   safety: JSON.stringify(formData.safety),
+        //   service: JSON.stringify(formData.service),
+        //   utility: JSON.stringify(formData.utility),
+        //   occurrencedate: TimeConverter(formData.occurrencedate, 7),
+        //   reportdate: TimeConverter(formData.reportdate, 7),
+        //   formstatus: "0",
+        //   files: pdfData.filePDF,
+        // };
+        
+        const submitFormData = new FormData();
+        Object.keys(formData).forEach((key) => {
+          if (formData[key] !== undefined && formData[key] !== null) {
+            // Exclude occurrencedate and reportdate
+            if (key !== "occurrencedate" && key !== "reportdate") {
+              // Convert arrays/objects to JSON string before appending
+              if (typeof formData[key] === "object") {
+                submitFormData.append(key, JSON.stringify(formData[key]));
+              } else {
+                submitFormData.append(key, formData[key]);
+              }
+            }
+          }
+        });
+        submitFormData.append("occurrencedate", TimeConverter(formData.occurrencedate, 7));
+        submitFormData.append("reportdate", TimeConverter(formData.reportdate, 7));
+        if (pdfData.filePDF) {
+          submitFormData.append("files", pdfData.filePDF);
+        }
+        submitFormData.append("formstatus", "0");
+
 
         try {
           const response = await axios.post(`${apiUrl}/occurrences`, submitFormData, { ...config });
@@ -373,14 +463,14 @@ const Occurrence = ({ Mode }) => {
     console.log(2);
     const missingKeys = keydata.filter(({ key }) => {
       if (key === "deptrelate") {
-        return !(FormData[key] && FormData[key].length);
+        return !(formData[key] && formData[key].length);
       } else {
-        return !FormData[key] || FormData[key] === ""; // Ensure it's not empty
+        return !formData[key] || formData[key] === ""; // Ensure it's not empty
       }
     });
     const totalLength = keysToCheck.reduce((sum, key) => {
-      if (Array.isArray(FormData[key])) {
-        return sum + FormData[key].length;
+      if (Array.isArray(formData[key])) {
+        return sum + formData[key].length;
       }
       return sum;
     }, 0);
@@ -392,15 +482,16 @@ const Occurrence = ({ Mode }) => {
       if (totalLength > 0 || Mode === "Draft") {
         submitEditFormData = {
           ...EditFormData,
-          deptrelate: JSON.stringify(FormData.deptrelate),
-          equipment: JSON.stringify(FormData.equipment),
-          management: JSON.stringify(FormData.management),
-          patientcare: JSON.stringify(FormData.patientcare),
-          patientsupport: JSON.stringify(FormData.patientsupport),
-          safety: JSON.stringify(FormData.safety),
-          service: JSON.stringify(FormData.service),
-          utility: JSON.stringify(FormData.utility),
+          deptrelate: JSON.stringify(formData.deptrelate),
+          equipment: JSON.stringify(formData.equipment),
+          management: JSON.stringify(formData.management),
+          patientcare: JSON.stringify(formData.patientcare),
+          patientsupport: JSON.stringify(formData.patientsupport),
+          safety: JSON.stringify(formData.safety),
+          service: JSON.stringify(formData.service),
+          utility: JSON.stringify(formData.utility),
           updateby: UserData.userid,
+          files: pdfData.filePDF,
         };
         if (Mode === "Draft") {
           submitEditFormData = {
@@ -409,7 +500,7 @@ const Occurrence = ({ Mode }) => {
           };
         }
         if (Mode === "Submit") {
-          if (FormData.formstatus === "0") {
+          if (formData.formstatus === "0") {
             submitEditFormData = {
               ...submitEditFormData,
               formstatus: "1",
@@ -484,7 +575,7 @@ const Occurrence = ({ Mode }) => {
                 </IconButton>
               </Tooltip>
             )}
-            {FormData && Mode !== "Add" && (<span style={{ fontSize: "20px" }}>หมายเลขเอกสาร : {FormData.reportid}&nbsp;&nbsp;</span>)}
+            {formData && Mode !== "Add" && (<span style={{ fontSize: "20px" }}>หมายเลขเอกสาร : {formData.reportid}&nbsp;&nbsp;</span>)}
           </span>
         </Box>
 
@@ -494,7 +585,7 @@ const Occurrence = ({ Mode }) => {
               <>
                 <GeneralInfo
                   Mode={Mode}
-                  data={FormData}
+                  data={formData}
                   setDataFunction={handleDataChange}
                   setSingleDataFunction={handleDataChangeSingle}
                   missingKeys={AlertBorder}
@@ -504,7 +595,7 @@ const Occurrence = ({ Mode }) => {
                 <ReportLog
                   FormType="Occ"
                   Mode={Mode}
-                  data={FormData}
+                  data={formData}
                   setDataFunction={handleDataChange}
                   handleDateChange={handleDateChange}
                   handleDataChangeCheckbox={handleDataChangeCheckbox}
@@ -515,7 +606,7 @@ const Occurrence = ({ Mode }) => {
                 <Divider variant="middle" flexItem sx={{ m: 1 }} />
                 <ReportRiskType
                   Mode={Mode}
-                  data={FormData}
+                  data={formData}
                   setDataFunction={handleDataChange}
                   optionsdata={DataDict_Risk}
                   datacolumn={["GeneralRisk", "ClinicalRisk"]}
@@ -534,7 +625,7 @@ const Occurrence = ({ Mode }) => {
                 </Box>
                 <ListSelectData
                   OccType={OccType}
-                  data={FormData}
+                  data={formData}
                   Mode={Mode}
                   DeleteFunction={removeDataFromCheckboxList}
                   setOccStage={setOccStage}
@@ -571,7 +662,7 @@ const Occurrence = ({ Mode }) => {
 
                     {OccStage === 1 && (
                       <SelectBoxList
-                        data={FormData}
+                        data={formData}
                         optionsdata={DataDict_OccurrenceForm}
                         datacolumn="patientcare"
                         remark={true}
@@ -585,7 +676,7 @@ const Occurrence = ({ Mode }) => {
                     )}
                     {OccStage === 2 && (
                       <SelectBoxList
-                        data={FormData}
+                        data={formData}
                         optionsdata={DataDict_OccurrenceForm}
                         datacolumn="patientsupport"
                         remark={true}
@@ -597,7 +688,7 @@ const Occurrence = ({ Mode }) => {
                     )}
                     {OccStage === 3 && (
                       <SelectBoxList
-                        data={FormData}
+                        data={formData}
                         optionsdata={DataDict_OccurrenceForm}
                         datacolumn="utility"
                         remark={true}
@@ -609,7 +700,7 @@ const Occurrence = ({ Mode }) => {
                     )}
                     {OccStage === 4 && (
                       <SelectBoxList
-                        data={FormData}
+                        data={formData}
                         optionsdata={DataDict_OccurrenceForm}
                         datacolumn="equipment"
                         remark={true}
@@ -621,7 +712,7 @@ const Occurrence = ({ Mode }) => {
                     )}
                     {OccStage === 5 && (
                       <SelectBoxList
-                        data={FormData}
+                        data={formData}
                         optionsdata={DataDict_OccurrenceForm}
                         datacolumn="safety"
                         remark={true}
@@ -633,7 +724,7 @@ const Occurrence = ({ Mode }) => {
                     )}
                     {OccStage === 6 && (
                       <SelectBoxList
-                        data={FormData}
+                        data={formData}
                         optionsdata={DataDict_OccurrenceForm}
                         datacolumn="service"
                         remark={true}
@@ -645,7 +736,7 @@ const Occurrence = ({ Mode }) => {
                     )}
                     {OccStage === 7 && (
                       <SelectBoxList
-                        data={FormData}
+                        data={formData}
                         optionsdata={DataDict_OccurrenceForm}
                         datacolumn="management"
                         remark={true}
@@ -665,7 +756,7 @@ const Occurrence = ({ Mode }) => {
                 <ReportDescription
                   OccType={OccType}
                   Mode={Mode}
-                  data={FormData}
+                  data={formData}
                   setDataFunction={handleDataChange}
                   missingKeys={AlertBorder}
                   UserData={UserData}
@@ -679,7 +770,7 @@ const Occurrence = ({ Mode }) => {
               <>
                 <ReportStaff
                   Mode={Mode}
-                  data={FormData}
+                  data={formData}
                   setDataFunction={handleDataChange}
                   setData={handleDataSingleChange}
                   missingKeys={AlertBorder}
@@ -687,17 +778,19 @@ const Occurrence = ({ Mode }) => {
 
                 <ReportSugestions
                   Mode={Mode}
-                  data={FormData}
+                  data={formData}
                   setDataFunction={handleDataChange}
                   missingKeys={AlertBorder}
                 />
               </>
             )}
+            
+            <ReportFile Mode={Mode} pdfData={pdfData} handleFilePChange={handleFilePChange} />
 
-            {Mode === "Show" && (isAdmin || isEXEC) && Stage === 1 && ["2", "5"].includes(FormData.formstatus) && (
+            {Mode === "Show" && (isAdmin || isEXEC) && Stage === 1 && ["2", "5"].includes(formData.formstatus) && (
               <>
                 <Divider variant="middle" flexItem sx={{ m: 1 }} />
-                <ReportComment data={FormData} />
+                <ReportComment data={formData} />
               </>
             )}
           </Box>
@@ -710,8 +803,8 @@ const Occurrence = ({ Mode }) => {
         )}
         <NavForm
           Mode={Mode}
-          Data={FormData}
-          Access={FormData.createby === UserData.userid || isAdmin}
+          Data={formData}
+          Access={formData.createby === UserData.userid || isAdmin}
           submitfunction={handleSubmit}
           handleSubmitEdit={handleSubmitEdit}
           Stage={Stage}
