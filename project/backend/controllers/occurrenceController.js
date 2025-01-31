@@ -85,7 +85,7 @@ exports.createOccurrence = async (req, res) => {
     if (pdfFile.length > 0) {
       const renamePromises = pdfFile.map((image, i) => {
         const fileExtension = path.extname(image.originalname); // Extract file extension
-        const newFilename = `${reportId}${fileExtension}`;
+        const newFilename = `OCC${reportId}${fileExtension}`;
         const oldPath = image.path;
         const newPath = path.join(__dirname, process.env.DB_STORE2, newFilename);
         console.log("newPath1", newPath);
@@ -382,7 +382,7 @@ exports.updateOccurrence = async (req, res) => {
     if (pdfFile && pdfFile.length > 0) {
       const renamePromises = pdfFile.map((image, i) => {
         const fileExtension = path.extname(image.originalname);
-        const newFilename = `${req.body.reportid}${fileExtension}`;
+        const newFilename = `OCC${req.body.reportid}${fileExtension}`;
         const oldPath = image.path;
         const newPath = path.join(__dirname, process.env.DB_STORE2, newFilename);
         console.log("newPath2", newPath);

@@ -93,8 +93,8 @@ const Occurrence = ({ Mode }) => {
       
   const fetchDataPDF = async () => {
     try {
-      const pdfPath = `${apiUrl}/filemanage/${formData.reportid}.pdf`;
-      const pdfPathLocal = `../../../storage/attachfiles/${formData.reportid}.pdf`;
+      const pdfPath = `${apiUrl}/filemanage/OCC${formData.reportid}.pdf`;
+      const pdfPathLocal = `../../../storage/attachfiles/OCC${formData.reportid}.pdf`;
       const pdfExists = await checkFileExists(pdfPath);
       if (pdfExists) {
         setPDFData((prevPDFData) => ({ ...prevPDFData, filePDFName: `${formData.reportid}.pdf`, previewPDF: pdfPathLocal }));

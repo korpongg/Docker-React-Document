@@ -4,7 +4,7 @@ import TextField from "@mui/material/TextField";
 const ReportFile = ({ Mode, pdfData, handleFilePChange }) => {
   return (
     <>
-      <div className="TopicHeader">แนบเอกสาร (ถ้ามี)</div>
+      <div className="TopicHeader">เอกสารแนบ (ถ้ามี)</div>
       <div className="GeneralBox">
         <div className="ContentBox" style={{ display: "flex", flexDirection: "column" }}>
           <div id="reportFile" className="AreaBOX">
