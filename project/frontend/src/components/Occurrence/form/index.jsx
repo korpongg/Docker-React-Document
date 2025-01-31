@@ -97,7 +97,7 @@ const Occurrence = ({ Mode }) => {
       const pdfPathLocal = `../../../storage/attachfiles/OCC${formData.reportid}.pdf`;
       const pdfExists = await checkFileExists(pdfPath);
       if (pdfExists) {
-        setPDFData((prevPDFData) => ({ ...prevPDFData, filePDFName: `${formData.reportid}.pdf`, previewPDF: pdfPathLocal }));
+        setPDFData((prevPDFData) => ({ ...prevPDFData, filePDFName: `OCC${formData.reportid}.pdf`, previewPDF: pdfPathLocal }));
       }
     } catch (err) {
       console.log(err);
@@ -573,6 +573,8 @@ const Occurrence = ({ Mode }) => {
       window.scrollTo({ top: yPosition, behavior: "smooth" });
     }
   };
+
+  console.log(pdfData)
 
   return (
     <>
