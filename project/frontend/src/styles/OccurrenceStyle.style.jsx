@@ -241,6 +241,46 @@ export const OccurrenceStyle = styled(Box)`
     padding:5px;
     margin:10px 0px 15px 20px;
   }
+
+  #reportFile.AreaBOX input {
+    color: #000;
+    padding: 10px;
+    border: 1px solid lightgray;
+    background: unset;
+    font-family: inherit;
+    font-size: 1.125rem;
+    border-radius: 6px;
+  }
+
+  #reportFile.AreaBOX .pdf-input-label, #reportFile.AreaBOX input[type="file"] {
+    color: #000;
+    padding: 10px;
+    border: 1px solid lightgray;
+    background: unset;
+    font-family: inherit;
+    font-size: 1.125rem;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    padding: 6px 10px;
+  }
+
+  #reportFile.AreaBOX .pdf-input-label .pdf-selected{
+    background: #6b6b6b;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 14px;
+    margin-right: 4px;
+    padding: 4px 6px;
+  }
+
+  #reportFile.AreaBOX .pdfViewer {
+    /* border: 1px solid lightgray; */
+    /* border-radius: 6px; */
+    max-height: 510px;
+    overflow: auto;
+  }
+
   .SETERRORBOX{
     background: #ffe5e580;
     border: 1px solid #ff000080 !important;
@@ -463,4 +503,6 @@ export const OccurrenceStyle = styled(Box)`
   .AccessBox{
     margin:200px;
   }
+
+
 `;

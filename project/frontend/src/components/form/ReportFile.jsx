@@ -7,7 +7,7 @@ const ReportFile = ({ Mode, pdfData, handleFilePChange }) => {
       <div className="TopicHeader">แนบเอกสาร (ถ้ามี)</div>
       <div className="GeneralBox">
         <div className="ContentBox" style={{ display: "flex", flexDirection: "column" }}>
-          <div className="AreaBOX">
+          <div id="reportFile" className="AreaBOX">
             <input
               type="file"
               id="filess"
@@ -26,18 +26,6 @@ const ReportFile = ({ Mode, pdfData, handleFilePChange }) => {
                 <iframe src={pdfData.previewPDF} title="PDF Viewer" width="100%" height="500px"></iframe>
               </div>
             )}
-            {/* <TextField
-              fullWidth
-              id="impromptusolution"
-              disabled={Mode === "Show"}
-              label="การแก้ไขปัญหาเฉพาะหน้า"
-              value={data?.impromptusolution || ""}
-              onChange={(e) => setDataFunction(e, "impromptusolution")}
-              variant="filled"
-              multiline
-              rows={4}
-              sx={{ marginBottom: 1 }}
-            /> */}
           </div>
         </div>
       </div>
