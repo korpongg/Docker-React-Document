@@ -111,7 +111,7 @@ const sendExecEmail = async (to, cc, reportId, subject, html) => {
     const mailOptions = {
       from: HA_EMAIL,
       to,
-      // cc,
+      cc,
       subject,
       html,
     };

@@ -83,36 +83,31 @@ exports.createOccurrence = async (req, res) => {
     });
   
     if (pdfFile.length > 0) {
-      const announceId = reportId;
       const renamePromises = pdfFile.map((image, i) => {
-          const fileExtension = path.extname(image.originalname); // Extract file extension
-          const newFilename = `${announceId}${fileExtension}`;
-          const oldPath = image.path;
-          const newPath = path.join(__dirname, process.env.DB_STORE2, newFilename);
-          
-          console.log("newPath1",newPath);
-          //const newPath = path.join(__dirname, '../storage/attachfiles', newFilename);
-          
-          return new Promise((resolve, reject) => {
-            fs.rename(oldPath, newPath, async (err) => {
-              if (err) {
-                reject(err);
-              } else {
-                // Copy the renamed file to DB_STORE2_BUILD
-                const newBuildPath = path.join(__dirname, process.env.DB_STORE2_BUILD, newFilename);
-                fs.copyFile(newPath, newBuildPath, (copyErr) => {
-                  if (copyErr) {
-                    reject(copyErr);
-                  } else {
-                    resolve(newFilename);
-                  }
-                });
-              }
-            });
+        const fileExtension = path.extname(image.originalname); // Extract file extension
+        const newFilename = `${reportId}${fileExtension}`;
+        const oldPath = image.path;
+        const newPath = path.join(__dirname, process.env.DB_STORE2, newFilename);
+        console.log("newPath1", newPath);
+        
+        return new Promise((resolve, reject) => {
+          fs.rename(oldPath, newPath, async (err) => {
+            if (err) {
+              reject(err);
+            } else {
+              const newBuildPath = path.join(__dirname, process.env.DB_STORE2_BUILD, newFilename);
+              fs.copyFile(newPath, newBuildPath, (copyErr) => {
+                if (copyErr) {
+                  reject(copyErr);
+                } else {
+                  resolve(newFilename);
+                }
+              });
+            }
           });
         });
-
-        result.image = await Promise.all(renamePromises);
+      });
+      result.image = await Promise.all(renamePromises);
       await result.save();
     }
 
@@ -329,6 +324,7 @@ exports.updateOccurrence = async (req, res) => {
   const id = req?.body?.id;
 
   try {
+    const pdfFile = req.files || "";
     const occurrence = await Occurrences.findOne({ where: { id: id } });
     // const [updated] = await Occurrences.update(req.body, {
     //   where: { id: req.params.id },
@@ -382,6 +378,34 @@ exports.updateOccurrence = async (req, res) => {
     // console.log(occurrence.toJSON());
 
     const result = await occurrence.save();
+
+    if (pdfFile && pdfFile.length > 0) {
+      const renamePromises = pdfFile.map((image, i) => {
+        const fileExtension = path.extname(image.originalname);
+        const newFilename = `${req.body.reportid}${fileExtension}`;
+        const oldPath = image.path;
+        const newPath = path.join(__dirname, process.env.DB_STORE2, newFilename);
+        console.log("newPath2", newPath);
+        
+        return new Promise((resolve, reject) => {
+          fs.rename(oldPath, newPath, async (err) => {
+            if (err) reject(err);
+            else {
+              const newBuildPath = path.join(__dirname, process.env.DB_STORE2_BUILD, newFilename);
+              fs.copyFile(newPath, newBuildPath, (copyErr) => {
+                if (copyErr) {
+                  reject(copyErr);
+                } else {
+                  resolve(newFilename);
+                }
+              });
+            }
+          });
+        });
+      });
+      result.image = await Promise.all(renamePromises);
+      await result.save();
+    }
 
     // Determine if email should be sent based on level and reporttype
     const isGeneralRisk = result.reporttype === '0';
@@ -470,8 +494,8 @@ exports.updateOccurrence = async (req, res) => {
           5. สรุปเหตุการณ์:<br/> ${renewDesc}<br/><br/>
           6. การแก้ไขปัญหาเฉพาะหน้า:<br/> ${impromptDesc ? impromptDesc : '-'}</div>
         `;
-        // const recipientEmail = 'pattarapon.k@thainakarin.co.th';
-        const recipientEmail = HA_EMAIL;
+        const recipientEmail = 'pattarapon.k@thainakarin.co.th';
+        // const recipientEmail = HA_EMAIL;
         sendExecEmail(recipientEmail, emailCC, id, emailSubject, emailMessage);
       }
     }

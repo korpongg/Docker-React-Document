@@ -282,7 +282,7 @@ const Occurrence = ({ Mode }) => {
     if(formData.reportid) {
       fetchDataPDF();
     }
-  }, [formData]);
+  }, [formData.reportid]);
 
   const handleFilePChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -365,11 +365,6 @@ const Occurrence = ({ Mode }) => {
     "service",
     "utility",
   ];
-  
-  const formatDateForSQL = (date) => {
-    if (!date) return "";
-    return new Date(date).toISOString().slice(0, 19).replace("T", " ");
-  };
 
   const handleSubmit = async (Mode) => {
     console.log(1);
@@ -390,7 +385,7 @@ const Occurrence = ({ Mode }) => {
       setAlertBorder(missingKeys);
     }
     if (missingKeys.length === 0 || Mode === "Draft") {
-      let submitFormData;
+      // let submitFormData;
       if (totalLength > 0 || Mode === "Draft") {
         // submitFormData = {
         //   ...formData,
@@ -428,7 +423,6 @@ const Occurrence = ({ Mode }) => {
           submitFormData.append("files", pdfData.filePDF);
         }
         submitFormData.append("formstatus", "0");
-
 
         try {
           const response = await axios.post(`${apiUrl}/occurrences`, submitFormData, { ...config });
@@ -478,36 +472,64 @@ const Occurrence = ({ Mode }) => {
       setAlertBorder(missingKeys);
     }
     if (missingKeys.length === 0 || Mode === "Draft") {
-      let submitEditFormData;
+      // let submitEditFormData;
       if (totalLength > 0 || Mode === "Draft") {
-        submitEditFormData = {
-          ...EditFormData,
-          deptrelate: JSON.stringify(formData.deptrelate),
-          equipment: JSON.stringify(formData.equipment),
-          management: JSON.stringify(formData.management),
-          patientcare: JSON.stringify(formData.patientcare),
-          patientsupport: JSON.stringify(formData.patientsupport),
-          safety: JSON.stringify(formData.safety),
-          service: JSON.stringify(formData.service),
-          utility: JSON.stringify(formData.utility),
-          updateby: UserData.userid,
-          files: pdfData.filePDF,
-        };
+        // submitEditFormData = {
+        //   ...EditFormData,
+        //   deptrelate: JSON.stringify(formData.deptrelate),
+        //   equipment: JSON.stringify(formData.equipment),
+        //   management: JSON.stringify(formData.management),
+        //   patientcare: JSON.stringify(formData.patientcare),
+        //   patientsupport: JSON.stringify(formData.patientsupport),
+        //   safety: JSON.stringify(formData.safety),
+        //   service: JSON.stringify(formData.service),
+        //   utility: JSON.stringify(formData.utility),
+        //   updateby: UserData.userid,
+        //   files: pdfData.filePDF,
+        // };
+        // if (Mode === "Draft") {
+        //   submitEditFormData = {
+        //     ...submitEditFormData,
+        //     formstatus: "0",
+        //   };
+        // }
+        // if (Mode === "Submit") {
+        //   if (formData.formstatus === "0") {
+        //     submitEditFormData = {
+        //       ...submitEditFormData,
+        //       formstatus: "1",
+        //     };
+        //   }
+        // }
+        // console.log("submitEditFormData", submitEditFormData);
+        
+        const submitEditFormData = new FormData();
+        Object.keys(formData).forEach((key) => {
+          if (formData[key] !== undefined && formData[key] !== null) {
+            // Exclude occurrencedate and reportdate
+            if (key !== "occurrencedate" && key !== "reportdate" && key != "formstatus") {
+              // Convert arrays/objects to JSON string before appending
+              if (typeof formData[key] === "object") {
+                submitEditFormData.append(key, JSON.stringify(formData[key]));
+              } else {
+                submitEditFormData.append(key, formData[key]);
+              }
+            }
+          }
+        });
+        submitEditFormData.append("occurrencedate", TimeConverter(formData.occurrencedate, 7));
+        submitEditFormData.append("reportdate", TimeConverter(formData.reportdate, 7));
+        if (pdfData.filePDF) {
+          submitEditFormData.append("files", pdfData.filePDF);
+        }
         if (Mode === "Draft") {
-          submitEditFormData = {
-            ...submitEditFormData,
-            formstatus: "0",
-          };
+          submitEditFormData.append("formstatus", "0");
         }
         if (Mode === "Submit") {
           if (formData.formstatus === "0") {
-            submitEditFormData = {
-              ...submitEditFormData,
-              formstatus: "1",
-            };
+            submitEditFormData.append("formstatus", "1");
           }
         }
-        // console.log("submitEditFormData", submitEditFormData);
 
         try {
           const response = await axios.put(`${apiUrl}/occurrences`, submitEditFormData, { ...config });
