@@ -78,6 +78,7 @@ export const MedicationStyle = styled(Box)`
     color:#000000;
     font-size:18px;
     padding:10px;
+    align-items: center;
   }
   .DatetimeBox{
     width:100%;

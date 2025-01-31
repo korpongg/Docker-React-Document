@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
+import ViewIcon from '@mui/icons-material/FindInPageRounded';
+import Button from '@mui/material/Button';
 import Tooltip from "@mui/material/Tooltip";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
@@ -704,7 +706,10 @@ const Medication = ({ Mode }) => {
             {Stage === 1 && (
               <>
                 <Divider variant="middle" flexItem sx={{ m: 1 }} />
-                <Box className="TopicHeader">หัวข้อระบบงานที่เกี่ยวข้องกับเหตุการณ์ที่เกิดขึ้น</Box>
+                <Box className="TopicHeader">
+                  หัวข้อระบบงานที่เกี่ยวข้องกับเหตุการณ์ที่เกิดขึ้น
+                  <Button variant="outlined" sx={{ fontFamily: 'inherit', marginLeft: 1 }} startIcon={<ViewIcon />} onClick={() => window.open("https://example.com", "_blank")}>ดูตัวอย่าง</Button>
+                </Box>
                 <ListSelectData
                   OccType={OccType}
                   data={formData}
