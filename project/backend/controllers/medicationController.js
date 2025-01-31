@@ -9,6 +9,9 @@ const { findMedDepartmentEmail, sendEmailMed, sendEmailMedEvent, sendExecEmail, 
 const DB_NAME = process.env.DB_NAME;
 const HA_EMAIL = process.env.HA_EMAIL;
 
+const fs = require('fs');
+const path = require('path');
+
 // Utility function to format date to dd/mm/yyyy hh:mm:ss
 const formatDateTime_N7 = (date) => {
   if (!date) return null;
@@ -226,6 +229,7 @@ exports.rePort = async (req, res) => {
 // Create a new medication record
 exports.createMedication = async (req, res) => {
   try {
+    const pdfFile = req.files || "";
 
     // Get the current year and month
     const currentYear = new Date().getFullYear().toString().slice(-2); // Extract last two digits of the year
@@ -271,6 +275,35 @@ exports.createMedication = async (req, res) => {
       createAt: sequelize.literal("CURRENT_TIMESTAMP"),
       reportid: reportId, // Assign the generated reportId
     });
+    
+    if (pdfFile.length > 0) {
+      const renamePromises = pdfFile.map((image, i) => {
+        const fileExtension = path.extname(image.originalname);
+        const newFilename = `MED${reportId}${fileExtension}`;
+        const oldPath = image.path;
+        const newPath = path.join(__dirname, process.env.DB_STORE2, newFilename);
+        console.log("newPath1", newPath);
+        
+        return new Promise((resolve, reject) => {
+          fs.rename(oldPath, newPath, async (err) => {
+            if (err) {
+              reject(err);
+            } else {
+              const newBuildPath = path.join(__dirname, process.env.DB_STORE2_BUILD, newFilename);
+              fs.copyFile(newPath, newBuildPath, (copyErr) => {
+                if (copyErr) {
+                  reject(copyErr);
+                } else {
+                  resolve(newFilename);
+                }
+              });
+            }
+          });
+        });
+      });
+      result.image = await Promise.all(renamePromises);
+      await result.save();
+    }
 
     executeAndStoreQueryResult();
     
@@ -478,6 +511,7 @@ exports.updateMedication = async (req, res) => {
   const id = req?.body?.id;
 
   try {
+    const pdfFile = req.files || "";
     const med = await Medication.findOne({ where: { id: id } });
     if (!med) {
       return res.status(204).json({ message: `No Medication matches ID ${req.body.id}.` });
@@ -545,6 +579,34 @@ exports.updateMedication = async (req, res) => {
     // console.log(med.toJSON());
 
     const result = await med.save();
+    
+    if (pdfFile && pdfFile.length > 0) {
+      const renamePromises = pdfFile.map((image, i) => {
+        const fileExtension = path.extname(image.originalname);
+        const newFilename = `MED${req.body.reportid}${fileExtension}`;
+        const oldPath = image.path;
+        const newPath = path.join(__dirname, process.env.DB_STORE2, newFilename);
+        console.log("newPath2", newPath);
+        
+        return new Promise((resolve, reject) => {
+          fs.rename(oldPath, newPath, async (err) => {
+            if (err) reject(err);
+            else {
+              const newBuildPath = path.join(__dirname, process.env.DB_STORE2_BUILD, newFilename);
+              fs.copyFile(newPath, newBuildPath, (copyErr) => {
+                if (copyErr) {
+                  reject(copyErr);
+                } else {
+                  resolve(newFilename);
+                }
+              });
+            }
+          });
+        });
+      });
+      result.image = await Promise.all(renamePromises);
+      await result.save();
+    }
 
     executeAndStoreQueryResult();
 

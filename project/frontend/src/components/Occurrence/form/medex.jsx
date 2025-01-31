@@ -16,6 +16,7 @@ import ReportDescription from "../../form/ReportDescription";
 import ReportStaff from "../../form/ReportStaff";
 import ReportSugestionsMed from "../../form/ReportSugestionsMed";
 import ReportComment from "../../form/ReportComment";
+import ReportFile from "../../form/ReportFile";
 import NavForm from "../../form/NavForm";
 import ListSelectData from "../../form/ListSelectData";
 
@@ -26,7 +27,7 @@ import DataDict_Med from "../../../data/form/DataDict_Med";
 import { MedicationStyle } from "../../../styles/MedicationStyle.style";
 import departmentRaw from "../../../data/rawData.json";
 import AlertBar from "../../form/AlertBar";
-import { chkMedic, chkHead, chkAdmins, chkAdmin, TimeConverter } from "../../Function";
+import { chkMedic, chkHead, chkAdmins, chkAdmin, TimeConverter, checkFileExists } from "../../Function";
 import showAlert from "../../../utils/alertService";
 
 const Medication = ({ Mode }) => {
@@ -42,7 +43,12 @@ const Medication = ({ Mode }) => {
   const TempFormData = JSON.parse(localStorage.getItem("FormData")) || {};
   const [Stage, setStage] = useState(1);
   const [OccStage, setOccStage] = useState(0);
-  const [FormData, setFormData] = useState({});
+  const [formData, setFormData] = useState({});
+    const [pdfData, setPDFData] = useState({
+      filePDF: null,
+      filePDFName: null,
+      previewPDF: null,
+    });
   const [EditFormData, setEditFormData] = useState({});
   const [Alert, setAlert] = useState(false);
   const [AlertType, setAlertType] = useState("error");
@@ -79,7 +85,7 @@ const Medication = ({ Mode }) => {
       value = "";
     }
 
-    setFormData({ ...FormData, [name]: value });
+    setFormData({ ...formData, [name]: value });
 
     if (Mode === "Edit") {
       setEditFormData({ ...EditFormData, [name]: value });
@@ -88,16 +94,16 @@ const Medication = ({ Mode }) => {
 
   const handleDataChangeSingle = (datavalue, name) => {
     const Text = datavalue;
-    setFormData({ ...FormData, [name]: Text });
+    setFormData({ ...formData, [name]: Text });
     if (Mode === "Edit") {
       setEditFormData({ ...EditFormData, [name]: Text });
     }
   };
 
   const handleReplaceData = (source, destination) => {
-    const tempsource = FormData[source];
+    const tempsource = formData[source];
     // console.log("tempsource",tempsource);
-    setFormData({ ...FormData, [destination]: tempsource });
+    setFormData({ ...formData, [destination]: tempsource });
     setEditFormData({ ...EditFormData, [destination]: tempsource });
   };
 
@@ -109,9 +115,22 @@ const Medication = ({ Mode }) => {
   const handleDateChange = (event, name) => {
     const AddDate = new Date(event.target.value);
     const EditDate = TimeConverter(event.target.value, 7);
-    setFormData({ ...FormData, [name]: AddDate });
+    setFormData({ ...formData, [name]: AddDate });
     if (Mode === "Edit") {
       setEditFormData({ ...EditFormData, [name]: EditDate });
+    }
+  };
+  
+  const fetchDataPDF = async () => {
+    try {
+      const pdfPath = `${apiUrl}/filemanage/MED${formData.reportid}.pdf`;
+      const pdfPathLocal = `../../../storage/attachfiles/MED${formData.reportid}.pdf`;
+      const pdfExists = await checkFileExists(pdfPath);
+      if (pdfExists) {
+        setPDFData((prevPDFData) => ({ ...prevPDFData, filePDFName: `MED${formData.reportid}.pdf`, previewPDF: pdfPathLocal }));
+      }
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -226,7 +245,7 @@ const Medication = ({ Mode }) => {
     });
 
     // Update the state with the sorted data
-    setFormData({ ...FormData, [columnname]: sortedData });
+    setFormData({ ...formData, [columnname]: sortedData });
 
     if (Mode === "Edit") {
       setEditFormData({ ...EditFormData, [columnname]: sortedData });
@@ -254,37 +273,37 @@ const Medication = ({ Mode }) => {
   };
 
   const handleDataSingleChange = (data, name) => {
-    setFormData({ ...FormData, [name]: data });
+    setFormData({ ...formData, [name]: data });
     if (Mode === "Edit") {
       setEditFormData({ ...EditFormData, [name]: data });
     }
   };
 
   const NextStage = () => {
-    localStorage.setItem("FormData", JSON.stringify(FormData));
+    localStorage.setItem("FormData", JSON.stringify(formData));
     setStage(Stage + 1);
     handleScrollToTop();
   };
   const PrevStage = () => {
     if (Stage > 1) {
-      localStorage.setItem("FormData", JSON.stringify(FormData));
+      localStorage.setItem("FormData", JSON.stringify(formData));
       setStage(Stage - 1);
       handleScrollToTop();
     }
   };
   const FirstStage = () => {
-    localStorage.setItem("FormData", JSON.stringify(FormData));
+    localStorage.setItem("FormData", JSON.stringify(formData));
     setStage(1);
     handleScrollToTop();
   };
   const LastStage = (MaxStage) => {
-    localStorage.setItem("FormData", JSON.stringify(FormData));
+    localStorage.setItem("FormData", JSON.stringify(formData));
     setStage(MaxStage);
     handleScrollToTop();
   };
   const ToStage = (toval, MaxStage) => {
     if (toval <= MaxStage && toval > 0) {
-      localStorage.setItem("FormData", JSON.stringify(FormData));
+      localStorage.setItem("FormData", JSON.stringify(formData));
       setStage(toval);
       handleScrollToTop();
     }
@@ -315,6 +334,45 @@ const Medication = ({ Mode }) => {
       setEditFormData({ id: parseInt(id, 10) });
     }
   }, []);
+  
+  useEffect(() => {
+    if(formData.reportid) {
+      fetchDataPDF();
+    }
+  }, [formData.reportid]);
+
+  const handleFilePChange = (e) => {
+    const selectedFile = e.target.files[0];
+  
+    if (selectedFile) {
+      setPDFData((prevPDFData) => ({
+        ...prevPDFData,
+        filePDF: selectedFile,
+        filePDFName: selectedFile.name,
+      }));
+  
+      // Check if the selected file is a PDF
+      if (selectedFile.type.startsWith("application/pdf")) {
+        setPDFData((prevPDFData) => ({ ...prevPDFData, previewPDF: URL.createObjectURL(selectedFile) }));
+      } else {
+        setPDFData((prevPDFData) => ({
+          ...prevPDFData,
+          filePDF: null,
+          filePDFName: null,
+          previewPDF: null,
+        }));
+        // Handle the case where the selected file is not a PDF
+        // You may want to show an error message to the user
+      }
+  
+      const reader = new FileReader();
+      reader.onload = () => {
+        setPDFData((prevPDFData) => ({ ...prevPDFData, previewPDF: reader.result }));
+      };
+  
+      reader.readAsDataURL(selectedFile);
+    }
+  };
 
   const ClearData = () => {
     localStorage.removeItem("FormData");
@@ -330,6 +388,11 @@ const Medication = ({ Mode }) => {
       faction: UserData.faction,
       dep: UserData.dep,
       createby: UserData.userid,
+    });
+    setPDFData({
+      filePDF: null,
+      filePDFName: null,
+      previewPDF: null,
     });
   };
 
@@ -365,14 +428,14 @@ const Medication = ({ Mode }) => {
   const handleSubmit = async (Mode) => {
     const missingKeys = keydata.filter(({ key }) => {
       if (key === "deptrelate") {
-        return !(FormData[key] && FormData[key].length);
+        return !(formData[key] && formData[key].length);
       } else {
-        return !FormData[key] || FormData[key] === ""; // Ensure it's not empty
+        return !formData[key] || formData[key] === ""; // Ensure it's not empty
       }
     });
     const totalLength = keysToCheck.reduce((sum, key) => {
-      if (Array.isArray(FormData[key])) {
-        return sum + FormData[key].length;
+      if (Array.isArray(formData[key])) {
+        return sum + formData[key].length;
       }
       return sum;
     }, 0);
@@ -381,24 +444,46 @@ const Medication = ({ Mode }) => {
     }
 
     if (missingKeys.length === 0 || Mode === "Draft") {
-      let submitFormData;
+      // let submitFormData;
       if (totalLength > 0 || Mode === "Draft") {
-        submitFormData = {
-          ...FormData,
-          prescribing: JSON.stringify(FormData.prescribing),
-          dispensing: JSON.stringify(FormData.dispensing),
-          administration: JSON.stringify(FormData.administration),
-          transcribing: JSON.stringify(FormData.transcribing),
-          rca: JSON.stringify(FormData.rca),
-          effect: JSON.stringify(FormData.effect),
-          drugrelate: JSON.stringify(FormData.drugrelate),
-          occurrencedate: TimeConverter(FormData.occurrencedate, 7),
-          reportdate: TimeConverter(FormData.reportdate, 7),
-          formstatus: "0",
-          // deptrelate: JSON.stringify(FormData.deptrelate),
-        };
+        // submitFormData = {
+        //   ...formData,
+        //   prescribing: JSON.stringify(formData.prescribing),
+        //   dispensing: JSON.stringify(formData.dispensing),
+        //   administration: JSON.stringify(formData.administration),
+        //   transcribing: JSON.stringify(formData.transcribing),
+        //   rca: JSON.stringify(formData.rca),
+        //   effect: JSON.stringify(formData.effect),
+        //   drugrelate: JSON.stringify(formData.drugrelate),
+        //   occurrencedate: TimeConverter(formData.occurrencedate, 7),
+        //   reportdate: TimeConverter(formData.reportdate, 7),
+        //   formstatus: "0",
+        //   // deptrelate: JSON.stringify(formData.deptrelate),
+        // };
 
         // console.log("submitFormData", submitFormData);
+        
+        const submitFormData = new FormData();
+        Object.keys(formData).forEach((key) => {
+          if (formData[key] !== undefined && formData[key] !== null) {
+            // Exclude occurrencedate and reportdate
+            if (key !== "occurrencedate" && key !== "reportdate") {
+              // Convert arrays/objects to JSON string before appending
+              if (typeof formData[key] === "object") {
+                submitFormData.append(key, JSON.stringify(formData[key]));
+              } else {
+                submitFormData.append(key, formData[key]);
+              }
+            }
+          }
+        });
+        submitFormData.append("occurrencedate", TimeConverter(formData.occurrencedate, 7));
+        submitFormData.append("reportdate", TimeConverter(formData.reportdate, 7));
+        if (pdfData.filePDF) {
+          submitFormData.append("files", pdfData.filePDF);
+        }
+        submitFormData.append("formstatus", "0");
+
         try {
           const response = await axios.post(`${apiUrl}/medication`, submitFormData, { ...config });
           const responseStatus = response.status;
@@ -429,18 +514,18 @@ const Medication = ({ Mode }) => {
   };
 
   const handleSubmitEdit = async (Mode) => {
-    console.log("handleSubmitEdit", FormData);
+    console.log("handleSubmitEdit", formData);
     const missingKeys = keydata.filter(({ key }) => {
       if (key === "deptrelate" || key === "level") {
-        // return !(FormData[key] && FormData[key].length);
-        return !FormData[key];
+        // return !(formData[key] && formData[key].length);
+        return !formData[key];
       } else {
-        return !FormData[key] || FormData[key] === ""; // Ensure it's not empty
+        return !formData[key] || formData[key] === ""; // Ensure it's not empty
       }
     });
     const totalLength = keysToCheck.reduce((sum, key) => {
-      if (Array.isArray(FormData[key])) {
-        return sum + FormData[key].length;
+      if (Array.isArray(formData[key])) {
+        return sum + formData[key].length;
       }
       return sum;
     }, 0);
@@ -448,35 +533,63 @@ const Medication = ({ Mode }) => {
       setAlertBorder(missingKeys);
     }
     if (missingKeys.length === 0 || Mode === "Draft") {
-      let submitEditFormData;
+      // let submitEditFormData;
       if (totalLength > 0 || Mode === "Draft") {
-        submitEditFormData = {
-          ...EditFormData,
-          prescribing: JSON.stringify(FormData.prescribing),
-          dispensing: JSON.stringify(FormData.dispensing),
-          administration: JSON.stringify(FormData.administration),
-          transcribing: JSON.stringify(FormData.transcribing),
-          rca: JSON.stringify(FormData.rca),
-          effect: JSON.stringify(FormData.effect),
-          drugrelate: JSON.stringify(FormData.drugrelate),
-          updateby: UserData.userid,
-          formstatus: FormData.formstatus,
-        };
+        // submitEditFormData = {
+        //   ...EditFormData,
+        //   prescribing: JSON.stringify(formData.prescribing),
+        //   dispensing: JSON.stringify(formData.dispensing),
+        //   administration: JSON.stringify(formData.administration),
+        //   transcribing: JSON.stringify(formData.transcribing),
+        //   rca: JSON.stringify(formData.rca),
+        //   effect: JSON.stringify(formData.effect),
+        //   drugrelate: JSON.stringify(formData.drugrelate),
+        //   updateby: UserData.userid,
+        //   formstatus: formData.formstatus,
+        // };
+        // if (Mode === "Draft") {
+        //   submitEditFormData = {
+        //     ...submitEditFormData,
+        //     formstatus: "0",
+        //   };
+        // }
+        // if (Mode === "Submit") {
+        //   if (formData.formstatus === "0") {
+        //     submitEditFormData = {
+        //       ...submitEditFormData,
+        //       formstatus: "1",
+        //     };
+        //   }
+        // }
+        // console.log("submitEditFormData", submitEditFormData);
+        
+        const submitEditFormData = new FormData();
+        Object.keys(formData).forEach((key) => {
+          if (formData[key] !== undefined && formData[key] !== null) {
+            // Exclude occurrencedate and reportdate
+            if (key !== "occurrencedate" && key !== "reportdate" && key != "formstatus") {
+              // Convert arrays/objects to JSON string before appending
+              if (typeof formData[key] === "object") {
+                submitEditFormData.append(key, JSON.stringify(formData[key]));
+              } else {
+                submitEditFormData.append(key, formData[key]);
+              }
+            }
+          }
+        });
+        submitEditFormData.append("occurrencedate", TimeConverter(formData.occurrencedate, 7));
+        submitEditFormData.append("reportdate", TimeConverter(formData.reportdate, 7));
+        if (pdfData.filePDF) {
+          submitEditFormData.append("files", pdfData.filePDF);
+        }
         if (Mode === "Draft") {
-          submitEditFormData = {
-            ...submitEditFormData,
-            formstatus: "0",
-          };
+          submitEditFormData.append("formstatus", "0");
         }
         if (Mode === "Submit") {
-          if (FormData.formstatus === "0") {
-            submitEditFormData = {
-              ...submitEditFormData,
-              formstatus: "1",
-            };
+          if (formData.formstatus === "0") {
+            submitEditFormData.append("formstatus", "1");
           }
         }
-        // console.log("submitEditFormData", submitEditFormData);
 
         try {
           const response = await axios.put(`${apiUrl}/medication`, submitEditFormData, { ...config });
@@ -545,7 +658,7 @@ const Medication = ({ Mode }) => {
                 </IconButton>
               </Tooltip>
             )}
-            {FormData && Mode !== "Add" && (<span style={{ fontSize: "20px" }}>&nbsp;&nbsp;&nbsp;หมายเลขเอกสาร : {FormData.reportid}&nbsp;&nbsp;</span>)}
+            {formData && Mode !== "Add" && (<span style={{ fontSize: "20px" }}>&nbsp;&nbsp;&nbsp;หมายเลขเอกสาร : {formData.reportid}&nbsp;&nbsp;</span>)}
           </span>
         </Box>
 
@@ -555,7 +668,7 @@ const Medication = ({ Mode }) => {
               <>
                 <GeneralInfo
                   Mode={Mode}
-                  data={FormData}
+                  data={formData}
                   setDataFunction={handleDataChange}
                   setSingleDataFunction={handleDataChangeSingle}
                   missingKeys={AlertBorder}
@@ -565,7 +678,7 @@ const Medication = ({ Mode }) => {
                 <ReportLog
                   FormType="Med"
                   Mode={Mode}
-                  data={FormData}
+                  data={formData}
                   setSingleDataFunction={handleDataChangeSingle}
                   setDataFunction={handleDataChange}
                   handleDateChange={handleDateChange}
@@ -577,7 +690,7 @@ const Medication = ({ Mode }) => {
                 <Divider variant="middle" flexItem sx={{ m: 1 }} />
                 <ReportRiskType
                   Mode={Mode}
-                  data={FormData}
+                  data={formData}
                   setDataFunction={handleDataChange}
                   optionsdata={DataDict_Risk}
                   datacolumn={["", "ClinicalRisk"]}
@@ -594,7 +707,7 @@ const Medication = ({ Mode }) => {
                 <Box className="TopicHeader">หัวข้อระบบงานที่เกี่ยวข้องกับเหตุการณ์ที่เกิดขึ้น</Box>
                 <ListSelectData
                   OccType={OccType}
-                  data={FormData}
+                  data={formData}
                   Mode={Mode}
                   DeleteFunction={removeDataFromCheckboxList}
                   setOccStage={setOccStage}
@@ -629,7 +742,7 @@ const Medication = ({ Mode }) => {
                     {OccStage === 1 && (
                       <SelectBoxList
                         Mode={Mode}
-                        data={FormData}
+                        data={formData}
                         optionsdata={DataDict_MedicationForm}
                         datacolumn="prescribing"
                         remark={true}
@@ -644,7 +757,7 @@ const Medication = ({ Mode }) => {
                     {OccStage === 2 && (
                       <SelectBoxList
                         Mode={Mode}
-                        data={FormData}
+                        data={formData}
                         optionsdata={DataDict_MedicationForm}
                         datacolumn="dispensing"
                         remark={true}
@@ -657,7 +770,7 @@ const Medication = ({ Mode }) => {
                     {OccStage === 3 && (
                       <SelectBoxList
                         Mode={Mode}
-                        data={FormData}
+                        data={formData}
                         optionsdata={DataDict_MedicationForm}
                         datacolumn="administration"
                         remark={true}
@@ -670,7 +783,7 @@ const Medication = ({ Mode }) => {
                     {OccStage === 4 && (
                       <SelectBoxList
                         Mode={Mode}
-                        data={FormData}
+                        data={formData}
                         optionsdata={DataDict_MedicationForm}
                         datacolumn="transcribing"
                         remark={true}
@@ -690,7 +803,7 @@ const Medication = ({ Mode }) => {
                 <ReportDescription
                   OccType={OccType}
                   Mode={Mode}
-                  data={FormData}
+                  data={formData}
                   setDataFunction={handleDataChange}
                   missingKeys={AlertBorder}
                   UserData={UserData}
@@ -706,7 +819,7 @@ const Medication = ({ Mode }) => {
                 <Box className="TopicHeader">ผลลัพธ์ที่เกิดขึ้น</Box>
                 <SelectBoxList
                   Mode={Mode}
-                  data={FormData}
+                  data={formData}
                   optionsdata={DataDict_Med}
                   datacolumn="effect"
                   remark={true}
@@ -724,7 +837,7 @@ const Medication = ({ Mode }) => {
                 <Box className="TopicHeader">กลุ่มยาที่เกิดปัญหา</Box>
                 <SelectBoxList
                   Mode={Mode}
-                  data={FormData}
+                  data={formData}
                   optionsdata={DataDict_Med}
                   datacolumn="drugrelate"
                   remark={true}
@@ -741,7 +854,7 @@ const Medication = ({ Mode }) => {
             {Stage === 1 && (
               <ReportStaff
                 Mode={Mode}
-                data={FormData}
+                data={formData}
                 setDataFunction={handleDataChange}
                 setData={handleDataSingleChange}
                 missingKeys={AlertBorder}
@@ -752,7 +865,7 @@ const Medication = ({ Mode }) => {
               <ReportSugestionsMed
                 OccType={OccType}
                 Mode={Mode}
-                data={FormData}
+                data={formData}
                 setDataFunction={handleDataChange}
                 missingKeys={AlertBorder}
               />
@@ -766,7 +879,7 @@ const Medication = ({ Mode }) => {
                 </Box>
                 <SelectBoxListRCA
                   Mode={Mode}
-                  data={FormData}
+                  data={formData}
                   optionsdata={DataDict_Med}
                   datacolumn="rca"
                   remark={true}
@@ -777,11 +890,13 @@ const Medication = ({ Mode }) => {
                 />
               </>
             )}
+            
+            <ReportFile Mode={Mode} pdfData={pdfData} handleFilePChange={handleFilePChange} />
 
-            {Mode === "Show" && (isAdmin || isHead || isEXEC) && Stage === 1 && ["2", "3", "6"].includes(FormData.formstatus) && (
+            {Mode === "Show" && (isAdmin || isHead || isEXEC) && Stage === 1 && ["2", "3", "6"].includes(formData.formstatus) && (
               <>
                 <Divider variant="middle" flexItem sx={{ m: 1 }} />
-                <ReportComment data={FormData} />
+                <ReportComment data={formData} />
               </>
             )}
           </Box>
@@ -794,8 +909,8 @@ const Medication = ({ Mode }) => {
         )}
         <NavForm
           Mode={Mode}
-          Data={FormData}
-          Access={FormData.createby === UserData.userid || isAdmin}
+          Data={formData}
+          Access={formData.createby === UserData.userid || isAdmin}
           submitfunction={handleSubmit}
           handleSubmitEdit={handleSubmitEdit}
           Stage={Stage}

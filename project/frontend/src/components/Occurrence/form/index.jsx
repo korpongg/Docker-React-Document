@@ -400,7 +400,6 @@ const Occurrence = ({ Mode }) => {
         //   occurrencedate: TimeConverter(formData.occurrencedate, 7),
         //   reportdate: TimeConverter(formData.reportdate, 7),
         //   formstatus: "0",
-        //   files: pdfData.filePDF,
         // };
         
         const submitFormData = new FormData();
@@ -485,7 +484,6 @@ const Occurrence = ({ Mode }) => {
         //   service: JSON.stringify(formData.service),
         //   utility: JSON.stringify(formData.utility),
         //   updateby: UserData.userid,
-        //   files: pdfData.filePDF,
         // };
         // if (Mode === "Draft") {
         //   submitEditFormData = {
