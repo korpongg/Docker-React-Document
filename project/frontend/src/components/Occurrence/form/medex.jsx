@@ -708,7 +708,7 @@ const Medication = ({ Mode }) => {
                 <Divider variant="middle" flexItem sx={{ m: 1 }} />
                 <Box className="TopicHeader">
                   หัวข้อระบบงานที่เกี่ยวข้องกับเหตุการณ์ที่เกิดขึ้น
-                  <Button variant="outlined" sx={{ fontFamily: 'inherit', marginLeft: 1 }} startIcon={<ViewIcon />} onClick={() => window.open("https://example.com", "_blank")}>ดูตัวอย่าง</Button>
+                  <Button variant="outlined" sx={{ fontFamily: 'inherit', marginLeft: 1 }} startIcon={<ViewIcon />} onClick={() => window.open("https://drive.google.com/file/d/1Gac0dFkjsXz2gXXh-5WeDyx3YAG5g5pa/view?usp=drive_link", "_blank")}>ดูตัวอย่าง</Button>
                 </Box>
                 <ListSelectData
                   OccType={OccType}

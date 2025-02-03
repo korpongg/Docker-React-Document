@@ -644,7 +644,7 @@ const Occurrence = ({ Mode }) => {
                 <Divider variant="middle" flexItem sx={{ m: 1 }} />
                 <Box className="TopicHeader">
                   หัวข้อระบบงานที่เกี่ยวข้องกับเหตุการณ์ที่เกิดขึ้น
-                  <Button variant="outlined" sx={{ fontFamily: 'inherit', marginLeft: 1 }} startIcon={<ViewIcon />} onClick={() => window.open("https://example.com", "_blank")}>ดูตัวอย่าง</Button>
+                  <Button variant="outlined" sx={{ fontFamily: 'inherit', marginLeft: 1 }} startIcon={<ViewIcon />} onClick={() => window.open("https://drive.google.com/file/d/1LfK2DArKhfbYODkGmhXsGIm-BAWdEIui/view?usp=drive_link", "_blank")}>ดูตัวอย่าง</Button>
                 </Box>
                 <ListSelectData
                   OccType={OccType}
