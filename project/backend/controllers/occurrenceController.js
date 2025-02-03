@@ -11,26 +11,50 @@ const fs = require('fs');
 const path = require('path');
 
 // Utility function to format date to dd/mm/yyyy hh:mm:ss
+// const formatDateTime_N7 = (date) => {
+//   if (!date) return null;
+//     const d = new Date(date);
+
+//     const day = d.getUTCDate();
+//     const month = d.getUTCMonth() + 1;
+//     const year = d.getUTCFullYear();
+//     const hours = d.getUTCHours();
+//     const minutes = d.getUTCMinutes();
+//     const seconds = d.getUTCSeconds();
+
+//     // Pad single-digit day, month, hours, minutes, and seconds with leading zeros
+//     const formattedDay = day < 10 ? `0${day}` : `${day}`;
+//     const formattedMonth = month < 10 ? `0${month}` : `${month}`;
+//     const formattedHours = hours < 10 ? `0${hours}` : `${hours}`;
+//     const formattedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
+//     const formattedSeconds = seconds < 10 ? `0${seconds}` : `${seconds}`;
+    
+//     return `${formattedDay}/${formattedMonth}/${year} ${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+// }
+
 const formatDateTime_N7 = (date) => {
   if (!date) return null;
-    const d = new Date(date);
 
-    const day = d.getUTCDate();
-    const month = d.getUTCMonth() + 1;
-    const year = d.getUTCFullYear();
-    const hours = d.getUTCHours();
-    const minutes = d.getUTCMinutes();
-    const seconds = d.getUTCSeconds();
+  let d;
+  
+  // If it's a Sequelize literal object, extract the value
+  if (typeof date === 'object' && date.val) {
+    d = new Date(date.val.replace(/^'|'$/g, '')); // Remove quotes if present
+  } else {
+    d = new Date(date);
+  }
 
-    // Pad single-digit day, month, hours, minutes, and seconds with leading zeros
-    const formattedDay = day < 10 ? `0${day}` : `${day}`;
-    const formattedMonth = month < 10 ? `0${month}` : `${month}`;
-    const formattedHours = hours < 10 ? `0${hours}` : `${hours}`;
-    const formattedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
-    const formattedSeconds = seconds < 10 ? `0${seconds}` : `${seconds}`;
-    
-    return `${formattedDay}/${formattedMonth}/${year} ${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
-}
+  if (isNaN(d.getTime())) return null; // Ensure it's a valid date
+
+  const day = d.getDate().toString().padStart(2, '0');
+  const month = (d.getMonth() + 1).toString().padStart(2, '0');
+  const year = d.getFullYear();
+  const hours = d.getHours().toString().padStart(2, '0');
+  const minutes = d.getMinutes().toString().padStart(2, '0');
+  const seconds = d.getSeconds().toString().padStart(2, '0');
+
+  return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+};
 
 // Create a new occurrence
 exports.createOccurrence = async (req, res) => {
