@@ -53,7 +53,7 @@ const formatDateTime_N7 = (date) => {
   const minutes = d.getMinutes().toString().padStart(2, '0');
   const seconds = d.getSeconds().toString().padStart(2, '0');
 
-  return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+  return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 };
 
 // Create a new occurrence
