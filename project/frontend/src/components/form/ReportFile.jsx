@@ -14,59 +14,6 @@ const FileUpload = ({ id, accept, onChange, fileName, label, remark, disabled })
   </>
 );
 
-const FilePreview2 = ({ forFile, Mode, previewSrc, fileName, downloadTitle }) => (
-  previewSrc && (
-    <>
-      {/* previewSrc.endsWith(".pdf") */}
-      {forFile === "FileDoc" ? (
-        <div className="docViewer">
-          <iframe src={previewSrc} title="PDF Viewer" width="99%" height="510px" />
-        </div>
-      ) : (
-        <div className="imgViewer">
-          <img src={previewSrc} alt="Preview" className="preview-img" loading="lazy" />
-        </div>
-      )}
-      {Mode === "Show" && (
-        <span className="Download">
-          {fileName}
-          <Tooltip title={downloadTitle} placement="right" arrow>
-            <a href={previewSrc} target="_blank" rel="noopener noreferrer">
-              <DownloadIcon />
-            </a>
-          </Tooltip>
-        </span>
-      )}
-    </>
-  )
-);
-
-const FilePreview3 = ({ forFile, Mode, previewSrc, fileName, downloadTitle }) => (
-  previewSrc && (
-    <>
-      {fileName.endsWith(".pdf") && forFile === "FileDoc" ? (
-        <div className="docViewer">
-          <iframe src={previewSrc} title="PDF Viewer" width="99%" height="510px" />
-        </div>
-      ) : (
-        <div className="imgViewer">
-          <img src={previewSrc} alt="Preview" className="preview-img" loading="lazy" />
-        </div>
-      )}
-      {Mode === "Show" && (
-        <span className="Download">
-          {fileName}
-          <Tooltip title={downloadTitle} placement="right" arrow>
-            <a href={previewSrc} target="_blank" rel="noopener noreferrer">
-              <DownloadIcon />
-            </a>
-          </Tooltip>
-        </span>
-      )}
-    </>
-  )
-);
-
 const FilePreview = ({ forFile, Mode, previewSrc, fileName, downloadTitle }) => {
   if (!previewSrc) return null;
   const fileExt = fileName.split(".").pop().toLowerCase();
