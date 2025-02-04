@@ -450,6 +450,7 @@ const Occurrence = ({ Mode }) => {
   ];
 
   const handleSubmit = async (Mode) => {
+    console.log(1)
     const missingKeys = keydata.filter(({ key }) => {
       if (key === "deptrelate") {
         return !(formData[key] && formData[key].length);
@@ -538,6 +539,7 @@ const Occurrence = ({ Mode }) => {
   };
 
   const handleSubmitEdit = async (Mode) => {
+    console.log(2)
     const missingKeys = keydata.filter(({ key }) => {
       if (key === "deptrelate") {
         return !(formData[key] && formData[key].length);
@@ -589,7 +591,7 @@ const Occurrence = ({ Mode }) => {
         Object.keys(formData).forEach((key) => {
           if (formData[key] !== undefined && formData[key] !== null) {
             // Exclude occurrencedate and reportdate
-            if (key !== "occurrencedate" && key !== "reportdate" && key != "formstatus") {
+            if (key !== "updateby" && key !== "occurrencedate" && key !== "reportdate" && key != "formstatus") {
               // Convert arrays/objects to JSON string before appending
               if (typeof formData[key] === "object") {
                 submitEditFormData.append(key, JSON.stringify(formData[key]));
@@ -599,6 +601,7 @@ const Occurrence = ({ Mode }) => {
             }
           }
         });
+        submitEditFormData.append("updateby", UserData.userid);
         submitEditFormData.append("occurrencedate", TimeConverter(formData.occurrencedate, 7));
         submitEditFormData.append("reportdate", TimeConverter(formData.reportdate, 7));
         if (attachData.fileImage) {

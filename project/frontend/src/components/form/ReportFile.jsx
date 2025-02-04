@@ -70,26 +70,21 @@ const FilePreview3 = ({ forFile, Mode, previewSrc, fileName, downloadTitle }) =>
 const FilePreview = ({ forFile, Mode, previewSrc, fileName, downloadTitle }) => {
   if (!previewSrc) return null;
   const fileExt = fileName.split(".").pop().toLowerCase();
-
-  // Use Office Online Viewer for Word, Excel, and PowerPoint
-  const officeFormats = ["doc", "docx", "xls", "xlsx", "ppt", "pptx"];
   const googleDocsFormats = ["pdf"];
-
   let viewerSrc = "";
-  
   if (googleDocsFormats.includes(fileExt)) {
     viewerSrc = previewSrc; // PDF directly displayed in iframe
-  } else if (officeFormats.includes(fileExt)) {
-    viewerSrc = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(previewSrc)}`;
   }
 
   return (
     <>
-      {viewerSrc && forFile === "FileDoc" ? (
-        <div className="docViewer">
-          <iframe src={viewerSrc} title="Document Viewer" width="99%" height="510px" />
-        </div>
-      ) : (
+      {forFile === "FileDoc" ? 
+        viewerSrc && (
+          <div className="docViewer">
+            <iframe src={viewerSrc} title="Document Viewer" width="99%" height="510px" />
+          </div>
+        )
+      : (
         <div className="imgViewer">
           <img src={previewSrc} alt="Preview" className="preview-img" loading="lazy" />
         </div>
