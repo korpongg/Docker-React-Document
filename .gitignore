@@ -1,7 +1,7 @@
 project/backend/.env
 project/frontend/.env
 project/frontend/node_modules/*
-project/frontend/public/storage/
+project/frontend/public/storage/attachfiles/*
 project/backend/package-lock.json
 project/yarn.lock
 project/frontend/package-lock.json
