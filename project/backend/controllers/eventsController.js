@@ -397,8 +397,8 @@ exports.createEventtLog = async (req, res) => {
         ${managementDetails ? `<u>${getTopicByKey('management')}:</u> ${managementDetails}<br/><br/>` : ""}
         <u>สรุปเหตุการณ์ไม่พึงประสงค์:</u><br/> ${renewDesc}
       `;
-      const recipientEmail = await findDepartmentEmail(newCode);
-      // const recipientEmail = HA_EMAIL;
+      // const recipientEmail = await findDepartmentEmail(newCode);
+      const recipientEmail = HA_EMAIL;
       sendEmailEvent(recipientEmail, emailSubject, emailMessage);
     }
 
@@ -657,8 +657,8 @@ exports.updateEventLog = async (req, res) => {
     } else if (status === '3') {
       emailSubject = `รายงานอุบัติการณ์ เลขที่เอกสาร: ${code}`;
       emailMessage = `เลขที่เอกสาร: ${code}<br/><br/>มีรายงานส่งทบทวนอุบัติการณ์ถึงหน่วยงาน`;
-      recipientEmail = await findDepartmentEmail(code);
-      // recipientEmail = HA_EMAIL;
+      // recipientEmail = await findDepartmentEmail(code);
+      recipientEmail = HA_EMAIL;
       sendEmailEvent(recipientEmail, emailSubject, emailMessage);
     }
 

@@ -36,21 +36,25 @@ const Medication = ({ Mode }) => {
   let { id } = useParams();
   const OccType = "Medication";
   const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
+  const hostUrl = import.meta.env.VITE_REACT_APP_HOST_URL;
   const storedAuth = JSON.parse(localStorage.getItem("auth"));
-  const config = {
-    headers: { Authorization: `Bearer ${storedAuth.accessToken}` },
-  };
+  const config = { headers: { Authorization: `Bearer ${storedAuth.accessToken}` } };
   const navigate = useNavigate();
   const UserData = JSON.parse(localStorage.getItem("userData")) || null;
   const TempFormData = JSON.parse(localStorage.getItem("FormData")) || {};
   const [Stage, setStage] = useState(1);
   const [OccStage, setOccStage] = useState(0);
   const [formData, setFormData] = useState({});
-    const [pdfData, setPDFData] = useState({
-      filePDF: null,
-      filePDFName: null,
-      previewPDF: null,
-    });
+  const [attachData, setAttachData] = useState({
+    filePDF: null,
+    filePDFName: null,
+    previewPDF: null,
+    fileImage: null,
+    fileImageName: null,
+    previewImg: null,
+  });
+  const MAX_IMAGE_SIZE = 2 * 1024 * 1024; // 2MB
+  const MAX_DOC_SIZE = 5 * 1024 * 1024; // 5MB
   const [EditFormData, setEditFormData] = useState({});
   const [Alert, setAlert] = useState(false);
   const [AlertType, setAlertType] = useState("error");
@@ -122,14 +126,55 @@ const Medication = ({ Mode }) => {
       setEditFormData({ ...EditFormData, [name]: EditDate });
     }
   };
-  
-  const fetchDataPDF = async () => {
+
+  const fetchAttach = async () => {
     try {
-      const pdfPath = `${apiUrl}/filemanage/MED${formData.reportid}.pdf`;
-      const pdfPathLocal = `../../../storage/attachfiles/MED${formData.reportid}.pdf`;
-      const pdfExists = await checkFileExists(pdfPath);
-      if (pdfExists) {
-        setPDFData((prevPDFData) => ({ ...prevPDFData, filePDFName: `MED${formData.reportid}.pdf`, previewPDF: pdfPathLocal }));
+      const imgExtensions = ["jpg", "jpeg", "png"]; // List of image formats to check
+      let imgPathLocl = "";
+      let imgExt = "";
+      let imgExists = false;
+      
+      // Check for image files dynamically
+      for (const ext of imgExtensions) {
+        const imgPath = `${apiUrl}/filemanage/MED${formData.reportid}.${ext}`;
+        const localPath = `../../../storage/attachfiles/MED${formData.reportid}.${ext}`;
+        
+        if (await checkFileExists(imgPath)) {
+          imgPathLocl = localPath;
+          imgExt = ext;
+          imgExists = true;
+          break;
+        }
+      }
+      if (imgExists) {
+        setAttachData((prevAttachData) => ({ ...prevAttachData, fileImageName: `MED${formData.reportid}.${imgExt}`, previewImg: imgPathLocl }));
+      }
+      
+      const docExtensions = ["pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx"]; 
+      let docPathLocal = "";
+      let docExt = "";
+      let docExists = false;
+      
+      // Check for Doc files dynamically
+      for (const ext of docExtensions) {
+        const docPath = `${apiUrl}/filemanage/MED${formData.reportid}.${ext}`;
+        const localPath = `../../../storage/attachfiles/MED${formData.reportid}.${ext}`;
+        const hostPath = `${hostUrl}/storage/attachfiles/MED${formData.reportid}.${ext}`;
+        
+        if (await checkFileExists(docPath)) {
+          docPathLocal = ext === "pdf" ? localPath : hostPath;
+          docExt = ext;
+          docExists = true;
+          break;
+        }
+      }
+      
+      if (docExists) {
+        setAttachData((prevAttachData) => ({
+          ...prevAttachData,
+          filePDFName: `MED${formData.reportid}.${docExt}`,
+          previewPDF: docPathLocal, // Only preview PDFs
+        }));
       }
     } catch (err) {
       console.log(err);
@@ -339,40 +384,73 @@ const Medication = ({ Mode }) => {
   
   useEffect(() => {
     if(formData.reportid) {
-      fetchDataPDF();
+      fetchAttach();
     }
   }, [formData.reportid]);
 
-  const handleFilePChange = (e) => {
+  const handleImgChange = (e) => {
+    const selectedFile = e.target.files[0];
+
+    if (selectedFile) {
+      if (!["image/jpeg", "image/png"].includes(selectedFile.type)) {
+        alert("กรุณาเลือกไฟล์ .jpg หรือ .png เท่านั้น");
+        e.target.value = "";
+        return;
+      }
+  
+      if (selectedFile.size > MAX_IMAGE_SIZE) {
+        alert("ไฟล์รูปภาพต้องไม่เกิน 2MB");
+        e.target.value = "";
+        return;
+      }
+  
+      setAttachData((prevAttachData) => ({
+        ...prevAttachData,
+        fileImage: selectedFile,
+        fileImageName: selectedFile.name,
+      }));
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        setAttachData((prevAttachData) => ({ ...prevAttachData, previewImg: reader.result }));
+      };
+
+      reader.readAsDataURL(selectedFile);
+    }
+  };
+
+  const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
   
     if (selectedFile) {
-      setPDFData((prevPDFData) => ({
-        ...prevPDFData,
+      const allowedTypes = [
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/vnd.ms-excel",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "application/vnd.ms-powerpoint",
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      ];
+
+      if (!allowedTypes.includes(selectedFile.type)) {
+        alert("กรุณาเลือกไฟล์เอกสารที่รองรับ (PDF, Word, Excel, PowerPoint)");
+        e.target.value = "";
+        return;
+      }
+
+      if (selectedFile.size > MAX_DOC_SIZE) {
+        alert("ไฟล์ต้องไม่เกิน 5MB");
+        e.target.value = "";
+        return;
+      }
+
+      setAttachData((prevAttachData) => ({
+        ...prevAttachData,
         filePDF: selectedFile,
         filePDFName: selectedFile.name,
+        previewPDF: selectedFile.type === "application/pdf" ? URL.createObjectURL(selectedFile) : null,
       }));
-  
-      // Check if the selected file is a PDF
-      if (selectedFile.type.startsWith("application/pdf")) {
-        setPDFData((prevPDFData) => ({ ...prevPDFData, previewPDF: URL.createObjectURL(selectedFile) }));
-      } else {
-        setPDFData((prevPDFData) => ({
-          ...prevPDFData,
-          filePDF: null,
-          filePDFName: null,
-          previewPDF: null,
-        }));
-        // Handle the case where the selected file is not a PDF
-        // You may want to show an error message to the user
-      }
-  
-      const reader = new FileReader();
-      reader.onload = () => {
-        setPDFData((prevPDFData) => ({ ...prevPDFData, previewPDF: reader.result }));
-      };
-  
-      reader.readAsDataURL(selectedFile);
     }
   };
 
@@ -391,10 +469,13 @@ const Medication = ({ Mode }) => {
       dep: UserData.dep,
       createby: UserData.userid,
     });
-    setPDFData({
+    setAttachData({
       filePDF: null,
       filePDFName: null,
       previewPDF: null,
+      fileImage: null,
+      fileImageName: null,
+      previewImg: null,
     });
   };
 
@@ -481,8 +562,11 @@ const Medication = ({ Mode }) => {
         });
         submitFormData.append("occurrencedate", TimeConverter(formData.occurrencedate, 7));
         submitFormData.append("reportdate", TimeConverter(formData.reportdate, 7));
-        if (pdfData.filePDF) {
-          submitFormData.append("files", pdfData.filePDF);
+        if (attachData.fileImage) {
+          submitFormData.append("files", attachData.fileImage);
+        }
+        if (attachData.filePDF) {
+          submitFormData.append("files", attachData.filePDF);
         }
         submitFormData.append("formstatus", "0");
 
@@ -516,7 +600,6 @@ const Medication = ({ Mode }) => {
   };
 
   const handleSubmitEdit = async (Mode) => {
-    console.log("handleSubmitEdit", formData);
     const missingKeys = keydata.filter(({ key }) => {
       if (key === "deptrelate" || key === "level") {
         // return !(formData[key] && formData[key].length);
@@ -581,8 +664,11 @@ const Medication = ({ Mode }) => {
         });
         submitEditFormData.append("occurrencedate", TimeConverter(formData.occurrencedate, 7));
         submitEditFormData.append("reportdate", TimeConverter(formData.reportdate, 7));
-        if (pdfData.filePDF) {
-          submitEditFormData.append("files", pdfData.filePDF);
+        if (attachData.fileImage) {
+          submitEditFormData.append("files", attachData.fileImage);
+        }
+        if (attachData.filePDF) {
+          submitEditFormData.append("files", attachData.filePDF);
         }
         if (Mode === "Draft") {
           submitEditFormData.append("formstatus", "0");
@@ -896,7 +982,7 @@ const Medication = ({ Mode }) => {
               </>
             )}
             
-            <ReportFile Mode={Mode} pdfData={pdfData} handleFilePChange={handleFilePChange} />
+            <ReportFile Mode={Mode} attachData={attachData} handleImgChange={handleImgChange} handleFileChange={handleFileChange} />
 
             {Mode === "Show" && (isAdmin || isHead || isEXEC) && Stage === 1 && ["2", "3", "6"].includes(formData.formstatus) && (
               <>

@@ -245,6 +245,41 @@ export const MedicationStyle = styled(Box)`
     margin:10px 0px 15px 20px;
   }
 
+  #reportImage.AreaBOX {
+    text-align: left;
+    margin: 10px 0px 5px 20px;
+    border-radius: unset;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.42);
+  }
+  #reportImage.AreaBOX img.preview-img {
+    max-width: 100%;
+    display: block;
+    margin: 0 auto;
+  }
+  #reportImage.AreaBOX .file {
+    display: flex;
+    align-items: center;
+    background: #6b6b6b;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    font-size: 0.875rem;
+    padding: 3px 6px;
+    width: fit-content;
+  }
+  #reportImage.AreaBOX .file:hover {
+    background: #008000;
+  }
+  #reportImage.AreaBOX .imgViewer {
+    max-height: 300px;
+    overflow: auto;
+    margin-bottom: 10px;
+  }
+
+  #reportFile.AreaBOX {
+    text-align: left;
+    margin: 5px 0px 10px 20px;
+  }
   #reportFile.AreaBOX input {
     color: #000;
     padding: 10px;
@@ -254,7 +289,11 @@ export const MedicationStyle = styled(Box)`
     font-size: 1.125rem;
     border-radius: 6px;
   }
-
+  #reportFile.AreaBOX span.remark {
+    color: red;
+    font-size: 0.9rem;
+    margin-top: -10px;
+  }
   #reportFile.AreaBOX .pdf-input-label, #reportFile.AreaBOX input[type="file"] {
     color: #000;
     padding: 10px;
@@ -265,21 +304,21 @@ export const MedicationStyle = styled(Box)`
     border-radius: 6px;
     cursor: pointer;
     display: flex;
+    align-items: center;
     padding: 6px 10px;
   }
-
-  #reportFile.AreaBOX .pdf-input-label .pdf-selected{
+  #reportFile.AreaBOX .pdf-input-label .pdf-selected {
     background: #6b6b6b;
     border-radius: 4px;
     color: #fff;
-    font-size: 14px;
+    font-size: 0.875rem;
     margin-right: 4px;
-    padding: 4px 6px;
+    padding: 3px 8px;
   }
-
+  #reportFile.AreaBOX .pdf-input-label .pdf-selected:hover {
+    background: #008000;
+  }
   #reportFile.AreaBOX .pdfViewer {
-    /* border: 1px solid lightgray; */
-    /* border-radius: 6px; */
     max-height: 510px;
     overflow: auto;
   }

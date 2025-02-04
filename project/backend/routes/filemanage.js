@@ -11,10 +11,10 @@ router.get('/:fileName', (req, res) => {
   const fileNameWithoutExtension = parts.join('.');
   const newFileName = `${fileNameWithoutExtension}.${fileExtension}`;
 
-  console.log(newFileName);
+  // console.log(newFileName);
 
   const filePath = path.join(__dirname, process.env.DB_STORE2 , newFileName);
-  console.log("filePath",filePath); //const filePath = path.join(__dirname, '../storage/attachfiles/', newFileName);
+  // console.log("filePath", filePath); //const filePath = path.join(__dirname, '../storage/attachfiles/', newFileName);
 
   // Check if the file exists
   if (fs.existsSync(filePath)) {

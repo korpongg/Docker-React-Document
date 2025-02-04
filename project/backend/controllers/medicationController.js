@@ -253,7 +253,7 @@ exports.rePort = async (req, res) => {
 // Create a new medication record
 exports.createMedication = async (req, res) => {
   try {
-    const pdfFile = req.files || "";
+    const fileData = req.files || [];
 
     // Get the current year and month
     const currentYear = new Date().getFullYear().toString().slice(-2); // Extract last two digits of the year
@@ -300,11 +300,11 @@ exports.createMedication = async (req, res) => {
       reportid: reportId, // Assign the generated reportId
     });
     
-    if (pdfFile.length > 0) {
-      const renamePromises = pdfFile.map((image, i) => {
-        const fileExtension = path.extname(image.originalname);
-        const newFilename = `MED${reportId}${fileExtension}`;
-        const oldPath = image.path;
+    if (fileData.length > 0) {
+      const renamePromises = fileData.map((file) => {
+        const fileExt = path.extname(file.originalname).toLowerCase();
+        const newFilename = `MED${reportId}${fileExt}`;
+        const oldPath = file.path;
         const newPath = path.join(__dirname, process.env.DB_STORE2, newFilename);
         console.log("newPath1", newPath);
         
@@ -315,11 +315,8 @@ exports.createMedication = async (req, res) => {
             } else {
               const newBuildPath = path.join(__dirname, process.env.DB_STORE2_BUILD, newFilename);
               fs.copyFile(newPath, newBuildPath, (copyErr) => {
-                if (copyErr) {
-                  reject(copyErr);
-                } else {
-                  resolve(newFilename);
-                }
+                if (copyErr) reject(copyErr);
+                else resolve(newFilename);
               });
             }
           });
@@ -535,7 +532,7 @@ exports.updateMedication = async (req, res) => {
   const id = req?.body?.id;
 
   try {
-    const pdfFile = req.files || "";
+    const fileData = req.files;
     const med = await Medication.findOne({ where: { id: id } });
     if (!med) {
       return res.status(204).json({ message: `No Medication matches ID ${req.body.id}.` });
@@ -604,32 +601,63 @@ exports.updateMedication = async (req, res) => {
 
     const result = await med.save();
     
-    if (pdfFile && pdfFile.length > 0) {
-      const renamePromises = pdfFile.map((image, i) => {
-        const fileExtension = path.extname(image.originalname);
-        const newFilename = `MED${req.body.reportid}${fileExtension}`;
-        const oldPath = image.path;
-        const newPath = path.join(__dirname, process.env.DB_STORE2, newFilename);
-        console.log("newPath2", newPath);
-        
-        return new Promise((resolve, reject) => {
-          fs.rename(oldPath, newPath, async (err) => {
-            if (err) reject(err);
-            else {
-              const newBuildPath = path.join(__dirname, process.env.DB_STORE2_BUILD, newFilename);
-              fs.copyFile(newPath, newBuildPath, (copyErr) => {
-                if (copyErr) {
-                  reject(copyErr);
-                } else {
-                  resolve(newFilename);
-                }
-              });
+    if (fileData && fileData.length > 0) {
+      const imgExtensions = [".jpg", ".jpeg", ".png"];
+      const docExtensions = [".pdf", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx"];
+      let hasImageFile = false;
+      let hasDocFile = false;
+      
+      fileData.forEach((file) => {
+        const fileExt = path.extname(file.originalname).toLowerCase();
+        if (imgExtensions.includes(fileExt)) hasImageFile = true;
+        if (docExtensions.includes(fileExt)) hasDocFile = true;
+      });
+      
+      if (hasImageFile || hasDocFile) {
+        // Delete existing files before saving new ones
+        if (hasImageFile) {
+          imgExtensions.forEach((ext) => {
+            const existingFilePath = path.join(__dirname, process.env.DB_STORE2, `MED${req.body.reportid}${ext}`);
+            if (fs.existsSync(existingFilePath)) {
+              fs.unlinkSync(existingFilePath);
             }
           });
+        }
+        
+        if (hasDocFile) {
+          docExtensions.forEach((ext) => {
+            const existingFilePath = path.join(__dirname, process.env.DB_STORE2, `MED${req.body.reportid}${ext}`);
+            if (fs.existsSync(existingFilePath)) {
+              fs.unlinkSync(existingFilePath);
+            }
+          });
+        }
+        
+        // Process file renaming and saving
+        const renamePromises = fileData.map((file) => {
+          const fileExt = path.extname(file.originalname).toLowerCase();
+          const newFilename = `MED${req.body.reportid}${fileExt}`;
+          const oldPath = file.path;
+          const newPath = path.join(__dirname, process.env.DB_STORE2, newFilename);
+          console.log("newPath2", newPath);
+          
+          return new Promise((resolve, reject) => {
+            fs.rename(oldPath, newPath, async (err) => {
+              if (err) reject(err);
+              else {
+                const newBuildPath = path.join(__dirname, process.env.DB_STORE2_BUILD, newFilename);
+                fs.copyFile(newPath, newBuildPath, (copyErr) => {
+                  if (copyErr) reject(copyErr);
+                  else resolve(newFilename);
+                });
+              }
+            });
+          });
         });
-      });
-      result.image = await Promise.all(renamePromises);
-      await result.save();
+        
+        result.image = await Promise.all(renamePromises);
+        await result.save();
+      }
     }
 
     executeAndStoreQueryResult();
@@ -678,8 +706,8 @@ exports.updateMedication = async (req, res) => {
         ${transcribingDetails ? `<u>${getTopicByKeyMed('transcribing', 'th')}:</u><br/> ${transcribingDetails}<br/><br/>` : ""}
         <br/><b>***รบกวนหน่วยงานตอบกลับภายใน 7 วัน***</b><br/>
       `;
-      const recipientEmail = await findMedDepartmentEmail(reportId);
-      // const recipientEmail = HA_EMAIL;
+      // const recipientEmail = await findMedDepartmentEmail(reportId);
+      const recipientEmail = HA_EMAIL;
       sendEmailMedEvent(recipientEmail, id, emailSubject, emailMessage);
 
       // Send to Exec
@@ -715,8 +743,8 @@ exports.updateMedication = async (req, res) => {
           4. หน่วยงานที่เกี่ยวข้อง: ${departments.name} <br/><br/>
           5. สรุปเหตุการณ์:<br/> ${renewDesc}</div>
         `;
-        const recipientEmail = 'pattarapon.k@thainakarin.co.th';
-        // const recipientEmail = HA_EMAIL;
+        // const recipientEmail = 'pattarapon.k@thainakarin.co.th';
+        const recipientEmail = HA_EMAIL;
         sendExecEmail(recipientEmail, emailCC, id, emailSubject, emailMessage);
       }
     }
