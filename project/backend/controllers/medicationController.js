@@ -706,8 +706,8 @@ exports.updateMedication = async (req, res) => {
         ${transcribingDetails ? `<u>${getTopicByKeyMed('transcribing', 'th')}:</u><br/> ${transcribingDetails}<br/><br/>` : ""}
         <br/><b>***รบกวนหน่วยงานตอบกลับภายใน 7 วัน***</b><br/>
       `;
-      // const recipientEmail = await findMedDepartmentEmail(reportId);
-      const recipientEmail = HA_EMAIL;
+      const recipientEmail = await findMedDepartmentEmail(reportId);
+      // const recipientEmail = HA_EMAIL;
       sendEmailMedEvent(recipientEmail, id, emailSubject, emailMessage);
 
       // Send to Exec
@@ -743,8 +743,8 @@ exports.updateMedication = async (req, res) => {
           4. หน่วยงานที่เกี่ยวข้อง: ${departments.name} <br/><br/>
           5. สรุปเหตุการณ์:<br/> ${renewDesc}</div>
         `;
-        // const recipientEmail = 'pattarapon.k@thainakarin.co.th';
-        const recipientEmail = HA_EMAIL;
+        const recipientEmail = 'pattarapon.k@thainakarin.co.th';
+        // const recipientEmail = HA_EMAIL;
         sendExecEmail(recipientEmail, emailCC, id, emailSubject, emailMessage);
       }
     }

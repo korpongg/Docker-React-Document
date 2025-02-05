@@ -546,8 +546,8 @@ exports.updateOccurrence = async (req, res) => {
           5. สรุปเหตุการณ์:<br/> ${renewDesc}<br/><br/>
           6. การแก้ไขปัญหาเฉพาะหน้า:<br/> ${impromptDesc ? impromptDesc : '-'}</div>
         `;
-        // const recipientEmail = 'pattarapon.k@thainakarin.co.th';
-        const recipientEmail = HA_EMAIL;
+        const recipientEmail = 'pattarapon.k@thainakarin.co.th';
+        // const recipientEmail = HA_EMAIL;
         sendExecEmail(recipientEmail, emailCC, id, emailSubject, emailMessage);
       }
     }
