@@ -50,11 +50,13 @@ const FilePreview = ({ forFile, Mode, previewSrc, fileName, downloadTitle }) => 
   );
 };
 
-
 const ReportFile = ({ Mode, attachData, handleImgChange, handleFileChange }) => {
+  if (Mode === "Show" && !attachData.fileImageName && !attachData.filePDFName) {
+    return null;
+  }
   return (
     <ReportFileBox>
-      <div className="TopicHeader">เอกสารแนบ (ถ้ามี)</div>
+      <div className="TopicHeader">เอกสารแนบ {Mode !== "Show" ? "(ถ้ามี)" : "" }</div>
       <div className="GeneralBox">
         <div className="ContentBox" style={{ display: "flex", flexDirection: "column" }} >
           {/* Image Box */}
