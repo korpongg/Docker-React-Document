@@ -173,7 +173,7 @@ const Medication = ({ Mode }) => {
         setAttachData((prevAttachData) => ({
           ...prevAttachData,
           filePDFName: `MED${formData.reportid}.${docExt}`,
-          previewPDF: docPathLocal, // Only preview PDFs
+          previewPDF: docPathLocal,
         }));
       }
     } catch (err) {

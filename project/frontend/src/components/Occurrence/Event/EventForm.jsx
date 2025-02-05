@@ -1,8 +1,80 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { DialogTitle, DialogContent, TextField, Radio, RadioGroup, FormControlLabel, Select, MenuItem, InputLabel, FormControl } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
+import ReportFile from "../../form/ReportFile";
+import { checkFileExists } from "../../Function";
 
 const EventForm = ({ mode, isHA, reportData, eventData, departments, formData, summarydetailRef, riskRef, factorsRef, commentRef, suggestionRef, forwardtxtRef, handleSelectChange, handleUrgentChange, handleISNewChange, handleInputChange }) => {
+  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
+  const hostUrl = import.meta.env.VITE_REACT_APP_HOST_URL;
+  const [attachData, setAttachData] = useState({
+    filePDF: null,
+    filePDFName: null,
+    previewPDF: null,
+    fileImage: null,
+    fileImageName: null,
+    previewImg: null,
+  });
+      
+  const fetchAttach = async () => {
+    try {
+      const imgExtensions = ["jpg", "jpeg", "png"]; // List of image formats to check
+      let imgPathLocl = "";
+      let imgExt = "";
+      let imgExists = false;
+
+      // Check for image files dynamically
+      for (const ext of imgExtensions) {
+        const imgPath = `${apiUrl}/filemanage/OCC${reportData.reportid}.${ext}`;
+        const localPath = `../../../storage/attachfiles/OCC${reportData.reportid}.${ext}`;
+        
+        if (await checkFileExists(imgPath)) {
+          imgPathLocl = localPath;
+          imgExt = ext;
+          imgExists = true;
+          break;
+        }
+      }
+      if (imgExists) {
+        setAttachData((prevAttachData) => ({ ...prevAttachData, fileImageName: `OCC${reportData.reportid}.${imgExt}`, previewImg: imgPathLocl }));
+      }
+      
+      const docExtensions = ["pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx"]; 
+      let docPathLocal = "";
+      let docExt = "";
+      let docExists = false;
+
+      // Check for Doc files dynamically
+      for (const ext of docExtensions) {
+        const docPath = `${apiUrl}/filemanage/OCC${reportData.reportid}.${ext}`;
+        const localPath = `../../../storage/attachfiles/OCC${reportData.reportid}.${ext}`;
+        const hostPath = `${hostUrl}/storage/attachfiles/OCC${reportData.reportid}.${ext}`;
+        
+        if (await checkFileExists(docPath)) {
+          docPathLocal = ext === "pdf" ? localPath : hostPath;
+          docExt = ext;
+          docExists = true;
+          break;
+        }
+      }
+      
+      if (docExists) {
+        setAttachData((prevAttachData) => ({
+          ...prevAttachData,
+          filePDFName: `OCC${reportData.reportid}.${docExt}`,
+          previewPDF: docPathLocal,
+        }));
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  useEffect(() => {
+    if(reportData?.reportid) {
+      fetchAttach();
+    }
+  }, [reportData?.reportid]);
+  
   const renderEventInfo = () => (
     <>
       <div className="EventRow">
@@ -113,6 +185,8 @@ const EventForm = ({ mode, isHA, reportData, eventData, departments, formData, s
             {renderTextField("summarydetail", "สรุปเหตุการณ์ไม่พึงประสงค์", reportData?.summarydetail || eventData?.summarydetail || "-")}
             
             {renderTextField("activefailure", "ความคลาดเคลื่อน", reportData?.activefailure || eventData?.activefailure || "-")}
+            
+            <ReportFile Mode="Show" attachData={attachData} handleImgChange="" handleFileChange="" />
 
             {renderTextField("risk", "สรุปเหตุการณ์ความเสี่ยง / เหตุการณ์ไม่พึงประสงค์ที่เกิดขึ้น", eventData?.risk, riskRef, false, false)}
             <span className="validate">*กรอกข้อมูล สรุปเหตุการณ์ความเสี่ยง / เหตุการณ์ไม่พึงประสงค์ที่เกิดขึ้น</span>
@@ -132,6 +206,7 @@ const EventForm = ({ mode, isHA, reportData, eventData, departments, formData, s
         ) : (
           <>
             {renderTextField("renew", "สรุปรายละเอียดเหตุการณ์", reportData?.renew || eventData?.renew || "-")}
+            <ReportFile Mode="Show" attachData={attachData} handleImgChange="" handleFileChange="" />
             {renderTextField("summarydetail", "สรุปเหตุการณ์ไม่พึงประสงค์", eventData?.summarydetail, summarydetailRef, false, false)}
             <span className="validate">*กรอกข้อมูล สรุปเหตุการณ์ไม่พึงประสงค์</span>
           </>

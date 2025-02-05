@@ -143,7 +143,7 @@ const Occurrence = ({ Mode }) => {
         setAttachData((prevAttachData) => ({
           ...prevAttachData,
           filePDFName: `OCC${formData.reportid}.${docExt}`,
-          previewPDF: docPathLocal, // Only preview PDFs
+          previewPDF: docPathLocal,
         }));
       }
     } catch (err) {
@@ -433,7 +433,7 @@ const Occurrence = ({ Mode }) => {
     { key: "deptrelate", name: "หน่วยงานที่เกี่ยวข้อง", location: 1 },
     { key: "level", name: "ระดับความเสี่ยง", location: 1 },
     { key: "description", name: "บรรยายสรุปเหตุการณ์ที่เกิดขึ้น", location: 1 },
-    { key: "effectremark", name: "ระบุความเสียหายที่เกิดขึ้น", location: 1 },
+    // { key: "effectremark", name: "ระบุความเสียหายที่เกิดขึ้น", location: 1 },
     { key: "impromptusolution", name: "การแก้ปัญหาเฉพาะหน้า", location: 1 },
     { key: "activefailure", name: "ความคลาดเคลื่อนที่เกิดขึ้น", location: 1 },
     { key: "suggestion", name: "ข้อเสนอแนะ", location: 1 },
@@ -450,7 +450,6 @@ const Occurrence = ({ Mode }) => {
   ];
 
   const handleSubmit = async (Mode) => {
-    console.log(1)
     const missingKeys = keydata.filter(({ key }) => {
       if (key === "deptrelate") {
         return !(formData[key] && formData[key].length);
@@ -539,7 +538,6 @@ const Occurrence = ({ Mode }) => {
   };
 
   const handleSubmitEdit = async (Mode) => {
-    console.log(2)
     const missingKeys = keydata.filter(({ key }) => {
       if (key === "deptrelate") {
         return !(formData[key] && formData[key].length);

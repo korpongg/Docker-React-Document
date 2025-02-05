@@ -2,6 +2,8 @@ import styled from "styled-components";
 import Box from "@mui/material/Box";
 
 export const ReportFileBox = styled(Box)`
+  margin-top: 6px !important;
+
   .AreaBOX {
     text-align: left;
   }

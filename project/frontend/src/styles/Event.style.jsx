@@ -113,6 +113,10 @@ export const EventBox = styled(Box)`
     margin-top: 40px;
     width: 86vw;
   }
+
+  .EventBox .GeneralBox .ContentBox > #reportImage {
+    padding: 5px;
+  }
 `;
 
 export const TranferDialogBox = styled(Dialog)`
@@ -219,5 +223,10 @@ export const TranferDialogBox = styled(Dialog)`
       font-size: 1.125rem;
       // color:red;
     }
+  }
+
+  .EventBox .GeneralBox .ContentBox #reportImage, .EventBox .GeneralBox .ContentBox #reportFile {
+    margin: 0;
+    padding: 5px;
   }
 `;

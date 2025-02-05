@@ -55,8 +55,8 @@ const ReportFile = ({ Mode, attachData, handleImgChange, handleFileChange }) => 
     return null;
   }
   return (
-    <ReportFileBox>
-      <div className="TopicHeader">เอกสารแนบ {Mode !== "Show" ? "(ถ้ามี)" : "" }</div>
+    <ReportFileBox className={!handleImgChange ? "EventBox" : ""}>
+      {!handleImgChange ? (<div className="EventRow"><div className="EventCell AreaTopic">เอกสารแนบ</div></div>) : (<div className="TopicHeader">เอกสารแนบ {Mode !== "Show" ? "(ถ้ามี)" : "" }</div>)}
       <div className="GeneralBox">
         <div className="ContentBox" style={{ display: "flex", flexDirection: "column" }} >
           {/* Image Box */}

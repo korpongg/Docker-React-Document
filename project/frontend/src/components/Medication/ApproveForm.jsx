@@ -4,9 +4,83 @@ import Divider from "@mui/material/Divider";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import ListSelectData from "../form/ListSelectData";
 import SelectBoxListRCA from "../form/SelectBoxListRCA";
+import ReportFile from "../form/ReportFile";
+import { checkFileExists } from "../Function";
 
 const ApproveForm = ({ mode, isHA, data, approveData, DataDictMed, handleDataChange, handleDataChangeCheckbox }) => {
+  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
+  const hostUrl = import.meta.env.VITE_REACT_APP_HOST_URL;
   const [OccStage, setOccStage] = useState(0);
+
+  const [attachData, setAttachData] = useState({
+    filePDF: null,
+    filePDFName: null,
+    previewPDF: null,
+    fileImage: null,
+    fileImageName: null,
+    previewImg: null,
+  });
+
+  console.log(data)
+
+  const fetchAttach = async () => {
+    try {
+      const imgExtensions = ["jpg", "jpeg", "png"]; // List of image formats to check
+      let imgPathLocl = "";
+      let imgExt = "";
+      let imgExists = false;
+
+      // Check for image files dynamically
+      for (const ext of imgExtensions) {
+        const imgPath = `${apiUrl}/filemanage/MED${data.reportid}.${ext}`;
+        const localPath = `../../../storage/attachfiles/MED${data.reportid}.${ext}`;
+        
+        if (await checkFileExists(imgPath)) {
+          imgPathLocl = localPath;
+          imgExt = ext;
+          imgExists = true;
+          break;
+        }
+      }
+      if (imgExists) {
+        setAttachData((prevAttachData) => ({ ...prevAttachData, fileImageName: `MED${data.reportid}.${imgExt}`, previewImg: imgPathLocl }));
+      }
+      
+      const docExtensions = ["pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx"]; 
+      let docPathLocal = "";
+      let docExt = "";
+      let docExists = false;
+
+      // Check for Doc files dynamically
+      for (const ext of docExtensions) {
+        const docPath = `${apiUrl}/filemanage/MED${data.reportid}.${ext}`;
+        const localPath = `../../../storage/attachfiles/MED${data.reportid}.${ext}`;
+        const hostPath = `${hostUrl}/storage/attachfiles/MED${data.reportid}.${ext}`;
+        
+        if (await checkFileExists(docPath)) {
+          docPathLocal = ext === "pdf" ? localPath : hostPath;
+          docExt = ext;
+          docExists = true;
+          break;
+        }
+      }
+      
+      if (docExists) {
+        setAttachData((prevAttachData) => ({
+          ...prevAttachData,
+          filePDFName: `MED${data.reportid}.${docExt}`,
+          previewPDF: docPathLocal,
+        }));
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  useEffect(() => {
+    if(data?.reportid) {
+      fetchAttach();
+    }
+  }, [data?.reportid]);
     
   return (
     data && (
@@ -28,6 +102,8 @@ const ApproveForm = ({ mode, isHA, data, approveData, DataDictMed, handleDataCha
             <ListSelectData OccType="Medication" data={data} Mode="Show" setOccStage={0} />
           </div>
         </div>
+
+        <ReportFile Mode="Show" attachData={attachData} handleImgChange="" handleFileChange="" />
 
         {/* Form  */}
         <div className="EventBox">
