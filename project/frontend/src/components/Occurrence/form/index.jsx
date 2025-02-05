@@ -434,9 +434,9 @@ const Occurrence = ({ Mode }) => {
     { key: "level", name: "ระดับความเสี่ยง", location: 1 },
     { key: "description", name: "บรรยายสรุปเหตุการณ์ที่เกิดขึ้น", location: 1 },
     // { key: "effectremark", name: "ระบุความเสียหายที่เกิดขึ้น", location: 1 },
-    { key: "impromptusolution", name: "การแก้ปัญหาเฉพาะหน้า", location: 1 },
-    { key: "activefailure", name: "ความคลาดเคลื่อนที่เกิดขึ้น", location: 1 },
-    { key: "suggestion", name: "ข้อเสนอแนะ", location: 1 },
+    // { key: "impromptusolution", name: "การแก้ปัญหาเฉพาะหน้า", location: 1 },
+    // { key: "activefailure", name: "ความคลาดเคลื่อนที่เกิดขึ้น", location: 1 },
+    // { key: "suggestion", name: "ข้อเสนอแนะ", location: 1 },
   ];
 
   const keysToCheck = [
