@@ -486,7 +486,7 @@ const Medication = ({ Mode }) => {
     { key: "gender", name: "เพศ", location: 1 },
     // { key: "dx", name: "Dx.", location: 1 },
     { key: "pct", name: "PCT ที่เกี่ยวข้าง", location: 1 },
-    // { key: "reportlocation", name: "สถานที่เกิดเหตุ", location: 1 },
+    { key: "reportlocation", name: "สถานที่เกิดเหตุ", location: 1 },
     { key: "occurrencedate", name: "วัน-เวลาที่เกิดเหตุการณ์", location: 1 },
     { key: "deptrelate", name: "หน่วยงานที่เกี่ยวข้อง", location: 1 },
     { key: "level", name: "ระดับความเสี่ยง", location: 1 },
@@ -512,6 +512,9 @@ const Medication = ({ Mode }) => {
     const missingKeys = keydata.filter(({ key }) => {
       if (key === "deptrelate") {
         return !(formData[key] && formData[key].length);
+      } else if (key === "occurrencedate") {
+        const date = new Date(formData[key]);
+        return !formData[key] || isNaN(date.getTime()); // Check if date is valid
       } else {
         return !formData[key] || formData[key] === ""; // Ensure it's not empty
       }
@@ -604,6 +607,9 @@ const Medication = ({ Mode }) => {
       if (key === "deptrelate" || key === "level") {
         // return !(formData[key] && formData[key].length);
         return !formData[key];
+      } else if (key === "occurrencedate") {
+        const date = new Date(formData[key]);
+        return !formData[key] || isNaN(date.getTime()); // Check if date is valid
       } else {
         return !formData[key] || formData[key] === ""; // Ensure it's not empty
       }

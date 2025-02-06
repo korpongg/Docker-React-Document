@@ -453,6 +453,9 @@ const Occurrence = ({ Mode }) => {
     const missingKeys = keydata.filter(({ key }) => {
       if (key === "deptrelate") {
         return !(formData[key] && formData[key].length);
+      } else if (key === "occurrencedate") {
+        const date = new Date(formData[key]);
+        return !formData[key] || isNaN(date.getTime()); // Check if date is valid
       } else {
         return !formData[key] || formData[key] === ""; // Ensure it's not empty
       }
@@ -541,6 +544,9 @@ const Occurrence = ({ Mode }) => {
     const missingKeys = keydata.filter(({ key }) => {
       if (key === "deptrelate") {
         return !(formData[key] && formData[key].length);
+      } else if (key === "occurrencedate") {
+        const date = new Date(formData[key]);
+        return !formData[key] || isNaN(date.getTime()); // Check if date is valid
       } else {
         return !formData[key] || formData[key] === ""; // Ensure it's not empty
       }
