@@ -480,7 +480,7 @@ const Medication = ({ Mode }) => {
   };
 
   const keydata = [
-    // { key: "hn", name: "hn", location: 1 },
+    { key: "hn", name: "hn", location: 1 },
     // { key: "an", name: "an", location: 1 },
     // { key: "age", name: "อายุ", location: 1 },
     { key: "gender", name: "เพศ", location: 1 },
