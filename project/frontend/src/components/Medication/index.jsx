@@ -98,16 +98,20 @@ const Medication = () => {
     let filteredData = dataMedic;
     if (supData && (supData.type === "1" || supData.type === "2")) {
       if (supData.deptrelate.length > 1) {
-        filteredData = dataMedic.filter(item => supData.deptrelate.includes(item.deptAffInfo.DepID) && ['2', '4', '5'].includes(item.formstatus));
+        filteredData = dataMedic.filter(item => supData.deptrelate.includes(item.deptAffInfo.DepID) && ['2', '4', '5'].includes(item.formstatus) 
+        || item.deptAffInfo.AffName === userData.affiliation || (item.requestaff === userData.affiliation && item.requestdep === userData.dep));
       } else {
-        filteredData = dataMedic.filter(item => item.deptAffInfo.DepID === supData.deptrelate[0] && ['2', '4', '5'].includes(item.formstatus));
+        filteredData = dataMedic.filter(item => item.deptAffInfo.DepID === supData.deptrelate[0] && ['2', '4', '5'].includes(item.formstatus) 
+        || item.deptAffInfo.AffName === userData.affiliation || (item.requestaff === userData.affiliation && item.requestdep === userData.dep));
       }
     }
     else if (!isAdmin) {
       if (isEXEC) {
-        filteredData = userData.affiliation === "งานคุณภาพ"
-          ? dataMedic
-          : dataMedic.filter(item => item.deptAffInfo.AffName === userData.affiliation);
+        if (userData.affiliation === "งานคุณภาพ") {
+          filteredData = dataMedic;
+        } else {
+          filteredData = dataMedic.filter(item => item.deptAffInfo.AffName === userData.affiliation || (item.requestaff === userData.affiliation && item.requestdep === userData.dep));
+        }
       } else {
         filteredData = dataMedic.filter(item => (item.requestaff === userData.affiliation && item.requestdep === userData.dep) 
         || (item.deptrelate === userData.DepID && ['4', '5'].includes(item.formstatus)));
