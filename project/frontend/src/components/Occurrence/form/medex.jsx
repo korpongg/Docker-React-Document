@@ -218,8 +218,8 @@ const Medication = ({ Mode }) => {
               faction: response.data.requestfac,
               dep: response.data.requestdep,
               // renew: response.data.description || null,
-            }),
-              setAccess(true);
+            });
+            setAccess(true);
           } else if (isEXEC) {
             if (UserData.affiliation === "งานคุณภาพ") {
               setFormData({
@@ -231,14 +231,21 @@ const Medication = ({ Mode }) => {
                 faction: response.data.requestfac,
                 dep: response.data.requestdep,
                 // renew: response.data.description || null,
-              }),
-                setAccess(true);
+              });
+              setAccess(true);
+            } else if (response.data.deptAffInfo.AffName === UserData.affiliation || (response.data.requestaff === UserData.affiliation && response.data.requestdep === UserData.dep)) {
+              setFormData({
+                ...response.data,
+                userreport: response.data.createby,
+                reportdate: TimeConverter(response.data.createAt, -7),
+                occurrencedate: TimeConverter(response.data.occurrencedate, -7),
+                aff: response.data.requestaff,
+                faction: response.data.requestfac,
+                dep: response.data.requestdep,
+              });
+              setAccess(true);
             }
-          } else if (
-            isHead &&
-            UserData.DepID === response.data.deptrelate &&
-            ["4", "5"].includes(response.data.formstatus)
-          ) {
+          } else if ( isHead && UserData.DepID === response.data.deptrelate && ["4", "5"].includes(response.data.formstatus) ) {
             setFormData({
               ...response.data,
               userreport: response.data.createby,
@@ -248,8 +255,8 @@ const Medication = ({ Mode }) => {
               faction: response.data.requestfac,
               dep: response.data.requestdep,
               // renew: response.data.description || null,
-            }),
-              setAccess(true);
+            });
+            setAccess(true);
           } else {
             if (UserData.affiliation === response.data.requestaff) {
               setFormData({
@@ -261,8 +268,8 @@ const Medication = ({ Mode }) => {
                 faction: response.data.requestfac,
                 dep: response.data.requestdep,
                 description: "...",
-              }),
-                setAccess(true);
+              });
+              setAccess(true);
             } else {
               setAccess(false);
             }
