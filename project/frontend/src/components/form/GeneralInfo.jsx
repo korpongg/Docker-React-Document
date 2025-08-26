@@ -15,7 +15,8 @@ const options = [
   "PCT อายุรกรรมทางเดินอาหาร",
   "PCT ตา",
   "PCT กุมารเวชกรรม",
-  "PCT ฉุกเฉิน"
+  "PCT ฉุกเฉิน",
+  "PCT Palliative Care Team"
   ]
 
 const GeneralInfo = ({ Mode, data, setDataFunction,setSingleDataFunction, missingKeys }) => {
