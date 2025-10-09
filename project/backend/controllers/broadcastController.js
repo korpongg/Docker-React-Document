@@ -29,7 +29,8 @@ const executeSQLQuery = async () => {
         CASE WHEN occ.reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END AS reporttypename
       FROM ${DB_NAME}.[dbo].[occurrences] occ
       LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_request ON u_request.userid = occ.createby
-      LEFT JOIN ${DB_NAME}.[dbo].[department] AS dep ON dep.name = u_request.dep
+      LEFT JOIN ${DB_NAME}.[dbo].[affiliation] AS aff ON aff.name = u_request.affiliation
+      LEFT JOIN ${DB_NAME}.[dbo].[department] AS dep ON dep.name = u_request.dep AND dep.relateid = aff.id
       LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_update ON u_update.userid = occ.updateby
       LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_accept ON u_accept.userid = occ.acceptby
       WHERE occ.createAt BETWEEN DATEADD(MONTH, -2, GETDATE()) AND GETDATE()
