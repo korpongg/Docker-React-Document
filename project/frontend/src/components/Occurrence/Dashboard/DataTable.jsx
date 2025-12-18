@@ -147,7 +147,7 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
             />
           </Tooltip>
           
-          {shouldShowButton(row) && (
+          {/* {shouldShowButton(row) && ( */}
             <Tooltip title={row.formstatus === '1' || row.formstatus === '4' ? 'ส่งต่อรายงาน' : 'ดูรายงานส่งต่อ'}>
               <GridActionsCellItem
                 icon={row.formstatus === '1' || row.formstatus === '4' ? <RotateIcon /> : <ViewIcon />}
@@ -156,9 +156,9 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
                 color="secondary"
               />
             </Tooltip>
-          )}
+          {/* )} */}
           
-          {shouldShowButton(row, true) && (
+          {/* {shouldShowButton(row, true) && (
             <Tooltip title={row.formstatus === '1' || row.formstatus === '4' ? 'ส่งรายงาน' : 'ดูรายงาน'}>
               <GridActionsCellItem
                 icon={row.formstatus === '1' || row.formstatus === '4' ? <SendIcon /> : <ViewIcon />}
@@ -167,7 +167,7 @@ const DataTable = ({ data, isAdmin, isEXEC, userData, handleAddItem, handleViewC
                 color="secondary"
               />
             </Tooltip>
-          )}
+          )} */}
 
           {isAdmin && ['1', '4'].includes(row.formstatus) && (
             <Tooltip title="Update">
