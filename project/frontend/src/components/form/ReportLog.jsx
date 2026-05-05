@@ -5,54 +5,23 @@ import AutoCompleteTextSingle from "./AutoCompleteTextSingle";
 import { getCurrentDate } from "../Function";
 import Divider from '@mui/material/Divider';
 
-const ReportLog = ({ FormType,Mode, data, setDataFunction,setSingleDataFunction, handleDateChange, handleDataChangeCheckbox, missingKeys }) => {
+const ReportLog = ({ FormType,Mode, data, setDataFunction,setSingleDataFunction,     setErrors,
+                errors,
+                inputRefs,handleDateChange, handleDataChangeCheckbox, missingKeys }) => {
+  
   return (
     <>
-      <div className="TopicHeader">ข้อมูลสถานการณ์</div>
-      <div className="GeneralBox">
-        <div className="ContentBox">
-          {FormType==="Occ" && 
-          <div className="ContentRow">
-            <div className="w30P">สถานที่เกิดเหตุ</div>
-            <div className="w70P">
-            <input
-              className={missingKeys.some(item => item.key === "reportlocation") ? "TextInputContent SETERROR" : "TextInputContent"}
-              disabled={Mode === "Show"}
-              id="reportlocation"
-              label="สถานที่เกิดเหตุ"
-              value={data?.reportlocation || ""}
-              onChange={(e) => setDataFunction(e, "reportlocation")}
-            />
-            </div>
-          </div>
-          }
-          <div className="ContentRow">
-            <div className="w30P">วัน-เวลาที่เกิดเหตุการณ์</div>
-            <div className="w70P">
-              <input
-                id="occurrencedate"
-                disabled={Mode === "Show"}
-                className={missingKeys.some(item => item.key === "occurrencedate") ? "DatetimeInput SETERROR" : "DatetimeInput"}
-                placeholder="วันที่รายงานเหตุการณ์"
-                type="datetime-local"
-                value={getCurrentDate(data?.occurrencedate)}
-                onChange={(e) => handleDateChange(e, "occurrencedate")}
-              />
-            </div>
-          </div>
-          <Divider variant="middle" flexItem sx={{ marginLeft: 5, marginTop: 1 }} />
-          <div className="ContentRow" style={{ margin: "0px" }}>
-            <div className="w30P">หน่วยงานที่เกี่ยวข้อง</div>
-          </div>
-          <div className="ContentRow" style={{ marginTop: "5px", paddingLeft: "0px", flexDirection: "column" }}>
-            <div className={missingKeys.some(item => item.key === "deptrelate") ? "SETERROR" : ""}>
-              {FormType==="Occ" &&
+      {FormType==="Occ" &&
                 <AutoCompleteText
                   required
                   Mode={Mode}
                   data={data}
                   datacolumn="deptrelate"
+                  datacolumn2="deptemail"
                   handleDataChangeCheckbox={handleDataChangeCheckbox}
+                    setErrors={setErrors}
+                errors={errors}
+                inputRefs={inputRefs}
                 />
               }
               {FormType==="Med" &&
@@ -66,10 +35,6 @@ const ReportLog = ({ FormType,Mode, data, setDataFunction,setSingleDataFunction,
                   handleDataChangeCheckbox={handleDataChangeCheckbox}
                 />
               }
-            </div>
-          </div>
-        </div>
-      </div>
     </>
   );
 };

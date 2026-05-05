@@ -20,7 +20,13 @@ export default function ConfirmDialog({Mode,submitfunction,SubmitMode,Lable}) {
 
   return (
     <React.Fragment>
-      <Button sx={{fontSize:22,width:180,p:0.25,marginRight:1}} variant="contained" color={SubmitMode==="Draft" ? "info" : "success"} onClick={handleClickOpen}>
+  
+      <Button sx={{fontSize:22,width:180,p:0.25,margin:'0 auto',
+      
+     bgcolor: Mode === "Add" ? "#04a54dff" : "#b8b01fff",
+   "&:hover": {
+  bgcolor: Mode === "Add" ? "#14974dff" : "#d9a806ff",
+},}} variant="contained" color={SubmitMode==="Draft" ? "success" : "success"}   onClick={handleClickOpen}>
         {Lable}
       </Button>
       <Dialog
@@ -39,7 +45,7 @@ export default function ConfirmDialog({Mode,submitfunction,SubmitMode,Lable}) {
           },
         }}
       >
-        <DialogTitle sx={{fontFamily:"inherit"}} variant="contained" color="success">บันทึก</DialogTitle>
+        <DialogTitle sx={{fontFamily:"inherit"}} variant="success" color="success">บันทึก</DialogTitle>
         <DialogContent>
           <DialogContentText sx={{fontFamily:"inherit"}}>
             ต้องการส่งข้อมูลเข้าสู่ระบบและทำการยื่นแบบฟอร์มหรือไม่?
@@ -57,8 +63,11 @@ export default function ConfirmDialog({Mode,submitfunction,SubmitMode,Lable}) {
           /> */}
         </DialogContent>
         <DialogActions>
-          <Button sx={{fontFamily:"inherit",fontSize:22,width:100,p:0.25}} onClick={handleClose}>ยกเลิก</Button>
-          <Button sx={{fontFamily:"inherit",fontSize:22,width:120,p:0.25}} variant="contained" className="ConfirmBTN" type="submit">ยืนยัน</Button>
+          <Button sx={{fontFamily:"inherit",fontSize:22,width:100,p:0.25,color:'black'}} onClick={handleClose}>ยกเลิก</Button>
+          <Button sx={{fontFamily:"inherit",fontSize:22,width:120,p:0.25,   backgroundColor: "#061e5fffed",
+    "&:hover": {
+      backgroundColor: "#047857", // เขียวเข้มขึ้น
+    },}} variant="contained" className="ConfirmBTN" type="submit">ยืนยัน</Button>
         </DialogActions>
       </Dialog>
     </React.Fragment>

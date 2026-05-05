@@ -44,6 +44,8 @@
 
 .card {
   padding: 2em;
+    border: 1px solid #e6e6e6;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
 }
 
 .read-the-docs {
@@ -192,3 +194,4 @@ section#dbPicker_modal_calendar table button::after {
     color:inherit;
   }
 }
+

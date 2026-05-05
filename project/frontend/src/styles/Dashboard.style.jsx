@@ -123,7 +123,6 @@ export const DashboardBox = styled(Box)`
   }
 
   @media screen and (max-width: 1600px) {
-    margin-top: 40px;
     width: 86vw;
   }
 

@@ -4,7 +4,6 @@ import { Box, TextField, InputAdornment, IconButton } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
 import SupTable from "./SupTable";
 import AddSup from "./AddSup";
-import { SupBox } from "../../../styles/SupManage.style";
 import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle`

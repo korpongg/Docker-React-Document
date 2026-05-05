@@ -2,89 +2,108 @@ import { styled } from "styled-components";
 import Box from "@mui/material/Box";
 
 export const HomeBox = styled(Box)`
-  font-family: inherit;
+
   width: 65vw;
-  max-width: 1280px;
 
-  .ItemBox {
-    display:flex;
-    justify-content: center;
-    align-items: center;
-    width:100%;
-    flex-wrap: wrap;
-  }
-
+.ItemBox {
+  display: flex;
+  justify-content: center;
+  align-items: center; /* center แนวตั้งด้วย */
+}
   .IBW80 {
     width:80% !important;
   }
+.menu-grid {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
 
-  .LinkToMNG {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: #525252;
-    background: #f4ffff;
-    padding: 10px;
-    width: 165px;
-    height: 165px;
-    font-size: 1rem;
-    letter-spacing: 0.1rem;
-    cursor: pointer;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 15px;
-    margin: 10px 20px;
-    box-shadow: rgba(0, 0, 0, 0.2) -4px -4px 0px inset;
-    position: relative;
-    transition: all 0.6s cubic-bezier(0.8, -0.4, 0.2, 1.7);
-    transform-style: preserve-3d;
-    perspective: 1000px;
-  }
-  .LinkToMNG img {
-    width: 125px;
-  }
-  .LinkToMNG span {
-    font-size: 18px;
-    width: 150px;
-    display: block;
-    text-align: center;
-  }
+.LinkToMNG {
+  width: 320px;
+  cursor: pointer;
+}
+ .menu-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: linear-gradient(135deg, #ffffff, #f8fafc);
+  border-radius: 22px;
+  padding: 20px 24px;
+  height: 130px;
+  transition: all 0.35s ease;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+  position: relative;
+  overflow: hidden;
+}
 
-  .flip-card-front, .flip-card-back {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 15px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+/* glow effect */
+.menu-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent, rgba(99,102,241,0.15), transparent);
+  opacity: 0;
+  transition: 0.4s;
+}
 
-  .flip-card-front {
-    color: black;
-  }
+.menu-card:hover::before {
+  opacity: 1;
+}
 
-  .flip-card-back {
-    background-color: dodgerblue;
-    color: white;
-    transform: rotateY(180deg);
-  }
+/* hover */
+.menu-card:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.18);
+}
 
-  .LinkToMNG:hover {
-    background:#dafffd;
-    transform: rotateY(180deg);
-  }
+/* icon */
+.menu-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.35);
+  flex-shrink: 0;
+}
 
-  @media screen and (max-width: 680px){
-    width:98vw;
+.menu-icon img {
+  width: 40px;
+  
+}
 
-    .ItemBox {
-      display:flex;
-      justify-content: center;
-      align-items: center;
-      width:100%;
-    }
-  }
-`;
+/* text */
+.menu-text {
+  flex: 1;
+}
+
+.menu-text h5 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: 0.3px;
+}
+
+.menu-text p {
+  margin-top: 6px;
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+/* click area */
+.LinkToMNG {
+  width: 320px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.LinkToMNG:active {
+  transform: scale(0.97);
+}
+  `;

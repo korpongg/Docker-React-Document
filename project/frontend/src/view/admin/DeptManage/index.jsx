@@ -4,7 +4,6 @@ import { Box, TextField, InputAdornment, IconButton } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
 import AddDept from "./AddDept";
 import DeptTable from "./DeptTable";
-import { DepartBox } from "../../../styles/DeptManage.style";
 import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle`
@@ -76,8 +75,7 @@ const DeptManagement = () => {
     );
 
     return (
-        <DepartBox>
-            <GlobalStyle />
+       <>  <GlobalStyle />
             <Box className="DepManageFrame">
                 <Box className="DepHeader">Department Manager</Box>
 
@@ -109,8 +107,9 @@ const DeptManagement = () => {
                 </Box>
 
                 <DeptTable data={filteredData} affs={affData} fetch={fetchData} loading={loading} />
-            </Box>
-        </DepartBox>
+            </Box></>
+          
+     
     )
 }
 

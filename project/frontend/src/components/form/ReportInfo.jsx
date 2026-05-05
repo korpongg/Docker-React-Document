@@ -61,13 +61,13 @@ const ReportInfo = ({data,setDataFunction}) => {
             sx={{ p: 1 }}
             value="1"
             control={<Radio />}
-            label="อุบัติการณ์ใหม่"
+            label="ข้อร้องเรียนใหม่"
           />
           <FormControlLabel
             sx={{ p: 1 }}
             value="0"
             control={<Radio />}
-            label="อุบัติการณ์ซ้ำ"
+            label="ข้อร้องเรียนซ้ำ"
           />
         </RadioGroup>
       </ReportInfoStyle>

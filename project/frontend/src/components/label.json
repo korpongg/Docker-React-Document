@@ -8,13 +8,13 @@
     },
     {
       "id": 1,
-      "statusText": "อุบัติการณ์ใหม่",
+      "statusText": "ข้อร้องเรียนใหม่",
       "statusColor": "new",
       "color": "cadetblue"
     },
     {
       "id": 2,
-      "statusText": "ปิดอุบัติการณ์",
+      "statusText": "ปิดข้อร้องเรียน",
       "statusColor": "success",
       "color": "green"
     },
@@ -32,7 +32,7 @@
     },
     {
       "id": 5,
-      "statusText": "ไม่ใช่อุบัติการณ์",
+      "statusText": "ไม่ใช่ข้อร้องเรียน",
       "statusColor": "cancel",
       "color": "red"
     }
@@ -76,7 +76,7 @@
     },
     {
       "id": 6,
-      "statusText": "ไม่ใช่อุบัติการณ์",
+      "statusText": "ไม่ใช่ข้อร้องเรียน",
       "statusColor": "cancel",
       "color": "red"
     }
@@ -109,8 +109,8 @@
   ],
   "CloseIncident": {
     "Occurrence": {
-      "title": "แก้ไขสถานะอุบัติการณ์",
-      "closeReport": "ปิดอุบัติการณ์"
+      "title": "แก้ไขสถานะข้อร้องเรียน",
+      "closeReport": "ปิดข้อร้องเรียน"
     },
     "Medication": {
       "title": "แก้ไขสถานะความคลาดเคลื่อนยา",

@@ -41,6 +41,8 @@ body {
   margin: 0;
   display: flex;
   place-items: center;
+background: #d7e5f9 ;
+
   /* min-width: 320px; */
   /* min-height: 100vh; */
   min-height: 100vh;
@@ -205,3 +207,4 @@ div:where(.swal2-icon) {
   word-break: break-word; /* Ensures long words break to fit within the container */
   overflow: hidden; /* Hides any overflowing content */
 }
+

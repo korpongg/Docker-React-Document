@@ -379,12 +379,12 @@ exports.createEventtLog = async (req, res) => {
       }).join(", ") : null;
       
       // Send email
-      const emailSubject = "รายงานอุบัติการณ์ เลขที่เอกสาร: " + newCode;
-      // const emailMessage ="เลขที่เอกสาร: " + newCode + `<br/><br/>` + "มีรายงานอุบัติการณ์ถึงหน่วยงาน";
+      const emailSubject = "ข้อร้องเรียน เลขที่เอกสาร: " + newCode;
+      // const emailMessage ="เลขที่เอกสาร: " + newCode + `<br/><br/>` + "มีข้อร้องเรียนถึงหน่วยงาน";
       const emailMessage = `
         เลขที่เอกสาร: ${newCode}<br/><br/>
-        มีรายงานอุบัติการณ์ถึงหน่วยงาน<br/><br/>
-        <strong>รายละเอียดอุบัติการณ์:</strong><br/>
+        มีข้อร้องเรียนถึงหน่วยงาน<br/><br/>
+        <strong>รายละเอียดข้อร้องเรียน:</strong><br/>
         เกิดเมื่อ: ${formatDateTime_N7(occurrences.occurrencedate)}<br/>
         ประเภท: ${occurrences.reporttype === '0' ? 'General Risk' : 'Clinical Risk'}<br/>
         ระดับความรุนแรง: ${occurrences.level}<br/><br/>
@@ -650,13 +650,13 @@ exports.updateEventLog = async (req, res) => {
 
     // Send email
     if (status === '2'){
-      emailSubject = `รายงานอุบัติการณ์ เลขที่เอกสาร: ${code}`;
-      emailMessage = `เลขที่เอกสาร: ${code}<br/><br/>หน่วยงานทำการบันทึกผลการทบทวนอุบัติการณ์แล้ว`;
+      emailSubject = `ข้อร้องเรียน เลขที่เอกสาร: ${code}`;
+      emailMessage = `เลขที่เอกสาร: ${code}<br/><br/>หน่วยงานทำการบันทึกผลการทบทวนข้อร้องเรียนแล้ว`;
       recipientEmail = HA_EMAIL;
       sendEmailEventHA(recipientEmail, emailSubject, emailMessage);
     } else if (status === '3') {
-      emailSubject = `รายงานอุบัติการณ์ เลขที่เอกสาร: ${code}`;
-      emailMessage = `เลขที่เอกสาร: ${code}<br/><br/>มีรายงานส่งทบทวนอุบัติการณ์ถึงหน่วยงาน`;
+      emailSubject = `ข้อร้องเรียน เลขที่เอกสาร: ${code}`;
+      emailMessage = `เลขที่เอกสาร: ${code}<br/><br/>มีรายงานส่งทบทวนข้อร้องเรียนถึงหน่วยงาน`;
       recipientEmail = await findDepartmentEmail(code);
       // recipientEmail = HA_EMAIL;
       sendEmailEvent(recipientEmail, emailSubject, emailMessage);

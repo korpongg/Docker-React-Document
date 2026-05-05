@@ -6,6 +6,7 @@ import Radio from "@mui/material/Radio";
 import Divider from "@mui/material/Divider";
 import RadioList from "./RadioList";
 
+
 const ReportRiskType = ({
   Mode,
   data,
@@ -19,7 +20,7 @@ const ReportRiskType = ({
 }) => {
   return (
     <>
-      <Box className="TopicHeader">ประเภทอุบัติการณ์</Box>
+      <Box className="TopicHeader">ประเภทข้อร้องเรียน</Box>
       <div className="ContentRow" style={{ paddingLeft: "50px" }}>
         <RadioGroup
           sx={{ p: 1 }}

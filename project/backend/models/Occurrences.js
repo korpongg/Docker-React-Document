@@ -32,12 +32,12 @@ const Occurrences = sequelize.define('Occurrences', {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  pct: {
+  board: {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  reportlocation: {
-    type: DataTypes.TEXT,
+  date: {
+    type: DataTypes.DATE,
     allowNull: true
   },
   // reportdate: {
@@ -64,12 +64,12 @@ const Occurrences = sequelize.define('Occurrences', {
     type: DataTypes.STRING(3),
     allowNull: true
   },
-  acceptdate: {
-    type: DataTypes.DATE,
+  risk: {
+    type: DataTypes.STRING(1),
     allowNull: true
   },
-  responsedate: {
-    type: DataTypes.DATE,
+  quality: {
+    type: DataTypes.TEXT,
     allowNull: true
   },
   // urgenttype: {
@@ -80,55 +80,55 @@ const Occurrences = sequelize.define('Occurrences', {
   //   type: DataTypes.STRING(1),
   //   allowNull: true
   // },
-  patientcare: {
+  nurse: {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  patientcareremark: {
+  administer: {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  patientsupport: {
+  operation: {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  patientsupportremark: {
+  director: {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  utility: {
+  doctor: {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  utilityremark: {
+  compensation: {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  equipment: {
+  respond_radio: {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  equipmentremark: {
+  respond_text: {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  safety: {
+  summary_reply: {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  safetyremark: {
+  summary_analysis: {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  service: {
+  summary_solving: {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  serviceremark: {
+  reply: {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  management: {
+  manager: {
     type: DataTypes.TEXT,
     allowNull: true
   },
@@ -222,6 +222,20 @@ const Occurrences = sequelize.define('Occurrences', {
   },
   deleteAt: {
     type: DataTypes.DATE,
+    allowNull: true
+  },
+    deptrelate2: {
+    type: DataTypes.STRING(100),
+    allowNull: true
+  },
+
+complainant: {
+    type: DataTypes.STRING(1),
+    allowNull: true
+  },
+
+  problem:{
+    type: DataTypes.STRING(1),
     allowNull: true
   }
 }, {

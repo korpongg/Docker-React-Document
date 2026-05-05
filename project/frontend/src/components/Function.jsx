@@ -104,8 +104,7 @@ export function chkDiscount(arr, code) {
 // เช็ค File Exitst
 export async function checkFileExists(url) {
   try {
-    const response = await axios.head(url);
-    return response;
+
   } catch (error) {
     return false;
   }

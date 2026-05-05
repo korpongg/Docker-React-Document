@@ -65,7 +65,7 @@ function AutoCompleteTextSingle({ Mode, data, datacolumn, setDataFunction, setSi
         name={datacolumn}
         form={datacolumn}
         disabled={Mode==="Show"}
-        sx={{ width: 800 }}
+        sx={{ width: '100%' }}
         options={departmentData}
         getOptionLabel={(option) => `${option.DepName} - ${option.AffName}`}
         renderInput={(params) => <TextField {...params} label="กรุณาเลือก" />}

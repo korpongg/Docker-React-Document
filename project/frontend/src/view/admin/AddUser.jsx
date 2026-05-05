@@ -62,7 +62,7 @@ const AddUser = () => {
         let isValid = true;
 
         if (!userId || userId.length < 6 || userId.length > 10) {
-            console.log(userId);
+           // console.log(userId);
             setResponse({ success: false, message: 'รหัสพนักงานต้องมีความยาวระหว่าง 6-10 ตัวอักษร' });
             isValid = false;
             setLoading(false);

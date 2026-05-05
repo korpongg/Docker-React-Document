@@ -45,13 +45,11 @@ app.use("/api/logout", require("./routes/logout"));
 
 //routes
 app.use("/api/users", require("./routes/api/users"));
-app.use("/api/affiliations", require("./routes/api/affiliations"));
 app.use("/api/factions", require("./routes/api/factions"));
 app.use("/api/departments", require("./routes/api/departments"));
-app.use("/api/departmentsMed", require("./routes/api/departmentsMed"));
-app.use("/api/occurrences", require("./routes/api/occurrences"));
+app.use("/api/document", require("./routes/api/document"));
+app.use("/api/documentform", require("./routes/api/documentform"));
 app.use("/api/events", require("./routes/api/events"));
-app.use("/api/medication", require("./routes/api/medication"));
 app.use("/api/supervisor", require("./routes/api/supervisor"));
 app.use("/api/checksupervisor", require("./routes/api/checksupervisor"));
 
@@ -62,6 +60,11 @@ const WebSocket = require("ws");
 
 const { addClient, removeClient } = require("./services/websocketManager");
 const { executeAndStoreQueryResult } = require("./services/broadcastService");
+
+const { getCenter1,
+  getCenter2,
+  getCenter3,
+  getCenter4, } = require('./controllers/broadcastController');
 
 // Spinning the HTTP server and the WebSocket server.
 const server = http.createServer(app);
@@ -75,33 +78,63 @@ server.listen(PORT, () => {
 let connectedClientsCount = 0;
 
 // Function to handle new client connections
-wsServer.on("connection", function (connection, request) {
+wsServer.on("connection", (connection) => {
   const userId = uuidv4();
-  const userIP = request.headers["x-forwarded-for"] || request.connection.remoteAddress;
-  console.log(`Received a new connection from user:${userId} With IP:${userIP}.`);
   addClient(userId, connection);
-  executeAndStoreQueryResult();
-  connectedClientsCount++; // Increment the count
-
+connectedClientsCount++;   
   connection.on("message", async (message) => {
-    // Log the received message
     try {
       const data = JSON.parse(message);
-      console.log("Received message:", data);
-      // Handle the cid parameter sent from the client
-      
-      await executeAndStoreQueryResult();
-    } catch (error) {
-      console.error("Error processing message:", error);
+
+      switch (data.type) {
+
+        case "GET_DATA": {
+          let result = [];
+
+          switch (data.requestType) {
+            case "DATA1":
+              result = await getCenter1(data.payload);
+              break;
+            case "DATA2":
+              result = await getCenter2(data.payload);
+              break;
+            case "DATA3":
+              result = await getCenter3(data.payload);
+              break;
+            case "DATA4":
+              result = await getCenter4(data.payload);
+              break;
+            default:
+              throw new Error("Unknown requestType");
+          }
+
+          connection.send(JSON.stringify({
+            type: "CENTER_DATA",
+            requestType: data.requestType,
+            data: result,
+          }));
+          break;
+        }
+
+        default:
+          console.log("Unknown message type:", data.type);
+      }
+
+    } catch (err) {
+      console.error(err);
+      connection.send(JSON.stringify({
+        type: "ERROR",
+        message: err.message,
+      }));
     }
   });
 
   connection.on("close", () => {
-    console.log(`user:${userId} With IP:${userIP} disconnected.`);
     removeClient(userId);
     connectedClientsCount--;
   });
 });
+
 
 // Set up the interval to run the function every 5 seconds
 // Global variable to store the interval ID
@@ -117,7 +150,7 @@ global.resetInterval = () => {
         // Get the current date and time
         const currentTime = new Date();
         console.log(`..........Start Do interval......... At`, currentTime.toLocaleString("en-GB", { hour12: false }));
-        await executeAndStoreQueryResult();
+       // await executeAndStoreQueryResult();
       } catch (error) {
         console.error("Error during periodic execution:", error);
       }
@@ -126,7 +159,7 @@ global.resetInterval = () => {
 };
 
 // Initialize the interval
-global.resetInterval();
+//global.resetInterval();
 //End BoardCast
 
 // Serve static files from the React app

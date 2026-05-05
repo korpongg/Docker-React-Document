@@ -1,20 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
-import DeleteIcon from '@mui/icons-material/Delete';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import DoDisturbOnIcon from '@mui/icons-material/DoDisturbOn';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import Tooltip from '@mui/material/Tooltip'
 import ConfirmDialog from "./ConfirmDialog";
-import NavFormStyle from "../../styles/NavFormStyle.style";
-
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import FirstPageIcon from '@mui/icons-material/FirstPage';
-import LastPageIcon from '@mui/icons-material/LastPage';
 
 const NavForm = ({Mode,Data,Access,submitfunction,handleSubmitEdit,Stage,MaxStage,FirstStage,LastStage,PrevStage,NextStage,ToStage}) => {
   const NavPage = [];
@@ -28,7 +15,16 @@ const NavForm = ({Mode,Data,Access,submitfunction,handleSubmitEdit,Stage,MaxStag
   return (
   <>
   {/* {console.log(Access)} */}
-    <Box className="FormFooter" >
+   <Box className="action-bar"   style={{
+       background: "#ffffff",
+    borderBottom: "6px solid #141553ff",   // เส้นบนแทน
+    borderRadius: "10px",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+    position: "relative",
+    minHeight: "72px",
+    display: "flex",
+    alignItems: "center",
+          }}>
     {/* <span>
       {Stage>1 ?
       <>
@@ -53,20 +49,21 @@ const NavForm = ({Mode,Data,Access,submitfunction,handleSubmitEdit,Stage,MaxStag
     </span> */}
     {Stage===MaxStage ? 
     Mode!=="Show" &&(
-      Access && (
 
         (Mode==="Add" ?
           <>
-          <ConfirmDialog submitfunction={submitfunction} SubmitMode="Draft" Access={Access} Mode={Mode} Lable="บันทึกแบบร่าง"/> 
+          <ConfirmDialog submitfunction={submitfunction} SubmitMode="Draft" Access={Access} Mode={Mode} Lable="บันทึกข้อมูล" /> 
         {/* <ConfirmDialog submitfunction={submitfunction} SubmitMode="Submit" Access={Access} Mode={Mode} Lable="บันทึก"/>  */}
           </>
         :
         <>
-        {Data?.formstatus==="0" && <ConfirmDialog submitfunction={handleSubmitEdit} Access={Access} Mode={Mode} SubmitMode="Draft" Lable="บันทึกแบบร่าง"/>}
-        <ConfirmDialog submitfunction={handleSubmitEdit} Access={Access} Mode={Mode} SubmitMode="Submit" Lable="บันทึก"/>
+        <ConfirmDialog submitfunction={handleSubmitEdit} Access={Access} Mode={Mode} SubmitMode="Draft" Lable="แก้ไขข้อมูล"/>
+      
         </>
       
-      ))
+      )
+    
+    
       )
         : "Page "+Stage+" of "+MaxStage}
     {/* <span>
