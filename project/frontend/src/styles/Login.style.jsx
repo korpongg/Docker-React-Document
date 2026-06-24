@@ -20,20 +20,18 @@ export const LoginBox = styled(Box)`
   color: #166534 !important;
 }
 
-  .login {
-    overflow: hidden;
-    background-color: white;
-    padding: 44px;
-    border-radius: 10px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 480px;
-    transform: translate(-50%, -50%);
-    transition: transform 300ms, box-shadow 300ms;
-    box-shadow: 5px 5px 10px 0px rgb(0 184 255 / 30%);
-  }
+.login {
+  width: 100%;
+  max-width: 420px;
 
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+
+  overflow: hidden;
+}
   .login h1 {
     color: #5b5b5b;
     font-size: 26px;
@@ -78,10 +76,14 @@ export const LoginBox = styled(Box)`
     background-color: #edb314ff;
   }
 .login button {
-  background: linear-gradient(135deg, #0f309bff, #1f2da6ff);
-  border-radius: 8px;
+  width: 100%;
+  padding: 14px;
+
+  border: none;
+  border-radius: 12px;
+
+  font-size: 16px;
   font-weight: 600;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
 }
 .login button:hover {
   background: linear-gradient(135deg, #0f144aff, #190c7cff);
@@ -116,14 +118,15 @@ export const LoginBox = styled(Box)`
       transform: rotate(360deg);
     }
   }
+.login-wrapper {
+  min-height: 100vh;
 
-  .login-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, #13185eff, #531fa6ff, #0F9B0F);
-}
 
+  padding: 20px;
+}
 .login-card {
   width: 480px;
   padding: 60px 50px;
@@ -178,12 +181,14 @@ background: linear-gradient(
 }
 .login input {
   width: 100%;
+  box-sizing: border-box;
+
   padding: 14px 18px;
   border-radius: 12px;
+
+  margin-bottom: 15px;
+
   border: 2px solid #e5e7eb;
-  background: #ffffff;
-  font-size: 16px;
-  transition: all 0.25s ease;
 }
 
 .login input:focus {
@@ -220,5 +225,47 @@ background: linear-gradient(
   margin-top: 4px;
   font-size: 0.85rem;
   color: #6b7280; /* gray-500 */
+}
+  @media (max-width: 768px) {
+  .login {
+    padding: 30px 24px;
+    border-radius: 18px;
+  }
+
+  .login-header h1 {
+    font-size: 20px;
+  }
+
+  .login-header p {
+    font-size: 13px;
+  }
+
+  .icon-wrap {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-wrapper {
+    padding: 16px;
+  }
+
+  .login {
+    padding: 24px 20px;
+  }
+
+  .login-header h1 {
+    font-size: 18px;
+  }
+
+  .login input {
+    padding: 12px 14px;
+    font-size: 15px;
+  }
+
+  .login button {
+    padding: 12px;
+  }
 }
 `;

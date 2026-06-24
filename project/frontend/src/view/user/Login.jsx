@@ -166,7 +166,6 @@ const Login = () => {
       <LoginBox>
         <GlobalStyle />
         <div className="login-wrapper">
-          <div className="login-card">
             {" "}
           
             <form className="login" onSubmit={handleSubmit} autoComplete="off">
@@ -200,7 +199,6 @@ const Login = () => {
               <button disabled={loading}>เข้าสู่ระบบ</button>
             </form>
           </div>
-        </div>
       </LoginBox>
     </>
   );
