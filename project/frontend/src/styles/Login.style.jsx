@@ -3,7 +3,6 @@ import Box from "@mui/material/Box";
 
 export const LoginBox = styled(Box)`
   text-align: center;
-  background: linear-gradient(135deg, #0c065fff, #0f2c76ff);
 .swal-radius {
   border-radius: 20px !important;
 }
