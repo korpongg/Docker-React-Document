@@ -1,71 +1,8 @@
 const sequelize = require("../config/dbConn").sequelize;
-const Occurrences = require("../models/Occurrences");
-const Occurrences2 = require("../models/Occurrences2");
-
-const department_list = require("../models/department_list");
+const Occurrences = require("../models/Occurrences4");
+const personcomplaint = require("../models/PersonComplaint");
 const Department = require("../models/Department");
 // const User = require("../models/User");
-
-const MAIL_MAP = {
-  manager: {
-    a: ['korpongparunyakul@gmail.com'],
-    b: ['justtechcomseicnt@gmail.com'],
-  },
-  quality: {
-    a: ['quality_a111111@gmail.com'],
-    b: ['quality_b22222@gmail.com'],
-  },
-  nurse: {
-    a: ['nurse_a1111111@gmail.com'],
-    b: ['nurse_b1111111@gmail.com'],
-      c: ['nurse_c1111111@gmail.com'],
-  },
-  administer: {
-    a: ['admin_a1111111@gmail.com'],
-    b: ['admin_b1111111@gmail.com'],
-    c: ['admin_c1111111@gmail.com'],
-    d: ['admin_d1111111@gmail.com'],
-      e: ['admin_e1111111@gmail.com'],
-  },
-  operation: {
-      a: ['operation_a1111111@gmail.com'],
-    b: ['operation_b1111111@gmail.com'],
-    c: ['operation_c1111111@gmail.com'],
-    c: ['operation_c1111111@gmail.com'],
-  },
-  director: {
-    a: ['director1111111@gmail.com'],
-  },
-  doctor: {
-    a: ['doctor1111111@gmail.com'],
-     b: ['doctor_b1111111@gmail.com'],
-  },
-  compensation: {
-    a: ['compensation1111111@gmail.com'],
-  },
-};
-
-function buildMailList(data) {
-  const mails = [];
-
-  Object.entries(data).forEach(([role, value]) => {
-    if (!MAIL_MAP[role] || !value) return;
-
-    // แยกกรณีหลายค่า c,d,b
-    const codes = value.split(',');
-
-    codes.forEach(code => {
-      const emailList = MAIL_MAP[role][code];
-      if (emailList) {
-        mails.push(...emailList);
-      }
-    });
-  });
-
-  // กัน email ซ้ำ
-  return [...new Set(mails)];
-}
-
 const { executeAndStoreQueryResult } = require('../services/broadcastService');
 const { sendEmail, sendExecEmail } = require("./emailController");
 const DB_NAME = process.env.DB_NAME;
@@ -123,40 +60,14 @@ const formatDateTime_N7 = (date) => {
 // Create a new occurrence
 exports.createOccurrence = async (req, res) => {
   try {
-        const {count, deptemail,count2, deptemail2,reportidWhere,manager,quality } = req.body;
-console.log(req.body)
+    console.log('reqjwqjkekqwkjewjqkjke')
+    console.log(req.body)
+        
 
-const roleData = {
-  manager: req.body.manager,
-  quality: req.body.quality,
-  nurse: req.body.nurse,
-  administer: req.body.administer,
-  operation: req.body.operation,
-  director: req.body.director,
-  doctor: req.body.doctor,
-  compensation: req.body.compensation,
-};
-const mailList = buildMailList(roleData);
-
-console.log('MAIL LIST:', mailList);
-
-
-var arr_mail=[];
-if(typeof deptemail !== 'undefined' && deptemail !== null){
-arr_mail = JSON.parse(deptemail);
-}
-var arr_mail2=[];
-if( typeof deptemail2 !== 'undefined' && deptemail2 !== null){
-arr_mail2 = JSON.parse(deptemail2);
-}
-
-
-    const fileData = req.files || [];
- console.log('1111111111111111111111111111')
-
-  
-    // Get the current year and month
-    const currentYear = new Date().getFullYear().toString().slice(-2); // Extract last two digits of the year
+const {array,createby,appeal} = req.body
+const data = JSON.parse(array);
+console.log(data.length)
+const currentYear = new Date().getFullYear().toString().slice(-2); // Extract last two digits of the year
     const currentMonth = (new Date().getMonth() + 1).toString().padStart(2, "0"); // Get current month and ensure it's zero-padded
     const fullYear = new Date().getFullYear().toString();
     // Find the last job detail entry for the current month
@@ -185,25 +96,45 @@ arr_mail2 = JSON.parse(deptemail2);
     }
     // Concatenate year and month to form the reportid
     const reportId = lastReportId + currentMonth + currentYear;
+   if(appeal==1)
+for(var i=0;i<data.length;i++){
+  console.log(data[i])
+const result2 = await personcomplaint.create({
+  
+      number:data[i].id,
+      name:data[i].name,
+      department:data[i].department.id,
+      faction:data[i].faction,
+      createby:createby,
+      createAt: sequelize.literal("CURRENT_TIMESTAMP"),
+      reportid: reportId, // Assign the generated reportId
+    });
+}
 
+    const fileData = req.files || [];
+ console.log('1111111111111111111111111111')
+
+    // Get the current year and month
+    
     const occurrenceDate = new Date(req.body.occurrencedate);
     const formattedOccurrenceDate = occurrenceDate.toISOString().replace('T', ' ').replace('Z', '');
-
+console.log('55555')
     const result = await Occurrences.create({
       ...req.body,
       occurrencedate: sequelize.literal(`'${formattedOccurrenceDate}'`),
       formstatus: req.body.formstatus ? req.body.formstatus : "1",
       createAt: sequelize.literal("CURRENT_TIMESTAMP"),
-      reportid: reportidWhere, // Assign the generated reportId
+      reportid: reportId, // Assign the generated reportId
     });
-    
+
+  console.log('66666')
     if (fileData.length > 0) {
       const renamePromises = fileData.map((file) => {
         const fileExt = path.extname(file.originalname).toLowerCase();
         const newFilename = `OCC${reportId}${fileExt}`;
         const oldPath = file.path;
         const newPath = path.join(__dirname, process.env.DB_STORE2, newFilename);
-    
+        console.log("newPath1", newPath);
         
         return new Promise((resolve, reject) => {
           fs.rename(oldPath, newPath, async (err) => {
@@ -222,38 +153,13 @@ arr_mail2 = JSON.parse(deptemail2);
       result.image = await Promise.all(renamePromises);
       await result.save();
     }
+     console.log('xxxxxxxxxxxxxxx')
+       console.log(HA_EMAIL)
     // Send email
+    console.log(result)
+   console.log('77777')
 
-     for(var i=0;i<mailList.length;i++){
-   const newOccurrenceId = result.id;
-       const emailSubject = "แจ้งเพื่อทราบ เลขที่เอกสาร: " + reportId;
-       const emailMessage = "เลขที่เอกสาร: " + reportId + `<br/><br/>` + "สร้างรายงานสำเร็จ รอตรวจสอบ";
-       const recipientEmail = mailList[i];
-       sendEmail(recipientEmail, newOccurrenceId, emailSubject, emailMessage);
-}
-
-
-    for(var i=0;i<count;i++){
-   const newOccurrenceId = result.id;
-       const emailSubject = "ข้อร้องเรียน เลขที่เอกสาร: " + reportId;
-       const emailMessage = "เลขที่เอกสาร: " + reportId + `<br/><br/>` + "สร้างรายงานสำเร็จ รอตรวจสอบ";
-       const recipientEmail = arr_mail[i];
-       sendEmail(recipientEmail, newOccurrenceId, emailSubject, emailMessage);
-}
-
-  for(var i=0;i<count2;i++){
-   const newOccurrenceId = result.id;
-       const emailSubject = "ข้อร้องเรียน เลขที่เอกสาร: " + reportId;
-       const emailMessage = "เลขที่เอกสาร: " + reportId + `<br/><br/>` + "สร้างรายงานสำเร็จ รอตรวจสอบ";
-       const recipientEmail = arr_mail2[i];
-       sendEmail(recipientEmail, newOccurrenceId, emailSubject, emailMessage);
-}
-
-const result3= await Occurrences2.update({ 
-    risk: '1'
-  },{
-      where: { reportid: reportidWhere  }
-    });
+console.log('888888')
     executeAndStoreQueryResult();
     res.status(201).json(result);
   } catch (error) {
@@ -262,126 +168,14 @@ const result3= await Occurrences2.update({
   }
 };
 
-exports.submitExecutive = async (req, res) => {
-  try {
-const {reportidWhere}=req.body
-
-
-
-    const result = await Occurrences4.create({
-      ...req.body,
-      createAt: sequelize.literal("CURRENT_TIMESTAMP"),
-            formstatus: req.body.formstatus ? req.body.formstatus : "1",
-
-      reportid: reportidWhere, // Assign the generated reportId
-    });
-
-   
-    
-    const result3= await Occurrences2.update({ 
-    risk: '3'
-  },{
-      where: { reportid: reportidWhere  }
-    });
-    res.status(201).json(result);
-  } catch (error) {
-    console.log(error)
-    res.status(500).json({ error: error.message });
-  }
-};
-
-exports.submitManager = async (req, res) => {
-  try {
-    const {
-      reportidWhere,
-      department,
-      reply,
-      date_received,
-      signature, // เพิ่ม
-    } = req.body;
-
-    console.log("submitManager:", req.body);
-
-    const result3 = await department_list.update(
-      {
-        department_received: department,
-        reply: reply,
-        status: 1,
-        date_received: date_received,
-        signature: signature, // เพิ่ม
-        risk: "1",
-        updateAt: sequelize.literal("CURRENT_TIMESTAMP"),
-      },
-      {
-        where: {
-          reportid: reportidWhere,
-        },
-      }
-    );
-console.log("update result:", result3);
-    await executeAndStoreQueryResult(reportidWhere);
-
-    res.status(201).json(result3);
-  } catch (error) {
-    console.error("submitManager error:", error);
-    res.status(500).json({ error: error.message });
-  }
-};
-
-exports.updateReply = async (req, res) => {
-  try {
-
-const {reportidWhere}=req.body
-
-  const result= await Occurrences2.update(req.body, {
-      where: { reportid: reportidWhere  }
-    });
-    
-    res.status(201).json(result);
-  } catch (error) {
-    console.log(error)
-    res.status(500).json({ error: error.message });
-  }
-};
 // Get all occurrences
 exports.getAllOccurrences = async (req, res) => {
   try {
     // First query to get occurrences and user details
     const occQuery = `
-      SELECT occ.*,
-        CONCAT(u_request.title, ' ', u_request.name, ' ', u_request.lastname) AS requestby,
-        u_request.dep AS requestdep,
-        u_request.faction AS requestfac,
-        u_request.affiliation AS requestaff,
-        CASE
-          WHEN u_update.userid IS NULL THEN NULL
-          ELSE CONCAT(u_update.title, ' ', u_update.name, ' ', u_update.lastname)
-        END AS updateby,
-        u_update.dep AS updatedep,
-        u_update.faction AS updatefac,
-        u_update.affiliation AS updateaff,
-        CASE 
-          WHEN u_accept.userid IS NULL THEN NULL
-          ELSE CONCAT(u_accept.title, ' ', u_accept.name, ' ', u_accept.lastname)
-        END AS acceptby,
-        u_accept.dep AS acceptdep,
-        u_accept.faction AS acceptfac,
-        u_accept.affiliation AS acceptaff,
-        CASE WHEN occ.reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END AS reporttypename
-      FROM ${DB_NAME}.[dbo].[occurrences] occ
-      LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_request ON u_request.userid = occ.createby
-      LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_update ON u_update.userid = occ.updateby
-      LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_accept ON u_accept.userid = occ.acceptby
-      ORDER BY 
-        CASE 
-          WHEN occ.formstatus = '1' THEN 1
-          WHEN occ.formstatus = '2' THEN 2
-          WHEN occ.formstatus = '4' THEN 3
-          WHEN occ.formstatus = '0' THEN 4
-          WHEN occ.formstatus = '5' THEN 5
-          WHEN occ.formstatus = '3' THEN 6
-          ELSE 6 
-        END;
+      SELECT occ.*
+       FROM ${DB_NAME}.[dbo].[occurrences4] occ
+      
     `;
 
     const results = await sequelize.query(occQuery, {
@@ -417,7 +211,6 @@ exports.getAllOccurrences = async (req, res) => {
         return {
           ...occurrence,
           deptrelate: JSON.parse(occurrence.deptrelate || '[]'),
-          deptrelate2: JSON.parse(occurrence.deptrelate2 || '[]'),
           patientcare: JSON.parse(occurrence.patientcare || '[]'),
           patientsupport: JSON.parse(occurrence.patientsupport || '[]'),
           utility: JSON.parse(occurrence.utility || '[]'),
@@ -440,38 +233,18 @@ exports.getAllOccurrences = async (req, res) => {
 
 // Get a single occurrence by ID
 exports.getOccurrenceById = async (req, res) => {
-  if (!req?.params?.reportid) {
+  console.log('reportid4444444')
+ if (!req?.params?.id) {
     return res.status(400).json({ message: "id is required." });
   }
-
-  const reportid = req?.params?.reportid;
+console.log('reportid4444444222222222')
+  const reportid = req?.params?.id;
+console.log(reportid)
   try {
     // First query to get occurrences and user details
-    const occQuery = `
-      SELECT occ.*,
-        CONCAT(u_request.title, ' ', u_request.name, ' ', u_request.lastname) AS requestby,
-        u_request.dep AS requestdep,
-        u_request.faction AS requestfac,
-        u_request.affiliation AS requestaff,
-        CASE
-          WHEN u_update.userid IS NULL THEN NULL
-          ELSE CONCAT(u_update.title, ' ', u_update.name, ' ', u_update.lastname)
-        END AS updateby,
-        u_update.dep AS updatedep,
-        u_update.faction AS updatefac,
-        u_update.affiliation AS updateaff,
-        CASE 
-          WHEN u_accept.userid IS NULL THEN NULL
-          ELSE CONCAT(u_accept.title, ' ', u_accept.name, ' ', u_accept.lastname)
-        END AS acceptby,
-        u_accept.dep AS acceptdep,
-        u_accept.faction AS acceptfac,
-        u_accept.affiliation AS acceptaff,
-        CASE WHEN occ.reporttype = '0' THEN 'General Risk' ELSE 'Clinical Risk' END AS reporttypename
-      FROM ${DB_NAME}.[dbo].[occurrences] occ
-      LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_request ON u_request.userid = occ.createby
-      LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_update ON u_update.userid = occ.updateby
-      LEFT JOIN ${DB_NAME}.[dbo].[user] AS u_accept ON u_accept.userid = occ.acceptby
+   const occQuery = `
+      SELECT occ.*
+        FROM ${DB_NAME}.[dbo].[occurrences4] occ
       WHERE occ.reportid = :reportid;
     `;
 
@@ -510,7 +283,6 @@ exports.getOccurrenceById = async (req, res) => {
         return {
           ...occurrence,
           deptrelate: JSON.parse(occurrence.deptrelate || '[]'),
-          deptrelate2: JSON.parse(occurrence.deptrelate2 || '[]'),
           patientcare: JSON.parse(occurrence.patientcare || '[]'),
           patientsupport: JSON.parse(occurrence.patientsupport || '[]'),
           utility: JSON.parse(occurrence.utility || '[]'),
@@ -531,36 +303,43 @@ exports.getOccurrenceById = async (req, res) => {
   }
 };
 
+exports.getComplainantById = async (req, res) => {
+  console.log('wdwdwadwadawd')
+  if (!req?.params?.id) {
+    return res.status(400).json({ message: "id is required." });
+  }console.log(req?.params?.id)
+
+  const reportid = req?.params?.id;
+
+  try {
+    // First query to get occurrences and user details
+    const occQuery = `
+      SELECT per.*
+        FROM ${DB_NAME}.[dbo].[person_complaint] per
+    
+      WHERE per.reportid = :reportid;
+    `;
+console.log(occQuery)
+    const results = await sequelize.query(occQuery, {
+      type: sequelize.QueryTypes.SELECT,
+      replacements: { reportid }
+    });
+
+return res.status(200).json(results);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
 // Update an occurrence by ID
 exports.updateOccurrence = async (req, res) => {
   if (!req?.body?.id) {
     return res.status(400).json({ message: "id is required." });
-  }const {count, deptemail,count2, deptemail2,reportidWhere,manager,quality } = req.body;
-var arr_mail=[];
-
-const roleData = {
-  manager: req.body.manager,
-  quality: req.body.quality,
-  nurse: req.body.nurse,
-  administer: req.body.administer,
-  operation: req.body.operation,
-  director: req.body.director,
-  doctor: req.body.doctor,
-  compensation: req.body.compensation,
-};
-const mailList = buildMailList(roleData);
-
-console.log('MAIL LIST Update:', mailList);
-
-if(typeof deptemail !== 'undefined' && deptemail !== null){
-arr_mail = JSON.parse(deptemail);
-}
-var arr_mail2=[];
-if( typeof deptemail2 !== 'undefined' && deptemail2 !== null){
-arr_mail2 = JSON.parse(deptemail2);
-}
+  }
 
   const id = req?.body?.id;
+
   try {
     const fileData = req.files;
     const occurrence = await Occurrences.findOne({ where: { id: id } });
@@ -570,6 +349,7 @@ arr_mail2 = JSON.parse(deptemail2);
     if (!occurrence) {
       return res.status(204).json({ message: `No Occurrences matches ID ${req.body.id}.` });
     }
+
     // Check if req.body.occurrencedate is provided and parse it
     if (req.body.occurrencedate) {
       const occurrencedate = new Date(req.body.occurrencedate);
@@ -589,7 +369,7 @@ arr_mail2 = JSON.parse(deptemail2);
 
     if (req.body.updateby) {
       req.body.updateAt = sequelize.literal("CURRENT_TIMESTAMP");
-    }  
+    }
 
     const validColumns = req.body;
     // console.log("Data sets:", validColumns);
@@ -607,6 +387,7 @@ arr_mail2 = JSON.parse(deptemail2);
         // console.log("Updated value:", validColumns[column]);
       }
     }
+
     occurrence.updatedAt = sequelize.literal("CURRENT_TIMESTAMP");
 
     // Additional logging to trace the flow
@@ -646,13 +427,14 @@ arr_mail2 = JSON.parse(deptemail2);
             }
           });
         }
+
         // Process file renaming and saving
         const renamePromises = fileData.map((file) => {
           const fileExt = path.extname(file.originalname).toLowerCase();
           const newFilename = `OCC${req.body.reportid}${fileExt}`;
           const oldPath = file.path;
           const newPath = path.join(__dirname, process.env.DB_STORE2, newFilename);
-    
+          console.log("newPath2", newPath);
 
           return new Promise((resolve, reject) => {
             fs.rename(oldPath, newPath, async (err) => {
@@ -676,32 +458,17 @@ arr_mail2 = JSON.parse(deptemail2);
     // Determine if email should be sent based on level and reporttype
     const isGeneralRisk = result.reporttype === '0';
     const levelCheck = isGeneralRisk ? parseInt(result.level, 10) > 3 : ["E", "F", "G", "H", "I"].includes(result.level);
- 
-  
+
     // Send email
-     for(var i=0;i<mailList.length;i++){
-   const newOccurrenceId = result.id;
-       const emailSubject = "แจ้งเพื่อทราบ เลขที่เอกสาร: " + reportidWhere;
-       const emailMessage = "เลขที่เอกสาร: " + reportidWhere + `<br/><br/>` + "สร้างรายงานสำเร็จ รอตรวจสอบ";
-       const recipientEmail = mailList[i];
-       sendEmail(recipientEmail, newOccurrenceId, emailSubject, emailMessage);
-}
+    if (req.body.formstatus === '1') {
+      // Get the ID of the newly created occurrence
+      const reportId = result.reportid;
+      const emailSubject = "ข้อร้องเรียน เลขที่เอกสาร: " + reportId;
+      const emailMessage = "เลขที่เอกสาร: " + reportId + `<br/><br/>` + "สร้างรายงานสำเร็จ รอตรวจสอบ";
+      const recipientEmail = HA_EMAIL;
+      sendEmail(recipientEmail, id, emailSubject, emailMessage);
+    }
 
-    for(var i=0;i<count;i++){
-   const newOccurrenceId = result.id;
-       const emailSubject = "ข้อร้องเรียน เลขที่เอกสาร: " + reportidWhere;
-       const emailMessage = "เลขที่เอกสาร: " + reportidWhere + `<br/><br/>` + "สร้างรายงานสำเร็จ รอตรวจสอบ";
-       const recipientEmail = arr_mail[i];
-       sendEmail(recipientEmail, newOccurrenceId, emailSubject, emailMessage);
-}
-
-  for(var i=0;i<count2;i++){
-   const newOccurrenceId = result.id;
-       const emailSubject = "ข้อร้องเรียน เลขที่เอกสาร: " + reportidWhere;
-       const emailMessage = "เลขที่เอกสาร: " + reportidWhere + `<br/><br/>` + "สร้างรายงานสำเร็จ รอตรวจสอบ";
-       const recipientEmail = arr_mail2[i];
-       sendEmail(recipientEmail, newOccurrenceId, emailSubject, emailMessage);
-}
     if (occurrence.acceptby === null && req.body.renew) {
       occurrence.acceptby = '1';
       const resAccept = await occurrence.save();
@@ -731,31 +498,33 @@ arr_mail2 = JSON.parse(deptemail2);
         // Map relateids to corresponding email recipients
         const emailCC = [];
         const departmentList = [];
+
         Object.keys(departmentGroups).forEach((relateid) => {
           const names = departmentGroups[relateid].join(', ');
           departmentList.push(`${names}`);
           if (levelCheck) {
             switch (parseInt(relateid)) {
               case 1:
-                emailCC.push('korpongparunyakul@gmail.com');
+                emailCC.push('paitoon.k@thainakarin.co.th');
                 break;
               case 2:
-                emailCC.push('korpongparunyakul@gmail.com');
+                emailCC.push('watson.a@thainakarin.co.th');
                 break;
               case 3:
-                emailCC.push('korpongparunyakul@gmail.com');
+                emailCC.push('surussavadee.s@thainakarin.co.th');
                 break;
               case 5:
-                emailCC.push('korpongparunyakul@gmail.com');
+                emailCC.push('thipachart.p@thainakarin.co.th');
                 break;
               case 6:
-                emailCC.push('korpongparunyakul@gmail.com');
+                emailCC.push('malee.b@thainakarin.co.th');
                 break;
               default:
                 break;
             }
           }
         });
+        
         const reportId = resAccept.reportid;
         // Join department list with a line break or comma, as preferred
         const formatDepList = departmentList.join(', ');
@@ -773,7 +542,7 @@ arr_mail2 = JSON.parse(deptemail2);
           5. สรุปเหตุการณ์:<br/> ${renewDesc}<br/><br/>
           6. การแก้ไขปัญหาเฉพาะหน้า:<br/> ${impromptDesc ? impromptDesc : '-'}</div>
         `;
-        const recipientEmail = 'korpongparunyakul@gmail.com';
+        const recipientEmail = 'pattarapon.k@thainakarin.co.th';
         // const recipientEmail = HA_EMAIL;
         sendExecEmail(recipientEmail, emailCC, id, emailSubject, emailMessage);
       }
@@ -809,30 +578,20 @@ arr_mail2 = JSON.parse(deptemail2);
 // Delete an occurrence by ID
 exports.deleteOccurrence = async (req, res) => {
   const Id = req?.params?.id;
-
-  if (!Id) {
-    return res.status(400).json({ message: "Occurence ID required" });
-  }
+  if (!Id) return res.status(400).json({ message: "Occurence ID required" });
 
   try {
-    const occ = await department_list.findOne({ where: { id: Id } });
-
+    const occ = await Occurrences.findOne({ where: { id: Id, deleteAt: null } });
     if (!occ) {
-      return res.status(404).json({
-        message: `Occurence ID ${Id} not found`
-      });
+      return res.status(204).json({ message: `Occurence ID ${Id} not found` });
     }
-
-    await occ.destroy(); // ✅ ลบจริง
-
+    occ.deleteAt = sequelize.fn('GETDATE');
+    occ.formstatus = "3";
+    await occ.save();
     executeAndStoreQueryResult();
-    return res.status(200).json({
-      message: `Occurence ID ${Id} deleted successfully`
-    });
-
+    res.status(201).json({ message: `Occurence ID ${Id} deleted successfully` });
   } catch (error) {
-    console.error("DELETE ERROR:", error);
-    return res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 // exports.deleteOccurrence = async (req, res) => {

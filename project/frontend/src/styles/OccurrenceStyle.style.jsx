@@ -42,7 +42,28 @@ TOP HEADER
   margin-bottom: 26px;
 
 }
+.signature-canvas {
+  width: 100%;
+  height: 220px;
 
+  background: linear-gradient(
+    to bottom,
+    #ffffff 0%,
+    #fcfcfd 100%
+  );
+
+  border: 2px dashed #cbd5e1;
+  border-radius: 14px;
+
+  cursor: crosshair;
+
+  transition: all 0.2s ease;
+}
+
+.signature-canvas:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
+}
 .page-header-left {
   display: flex;
   align-items: center;

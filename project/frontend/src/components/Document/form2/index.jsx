@@ -10,17 +10,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate, useParams } from "react-router-dom";
 import Divider from "@mui/material/Divider";
 import GeneralInfo2 from "../../form/GeneralInfoView";
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import GeneralInfo from "../../form/GeneralInfo3";
-import ReportLog from "../../form/ReportLog";
-import ReportRiskType from "../../form/ReportRiskType";
-import SelectBoxList from "../../form/SelectBoxList";
-import ReportDescription from "../../form/ReportDescription";
-import ReportStaff from "../../form/ReportStaff";
-import ReportSugestions from "../../form/ReportSugestions";
-import ReportFile from "../../form/ReportFile";
-import NavForm from "../../form/NavForm";
-import ListSelectData from "../../form/ListSelectData";
+
 import Swal from "sweetalert2";
 import DataDict_OccurrenceForm from "../../../data/form/DataDict_OccurrenceForm";
 import DataDict_Risk from "../../../data/form/DataDict_Risk";
@@ -44,6 +34,7 @@ const Occurrence = ({ Mode }) => {
   const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
   const hostUrl = import.meta.env.VITE_REACT_APP_HOST_URL;
   const storedAuth = JSON.parse(localStorage.getItem("auth"));
+  
   const config = {
     headers: { Authorization: `Bearer ${storedAuth.accessToken}` },
   };
@@ -55,13 +46,13 @@ const Occurrence = ({ Mode }) => {
   const [Stage, setStage] = useState(1);
   const [OccStage, setOccStage] = useState(0);
   const [formData, setFormData] = useState({});
-
+const sigCanvas = useRef(null);
   const [formData2, setFormData2] = useState({});
   const [show, setShow] = useState(false);
   const [disable, setDisable] = useState(false);
     const [reportid, setReportid] = useState(false);
       const [recive, setChangeRecive] = useState(0);
- 
+ const [signature, setSignature] = useState("");
  const [checked, setChecked] = useState(false);
   const [attachData, setAttachData] = useState({
     filePDF: null,
@@ -135,7 +126,15 @@ setErrors((prev) => ({ ...prev, date: false }));
 useEffect(() => {
   console.log("formData", formData);
 }, [formData]);
-  
+  useEffect(() => {
+  if (
+    signature &&
+    sigCanvas.current &&
+    signature.startsWith("data:image")
+  ) {
+    sigCanvas.current.fromDataURL(signature);
+  }
+}, [signature]);
   const handleReplaceData = (source, destination) => {
     const tempsource = formData[source];
     // console.log("tempsource",tempsource);
@@ -300,7 +299,7 @@ useEffect(() => {
 const FetchOccurranceById2 = async (id) => {
   try {
     const response = await axios.get(
-      `${apiUrl}/occurrences2/viewform/${id}`,
+      `${apiUrl}/documentform/viewform/${id}`,
       config
     );
 
@@ -319,6 +318,11 @@ setFormData((prev) => ({
       setDateReceived(item.date_received || "");
       setChangeRecive(item.department_received );
       setChecked(!!item.reply);
+        console.log('item');
+      console.log(item);
+
+      setSignature(item.signature || "");
+
     }
 
   } catch (error) {
@@ -384,14 +388,9 @@ setFormData((prev) => ({
       };
     });
   };
-
-  const handleDataSingleChange = (data, name) => {
-    setFormData({ ...formData, [name]: data });
-    if (Mode === "Edit") {
-      setEditFormData({ ...EditFormData, [name]: data });
-    }
-  };
-
+const saveSignature = (signatureData) => {
+  setSignature(signatureData);
+};
   const NextStage = () => {
     localStorage.setItem("FormData", JSON.stringify(formData));
     setStage(Stage + 1);
@@ -616,100 +615,78 @@ setFormData((prev) => ({
     "utility",
   ];
 
-  const handleSubmit = async (Mode) => {
- 
+const handleSubmit = async () => {
+  if (recive == 0) {
+    setErrors((prev) => ({ ...prev, department: true }));
+    return;
+  }
 
-      if (recive == 0) {
-        setErrors((prev) => ({ ...prev, department: true }));
-        const el = inputRefs.current.department;
-        if (el) {
-          el.focus();
-          el.scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-          });
-        }
-        return;
-      }
-        if (datereceived.length == 0) {
-        setErrors((prev) => ({ ...prev, date: true }));
-        const el = inputRefs.current.date;
-        if (el) {
-          el.focus();
-          el.scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-          });
-        }
-        return;
-      }
-       if (!checked) {
-        setErrors((prev) => ({ ...prev, checked: true }));
-        const el = inputRefs.current.checked;
-        if (el) {
-          el.focus();
-          el.scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-          });
-        }
-        return;
-      }
-        const submitFormData = new FormData();
-   
-          submitFormData.set(
-    "reportidWhere",
- reportid
-  );
-  var r=0;
-        if(checked==true){
-            r=1;
-        }
-        submitFormData.set("reply", r)
-        submitFormData.set("date_received", datereceived)
-        submitFormData.set("department", recive)
-        try {
-             const response = await axios.post(
-            `${apiUrl}/occurrences/submitmanager`,
-            submitFormData,
-            { ...config }
-          );
-          const response2 = await axios.post(
-            `${apiUrl}/occurrences/updatereply`,
-            submitFormData,
-            { ...config }
-          );
-          const responseStatus = response.status;
+  if (datereceived.length === 0) {
+    setErrors((prev) => ({ ...prev, date: true }));
+    return;
+  }
 
-          if (responseStatus === 200 || responseStatus === 201) {
-            Swal.fire({
-              title: "ยืนยันการส่งเอกสาร?",
-              text: "กรุณาตรวจสอบข้อมูลก่อนยืนยัน",
-              icon: "question",
-              showCancelButton: true,
-              confirmButtonColor: "#3085d6",
-              cancelButtonColor: "#d33",
-              confirmButtonText: "ยืนยัน",
-              cancelButtonText: "ยกเลิก"
-            }).then((result) => {
-              if (result.isConfirmed) {
-                Swal.fire({
-                  title: "ส่งเอกสารสำเร็จ!",
-                  text: "ระบบได้บันทึกและส่งเอกสารเรียบร้อยแล้ว",
-                  icon: "success",
-                  confirmButtonText: "ตกลง"
-                }).then(() => {
-                  navigate("/document");
-                });
-              }
-            });
-          }
-        } catch (err) {
-          console.error(err);
-        }
-   
-    
-  };
+  if (!signature) {
+    Swal.fire({
+      icon: "warning",
+      title: "กรุณาลงลายเซ็น",
+    });
+    return;
+  }
+
+  const result = await Swal.fire({
+    title: "ยืนยันการส่งเอกสาร?",
+    text: "กรุณาตรวจสอบข้อมูลก่อนยืนยัน",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "ยืนยัน",
+    cancelButtonText: "ยกเลิก",
+  });
+
+  if (!result.isConfirmed) {
+    return;
+  }
+
+  const submitFormData = new FormData();
+
+  submitFormData.set("reportidWhere", reportid);
+  submitFormData.set("reply", 1);
+  submitFormData.set("date_received", datereceived);
+  submitFormData.set("department", recive);
+  submitFormData.set("signature", signature);
+console.log('2222222')
+console.log("ส่งข้อมูล", formData);
+  try {
+    const response = await axios.post(
+      `${apiUrl}/document/submitmanager`,
+      submitFormData,
+      config
+    );
+
+
+
+    if (response.status === 200 || response.status === 201) {
+      await Swal.fire({
+        title: "ส่งเอกสารสำเร็จ!",
+        text: "ระบบได้บันทึกและส่งเอกสารเรียบร้อยแล้ว",
+        icon: "success",
+        confirmButtonText: "ตกลง",
+      });
+
+      navigate("/document");
+    }
+  } catch (err) {
+    console.error(err);
+
+    Swal.fire({
+      icon: "error",
+      title: "เกิดข้อผิดพลาด",
+      text: "ไม่สามารถบันทึกข้อมูลได้",
+    });
+  }
+};
 
   const handleShow = async () => {
     setShow(!show);
@@ -719,23 +696,26 @@ setFormData((prev) => ({
     try {
     
       const response2 = await axios.get(
-        `${apiUrl}/occurrences2/getComplainant/${id}`,
+        `${apiUrl}/documentform/getComplainant/${id}`,
         config,
       );
+      console.log('response2')
+      console.log(response2)
       if (response2.status === 200 || response2.status === 201) {
         const list = Array.isArray(response2.data)
           ? response2.data
           : Object.values(response2.data);
      const item = response2.data[0];
      
-     setFormData({
-       ...item,
-       userreport: item.createby,
-       reportdate: TimeConverter(item.createAt, -7),
-       occurrencedate: TimeConverter(item.occurrencedate, -7),
-       aff: item.requestaff,
-       dep: item.requestdep,
-     });
+     setFormData((prev) => ({
+  ...prev,
+  ...item,
+  userreport: item.createby,
+  reportdate: TimeConverter(item.createAt, -7),
+  occurrencedate: TimeConverter(item.occurrencedate, -7),
+  aff: item.requestaff,
+  dep: item.requestdep,
+}));
     setArray(
           list.map((item) => ({
             id: item.id,
@@ -806,9 +786,10 @@ setFormData((prev) => ({
         submitEditFormData.set("reply", r)
         submitEditFormData.set("date_received", datereceived)
         submitEditFormData.set("department", recive)
+          submitEditFormData.set("signature", signature);
         try {
           const response = await axios.post(
-            `${apiUrl}/occurrences/submitmanager`,
+            `${apiUrl}/document/submitmanager`,
             submitEditFormData,
             { ...config }
           );
@@ -885,6 +866,7 @@ setFormData((prev) => ({
                 setCheckBoxFunction={handleCheckChange}
                 FormType="Occ"
                 handleShow={handleShow}
+                saveSignature={saveSignature}
                 handleSetBoard={handleSetBoard}
                 handleSetDate={handleSetDate}
                 showUrgent={showUrgent}
@@ -894,6 +876,8 @@ setFormData((prev) => ({
                 handleDataChangeCheckbox2={handleDataChangeCheckbox2}
                 depoptiondata={departmentRaw}
                 setChangeRecive={setChangeRecive}
+                signature={signature}
+
                 handleSubmitEdit={handleSubmitEdit}
                 checked={checked}
                  setErrors={setErrors}

@@ -899,9 +899,8 @@ var r=0;
         if(checked==true){
             r=1;
         }
-        submitEditFormData.set("reply", r)
-        submitEditFormData.set("date_received", datereceived)
-        submitEditFormData.set("department", recive)
+    
+
         try {
           const response = await axios.put(
             `${apiUrl}/documentform`,

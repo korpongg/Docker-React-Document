@@ -17,7 +17,7 @@ import Home from "./view/pages/Home";
 import Dashboard2 from "./components/Document/Dashboard"
 import Document from "./components/Document/form";
 
-
+import Documentform2 from "./components/Document/form2";
 import AddUser from "./view/admin/AddUser";
 import Usermanager from "./view/admin/Usermanager";
 
@@ -66,8 +66,11 @@ function App() {
             <Route path="/document/:id" element={<Document Mode="Show" />} />
             <Route path="/document/form" element={<Document Mode="Add" />} />
             <Route path="/document/form/:id" element={<Document Mode="Edit" />} />
-          
-
+            <Route path="/document/form2/:id" element={<Documentform2 Mode="Add" />} />
+<Route
+  path="/document/form2/edit/:id"
+  element={<Documentform2 Mode="Edit" />}
+/>
       
           </Route>
 

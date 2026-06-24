@@ -1,7 +1,7 @@
 const { DataTypes, Sequelize } = require("sequelize");
 const sequelize = require("../config/dbConn").sequelize;
 
-const department_list = sequelize.define('department_list', {
+const personcomplaint = sequelize.define('personcomplaint', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -72,14 +72,10 @@ date_document: {
   ordinal_number :{
     type: DataTypes.STRING(20),
     allowNull: true
-  },
-   signature :{
-    type: DataTypes.TEXT(),
-    allowNull: true
   }
 }, {
-  tableName: 'department_list',
+  tableName: 'person_complaint',
   timestamps: false // Disable automatic timestamps
 });
 
-module.exports = department_list;
+module.exports = personcomplaint;

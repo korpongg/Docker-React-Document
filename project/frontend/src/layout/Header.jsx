@@ -138,18 +138,7 @@ const Header = () => {
           </ListItemIcon>
           จัดการสิทธิ์
         </MenuItem>
-        <MenuItem key="supmanager" onClick={() => handleNavigate("/supmanager")}>
-          <ListItemIcon>
-            <SupervisorIcon fontSize="small" style={{ color: "olivedrab" }} />
-          </ListItemIcon>
-          Supervisor
-        </MenuItem>
-        <MenuItem key="deptmanager" onClick={() => handleNavigate("/deptmanager")}>
-          <ListItemIcon>
-            <SettingIcon fontSize="small" style={{ color: "darkblue" }} />
-          </ListItemIcon>
-          จัดการแผนก/หน่วยงาน
-        </MenuItem>
+   
         <MenuItem hidden={true} key="exportdata" onClick={() => navigate("/occurrence/report")}>
           <ListItemIcon>
             <FileDownloadIcon fontSize="small" style={{color: "#2bcb2b"}} />

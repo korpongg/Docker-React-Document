@@ -5,22 +5,12 @@ import axios from "axios";
 import Swal from "sweetalert2";
 
 import { chkAdmins, chkAdmin } from "../../Function";
-import SearchBox from "./SearchBox";
+
 import DataTable from "./DataTable";
-import TranferDialog from "./TranferDialog";
-import CloseIncidentDialog from "../../CloseIncidentDialog";
 
-import { DashboardBox } from "../../../styles/Dashboard.style";
 
-import { createGlobalStyle } from "styled-components";
 import { Container, Stack, Paper, Typography, Box } from "@mui/material";
 
-export const GlobalStyle = createGlobalStyle`
-  * {
-    font-family: 'Prompt', sans-serif !important;
-  }
-    
-`;
 
 const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -41,25 +31,7 @@ const Dashboard = () => {
     headers: { Authorization: `Bearer ${storedAuth.accessToken}` },
   };
   const [dashboard, setDashboard] = useState([]);
-
-  const [eventData, setEventData] = useState([]);
   const [loading, setLoading] = useState(load);
-  const [rowData, setRowData] = useState(null);
-
-  const [tranType, setTranTypeData] = useState(null);
-  const [isDialogOpen, setDialogOpen] = useState(false);
-  const [isCloseIncidentDialogOpen, setCloseIncidentDialogOpen] =
-    useState(false);
-  const [closeReason, setCloseReason] = useState("");
-  const [closeComment, setCloseComment] = useState("");
-
-  const [reportNo, setReportNo] = useState("");
-  const [hn, setHn] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [depSelect, setDepSelect] = useState([]);
-  const [incidentType, setIncidentType] = useState("0");
-  const [formStatus, setFormStatus] = useState("-");
 
 useEffect(() => {
   if (isConnected && userData?.userid) {
@@ -74,70 +46,9 @@ useEffect(() => {
 
 
   // function format date "YYYY-MM-DD"
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const day = date.getUTCDate();
-    const month = date.getUTCMonth() + 1;
-    const year = date.getUTCFullYear();
-    return `${year}-${month < 10 ? `0${month}` : month}-${day < 10 ? `0${day}` : day}`;
-  };
 
-  const filterDataSearch = (rowData) => {
-    const startDateObj = startDate ? formatDate(startDate) : null;
-    const endDateObj = endDate ? formatDate(endDate, true) : null;
-    const OccurrenceDate = formatDate(rowData.occurrencedate);
 
-    const isSameDate = (date1, date2) =>
-      formatDate(date1) === formatDate(date2);
 
-    const isStartDateValid = startDateObj
-      ? isSameDate(OccurrenceDate, startDateObj)
-      : true;
-    const isBetweenDates =
-      startDateObj && endDateObj
-        ? OccurrenceDate >= startDateObj && OccurrenceDate <= endDateObj
-        : true;
-
-    const reportNoMatch =
-      reportNo === "" ||
-      (rowData.reportid && rowData.reportid.includes(reportNo));
-    const hnMatch = hn === "" || (rowData.hn && rowData.hn.includes(hn));
-    const isDepSelectValid =
-      depSelect.length === 0 ||
-      rowData.deptrelate.some((dept) => depSelect.includes(dept));
-
-    return (
-      reportNoMatch &&
-      hnMatch &&
-      (startDateObj && endDateObj ? isBetweenDates : isStartDateValid) &&
-      isDepSelectValid &&
-      (incidentType === "0" || rowData.reporttypename === incidentType) &&
-      (formStatus === "-" || rowData.formstatus === formStatus)
-    );
-  };
-
-  // useEffect(() => {
-  //   const filterData = () => {
-  //     if (isAdmin) {
-  //       setDashboard(dataCenter.filter(filterDataSearch));
-  //       setEventData(dataEvent);
-  //     } else if (isEXEC) {
-  //       if (userData.affiliation === "งานคุณภาพ") {
-  //         setDashboard(dataCenter.filter(filterDataSearch));
-  //         setEventData(dataEvent);
-  //       } else {
-  //         const filteredData = dataCenter.filter((item) => item.requestaff === userData.affiliation);
-  //         setDashboard(filteredData.filter(filterDataSearch));
-  //       }
-  //     } else {
-  //       const filteredData = dataCenter.filter((item) =>item.requestaff === userData.affiliation &&item.requestdep === userData.dep);
-  //       setDashboard(filteredData.filter(filterDataSearch));
-  //     }
-  //     setLoading(false);
-  //   };
-
-  //   filterData();
-  // }, [dataCenter, dataEvent, reportNo, hn, startDate, endDate, depSelect, incidentType, formStatus]);
 useEffect(() => {
   if (!dataCenter2) return;
 
@@ -180,9 +91,9 @@ useEffect(() => {
     navigate(`/document/form`);
   };
 
-  const handleViewClick = (data, role) => {
+  const handleViewClick = (id, role) => {
 
-    navigate(`/ComplaintResponse/form`, {
+    navigate(`/document/form2/${id}`, {
       state: {
         reportid: role.reportid,
       },
@@ -206,73 +117,9 @@ useEffect(() => {
       },
     });
   };
-  const handleTranfClick = (id, data, type) => {
-    setRowData(data);
-    setTranTypeData(type);
-    setDialogOpen(true);
-  };
 
-  const handleCloseClick = async (id, data) => {
-    setCloseIncidentDialogOpen(true);
-    setRowData({ id, data });
-  };
 
-  const handleConfirmClose = async () => {
-    if (!closeReason) {
-      Swal.fire("ผิดพลาด", "กรุณาเลือกสถานะข้อร้องเรียน", "error");
-      return;
-    }
-    if (!closeComment) {
-      Swal.fire("ผิดพลาด", "กรุณาใส่ความคิดเห็น", "error");
-      return;
-    }
 
-    try {
-      const payload = {
-        id: rowData.id,
-        formstatus: closeReason,
-        comment: closeComment,
-        updateby: userData.userid,
-      };
-      const response = await axios.put(`${apiUrl}/document`, payload, {
-        ...config,
-      });
-      if (response.status === 200 || response.status === 201) {
-        Swal.fire("สำเร็จ", "แก้ไขสถานะข้อร้องเรียนเรียบร้อยแล้ว", "success");
-
-        setCloseIncidentDialogOpen(false);
-        setCloseComment("");
-        setCloseReason("");
-      }
-    } catch (error) {
-      console.error(error);
-      Swal.fire(
-        "ผิดพลาด",
-        "เกิดข้อผิดพลาดในการแก้ไขสถานะข้อร้องเรียน",
-        "error",
-      );
-    }
-  };
-
-  // const handleCloseClick = async (id, data) => {
-  //   const confirmed = await Swal.fire({
-  //     title: 'ยืนยันปิดข้อร้องเรียน?',
-  //     icon: 'warning',
-  //     showCancelButton: true,
-  //     confirmButtonText: 'ยืนยัน',
-  //     cancelButtonText: 'ยกเลิก',
-  //   });
-  //   if (confirmed.isConfirmed) {
-  //     try {
-  //       const response = await axios.put(`${apiUrl}/occurrences`, { id: id, formstatus: '2' }, { ...config });
-  //       console.log(response.data);
-  //       Swal.fire('สำเร็จ', 'ปิดข้อร้องเรียนเรียบร้อยแล้ว', 'success');
-  //     } catch (error) {
-  //       console.error(error);
-  //       Swal.fire('ผิดพลาด', 'เกิดข้อผิดพลาดในการปิดข้อร้องเรียน', 'error');
-  //     }
-  //   }
-  // };
 
   const handleEditClick = (id, role) => {
  
@@ -301,14 +148,15 @@ useEffect(() => {
       },
     });
   };
-  const handleEditClick4 = (id, role) => {
-
-    navigate(`/document/form4/${id}`, {
-      state: {
-        reportid: role.reportid,
-      },
-    });
-  };
+const handleEditClick4 = (id, row) => {
+  navigate(`/document/form2/edit/${id}`, {
+    state: {
+      reportid: row.reportid,
+      documentId: id,
+      row,
+    },
+  });
+};
 
   const handleDeleteClick = async (id) => {
     const result = await Swal.fire({
@@ -342,16 +190,14 @@ useEffect(() => {
     }
   };
 
-  const handleCloseDialog = () => {
-    setRowData(null);
-    setTranTypeData(null);
-    setDialogOpen(false);
-  };
 
   return (
     <>
       <Box>
-        <Container sx={{minWidth:'1270px'}}>
+        <Container   
+  disableGutters
+  className="px-2"
+ sx={{minWidth:'1270px'}}>
           <Stack spacing={3}>
             <Paper
               elevation={2}
@@ -424,42 +270,18 @@ useEffect(() => {
                   handleViewClick={handleViewClick}
                   handleViewClick2={handleViewClick2}
                   handleViewClick3={handleViewClick3}
-                  handleTranfClick={handleTranfClick}
-                  handleCloseClick={handleCloseClick}
+            
                   handleEditClick={handleEditClick}
                   handleEditClick2={handleEditClick2}
                   handleEditClick3={handleEditClick3}
                   handleEditClick4={handleEditClick4}
                   handleDeleteClick={handleDeleteClick}
-                  loading={loading}
+
                 />
               </div>
             </Paper>
           </Stack>
 
-          {/* Dialog ควรอยู่นอก Paper */}
-          <TranferDialog
-            userData={userData}
-            config={config}
-            isAdmin={isAdmin}
-            rowData={rowData}
-            tranType={tranType}
-            eventData={eventData}
-            setEventData={setEventData}
-            isDialogOpen={isDialogOpen}
-            handleCloseDialog={handleCloseDialog}
-          />
-
-          <CloseIncidentDialog
-            isOpen={isCloseIncidentDialogOpen}
-            type="Occurrence"
-            closeReason={closeReason}
-            setCloseReason={setCloseReason}
-            closeComment={closeComment}
-            setCloseComment={setCloseComment}
-            handleConfirmClose={handleConfirmClose}
-            handleCloseDialog={() => setCloseIncidentDialogOpen(false)}
-          />
         </Container>
       </Box>
     </>

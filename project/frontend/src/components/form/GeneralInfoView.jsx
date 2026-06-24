@@ -1,38 +1,22 @@
 import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
-import Divider from "@mui/material/Divider";
-import { getCurrentDate } from "../Function";
-import { TextField } from "@mui/material";
-import Autocomplete from "@mui/material/Autocomplete";
 import dayjs from "dayjs";
-import GreenCircle from "./GreenCircle";
 import IconButton from "@mui/material/IconButton";
-import ReportLog from "./ReportLog";
-import ReportLog2 from "./ReportLog2";
-import AutoCompleteText from "./AutoCompleteDep";
 import AutoCompleteText2 from "./AutoCompleteDepRecive";
 import VerifiedIcon from '@mui/icons-material/Verified';
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Radio from "@mui/material/Radio";
 import Button from "react-bootstrap/Button";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
-import { Table, InputGroup } from "react-bootstrap";
-import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
 import { useNavigate } from "react-router-dom";
-import FormGroup from "@mui/material/FormGroup";
-import Checkbox from "@mui/material/Checkbox";
-import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import Chip from "@mui/material/Chip";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import Tooltip from "@mui/material/Tooltip";
 import Swal from "sweetalert2";
+import SignatureCanvas from "react-signature-canvas";
+import { useRef } from "react";
+
+
 dayjs.extend(customParseFormat);
 import { color } from "@mui/system";
 
@@ -74,7 +58,9 @@ const GeneralInfo = ({
   setDataPerson,
   setChangeRecive,
   handleDateReceived,
+  saveSignature,
   datereceived,
+    signature,
   handleDateChange,
   handleDataChangeCheckbox,
   handleDataChangeCheckbox2,
@@ -102,6 +88,7 @@ const GeneralInfo = ({
   const [inputValue, setInputValue] = useState("");
   const [tosentvalue, settosentvalue] = useState("select"); // select or textinput
   const [timePicker, setTimePicker] = useState(null); // dayjs
+  const sigCanvas = useRef();
 const navigate = useNavigate(); 
   useEffect(() => {
     if (data.pct) {
@@ -114,6 +101,20 @@ const navigate = useNavigate();
       }
     }
   }, []);
+useEffect(() => {
+  const canvas = sigCanvas.current?.getCanvas();
+
+  if (canvas) {
+    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+
+    canvas.width = canvas.offsetWidth * ratio;
+    canvas.height = canvas.offsetHeight * ratio;
+    canvas.getContext("2d").scale(ratio, ratio);
+  }
+}, []);
+  useEffect(() => {
+  console.log("signature =", signature);
+}, [signature]);
   useEffect(() => {
     if (data?.time) {
       // ดึง "05:55" จาก ISO ตรง ๆ
@@ -123,6 +124,24 @@ const navigate = useNavigate();
       setTimePicker(null);
     }
   }, [data?.time]);
+useEffect(() => {
+  if (
+    signature &&
+    sigCanvas.current &&
+    !sigCanvas.current.isEmpty()
+  ) {
+    return;
+  }
+
+  if (
+    signature &&
+    sigCanvas.current &&
+    signature.startsWith("data:image")
+  ) {
+    sigCanvas.current.fromDataURL(signature);
+  }
+}, [signature]);
+  
   return (
   <>
     <div className="section-main">
@@ -513,7 +532,7 @@ SECTION 2 : รับเอกสาร (MODERN INPUT FLOW)
               style={{ display: "flex", alignItems: "center", gap: 4 }}
             >
               <ErrorOutlineIcon fontSize="small" />
-              กรุณาเลือกการดำเนินการเร่งด่วน
+              กรุณาเลือกการผู้รับเอกสาร (แผนก)
             </Form.Control.Feedback>
           )}
   </div>
@@ -547,7 +566,7 @@ SECTION 2 : รับเอกสาร (MODERN INPUT FLOW)
               style={{ display: "flex", alignItems: "center", gap: 4 }}
             >
               <ErrorOutlineIcon fontSize="small" />
-              กรุณาเลือกการดำเนินการเร่งด่วน
+             กรุณาเลือกการผู้รับเอกสาร (แผนก)
             </Form.Control.Feedback>
           )}
   </div>
@@ -555,50 +574,121 @@ SECTION 2 : รับเอกสาร (MODERN INPUT FLOW)
   {/* =========================
   FIELD 3
   ========================= */}
-  <div className="receive-input-block">
-    <label className="receive-input-label">
-      <span className="receive-number">3</span>
-      สถานะการรับ
-    </label>
+<div className="receive-input-block">
+  <label className="receive-input-label">
+    <span className="receive-number">3</span>
+    ลายเซ็นดิจิทัล (ผู้รับเอกสาร)
+  </label>
 
-    <div className="receive-input-body">
-      <button
-        name="check"
-        type="button"
-        onClick={() => {
-          const newValue = !checked;
-          setChecked(newValue);
-          handleDataChangeValue(newValue, "dateChecked");
+<Box
+  sx={{
+    border: "1px solid #e2e8f0",
+    borderRadius: "16px",
+    overflow: "hidden",
+    background: "#ffffff",
+    boxShadow: "0 4px 20px rgba(15,23,42,.06)",
+  }}
+>
+  {/* Header */}
+  <Box
+    sx={{
+      px: 2,
+      py: 1.5,
+      bgcolor: "#f8fafc",
+      borderBottom: "1px solid #e2e8f0",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+    }}
+  >
+    <Box>
+      <div
+        style={{
+          fontWeight: 700,
+          fontSize: "0.95rem",
+          color: "#0f172a",
         }}
-           ref={(el) => (inputRefs.current.checked = el)}
-        className={`receive-confirm-card ${checked ? "checked" : ""}`}
       >
-        {/* Icon */}
-        <div className="receive-confirm-icon">✔</div>
+        ลายเซ็นอิเล็กทรอนิกส์
+      </div>
 
-        {/* Text */}
-        <div className="receive-confirm-text">
-          <div className="receive-confirm-title">
-            {checked ? "รับเอกสารเรียบร้อยแล้ว" : "กดเพื่อยืนยันการรับเอกสาร"}
-          </div>
+      <div
+        style={{
+          fontSize: "0.75rem",
+          color: "#64748b",
+        }}
+      >
+        กรุณาเซ็นชื่อภายในกรอบด้านล่าง
+      </div>
+    </Box>
 
-          <div className="receive-confirm-subtitle">
-            ระบบจะบันทึกสถานะเมื่อกดยืนยัน
-          </div>
-        </div>
-      </button>
-     
-    </div>
-    {errors.checked && (
-            <Form.Control.Feedback
-              type="invalid"
-              style={{ display: "flex", alignItems: "center", gap: 4 }}
-            >
-              <ErrorOutlineIcon fontSize="small" />
-              กรุณาเลือกการดำเนินการเร่งด่วน
-            </Form.Control.Feedback>
-          )}
-  </div>
+    <Button
+      variant="outlined"
+      color="error"
+      size="small"
+      onClick={() => {
+        sigCanvas.current.clear();
+        saveSignature("");
+      }}
+      sx={{
+        borderRadius: "10px",
+        textTransform: "none",
+      }}
+    >
+      ล้างลายเซ็น
+    </Button>
+  </Box>
+
+  {/* Canvas */}
+  <Box
+    sx={{
+      p: 2,
+      bgcolor: "#ffffff",
+      position: "relative",
+    }}
+  >
+    <SignatureCanvas
+      ref={sigCanvas}
+      penColor="#111827"
+      onEnd={() => {
+        const signatureData = sigCanvas.current
+          .getCanvas()
+          .toDataURL("image/png");
+
+        saveSignature(signatureData);
+      }}
+      canvasProps={{
+        className: "signature-canvas",
+      }}
+    />
+
+    {/* เส้นเซ็น */}
+    <Box
+      sx={{
+        position: "absolute",
+        left: 40,
+        right: 40,
+        bottom: 50,
+        borderBottom: "2px dashed #cbd5e1",
+        pointerEvents: "none",
+      }}
+    />
+
+    <Box
+      sx={{
+        position: "absolute",
+        right: 45,
+        bottom: 30,
+        fontSize: "0.7rem",
+        color: "#94a3b8",
+        pointerEvents: "none",
+      }}
+    >
+      ลายเซ็นผู้อนุมัติ
+    </Box>
+  </Box>
+</Box>
+</div>
 
       </div>
       <div className="bottom-action-bar">

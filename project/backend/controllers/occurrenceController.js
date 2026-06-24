@@ -1,8 +1,10 @@
 const sequelize = require("../config/dbConn").sequelize;
 const Occurrences = require("../models/Occurrences");
 const Occurrences2 = require("../models/Occurrences2");
+const Occurrences3 = require("../models/Occurrences3");
+const Occurrences4 = require("../models/Occurrences4");
 
-const department_list = require("../models/department_list");
+const personcomplaint = require("../models/PersonComplaint");
 const Department = require("../models/Department");
 // const User = require("../models/User");
 
@@ -292,38 +294,23 @@ const {reportidWhere}=req.body
 
 exports.submitManager = async (req, res) => {
   try {
-    const {
-      reportidWhere,
-      department,
-      reply,
-      date_received,
-      signature, // เพิ่ม
-    } = req.body;
+    
+const {reportidWhere,department,reply,date_received}=req.body
+console.log(req.body)
 
-    console.log("submitManager:", req.body);
-
-    const result3 = await department_list.update(
-      {
-        department_received: department,
-        reply: reply,
-        status: 1,
-        date_received: date_received,
-        signature: signature, // เพิ่ม
-        risk: "1",
-        updateAt: sequelize.literal("CURRENT_TIMESTAMP"),
-      },
-      {
-        where: {
-          reportid: reportidWhere,
-        },
-      }
-    );
-console.log("update result:", result3);
-    await executeAndStoreQueryResult(reportidWhere);
-
+    const result3= await personcomplaint.update({ 
+         department_received:department,
+            reply:reply,
+       status:1,
+      date_received:date_received,
+    risk: '1',
+    updateAt:sequelize.literal("CURRENT_TIMESTAMP"),
+  },{
+      where: { reportid: reportidWhere  }
+    });
+        await executeAndStoreQueryResult();
     res.status(201).json(result3);
   } catch (error) {
-    console.error("submitManager error:", error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -809,30 +796,20 @@ arr_mail2 = JSON.parse(deptemail2);
 // Delete an occurrence by ID
 exports.deleteOccurrence = async (req, res) => {
   const Id = req?.params?.id;
-
-  if (!Id) {
-    return res.status(400).json({ message: "Occurence ID required" });
-  }
+  if (!Id) return res.status(400).json({ message: "Occurence ID required" });
 
   try {
-    const occ = await department_list.findOne({ where: { id: Id } });
-
+    const occ = await Occurrences.findOne({ where: { id: Id, deleteAt: null } });
     if (!occ) {
-      return res.status(404).json({
-        message: `Occurence ID ${Id} not found`
-      });
+      return res.status(204).json({ message: `Occurence ID ${Id} not found` });
     }
-
-    await occ.destroy(); // ✅ ลบจริง
-
+    occ.deleteAt = sequelize.fn('GETDATE');
+    occ.formstatus = "3";
+    await occ.save();
     executeAndStoreQueryResult();
-    return res.status(200).json({
-      message: `Occurence ID ${Id} deleted successfully`
-    });
-
+    res.status(201).json({ message: `Occurence ID ${Id} deleted successfully` });
   } catch (error) {
-    console.error("DELETE ERROR:", error);
-    return res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 // exports.deleteOccurrence = async (req, res) => {

@@ -1,5 +1,6 @@
 const sequelize = require("../config/dbConn").sequelize;
-const department_list = require("../models/department_list");
+const Occurrences = require("../models/Occurrences2");
+const personcomplaint = require("../models/PersonComplaint");
 const Department = require("../models/Department");
 // const User = require("../models/User");
 const { executeAndStoreQueryResult } = require('../services/broadcastService');
@@ -62,11 +63,7 @@ const formatDateTime_N7 = (date) => {
 // =========================
 exports.createOccurrence = async (req, res) => {
   try {
-    console.log('req.body');
-    const { array, createby, urgent, faction,  reply,
-  date_received,
-  department } = req.body;
-console.log(req.body);
+    const { array, createby, urgent, faction } = req.body;
 
     const data = JSON.parse(array);
     const results = [];
@@ -90,7 +87,7 @@ console.log(req.body);
             )
           ), 
         0) AS lastOrdinal
-      FROM department_list
+      FROM person_complaint
       WHERE YEAR(createAt) = :fullYear
         AND ordinal_number LIKE '%/%'
       `,
@@ -113,7 +110,7 @@ console.log(req.body);
             CAST(LEFT(reportid, 3) AS INT)
           ),
         0) AS lastReport
-      FROM department_list
+      FROM person_complaint
       WHERE YEAR(createAt) = :fullYear
         AND MONTH(createAt) = :currentMonth
       `,
@@ -153,7 +150,7 @@ console.log(req.body);
       // -------------------------
       // INSERT
       // -------------------------
-      const result = await department_list.create({
+      const result = await personcomplaint.create({
         number: data[i].id,
         id_document: data[i].id_document,
         department: data[i].department,
@@ -165,7 +162,7 @@ console.log(req.body);
         date_document: data[i].date_document,
         program_document: data[i].program_document,
         urgent,
-        reply: reply,
+        reply: 0,
         ordinal_number,
       });
 
@@ -309,14 +306,14 @@ exports.getOccurrenceViewFormById = async (req, res) => {
   date_document,
  program_document,
  urgent,
-signature,
+
    status,
  reply,
  date_received,
  department_received,
  dep.name as dep_name_send, 
  dep2.name as dep_name_received
-FROM [dbo].[department_list] as person
+FROM [dbo].[person_complaint] as person
 LEFT JOIN [dbo].[department] as dep ON person.department = dep.id
 LEFT JOIN [dbo].[department] as dep2 ON person.department_received = dep2.id
       WHERE person.reportid = :reportid;
@@ -428,7 +425,7 @@ exports.getOccurrenceById = async (req, res) => {
 };
 
 exports.getComplainantById = async (req, res) => {
-
+  console.log('wdwdwadwadawd')
   if (!req?.params?.id) {
     return res.status(400).json({ message: "id is required." });
   }//console.log(req?.params?.id)
@@ -439,7 +436,7 @@ console.log(req?.params)
     // First query to get occurrences and user details
     const occQuery = `
       SELECT per.*
-        FROM ${DB_NAME}.[dbo].[department_list] per
+        FROM ${DB_NAME}.[dbo].[person_complaint] per
     
       WHERE per.reportid = :reportid;
     `;
@@ -467,13 +464,12 @@ exports.updateOccurrence = async (req, res) => {
 
 const {array,createby,appeal,time,urgent,faction,reportid
   ,id_document,department,program_document,date_document
-  ,reply,
-  date_received,
 } = req.body
-
+console.log('อัพเดททท222222222')
+console.log(req.body)
 const data = JSON.parse(array);
 try{
-const result2 = await department_list.update(
+const result2 = await personcomplaint.update(
   {
     id_document: data[0].id_document,
     department: data[0].department,
@@ -482,9 +478,7 @@ const result2 = await department_list.update(
     updateAt: sequelize.literal("CURRENT_TIMESTAMP"),
     program_document:data[0].program_document,
     urgent: urgent,
- reply: reply,
-  date_received:date_received,
-  department_received:department
+    reply: 0,
     
   },
   {
@@ -505,7 +499,7 @@ const result2 = await department_list.update(
     // //console.log(result.toJSON());
 
     // const updatedOccurrence = await Occurrences.findByPk(req.params.id);
-    res.status(200).json(result2);
+    res.status(200).json(result);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -536,7 +530,7 @@ exports.deleteOccurrence = async (req, res) => {
   }
 
   try {
-    const occ = await department_list.findOne({
+    const occ = await personcomplaint.findOne({
       where: { id: Id },
     });
 
